@@ -81,7 +81,6 @@
      ido-vertical-mode
      ido-at-point
      ido-ubiquitous
-     guide-key
      highlight-escape-sequences
      whitespace-cleanup-mode
      smooth-scrolling
