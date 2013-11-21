@@ -39,22 +39,22 @@ If you want to use my settings straight out of the box, here are some things to 
 * `C-S-d` 		To put a new cursor at all things like the current selection
 * `C-M-a`		Drops a rectangular anchor, then use up and down to move
 
-### expand-region
+### Expand-region
 
 * `M-e`			Expand onto the next region
 * `C-M-e`		Contracts back to the previous region
 
-### smart-forward
+### Smart-forward
 
-* `M-arrow' 	up, down, left or right to move onto the next region
+* `M-arrow` 	up, down, left or right to move onto the next region
 
-### move-text
+### Move-text
 
-* `C-S-arrow' 	up or down to move a line up or down
+* `C-S-arrow` 	up or down to move a line up or down
 
 ### Custom keybindings
 
-* 'M-j'         Joins the line below to this line
+* `M-j`         Joins the line below to this line
 
 ### Files
 
