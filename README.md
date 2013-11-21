@@ -10,8 +10,8 @@ If you want to use my settings straight out of the box, here are some things to 
    [Technomancy's better-defaults package](https://github.com/technomancy/better-defaults),
    and then dig through this repo for useful nuggets, instead of forking it directly.
 
- * It should be possible to simply clone entire repo, drop it into a clean 
-   install of emacs, and it should set everything up properly, but bugs may exist!
+ * It should be possible to simply clone the entire repo, drop it into a clean 
+   install of emacs, and it should set everything up properly, but your experience may vary!
 
  * The key bindings are optimized for a [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
 
@@ -37,7 +37,7 @@ If you want to use my settings straight out of the box, here are some things to 
 
 * `C-d` 		To put a new cursor at the next thing like the current selection
 * `C-S-d` 		To put a new cursor at all things like the current selection
-* `C-M-a`		Drops a rectangular anchor, then use <up> and <down> to move
+* `C-M-a`		Drops a rectangular anchor, then use up and down to move
 
 ### expand-region
 
@@ -46,11 +46,11 @@ If you want to use my settings straight out of the box, here are some things to 
 
 ### smart-forward
 
-* `M-<arrow>' 	<up>, <down>, <left> or <right> to move onto the next region
+* `M-arrow' 	up, down, left or right to move onto the next region
 
 ### move-text
 
-* `C-S-<arrow>' <up> or <down> to move a line up or down
+* `C-S-arrow' 	up or down to move a line up or down
 
 ### Files
 
