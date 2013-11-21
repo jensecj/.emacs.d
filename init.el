@@ -126,6 +126,9 @@
 (require 'multiple-cursors)
 (require 'smart-forward)
 
+(require 'git-gutter+)
+(global-git-gutter+-mode t)
+
 ;; Highlight escape sequences
 (require 'highlight-escape-sequences)
 (hes-mode)
