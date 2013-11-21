@@ -52,6 +52,10 @@ If you want to use my settings straight out of the box, here are some things to 
 
 * `C-S-arrow' 	up or down to move a line up or down
 
+### Custom keybindings
+
+* 'M-j'         Joins the line below to this line
+
 ### Files
 
 * `C-x C-f` 	Open a file. Starts in the current directory
