@@ -72,6 +72,7 @@
      git-commit-mode
      gitconfig-mode
      gitignore-mode
+     markdown-mode
      git-gutter+
      move-text
      visual-regexp-steroids
