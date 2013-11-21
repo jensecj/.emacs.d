@@ -112,12 +112,7 @@
 ;; Default setup of smartparens
 (require 'smartparens-config)
 (setq sp-autoescape-string-quote nil)
-
-;; Setup minor modes
-(--each '(sml-mode-hook
-          markdown-mode)
-  (add-hook it 'turn-on-smartparens-mode)
-  (add-hook it 'turn-on-wrap-region-mode))
+(smartparens-global-mode t)
 
 ;; Language specific setup files
 (eval-after-load 'markdown-mode '(require 'setup-markdown-mode))
