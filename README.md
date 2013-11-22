@@ -21,10 +21,6 @@ If you want to use my settings straight out of the box, here are some things to 
 
  * Find file in dir with `C-x C-f`, recent files with `C-x f`
 
- * `C-h` is rebound to backspace, like in the shell. Get help on `F1` instead.
-
- * Undo with `C-_` and redo with `M-_`. Watch the undo-tree with `C-x u`
-
  * Indent and clean up white space in the entire buffer with `C-c n`
 
 ### Ace-jump-mode

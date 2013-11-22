@@ -1,3 +1,7 @@
+;; the mnemonic is C-x REALLY QUIT
+(global-set-key (kbd "C-x r q") 'save-buffers-kill-terminal)
+(global-set-key (kbd "C-x C-c") 'delete-frame)
+
 (require 'smex)
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
@@ -29,6 +33,11 @@
 (require 'visual-regexp)
 (define-key global-map (kbd "M-&") 'vr/query-replace)
 (define-key global-map (kbd "M-/") 'vr/replace)
+
+(require 'magit)
+;; Magit
+(global-set-key (kbd "C-x m") 'magit-status)
+(autoload 'magit-status "magit")
 
 ;; Join lines upward
 (global-set-key (kbd "M-j")
