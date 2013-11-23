@@ -89,6 +89,7 @@
      smooth-scrolling
      smex
      s
+     highlight-current-line
      expand-region
      smart-forward
      ace-jump-mode
@@ -136,6 +137,11 @@
 (require 'highlight-escape-sequences)
 (hes-mode)
 (put 'font-lock-regexp-grouping-backslash 'face-alias 'font-lock-builtin-face)
+
+;; Hightlight current line
+(require 'highlight-current-line)
+(setq highlight-current-line-globally t)
+(highlight-current-line-on t)
 
 ;; Smart M-x is smart
 (require 'smex)
