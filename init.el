@@ -14,11 +14,11 @@
 ;; ===================== Setup directories
 ;; =======================================
 
-;; Path to melpa installed packages
+;; Path to installed packages
 (setq elpa-dir
 	(expand-file-name "elpa" user-emacs-directory))
 
-;; Add melpa installed packages to load-path
+;; Add installed packages to load-path
 (dolist (project (directory-files elpa-dir t "\\w+"))
 	(when (file-directory-p project)
 		(add-to-list 'load-path project)))
