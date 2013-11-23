@@ -63,6 +63,7 @@
 (package-initialize)
 (package-refresh-contents)
 
+;; Install dash, which is needed by the setup-package script
 (when (not (package-installed-p 'dash))
   (package-install 'dash))
 
