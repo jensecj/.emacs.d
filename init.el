@@ -51,10 +51,12 @@
 ;; ======================== Setup packages
 ;; =======================================
 
-; Add melpa as a package archive
+; Add melpa and marmalade as a package archives
 (require 'package)
 (add-to-list 'package-archives
 	'("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives 
+       '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 ;; Install dash, which is needed for the setup-package script
 (require 'package)
@@ -86,6 +88,7 @@
      whitespace-cleanup-mode
      smooth-scrolling
      smex
+     s
      expand-region
      smart-forward
      ace-jump-mode
