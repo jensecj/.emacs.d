@@ -72,6 +72,7 @@
 (defun init--install-packages ()
   (packages-install
    '(magit
+     magit-log-edit
      git-commit-mode
      gitconfig-mode
      gitignore-mode
@@ -105,6 +106,9 @@
 ;; =======================================
 ;; ====================== Tweaks and hacks
 ;; =======================================
+
+;; Use the old commit mode
+(require 'magit-log-edit)
 
 ;; Lets start with a smattering of sanity
 (require 'sane-defaults)
