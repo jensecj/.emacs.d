@@ -45,5 +45,13 @@
                   (interactive)
                   (join-line -1)))
 
+;; Jump to symbol definitions
+(global-set-key (kbd "C-x C-i") 'ido-imenu)
+
+;; Fix spaces / tabs
+(global-set-key (kbd "C-c C-n") 'cleanup-buffer)
+
+;; Evaluate the current buffer
+(global-set-key (kbd "C-c C-k") 'eval-buffer)
 
 (provide 'key-bindings)
