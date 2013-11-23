@@ -16,12 +16,12 @@
 
 ;; Path to installed packages
 (setq elpa-dir
-	(expand-file-name "elpa" user-emacs-directory))
+      (expand-file-name "elpa" user-emacs-directory))
 
 ;; Add installed packages to load-path
 (dolist (project (directory-files elpa-dir t "\\w+"))
-	(when (file-directory-p project)
-		(add-to-list 'load-path project)))
+  (when (file-directory-p project)
+    (add-to-list 'load-path project)))
 
 ;; Add .emacs.d to load-path
 (add-to-list 'load-path user-emacs-directory)
@@ -33,11 +33,11 @@
 ;; Save backup and autosave files in data folder
 (defconst storage-dir "~/.emacs.d/data/")
 (setq backup-directory-alist
-	`((".*" . ,storage-dir)))
+      `((".*" . ,storage-dir)))
 (setq auto-save-file-name-transforms
-	`((".*" ,storage-dir t)))
+      `((".*" ,storage-dir t)))
 (setq auto-save-list-file-prefix
-	storage-dir)
+      storage-dir)
 
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
@@ -51,20 +51,20 @@
 ;; ======================== Setup packages
 ;; =======================================
 
-; Add melpa and marmalade as a package archives
+;; Add  melpa and marmalade as a package archives
 (require 'package)
 (add-to-list 'package-archives
-	'("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives 
-       '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 ;; Install dash, which is needed for the setup-package script
 (require 'package)
 (package-initialize)
 (package-refresh-contents)
 
-(when (not (package-installed-p 'dash))                                                                                              
-                (package-install 'dash))
+(when (not (package-installed-p 'dash))
+  (package-install 'dash))
 
 ;; Install missing packages
 (require 'setup-package)
