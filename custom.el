@@ -5,4 +5,4 @@
  '(show-paren-mode t))
 
 (custom-set-faces
- '(highlight-current-line-face ((t (:background "gray35")))))
+)
