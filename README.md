@@ -51,6 +51,8 @@ If you want to use my settings straight out of the box, here are some things to 
 ### Custom keybindings
 
 * `M-j`         Joins the line below to this line
+* `C-c C-k`     Evaluate current buffer
+* `C-c C-i`     Jump to symbol definition
 
 ### Files
 
@@ -72,7 +74,6 @@ If you want to use my settings straight out of the box, here are some things to 
 * `C-y` 		Paste (aka yank)
 * `M-y` 		Cycle last paste through previous kills
 * `C-x C-y` 	Choose what to paste from previous kills
-* `C-@`		 	Mark stuff quickly. Press multiple times
 
 ### General
 
