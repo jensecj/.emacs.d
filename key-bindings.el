@@ -49,7 +49,7 @@
 (global-set-key (kbd "C-x C-i") 'ido-imenu)
 
 ;; Fix spaces / tabs
-(global-set-key (kbd "C-c C-n") 'cleanup-buffer)
+(global-set-key (kbd "C-c n") 'cleanup-buffer)
 
 ;; Evaluate the current buffer
 (global-set-key (kbd "C-c C-k") 'eval-buffer)
