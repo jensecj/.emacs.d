@@ -1,6 +1,9 @@
 ;; the mnemonic is C-x REALLY QUIT
 (global-set-key (kbd "C-x r q") 'save-buffers-kill-terminal)
 (global-set-key (kbd "C-x C-c") 'delete-frame)
+;; =======================================
+;; ============================== Packages
+;; =======================================
 
 (require 'smex)
 (global-set-key (kbd "M-x") 'smex)
@@ -39,6 +42,9 @@
 (global-set-key (kbd "C-x m") 'magit-status)
 (autoload 'magit-status "magit")
 
+;; =======================================
+;; ========== Built-in features and Defuns
+;; =======================================
 ;; Join lines upward
 (global-set-key (kbd "M-j")
                 (lambda ()
