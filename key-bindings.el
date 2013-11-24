@@ -1,6 +1,3 @@
-;; the mnemonic is C-x REALLY QUIT
-(global-set-key (kbd "C-x r q") 'save-buffers-kill-terminal)
-(global-set-key (kbd "C-x C-c") 'delete-frame)
 ;; =======================================
 ;; ============================== Packages
 ;; =======================================
@@ -34,30 +31,63 @@
 (global-set-key (kbd "C-S-<down>") 'move-text-down)
 
 (require 'visual-regexp)
-(define-key global-map (kbd "M-&") 'vr/query-replace)
-(define-key global-map (kbd "M-/") 'vr/replace)
+(global-set-key (kbd "M-&") 'vr/query-replace)
+(global-set-key (kbd "M-/") 'vr/replace)
 
 (require 'magit)
-;; Magit
 (global-set-key (kbd "C-x m") 'magit-status)
 (autoload 'magit-status "magit")
 
 ;; =======================================
 ;; ========== Built-in features and Defuns
 ;; =======================================
-;; Join lines upward
-(global-set-key (kbd "M-j")
-                (lambda ()
-                  (interactive)
-                  (join-line -1)))
 
-;; Jump to symbol definitions
-(global-set-key (kbd "C-x C-i") 'ido-imenu)
+;; the mnemonic is C-x REALLY QUIT
+(global-set-key (kbd "C-x r q") 'save-buffers-kill-terminal)
+(global-set-key (kbd "C-x C-c") 'delete-frame)
+
+;; Use shell-like backspace C-h, rebind help to F1
+(define-key key-translation-map [?\C-h] [?\C-?])
+(global-set-key (kbd "<f1>") 'help-command)
+
+;; Make shell more convenient, and suspend-frame less
+(global-set-key (kbd "C-z") 'shell)
+(global-set-key (kbd "C-x M-z") 'suspend-frame)
 
 ;; Fix spaces / tabs
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
 
 ;; Evaluate the current buffer
 (global-set-key (kbd "C-c C-k") 'eval-buffer)
+
+;; Join lines upward
+(global-set-key (kbd "M-j")
+                (lambda ()
+                  (interactive)
+                  (join-line -1)))
+
+;; Transpose stuff with M-t
+(global-unset-key (kbd "M-t")) ;; which used to be transpose-words
+(global-set-key (kbd "M-t l") 'transpose-lines)
+(global-set-key (kbd "M-t w") 'transpose-words)
+(global-set-key (kbd "M-t s") 'transpose-sexps)
+(global-set-key (kbd "M-t p") 'transpose-params)
+
+;; Jump to symbol definitions
+(global-set-key (kbd "C-x C-i") 'ido-imenu)
+
+;; File finding
+(global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
+(global-set-key (kbd "C-x f") 'recentf-ido-find-file)
+(global-set-key (kbd "C-x C-p") 'find-or-create-file-at-point)
+(global-set-key (kbd "C-x M-p") 'find-or-create-file-at-point-other-window)
+(global-set-key (kbd "C-c y") 'bury-buffer)
+(global-set-key (kbd "C-c r") 'revert-buffer)
+(global-set-key (kbd "M-`") 'file-cache-minibuffer-complete)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; Comment/uncomment block
+(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-c u") 'uncomment-region)
 
 (provide 'key-bindings)
