@@ -38,6 +38,11 @@
 (global-set-key (kbd "C-x m") 'magit-status)
 (autoload 'magit-status "magit")
 
+(require 'undo-tree)
+(global-set-key (kbd "C-x u") 'undo-tree-visualize)
+(global-set-key (kbd "C-_") 'undo-tree-undo)
+(global-set-key (kbd "M-_") 'undo-tree-redo)
+
 ;; =======================================
 ;; ========== Built-in features and Defuns
 ;; =======================================

@@ -93,6 +93,7 @@
      smex
      s
      expand-region
+     undo-tree
      smart-forward
      ace-jump-mode
      multiple-cursors
@@ -146,6 +147,10 @@
 ;; Smart M-x is smart
 (require 'smex)
 (smex-initialize)
+
+;; Use the undo-tree
+(require 'undo-tree)
+(setq global-undo-tree-mode t)
 
 ;; Functions (load all files in defuns-dir)
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
