@@ -1,13 +1,12 @@
 # My emacs settings
 
-Heavily influenced by [magnars](https://github.com/magnars/.emacs.d) and [cjohansen](https://github.com/cjohansen/.emacs.d)
+Heavily influenced by [magnars](https://github.com/magnars/.emacs.d) and [cjohansen](https://github.com/cjohansen/.emacs.d).
 
 ## Tips for using these emacs settings
 
 If you want to use my settings straight out of the box, here are some things to note:
 
- * I recommend starting with a blank emacs +
-   [Technomancy's better-defaults package](https://github.com/technomancy/better-defaults),
+ * I recommend starting with a blank emacs + [Technomancy's better-defaults package](https://github.com/technomancy/better-defaults),
    and then dig through this repo for useful nuggets, instead of forking it directly.
 
  * It should be possible to simply clone the entire repo, drop it into a clean 
@@ -19,9 +18,11 @@ If you want to use my settings straight out of the box, here are some things to 
 
  * You quit emacs with `C-x r q`, mnemonic *Really Quit*.
 
- * Find file in dir with `C-x C-f`, recent files with `C-x f`
+### Custom keybindings
 
- * Indent and clean up white space in the entire buffer with `C-c n`
+* `M-j`         Joins the line below to this line
+* `C-c C-k`     Evaluate current buffer
+* `C-c n`       Indent and clean up white space in the entire buffer
 
 ### Ace-jump-mode
 
@@ -32,7 +33,7 @@ If you want to use my settings straight out of the box, here are some things to 
 ### Multiple-cursors
 
 * `C-d` 		To put a new cursor at the next thing like the current selection
-* `C-S-d` 		To put a new cursor at all things like the current selection
+* `C-D` 		To put a new cursor at all things like the current selection
 * `C-M-a`		Drops a rectangular anchor, then use up and down to move
 
 ### Expand-region
@@ -47,12 +48,6 @@ If you want to use my settings straight out of the box, here are some things to 
 ### Move-text
 
 * `C-S-arrow` 	up or down to move a line up or down
-
-### Custom keybindings
-
-* `M-j`         Joins the line below to this line
-* `C-c C-k`     Evaluate current buffer
-* `C-c C-i`     Jump to symbol definition
 
 ### Files
 
