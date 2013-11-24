@@ -19,9 +19,10 @@
       (expand-file-name "elpa" user-emacs-directory))
 
 ;; Add installed packages to load-path
-(dolist (project (directory-files elpa-dir t "\\w+"))
-  (when (file-directory-p project)
-    (add-to-list 'load-path project)))
+(when (file-exists-p elpa-dir)
+  (dolist (project (directory-files elpa-dir t "\\w+"))
+    (when (file-directory-p project)
+      (add-to-list 'load-path project))))
 
 ;; Add .emacs.d to load-path
 (add-to-list 'load-path user-emacs-directory)
