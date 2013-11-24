@@ -13,7 +13,7 @@
 
 (require 'multiple-cursors)
 (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-S-d") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-D") 'mc/mark-all-like-this)
 (global-set-key (kbd "C-M-a") 'set-rectangular-region-anchor)
 
 (require 'expand-region)
@@ -89,5 +89,11 @@
 ;; Comment/uncomment block
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-c u") 'uncomment-region)
+
+;; Move windows with S-<arrow>
+(global-set-key (kbd "S-<right>") 'windmove-right)
+(global-set-key (kbd "S-<left>") 'windmove-left)
+(global-set-key (kbd "S-<up>") 'windmove-up)
+(global-set-key (kbd "S-<down>") 'windmove-down)
 
 (provide 'key-bindings)
