@@ -33,7 +33,7 @@ If you want to use my settings straight out of the box, here are some things to 
 ### Multiple-cursors
 
 * `C-d` 		To put a new cursor at the next thing like the current selection
-* `C-D` 		To put a new cursor at all things like the current selection
+* `C-S-d` 		To put a new cursor at all things like the current selection
 * `C-M-a`		Drops a rectangular anchor, then use up and down to move
 
 ### Expand-region
@@ -48,6 +48,13 @@ If you want to use my settings straight out of the box, here are some things to 
 ### Move-text
 
 * `C-S-arrow` 	up or down to move a line up or down
+
+### Change-inner
+
+* `M-i` 	    copy contents of inner selection
+* `M-o` 	    copy contents of outer selection
+* `M-I` 	    change contents of inner selection
+* `M-O` 	    change contents of outer selection
 
 ### Files
 

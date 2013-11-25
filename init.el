@@ -84,6 +84,7 @@
      smartparens
      flx
      flx-ido
+     change-inner
      ido-vertical-mode
      ido-at-point
      ido-ubiquitous
@@ -133,6 +134,7 @@
 
 ;; load packages
 (require 'expand-region)
+(require 'change-inner)
 (require 'multiple-cursors)
 (require 'smart-forward)
 

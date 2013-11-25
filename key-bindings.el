@@ -13,12 +13,18 @@
 
 (require 'multiple-cursors)
 (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-D") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-S-d") 'mc/mark-all-like-this)
 (global-set-key (kbd "C-M-a") 'set-rectangular-region-anchor)
 
 (require 'expand-region)
 (global-set-key (kbd "M-e") 'er/expand-region)
 (global-set-key (kbd "C-M-e") 'er/contract-region)
+
+(require 'change-inner)
+(global-set-key (kbd "M-i") 'copy-inner)
+(global-set-key (kbd "M-o") 'copy-outer)
+(global-set-key (kbd "M-I") 'change-inner)
+(global-set-key (kbd "M-O") 'change-outer)
 
 (require 'smart-forward)
 (global-set-key (kbd "M-<up>") 'smart-up)
