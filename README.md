@@ -85,7 +85,7 @@ If you want to use my settings straight out of the box, here are some things to 
 * `C-_` 		Undo
 * `M-_` 		Redo
 * `C-x u` 		Show the undo-tree
-* `C-x m` 		Open magit. It's a magical git interface for emacs
+* `C-x m` 		Open magit. It's a magical git interface for emacs ([cheatsheet](http://daemianmack.com/magit-cheatsheet.html))
 
 ### Navigation
 
