@@ -110,4 +110,7 @@
 (global-set-key (kbd "S-<up>") 'windmove-up)
 (global-set-key (kbd "S-<down>") 'windmove-down)
 
+;; Force save a file
+(global-set-key (kbd "C-x t") 'touch-buffer-file)
+
 (provide 'key-bindings)
