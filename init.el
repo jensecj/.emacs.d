@@ -162,9 +162,9 @@
     (load file)))
 
 ;; Post feedback when evaluating buffer/region
-(defadvice eval-buffer (after eval-buffer-with-feedback ())
+(defadvice eval-buffer (after eval-buffer-with-feedback () activate)
   (message "Buffer evaluated"))
-(defadvice eval-region (after eval-region-with-feedback ())
+(defadvice eval-region (after eval-region-with-feedback () activate)
   (message "Region evaluated"))
 
 ;; Load custom keybindings
