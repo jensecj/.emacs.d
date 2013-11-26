@@ -125,6 +125,7 @@
 (require 'smartparens-config)
 (setq sp-autoescape-string-quote nil)
 (smartparens-global-mode t)
+(show-smartparens-global-mode t)
 
 ;; Language specific setup files
 (eval-after-load 'markdown-mode '(require 'setup-markdown-mode))
