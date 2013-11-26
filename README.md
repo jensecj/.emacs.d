@@ -22,6 +22,7 @@ If you want to use my settings straight out of the box, here are some things to 
 
 * `M-j`         Joins the line below to this line
 * `C-c C-k`     Evaluate current buffer
+* `C-c k`     Evaluate current region
 * `C-c n`       Indent and clean up white space in the entire buffer
 
 ### Ace-jump-mode

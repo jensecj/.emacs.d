@@ -71,6 +71,9 @@
 ;; Evaluate the current buffer
 (global-set-key (kbd "C-c C-k") 'eval-buffer)
 
+;; Evaluate the current region
+(global-set-key (kbd "C-c k") 'eval-region)
+
 ;; Join lines upward
 (global-set-key (kbd "M-j")
                 (lambda ()
