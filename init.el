@@ -98,6 +98,7 @@
      smart-forward
      ace-jump-mode
      multiple-cursors
+     yasnippet
      sml-mode)))
 
 (condition-case nil
@@ -120,6 +121,9 @@
 (eval-after-load 'ido '(require 'setup-ido))
 (eval-after-load 'dired '(require 'setup-dired))
 (eval-after-load 'magit '(require 'setup-magit))
+
+(require 'yasnippet)
+(require 'setup-yasnippet)
 
 ;; Default setup of smartparens
 (require 'smartparens-config)

@@ -1,0 +1,6 @@
+# name: if ... then ... else ...
+# key: if
+# --
+if ${1:expression}
+then ${2:expression}
+else ${3:expression}
