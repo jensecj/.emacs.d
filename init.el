@@ -160,5 +160,11 @@
   (when (file-regular-p file)
     (load file)))
 
+;; Post feedback when evaluating buffer/region
+(defadvice eval-buffer (after eval-buffer-with-feedback ())
+  (message "Buffer evaluated"))
+(defadvice eval-region (after eval-region-with-feedback ())
+  (message "Region evaluated"))
+
 ;; Load custom keybindings
 (require 'key-bindings)
