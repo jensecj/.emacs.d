@@ -111,6 +111,6 @@
 (global-set-key (kbd "S-<down>") 'windmove-down)
 
 ;; Force save a file
-(global-set-key (kbd "C-x t") 'touch-buffer-file)
+(global-set-key (kbd "C-x t") 'touch-buffer-file) ;; mnemonic is C-x TOUCH
 
 (provide 'key-bindings)

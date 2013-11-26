@@ -64,6 +64,7 @@ If you want to use my settings straight out of the box, here are some things to 
 * `C-x o` 		Open a file in the current project (based on .git)
 * `C-x C-s` 	Save this file
 * `C-x C-w` 	Save as ...
+* `C-x t` 	    Force save this file
 * `C-x C-j` 	Jump to this files' current directory
 * `C-x b` 		Switch to another open file (buffer)
 * `C-x C-b` 	List all open files (buffers)
