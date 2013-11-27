@@ -103,6 +103,7 @@
      smart-forward
      ace-jump-mode
      dired-details
+     zenburn-theme
      multiple-cursors
      yasnippet
      sml-mode)))
@@ -116,6 +117,9 @@
 ;; =======================================
 ;; ====================== Tweaks and hacks
 ;; =======================================
+
+;; Use the zenburn theme
+(load-theme 'zenburn)
 
 ;; Use the old commit mode
 (require 'magit-log-edit)
