@@ -10,6 +10,11 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
+;; Use the Source Code Pro font if it exists
+(if (null (x-list-fonts "Source Code Pro Semibold"))
+    nil 
+  (set-face-attribute 'default nil :font "Source Code Pro Semibold"))
+
 ;; =======================================
 ;; ===================== Setup directories
 ;; =======================================
@@ -164,12 +169,6 @@
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))
-
-;; Post feedback when evaluating buffer/region
-(defadvice eval-buffer (after eval-buffer-with-feedback () activate)
-  (message "Buffer evaluated"))
-(defadvice eval-region (after eval-region-with-feedback () activate)
-  (message "Region evaluated"))
 
 ;; Load custom keybindings
 (require 'key-bindings)
