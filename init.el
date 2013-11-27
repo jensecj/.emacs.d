@@ -102,6 +102,7 @@
      undo-tree
      smart-forward
      ace-jump-mode
+     dired-details
      multiple-cursors
      yasnippet
      sml-mode)))
