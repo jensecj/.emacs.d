@@ -106,6 +106,7 @@
      zenburn-theme
      multiple-cursors
      yasnippet
+     diminish
      sml-mode)))
 
 (condition-case nil
@@ -131,6 +132,11 @@
 (eval-after-load 'ido '(require 'setup-ido))
 (eval-after-load 'dired '(require 'setup-dired))
 (eval-after-load 'magit '(require 'setup-magit))
+
+;; Clean up the mode-line
+(eval-after-load 'yasnippet '(diminish 'yas-minor-mode))
+(eval-after-load 'smartparens '(diminish 'smartparens-mode))
+(eval-after-load 'git-gutter+ '(diminish 'git-gutter+-mode))
 
 (require 'yasnippet)
 (require 'setup-yasnippet)
