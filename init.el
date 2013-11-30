@@ -93,8 +93,6 @@
      ido-vertical-mode
      ido-at-point
      ido-ubiquitous
-     highlight-escape-sequences
-     whitespace-cleanup-mode
      smooth-scrolling
      smex
      s
@@ -161,11 +159,6 @@
 
 (require 'git-gutter+)
 (global-git-gutter+-mode t)
-
-;; Highlight escape sequences
-(require 'highlight-escape-sequences)
-(hes-mode)
-(put 'font-lock-regexp-grouping-backslash 'face-alias 'font-lock-builtin-face)
 
 ;; Smart M-x is smart
 (require 'smex)
