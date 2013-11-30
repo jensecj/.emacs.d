@@ -80,6 +80,17 @@
                   (interactive)
                   (join-line -1)))
 
+;; Scroll the buffer without moving the point (unless we over-move)
+(global-set-key (kbd "C-<up>") 
+                (lambda ()
+                  (interactive)
+                  (scroll-down 3)))
+
+(global-set-key (kbd "C-<down>") 
+                (lambda ()
+                  (interactive)
+                  (scroll-up 3)))
+
 ;; Transpose stuff with M-t
 (global-unset-key (kbd "M-t")) ;; which used to be transpose-words
 (global-set-key (kbd "M-t l") 'transpose-lines)
