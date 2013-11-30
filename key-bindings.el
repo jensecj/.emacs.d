@@ -50,10 +50,10 @@
 (global-set-key (kbd "M-_") 'undo-tree-redo)
 
 ;; =======================================
-;; ========== Built-in features and Defuns
+;; ===================== Built-in features
 ;; =======================================
 
-;; the mnemonic is C-x REALLY QUIT
+;; Quit emacs, mnemonic is C-x REALLY QUIT
 (global-set-key (kbd "C-x r q") 'save-buffers-kill-terminal)
 (global-set-key (kbd "C-x C-c") 'delete-frame)
 
@@ -64,9 +64,6 @@
 ;; Make shell more convenient, and suspend-frame less
 (global-set-key (kbd "C-z") 'shell)
 (global-set-key (kbd "C-x M-z") 'suspend-frame)
-
-;; Fix spaces / tabs
-(global-set-key (kbd "C-c n") 'cleanup-buffer)
 
 ;; Evaluate the current buffer
 (global-set-key (kbd "C-c C-k") 'eval-buffer)
@@ -91,15 +88,25 @@
                   (interactive)
                   (scroll-up 3)))
 
+;; =======================================
+;; ================================ Defuns
+;; =======================================
+
+;; Jump to symbol definitions
+(global-set-key (kbd "C-x C-i") 'ido-imenu)
+
+;; Fix spaces / tabs
+(global-set-key (kbd "C-c n") 'cleanup-buffer)
+
+;; Show line numbers temporarily, while prompting for the line number input
+(global-set-key (kbd "M-g M-g") 'goto-line-with-feedback)
+
 ;; Transpose stuff with M-t
 (global-unset-key (kbd "M-t")) ;; which used to be transpose-words
 (global-set-key (kbd "M-t l") 'transpose-lines)
 (global-set-key (kbd "M-t w") 'transpose-words)
 (global-set-key (kbd "M-t s") 'transpose-sexps)
 (global-set-key (kbd "M-t p") 'transpose-params)
-
-;; Jump to symbol definitions
-(global-set-key (kbd "C-x C-i") 'ido-imenu)
 
 ;; File finding
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
@@ -121,7 +128,6 @@
 (global-set-key (kbd "S-<up>") 'windmove-up)
 (global-set-key (kbd "S-<down>") 'windmove-down)
 
-;; Force save a file
-(global-set-key (kbd "C-x t") 'touch-buffer-file) ;; mnemonic is C-x TOUCH
-
+;; Force save a file, mnemonic is C-x TOUCH
+(global-set-key (kbd "C-x t") 'touch-buffer-file)
 (provide 'key-bindings)
