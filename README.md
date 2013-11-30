@@ -91,7 +91,7 @@ If you want to use my settings straight out of the box, here are some things to 
 
 ### Navigation
 
-* `C-<arrow>` 	<left><right> Move past words/paragraphs, <up><down> moves buffer up/down without moving point
+* `C-<arrow>` 	left, right - Move past words/paragraphs, up, down - moves buffer up/down without moving point
 * `C-a` 		Go to start of line
 * `C-e` 		Go to end of line
 * `M-g M-g` 	Go to line number
