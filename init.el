@@ -73,7 +73,7 @@
   (package-install 'dash))
 
 ;; Install missing packages
-(require 'setup-package)
+(require 'package-helper)
 (defun init--install-packages ()
   (packages-install
    '(magit

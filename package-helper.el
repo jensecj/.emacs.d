@@ -1,9 +1,6 @@
 (require 'package)
 (require 'dash)
 
-;; Add melpa to package repos
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-
 (package-initialize)
 
 (unless (file-exists-p "~/.emacs.d/elpa/archives/melpa")
@@ -29,4 +26,4 @@ re-downloaded in order to locate PACKAGE."
         (package-refresh-contents)
         (require-package package min-version t)))))
 
-(provide 'setup-package)
+(provide 'package-helper)
