@@ -57,15 +57,14 @@
 ;; ======================== Setup packages
 ;; =======================================
 
-;; Add  melpa and marmalade as a package archives
 (require 'package)
+
+;; Add melpa and marmalade as a package archives
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
-;; Install dash, which is needed for the setup-package script
-(require 'package)
 (package-initialize)
 (package-refresh-contents)
 
@@ -120,7 +119,7 @@
 ;; Use the zenburn theme
 (load-theme 'zenburn)
 
-;; Use the old commit mode
+;; Use the old commit mode in magit
 (require 'magit-log-edit)
 
 ;; Lets start with a smattering of sanity
