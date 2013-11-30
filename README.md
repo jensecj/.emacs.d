@@ -22,7 +22,7 @@ If you want to use my settings straight out of the box, here are some things to 
 
 * `M-j`         Joins the line below to this line
 * `C-c C-k`     Evaluate current buffer
-* `C-c k`     Evaluate current region
+* `C-c k`       Evaluate current region
 * `C-c n`       Indent and clean up white space in the entire buffer
 
 ### Ace-jump-mode
@@ -91,7 +91,8 @@ If you want to use my settings straight out of the box, here are some things to 
 
 ### Navigation
 
-* `C-<arrow>` 	left, right - Move past words/paragraphs, up, down - moves buffer up/down without moving point
+* `C-<left,right>` Move past words/paragraphs, up, down - moves buffer up/down without moving point
+* `C-<up,down>` Moves buffer up/down without moving point
 * `C-a` 		Go to start of line
 * `C-e` 		Go to end of line
 * `M-g M-g` 	Go to line number
