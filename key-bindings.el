@@ -88,6 +88,12 @@
                   (interactive)
                   (scroll-up 3)))
 
+;; Comment/uncomment block
+(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-c u") 'uncomment-region)
+
+
+
 ;; =======================================
 ;; ================================ Defuns
 ;; =======================================
@@ -118,10 +124,6 @@
 (global-set-key (kbd "M-`") 'file-cache-minibuffer-complete)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-;; Comment/uncomment block
-(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
-(global-set-key (kbd "C-c u") 'uncomment-region)
-
 ;; Move windows with S-<arrow>
 (global-set-key (kbd "S-<right>") 'windmove-right)
 (global-set-key (kbd "S-<left>") 'windmove-left)
@@ -130,4 +132,8 @@
 
 ;; Force save a file, mnemonic is C-x TOUCH
 (global-set-key (kbd "C-x t") 'touch-buffer-file)
+
+;; Copy current line / region
+(global-set-key (kbd "M-w") 'save-region-or-current-line)
+
 (provide 'key-bindings)

@@ -74,7 +74,7 @@ If you want to use my settings straight out of the box, here are some things to 
 * `C-space` 	Start marking stuff. C-g to cancel.
 * `C-w` 		Cut (aka kill)
 * `C-k` 		Cut till end of line
-* `M-w` 		Copy
+* `M-w` 		Copy current line / region
 * `C-y` 		Paste (aka yank)
 * `M-y` 		Cycle last paste through previous kills
 * `C-x C-y` 	Choose what to paste from previous kills
