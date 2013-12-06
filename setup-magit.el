@@ -112,9 +112,4 @@
 
 (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
 
-;; Show blame for current line
-
-(require-package 'git-messenger)
-(global-set-key (kbd "C-x v p") #'git-messenger:popup-message)
-
 (provide 'setup-magit)

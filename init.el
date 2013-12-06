@@ -19,16 +19,6 @@
 ;; ===================== Setup directories
 ;; =======================================
 
-;; Path to installed packages
-(setq elpa-dir
-      (expand-file-name "elpa" user-emacs-directory))
-
-;; Add installed packages to load-path
-(when (file-exists-p elpa-dir)
-  (dolist (project (directory-files elpa-dir t "\\w+"))
-    (when (file-directory-p project)
-      (add-to-list 'load-path project))))
-
 ;; Add .emacs.d to load-path
 (add-to-list 'load-path user-emacs-directory)
 
@@ -65,52 +55,39 @@
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
-(package-initialize)
-(package-refresh-contents)
-
-;; Install dash, which is needed by the setup-package script
-(when (not (package-installed-p 'dash))
-  (package-install 'dash))
-
 ;; Install missing packages
 (require 'package-helper)
-(defun init--install-packages ()
-  (packages-install
-   '(magit
-     magit-log-edit
-     git-commit-mode
-     gitconfig-mode
-     gitignore-mode
-     markdown-mode
-     git-gutter+
-     move-text
-     visual-regexp-steroids
-     smartparens
-     flx
-     flx-ido
-     change-inner
-     ido-vertical-mode
-     ido-at-point
-     ido-ubiquitous
-     smooth-scrolling
-     smex
-     s
-     expand-region
-     undo-tree
-     smart-forward
-     ace-jump-mode
-     dired-details
-     zenburn-theme
-     multiple-cursors
-     yasnippet
-     diminish
-     sml-mode)))
-
-(condition-case nil
-    (init--install-packages)
-  (error
-   (package-refresh-contents)
-   (init--install-packages)))
+(install-packages
+ '(magit
+   magit-log-edit
+   git-commit-mode
+   gitconfig-mode
+   gitignore-mode
+   markdown-mode
+   git-gutter+
+   move-text
+   visual-regexp-steroids
+   smartparens
+   flx
+   flx-ido
+   change-inner
+   ido-vertical-mode
+   ido-at-point
+   ido-ubiquitous
+   smooth-scrolling
+   smex
+   s
+   expand-region
+   undo-tree
+   smart-forward
+   ace-jump-mode
+   dired-details
+   zenburn-theme
+   multiple-cursors
+   flycheck
+   yasnippet
+   diminish
+   sml-mode))
 
 ;; =======================================
 ;; ====================== Tweaks and hacks
