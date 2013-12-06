@@ -10,7 +10,7 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-;; Use the Source Code Pro font if it exists
+;; Use Source Code Pro font if it is available
 (if (null (x-list-fonts "Source Code Pro Semibold"))
     nil 
   (set-face-attribute 'default nil :font "Source Code Pro Semibold"))
@@ -132,15 +132,10 @@
 (require 'change-inner)
 (require 'multiple-cursors)
 (require 'smart-forward)
-
 (require 'git-gutter+)
 (global-git-gutter+-mode t)
-
-;; Smart M-x is smart
 (require 'smex)
 (smex-initialize)
-
-;; Use the undo-tree
 (require 'undo-tree)
 (setq global-undo-tree-mode t)
 
