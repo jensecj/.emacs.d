@@ -58,36 +58,44 @@
 ;; Install missing packages
 (require 'package-helper)
 (install-packages
- '(magit
-   magit-log-edit
-   git-commit-mode
-   gitconfig-mode
-   gitignore-mode
-   markdown-mode
-   git-gutter+
-   move-text
-   visual-regexp-steroids
-   smartparens
-   flx
-   flx-ido
-   change-inner
-   ido-vertical-mode
-   ido-at-point
-   ido-ubiquitous
-   smooth-scrolling
-   smex
-   s
-   expand-region
-   undo-tree
-   smart-forward
-   ace-jump-mode
-   dired-details
-   zenburn-theme
-   multiple-cursors
-   yasnippet
-   flycheck
-   diminish
-   sml-mode))
+ '(
+;; Libraries
+   s                       ; string manipulation library 
+   dash                    ; list library
+;; Minor modes
+   git-commit-mode         ; new commit mode
+   gitconfig-mode          ; minor mode for editing git config files
+   gitignore-mode          ; minor mode for editing git ignore files
+   ido-vertical-mode       ; print ido vertically
+   ace-jump-mode           ; jump around the buffer with ease
+   smartparens             ; automatically add end parens, highlight matching parens
+   git-gutter+             ; mark added/changes/removed lines in the gutter
+   flycheck                ; linting
+   smooth-scrolling        ; add a top and bottom margin when scrolling
+;; Major modes
+   markdown-mode           ; minor mode for markdown
+   sml-mode                ; major mode for editing Standard ML
+;; Themes
+   zenburn-theme           ; the great zenburn theme
+;; Packages
+   visual-regexp-steroids  ; regex builder
+   flx                     ; flexible matching
+   flx-ido                 ; flexible matching in ido mode
+   change-inner            ; easily change the inner or outer content of something
+   ido-at-point            ; makes completion-at-point use ido
+   ido-ubiquitous          ; use ido everywhere
+   smex                    ; better M-x
+   expand-region           ; easily expand/contract selections
+   undo-tree               ; better undo/redo
+   smart-forward           ; better jumping forward/backwards
+   dired-details           ; more details to dired
+   multiple-cursors        ; ability to use a lot of cursors
+   yasnippet               ; snippet expansion
+   diminish                ; unclutter the mode line
+   magit                   ; magical git interface for emacs
+   magit-log-edit          ; use the old commit log in magit
+   move-text               ; easily move lines up/down
+))
 
 ;; =======================================
 ;; ====================== Tweaks and hacks
