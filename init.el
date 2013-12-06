@@ -84,8 +84,8 @@
    dired-details
    zenburn-theme
    multiple-cursors
-   flycheck
    yasnippet
+   flycheck
    diminish
    sml-mode))
 
@@ -136,6 +136,8 @@
 (smex-initialize)
 (require 'undo-tree)
 (setq global-undo-tree-mode t)
+(require 'flycheck)
+(global-flycheck-mode)
 
 ;; Functions (load all files in defuns-dir)
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
@@ -145,3 +147,6 @@
 
 ;; Load custom keybindings
 (require 'key-bindings)
+
+(provide  'init)
+;;; init.el ends here
