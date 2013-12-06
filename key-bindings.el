@@ -125,10 +125,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; Move windows with S-<arrow>
-(global-set-key (kbd "S-<right>") 'windmove-right)
-(global-set-key (kbd "S-<left>") 'windmove-left)
-(global-set-key (kbd "S-<up>") 'windmove-up)
-(global-set-key (kbd "S-<down>") 'windmove-down)
+(windmove-default-keybindings 'shift)
 
 ;; Force save a file, mnemonic is C-x TOUCH
 (global-set-key (kbd "C-x t") 'touch-buffer-file)
