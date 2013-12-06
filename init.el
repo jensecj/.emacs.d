@@ -96,9 +96,6 @@
 ;; Use the zenburn theme
 (load-theme 'zenburn)
 
-;; Use the old commit mode in magit
-(require 'magit-log-edit)
-
 ;; Lets start with a smattering of sanity
 (require 'sane-defaults)
 
@@ -106,6 +103,7 @@
 (eval-after-load 'ido '(require 'setup-ido))
 (eval-after-load 'dired '(require 'setup-dired))
 (eval-after-load 'magit '(require 'setup-magit))
+(eval-after-load 'magit '(require 'magit-log-edit))
 
 ;; Clean up the mode-line
 (eval-after-load 'yasnippet '(diminish 'yas-minor-mode))
