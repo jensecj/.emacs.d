@@ -78,6 +78,7 @@
 ;; Themes
    zenburn-theme           ; the great zenburn theme
 ;; Packages
+   browse-kill-ring
    visual-regexp-steroids  ; regex builder
    flx                     ; flexible matching
    flx-ido                 ; flexible matching in ido mode
@@ -149,6 +150,8 @@
 (setq global-undo-tree-mode t)
 (require 'flycheck)
 (global-flycheck-mode)
+(require 'browse-kill-ring)
+(setq browse-kill-ring-quit-action 'save-and-restore)
 
 ;; Functions (load all files in defuns-dir)
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))

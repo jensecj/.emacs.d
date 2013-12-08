@@ -50,6 +50,10 @@ If you want to use my settings straight out of the box, here are some things to 
 
 * `C-S-arrow` 	up or down to move a line up or down
 
+### Browse kill ring
+
+* `C-x C-y` 	browse the contents of the kill ring
+
 ### Change-inner
 
 * `M-i` 	    copy contents of inner selection

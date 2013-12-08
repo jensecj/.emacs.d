@@ -49,6 +49,9 @@
 (global-set-key (kbd "C-_") 'undo-tree-undo)
 (global-set-key (kbd "M-_") 'undo-tree-redo)
 
+(require 'browse-kill-ring)
+(global-set-key (kbd "C-x C-y") 'browse-kill-ring)
+
 ;; =======================================
 ;; ===================== Built-in features
 ;; =======================================
