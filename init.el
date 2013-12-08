@@ -102,6 +102,7 @@
 ;; =======================================
 
 ;; Use the zenburn theme
+
 (load-theme 'zenburn)
 
 ;; Lets start with a smattering of sanity
@@ -120,6 +121,8 @@
 
 (require 'yasnippet)
 (require 'setup-yasnippet)
+
+(require 'setup-hippie)
 
 ;; Default setup of smartparens
 (require 'smartparens-config)
