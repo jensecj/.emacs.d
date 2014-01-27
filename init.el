@@ -78,7 +78,8 @@
 ;; Themes
    zenburn-theme           ; the great zenburn theme
 ;; Packages
-   browse-kill-ring
+   auctex                  ; LaTeX editing
+   browse-kill-ring        ; browse the kill ring
    visual-regexp-steroids  ; regex builder
    flx                     ; flexible matching
    flx-ido                 ; flexible matching in ido mode
