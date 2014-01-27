@@ -141,4 +141,6 @@
 (global-set-key (kbd "C-:") 'hippie-expand-lines)
 (global-set-key (kbd "C-,") 'completion-at-point)
 
+(global-set-key (kbd "C-x C-r") 'sudo-edit)
+
 (provide 'key-bindings)

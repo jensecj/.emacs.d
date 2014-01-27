@@ -72,6 +72,7 @@ If you want to use my settings straight out of the box, here are some things to 
 * `C-x C-j` 	Jump to this files' current directory
 * `C-x b` 		Switch to another open file (buffer)
 * `C-x C-b` 	List all open files (buffers)
+* `C-x C-r` 	Reopen file using sudo
 
 ### Cut copy and paste
 
