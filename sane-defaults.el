@@ -1,3 +1,12 @@
+;; Dont blink the cursor
+(blink-cursor-mode 0)
+
+;; Hightlight current line, with a sane color, and transparent foreground
+(global-hl-line-mode 1)
+(set-face-background 'hl-line "gray30")
+(set-face-foreground 'highlight nil)
+
+
 ;; Allow pasting selection outside of Emacs
 (setq x-select-enable-clipboard t)
 
