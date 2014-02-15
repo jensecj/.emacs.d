@@ -104,7 +104,6 @@
 ;; =======================================
 
 ;; Use the zenburn theme
-
 (load-theme 'zenburn)
 
 ;; Lets start with a smattering of sanity
@@ -153,6 +152,8 @@
 (global-flycheck-mode)
 (require 'browse-kill-ring)
 (setq browse-kill-ring-quit-action 'save-and-restore)
+
+(setq TeX-PDF-mode t)
 
 ;; Functions (load all files in defuns-dir)
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
