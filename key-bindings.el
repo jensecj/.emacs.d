@@ -95,8 +95,6 @@
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-c u") 'uncomment-region)
 
-
-
 ;; =======================================
 ;; ================================ Defuns
 ;; =======================================
@@ -143,4 +141,14 @@
 
 (global-set-key (kbd "C-x C-r") 'sudo-edit)
 
+;; =======================================
+;; ================================= Modes
+;; =======================================
+
+(require 'cc-mode)
+;; in c++ mode, compile using C-c C-c
+(add-hook 'c++-mode-hook '(lambda() (define-key c++-mode-map (kbd "C-c C-c") 'compile)))
+
+
 (provide 'key-bindings)
+;;; key-bindings.el ends here
