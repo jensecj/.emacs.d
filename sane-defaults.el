@@ -5,7 +5,7 @@
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "gray30")
 (set-face-foreground 'highlight nil)
-
+(set-face-underline-p 'highlight nil)
 
 ;; Allow pasting selection outside of Emacs
 (setq x-select-enable-clipboard t)
