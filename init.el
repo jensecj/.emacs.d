@@ -153,7 +153,10 @@
 (require 'browse-kill-ring)
 (setq browse-kill-ring-quit-action 'save-and-restore)
 
+;; Default to compiling latex files to pdf
 (setq TeX-PDF-mode t)
+;; Auto save when compiling
+(setq TeX-save-query nil)
 
 ;; Functions (load all files in defuns-dir)
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
