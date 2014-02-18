@@ -97,6 +97,7 @@
    magit                   ; magical git interface for emacs
    magit-log-edit          ; use the old commit log in magit
    move-text               ; easily move lines up/down
+   fill-column-indicator   ; line to indicate the fill column
 ))
 
 ;; =======================================
@@ -122,7 +123,6 @@
 
 (require 'yasnippet)
 (require 'setup-yasnippet)
-
 (require 'setup-hippie)
 
 ;; Default setup of smartparens
@@ -130,6 +130,12 @@
 (setq sp-autoescape-string-quote nil)
 (smartparens-global-mode t)
 (show-smartparens-global-mode t)
+
+(require 'fill-column-indicator)
+(setq fci-rule-width 1)
+(setq fci-rule-color "dark gray")
+(define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+(global-fci-mode 1)
 
 ;; Language specific setup files
 (eval-after-load 'markdown-mode '(require 'setup-markdown-mode))
