@@ -6,9 +6,9 @@
 (setq inhibit-startup-message t)
 
 ;; Turn off excess interface early in startup to avoid momentary display
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
 
 ;; Use Source Code Pro font if it is available
 (if (null (x-list-fonts "Source Code Pro Semibold"))
@@ -60,7 +60,7 @@
 (install-packages
  '(
 ;; Libraries
-   s                       ; string manipulation library 
+   s                       ; string manipulation library
    dash                    ; list library
 ;; Minor modes
    git-commit-mode         ; new commit mode
