@@ -8,6 +8,7 @@
       ido-auto-merge-work-directories-length -1
       ido-create-new-buffer 'always
       ido-use-filename-at-point nil
+      ido-save-directory-list-file "~/.emacs.d/data/.ido.last"
       ido-max-prospects 10)
 
 ;; Try out flx-ido for better flex matching between words

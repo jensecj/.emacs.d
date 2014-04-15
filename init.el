@@ -11,8 +11,7 @@
 (scroll-bar-mode -1)
 
 ;; Use Source Code Pro font if it is available
-(if (null (x-list-fonts "Source Code Pro Semibold"))
-    nil
+(unless (null (x-list-fonts "Source Code Pro Semibold"))
   (set-face-attribute 'default nil :font "Source Code Pro Semibold"))
 
 ;; =======================================
@@ -28,12 +27,10 @@
 
 ;; Save backup and autosave files in data folder
 (defconst storage-dir "~/.emacs.d/data/")
-(setq backup-directory-alist
-      `((".*" . ,storage-dir)))
-(setq auto-save-file-name-transforms
-      `((".*" ,storage-dir t)))
-(setq auto-save-list-file-prefix
-      storage-dir)
+
+(setq backup-directory-alist `((".*" . ,storage-dir)))
+(setq auto-save-file-name-transforms `((".*" ,storage-dir t)))
+(setq auto-save-list-file-prefix storage-dir)
 
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
@@ -148,6 +145,7 @@
 (global-git-gutter+-mode t)
 (require 'smex)
 (smex-initialize)
+(setq smex-save-file "~/.emacs.d/data/.smex-items")
 (require 'undo-tree)
 (setq global-undo-tree-mode t)
 (require 'flycheck)
