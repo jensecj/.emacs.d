@@ -12,7 +12,7 @@
 
 ;; Use Source Code Pro font if it is available
 (if (null (x-list-fonts "Source Code Pro Semibold"))
-    nil 
+    nil
   (set-face-attribute 'default nil :font "Source Code Pro Semibold"))
 
 ;; =======================================
@@ -115,7 +115,6 @@
 (eval-after-load 'magit '(require 'magit-log-edit))
 
 ;; Clean up the mode-line
-(eval-after-load 'yasnippet '(diminish 'yas-minor-mode))
 (eval-after-load 'smartparens '(diminish 'smartparens-mode))
 (eval-after-load 'git-gutter+ '(diminish 'git-gutter+-mode))
 
