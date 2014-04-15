@@ -80,10 +80,9 @@
 ;; Packages
    auctex                  ; LaTeX editing
    browse-kill-ring        ; browse the kill ring
-   visual-regexp-steroids  ; regex builder
+   change-inner            ; easily change the inner or outer content of something
    flx                     ; flexible matching
    flx-ido                 ; flexible matching in ido mode
-   change-inner            ; easily change the inner or outer content of something
    ido-at-point            ; makes completion-at-point use ido
    ido-ubiquitous          ; use ido everywhere
    smex                    ; better M-x
@@ -92,7 +91,6 @@
    smart-forward           ; better jumping forward/backwards
    dired-details           ; more details to dired
    multiple-cursors        ; ability to use a lot of cursors
-   yasnippet               ; snippet expansion
    diminish                ; unclutter the mode line
    magit                   ; magical git interface for emacs
    magit-log-edit          ; use the old commit log in magit
@@ -121,8 +119,6 @@
 (eval-after-load 'smartparens '(diminish 'smartparens-mode))
 (eval-after-load 'git-gutter+ '(diminish 'git-gutter+-mode))
 
-(require 'yasnippet)
-(require 'setup-yasnippet)
 (require 'setup-hippie)
 
 ;; Default setup of smartparens

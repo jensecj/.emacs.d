@@ -105,9 +105,6 @@
 ;; Fix spaces / tabs
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
 
-;; Show line numbers temporarily, while prompting for the line number input
-(global-set-key (kbd "M-g M-g") 'goto-line-with-feedback)
-
 ;; Transpose stuff with M-t
 (global-unset-key (kbd "M-t")) ;; which used to be transpose-words
 (global-set-key (kbd "M-t l") 'transpose-lines)
