@@ -58,9 +58,11 @@
 ;; Lines should be 80 characters wide, not 72
 (setq fill-column 80)
 
-;; Save a list of recent files visited. (open recent file with C-x f)
-(recentf-mode 1)
+;; Save a list of recent files visited.
+(require 'recentf)
+(setq recentf-save-file (recentf-expand-file-name "~/.emacs.d/data/recentf"))
 (setq recentf-max-saved-items 100) ;; just 20 is too recent
+(recentf-mode 1)
 
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
