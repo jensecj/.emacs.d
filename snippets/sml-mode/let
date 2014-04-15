@@ -1,8 +1,0 @@
-# name: let ... in ... end
-# key: let
-# --
-let
-    ${1:expression}
-in
-    ${2:expression}
-end
