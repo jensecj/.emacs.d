@@ -25,7 +25,9 @@
 (load custom-file)
 
 ;; Save backup and autosave files in data folder
-(defconst storage-dir "~/.emacs.d/data/")
+(defconst storage-dir "~/.emacs.d/data/backups/")
+(unless (file-exists-p storage-dir)
+  (make-directory storage-dir))
 
 (setq backup-directory-alist `((".*" . ,storage-dir)))
 (setq auto-save-file-name-transforms `((".*" ,storage-dir t)))
