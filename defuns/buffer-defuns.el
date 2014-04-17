@@ -1,23 +1,5 @@
-;; Buffer-related defuns
 (require 'cl)
 (require 'imenu)
-
-(defvar buffer-local-mode nil)
-(make-variable-buffer-local 'buffer-local-mode)
-
-(defun mode-keymap (mode-sym)
-  (symbol-value (intern (concat (symbol-name mode-sym) "-map"))))
-
-(defun* buffer-local-set-key (key action)
-  (when buffer-local-mode
-    (define-key (mode-keymap buffer-local-mode)
-      key action)
-    (return-from set-key-buffer-local))
-  (let* ((mode-name-loc (gensym "-blm")))
-    (eval `(define-minor-mode ,mode-name-loc nil nil nil (make-sparse-keymap)))
-    (setq buffer-local-mode mode-name-loc)
-    (funcall mode-name-loc 1)
-    (define-key (mode-keymap mode-name-loc) key action)))
 
 (defun create-scratch-buffer nil
   "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
@@ -34,12 +16,8 @@
     (emacs-lisp-mode)
     ))
 
-(defun split-window-right-and-move-there-dammit ()
-  (interactive)
-  (split-window-right)
-  (windmove-right))
-
 (defun toggle-window-split ()
+  "Toggle window splitting between horizontal and vertical"
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
@@ -147,10 +125,6 @@ Including indent-buffer, which should not be called automatically on save."
   (untabify-buffer)
   (delete-trailing-whitespace)
   (indent-buffer))
-
-(defun file-name-with-one-directory (file-name)
-  (concat (cadr (reverse (split-string file-name "/"))) "/"
-          (file-name-nondirectory file-name)))
 
 (require 's)
 
