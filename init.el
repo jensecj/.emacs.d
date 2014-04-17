@@ -11,8 +11,7 @@
 (scroll-bar-mode -1)
 
 ;; Use Source Code Pro font if it is available
-(unless (null (x-list-fonts "Source Code Pro Semibold"))
-  (set-face-attribute 'default nil :font "Source Code Pro Semibold"))
+(add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10"))
 
 ;; =======================================
 ;; ===================== Setup directories
