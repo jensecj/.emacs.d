@@ -99,6 +99,9 @@
 ;; ================================ Defuns
 ;; =======================================
 
+;; Better C-a
+(global-set-key (kbd "C-a") 'smart-line-beginning)
+
 ;; Jump to symbol definitions
 (global-set-key (kbd "C-x C-i") 'ido-imenu)
 
