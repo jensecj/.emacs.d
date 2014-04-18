@@ -113,7 +113,7 @@
 (global-set-key (kbd "M-t l") 'transpose-lines)
 (global-set-key (kbd "M-t w") 'transpose-words)
 (global-set-key (kbd "M-t s") 'transpose-sexps)
-(global-set-key (kbd "M-t p") 'transpose-params)
+;; (global-set-key (kbd "M-t p") 'transpose-params) ;; TODO: make this better
 
 ;; File finding
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
