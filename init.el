@@ -14,7 +14,7 @@
 (add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10"))
 
 ;; =======================================
-;; ===================== Setup directories
+;; ================ Setup data directories
 ;; =======================================
 
 ;; Add .emacs.d to load-path
@@ -33,6 +33,9 @@
 (setq auto-save-file-name-transforms `((".*" ,storage-dir t)))
 (setq auto-save-list-file-prefix storage-dir)
 
+(require 'tramp)
+(setq tramp-persistency-file-name storage-dir)
+
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
 
@@ -42,7 +45,7 @@
 (setq save-place-file (expand-file-name "~/.emacs.d/data/.places" user-emacs-directory))
 
 ;; =======================================
-;; ======================== Setup packages
+;; ====================== Install packages
 ;; =======================================
 
 (require 'package)
@@ -55,10 +58,10 @@
 (require 'package-helper)
 (install-packages
  '(
-;; Libraries
+   ;; Libraries
    s                       ; string manipulation library
    dash                    ; list library
-;; Minor modes
+   ;; Minor modes
    git-commit-mode         ; new commit mode
    gitconfig-mode          ; minor mode for editing git config files
    gitignore-mode          ; minor mode for editing git ignore files
@@ -68,12 +71,12 @@
    git-gutter+             ; mark added/changes/removed lines in the gutter
    flycheck                ; linting
    smooth-scrolling        ; add a top and bottom margin when scrolling
-;; Major modes
+   ;; Major modes
    markdown-mode           ; minor mode for markdown
    sml-mode                ; major mode for editing Standard ML
-;; Themes
+   ;; Themes
    zenburn-theme           ; the great zenburn theme
-;; Packages
+   ;; Packages
    auctex                  ; LaTeX editing
    browse-kill-ring        ; browse the kill ring
    change-inner            ; easily change the inner or outer content of something
@@ -92,10 +95,10 @@
    magit-log-edit          ; use the old commit log in magit
    move-text               ; easily move lines up/down
    fill-column-indicator   ; line to indicate the fill column
-))
+   ))
 
 ;; =======================================
-;; ====================== Tweaks and hacks
+;; ======================== Setup packages
 ;; =======================================
 
 ;; Use the zenburn theme
