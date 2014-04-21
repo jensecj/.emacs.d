@@ -40,9 +40,8 @@
 (global-set-key (kbd "M-&") 'vr/query-replace)
 (global-set-key (kbd "M-/") 'vr/replace)
 
-(require 'magit)
-(global-set-key (kbd "C-x m") 'magit-status)
 (autoload 'magit-status "magit")
+(global-set-key (kbd "C-x m") 'magit-status)
 
 (require 'undo-tree)
 (global-set-key (kbd "C-x u") 'undo-tree-visualize)
@@ -81,12 +80,12 @@
                   (join-line -1)))
 
 ;; Scroll the buffer without moving the point (unless we over-move)
-(global-set-key (kbd "C-<up>") 
+(global-set-key (kbd "C-<up>")
                 (lambda ()
                   (interactive)
                   (scroll-down 3)))
 
-(global-set-key (kbd "C-<down>") 
+(global-set-key (kbd "C-<down>")
                 (lambda ()
                   (interactive)
                   (scroll-up 3)))
