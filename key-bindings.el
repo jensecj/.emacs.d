@@ -95,6 +95,10 @@
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-c u") 'uncomment-region)
 
+;; Disable popups from the mouse
+(global-set-key (kbd "C-<down-mouse-1>") nil)
+(global-set-key (kbd "C-<down-mouse-3>") nil)
+
 ;; =======================================
 ;; ================================ Defuns
 ;; =======================================
