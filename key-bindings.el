@@ -67,17 +67,20 @@
 (global-set-key (kbd "C-z") 'shell)
 (global-set-key (kbd "C-x M-z") 'suspend-frame)
 
-;; Evaluate the current buffer
+;; Evaluate the current buffer/region
 (global-set-key (kbd "C-c C-k") 'eval-buffer)
-
-;; Evaluate the current region
 (global-set-key (kbd "C-c k") 'eval-region)
 
-;; Join lines upward
-(global-set-key (kbd "M-j")
+;; Join lines
+(global-set-key (kbd "M-j") ;; upwards
                 (lambda ()
                   (interactive)
                   (join-line -1)))
+
+(global-set-key (kbd "M-J") ;; downwards
+                (lambda ()
+                  (interactive)
+                  (join-line)))
 
 ;; Scroll the buffer without moving the point (unless we over-move)
 (global-set-key (kbd "C-<up>")
@@ -119,13 +122,7 @@
 ;; (global-set-key (kbd "M-t p") 'transpose-params) ;; TODO: make this better
 
 ;; File finding
-(global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 (global-set-key (kbd "C-x f") 'recentf-ido-find-file)
-(global-set-key (kbd "C-x C-p") 'find-or-create-file-at-point)
-(global-set-key (kbd "C-x M-p") 'find-or-create-file-at-point-other-window)
-(global-set-key (kbd "C-c y") 'bury-buffer)
-(global-set-key (kbd "C-c r") 'revert-buffer)
-(global-set-key (kbd "M-`") 'file-cache-minibuffer-complete)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; Move windows with S-<arrow>
@@ -148,8 +145,8 @@
 ;; ================================= Modes
 ;; =======================================
 
-(require 'cc-mode)
 ;; in c++ mode, compile using C-c C-c
+(require 'cc-mode)
 (add-hook 'c++-mode-hook '(lambda() (define-key c++-mode-map (kbd "C-c C-c") 'compile)))
 
 
