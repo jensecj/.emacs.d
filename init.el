@@ -142,6 +142,7 @@
 (require 'expand-region)
 (require 'change-inner)
 (require 'multiple-cursors)
+(setq mc/list-file "~/.emacs.d/data/.mc-lists")
 (require 'smart-forward)
 (require 'git-gutter+)
 (global-git-gutter+-mode t)
