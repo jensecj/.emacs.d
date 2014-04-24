@@ -119,15 +119,6 @@
 ;; Load packages
 (require 'use-package)
 
-;; Clean up the mode-line
-(use-package smartparens
-  :commands smartparens-mode
-  :init '(diminish smartparens-mode))
-
-(use-package git-gutter+
-  :commands git-gutter+-mode
-  :init '(diminish git-gutter+-mode))
-
 (use-package expand-region)
 (use-package change-inner)
 (use-package smart-forward)
@@ -136,6 +127,7 @@
 
 ;; Default setup of smartparens
 (use-package smartparens-config
+  :diminish smartparens-mode
   :init
   (progn
     (setq sp-autoescape-string-quote nil)
@@ -161,6 +153,7 @@
   :init (setq mc/list-file "~/.emacs.d/data/.mc-lists"))
 
 (use-package git-gutter+
+  :diminish git-gutter+-mode
   :init (global-git-gutter+-mode t))
 
 (use-package undo-tree
@@ -177,7 +170,7 @@
 ;; Auto save when compiling
 (setq TeX-save-query nil)
 
-;; Functions (load all files in defuns-dir)
+;; load all files in defuns-dir
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
@@ -187,4 +180,3 @@
 (require 'key-bindings)
 
 (provide  'init)
-;;; init.el ends here
