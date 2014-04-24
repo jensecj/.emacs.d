@@ -152,36 +152,26 @@
     (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
     (global-fci-mode 1)))
 
-(use-package multiple-cursors
-  :init
-  (progn
-    (setq mc/list-file "~/.emacs.d/data/.mc-lists")))
-
-(use-package git-gutter+
-  :init
-  (progn
-    (global-git-gutter+-mode t)))
-
 (use-package smex
   :init
   (progn
     (smex-initialize)
     (setq smex-save-file "~/.emacs.d/data/.smex-items")))
 
+(use-package multiple-cursors
+  :init (setq mc/list-file "~/.emacs.d/data/.mc-lists"))
+
+(use-package git-gutter+
+  :init (global-git-gutter+-mode t))
+
 (use-package undo-tree
-  :init
-  (progn
-    (setq global-undo-tree-mode t)))
+  :init (setq global-undo-tree-mode t))
 
 (use-package flycheck
-  :init
-  (progn
-    (global-flycheck-mode)))
+  :init (global-flycheck-mode))
 
 (use-package browse-kill-ring
-  :init
-  (progn
-    (setq browse-kill-ring-quit-action 'save-and-restore)))
+  :init (setq browse-kill-ring-quit-action 'save-and-restore))
 
 ;; Default to compiling latex files to pdf
 (setq TeX-PDF-mode t)
