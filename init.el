@@ -33,11 +33,17 @@
 (setq auto-save-file-name-transforms `((".*" ,storage-dir t)))
 (setq auto-save-list-file-prefix storage-dir)
 
+;; Make backups of files, even when they're in version control
+(setq vc-make-backup-files t)
+
 (require 'tramp)
 (setq tramp-persistency-file-name storage-dir)
 
-;; Make backups of files, even when they're in version control
-(setq vc-make-backup-files t)
+;; stop leaking information, you are not a browser
+(require 'url)
+(setq url-privacy-level 'paranoid)
+(url-setup-privacy-info)
+(setq url-temporary-directory storage-dir)
 
 ;; Save point position between sessions
 (require 'saveplace)
