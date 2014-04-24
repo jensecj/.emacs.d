@@ -81,6 +81,7 @@
    ;; Themes
    zenburn-theme           ; the great zenburn theme
    ;; Packages
+   use-package
    auctex                  ; LaTeX editing
    browse-kill-ring        ; browse the kill ring
    change-inner            ; easily change the inner or outer content of something
