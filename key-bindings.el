@@ -48,15 +48,15 @@
 (global-set-key (kbd "C-<down-mouse-1>") nil)
 (global-set-key (kbd "C-<down-mouse-3>") nil)
 
+;; Jump to symbol definitions
+(global-set-key (kbd "C-x C-i") 'imenu)
+
 ;; =======================================
 ;; ================================ Defuns
 ;; =======================================
 
 ;; Better C-a
 (global-set-key (kbd "C-a") 'smart-line-beginning)
-
-;; Jump to symbol definitions
-(global-set-key (kbd "C-x C-i") 'ido-imenu)
 
 ;; Fix spaces / tabs
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
