@@ -100,5 +100,6 @@
   :bind
   (("C-x C-y" . browse-kill-ring)))
 
+(use-package smooth-scrolling)
 
 (provide 'setup-packages)

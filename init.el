@@ -115,8 +115,8 @@
 ;; Use the zenburn theme
 (load-theme 'zenburn)
 
-;; Lets start with a smattering of sanity
-(require 'sane-defaults)
+;; Lets start with some better defaults
+(require 'setup-defaults)
 
 ;; Setup extensions
 (eval-after-load 'ido '(require 'setup-ido))

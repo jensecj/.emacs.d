@@ -79,9 +79,6 @@
 ;; Don't break lines for me, please
 (setq-default truncate-lines t)
 
-;; Keep cursor away from edges when scrolling up/down
-(require 'smooth-scrolling)
-
 ;; Allow recursive minibuffers
 (setq enable-recursive-minibuffers t)
 
@@ -94,11 +91,6 @@
 ;; Add parts of each file's directory to the buffer name if not unique
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
-
-;; A saner ediff
-(setq ediff-diff-options "-w")
-(setq ediff-split-window-function 'split-window-horizontally)
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 ;; Nic says eval-expression-print-level needs to be set to nil (turned off) so
 ;; that you can always see what's happening.
@@ -115,4 +107,4 @@
     (dotimes (i 10)
       (when (= p (point)) ad-do-it))))
 
-(provide 'sane-defaults)
+(provide 'setup-defaults)
