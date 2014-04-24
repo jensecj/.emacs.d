@@ -117,46 +117,71 @@
 (eval-after-load 'magit '(require 'setup-magit))
 (eval-after-load 'magit '(require 'magit-log-edit))
 
-;; Clean up the mode-line
-(eval-after-load 'smartparens '(diminish 'smartparens-mode))
-(eval-after-load 'git-gutter+ '(diminish 'git-gutter+-mode))
+;; Load packages
+(require 'use-package)
 
-(require 'setup-hippie)
+;; Clean up the mode-line
+(use-package smartparens
+  :commands smartparens-mode
+  :init '(diminish smartparens-mode))
+
+(use-package git-gutter+
+  :commands git-gutter+-mode
+  :init '(diminish git-gutter+-mode))
+
+(use-package expand-region)
+(use-package change-inner)
+(use-package smart-forward)
+
+(use-package setup-hippie)
 
 ;; Default setup of smartparens
-(require 'smartparens-config)
-(setq sp-autoescape-string-quote nil)
-(smartparens-global-mode t)
-(show-smartparens-global-mode t)
+(use-package smartparens-config
+  :init
+  (progn
+    (setq sp-autoescape-string-quote nil)
+    (smartparens-global-mode t)
+    (show-smartparens-global-mode t)))
 
-(require 'fill-column-indicator)
-(setq fci-rule-width 1)
-(setq fci-rule-color "dark gray")
-(setq fci-rule-column 80)
-(define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-(global-fci-mode 1)
+(use-package fill-column-indicator
+  :init
+  (progn
+    (setq fci-rule-width 1)
+    (setq fci-rule-color "dark gray")
+    (setq fci-rule-column 80)
+    (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+    (global-fci-mode 1)))
 
-;; Language specific setup files
-(eval-after-load 'markdown-mode '(require 'setup-markdown-mode))
+(use-package multiple-cursors
+  :init
+  (progn
+    (setq mc/list-file "~/.emacs.d/data/.mc-lists")))
 
+(use-package git-gutter+
+  :init
+  (progn
+    (global-git-gutter+-mode t)))
 
-;; load packages
-(require 'expand-region)
-(require 'change-inner)
-(require 'multiple-cursors)
-(setq mc/list-file "~/.emacs.d/data/.mc-lists")
-(require 'smart-forward)
-(require 'git-gutter+)
-(global-git-gutter+-mode t)
-(require 'smex)
-(smex-initialize)
-(setq smex-save-file "~/.emacs.d/data/.smex-items")
-(require 'undo-tree)
-(setq global-undo-tree-mode t)
-(require 'flycheck)
-(global-flycheck-mode)
-(require 'browse-kill-ring)
-(setq browse-kill-ring-quit-action 'save-and-restore)
+(use-package smex
+  :init
+  (progn
+    (smex-initialize)
+    (setq smex-save-file "~/.emacs.d/data/.smex-items")))
+
+(use-package undo-tree
+  :init
+  (progn
+    (setq global-undo-tree-mode t)))
+
+(use-package flycheck
+  :init
+  (progn
+    (global-flycheck-mode)))
+
+(use-package browse-kill-ring
+  :init
+  (progn
+    (setq browse-kill-ring-quit-action 'save-and-restore)))
 
 ;; Default to compiling latex files to pdf
 (setq TeX-PDF-mode t)
