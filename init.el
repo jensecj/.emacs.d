@@ -129,7 +129,7 @@
 
 
 ;; load all files in defuns-dir
-(setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
+(setq defuns-dir (concat root-dir "defuns/"))
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))

@@ -14,7 +14,7 @@ If you want to use my settings straight out of the box, here are some things to 
 
  * The key bindings are optimized for a [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
 
- * Start by reading up on all the cool stuff in key-bindings.el.
+ * Start by reading up on all the cool stuff in setup-packages.el and key-bindings.el.
 
  * You quit emacs with `C-x r q`, mnemonic *Really Quit*.
 
