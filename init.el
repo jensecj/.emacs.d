@@ -84,6 +84,7 @@
    flycheck                ; linting
    smooth-scrolling        ; add a top and bottom margin when scrolling
    ;; Major modes
+   markdown-mode
    ;; Themes
    zenburn-theme           ; the great zenburn theme
    ;; Misc
