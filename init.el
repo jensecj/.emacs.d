@@ -149,6 +149,9 @@
     (show-smartparens-global-mode t)))
 
 (use-package smex
+  :bind
+  (("M-x" . smex)
+   ("M-X" . smex-major-mode-commands))
   :init
   (progn
     (smex-initialize)
@@ -163,7 +166,12 @@
   :init (global-flycheck-mode))
 
 (use-package multiple-cursors
-  :init (setq mc/list-file (concat data-dir ".mc-lists")))
+  :bind
+  (("C-d" . mc/mark-next-like-this)
+   ("C-S-d" . mc/mark-all-like-this)
+   ("C-M-a" . set-rectangular-region-anchor))
+  :init 
+  (setq mc/list-file (concat data-dir ".mc-lists")))
 
 (use-package undo-tree
   :init (setq global-undo-tree-mode t))

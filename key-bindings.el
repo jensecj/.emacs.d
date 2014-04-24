@@ -2,57 +2,58 @@
 ;; ============================== Packages
 ;; =======================================
 
-(require 'smex)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+(require 'use-package)
 
-(require 'ace-jump-mode)
-(global-set-key (kbd "C-ø") 'ace-jump-mode)
-(global-set-key (kbd "C-Ø") 'ace-jump-char-mode)
-(global-set-key (kbd "C-'") 'ace-jump-line-mode)
+(use-package ace-jump-mode
+  :bind
+  (("C-ø" . ace-jump-mode)
+   ("C-Ø" . ace-jump-char-mode)
+   ("C-'" . ace-jump-line-mode)))
 
-(require 'multiple-cursors)
-(global-set-key (kbd "C-d") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-S-d") 'mc/mark-all-like-this)
-(global-set-key (kbd "C-M-a") 'set-rectangular-region-anchor)
+(use-package expand-region
+  :bind
+  (("M-e" . er/expand-region)
+   ("C-M-e" . er/contract-region)))
 
-(require 'expand-region)
-(global-set-key (kbd "M-e") 'er/expand-region)
-(global-set-key (kbd "C-M-e") 'er/contract-region)
+(use-package change-inner
+  :bind
+  (("M-i" . copy-inner)
+   ("M-o" . copy-outer)
+   ("M-I" . change-inner)
+   ("M-O" . change-outer)))
 
-(require 'change-inner)
-(global-set-key (kbd "M-i") 'copy-inner)
-(global-set-key (kbd "M-o") 'copy-outer)
-(global-set-key (kbd "M-I") 'change-inner)
-(global-set-key (kbd "M-O") 'change-outer)
+(use-package smart-forward
+  :bind
+  (("M-<up>" . smart-up)
+   ("M-<down>" . smart-down)
+   ("M-<left>" . smart-backward)
+   ("M-<right>" . smart-forward)))
 
-(require 'smart-forward)
-(global-set-key (kbd "M-<up>") 'smart-up)
-(global-set-key (kbd "M-<down>") 'smart-down)
-(global-set-key (kbd "M-<left>") 'smart-backward)
-(global-set-key (kbd "M-<right>") 'smart-forward)
+(use-package move-text
+  :bind
+  (("C-S-<up>" . move-text-up)
+   ("C-S-<down>" . move-text-down)))
 
-(require 'move-text)
-(global-set-key (kbd "C-S-<up>") 'move-text-up)
-(global-set-key (kbd "C-S-<down>") 'move-text-down)
+(use-package visual-regexp-steroids
+  :bind
+  (("C-c r" . vr/replace)
+   ("C-c q" . vr/query-replace)
+   ("C-s" . vr/isearch-forward)
+   ("C-r" . vr/isearch-backward)
+   ("C-M-s" . vr/mc-mark)))
 
-(require 'visual-regexp-steroids)
-(global-set-key (kbd "C-c r") 'vr/replace)
-(global-set-key (kbd "C-c q") 'vr/query-replace)
-(global-set-key (kbd "C-s") 'vr/isearch-forward)
-(global-set-key (kbd "C-r") 'vr/isearch-backward)
-(global-set-key (kbd "C-M-s") 'vr/mc-mark)
+(use-package magit
+  :bind ("C-x m" . magit-status))
 
-(autoload 'magit-status "magit")
-(global-set-key (kbd "C-x m") 'magit-status)
+(use-package undo-tree
+  :bind
+  (("C-x u" . undo-tree-visualize)
+   ("C-_" . undo-tree-undo)
+   ("M-_" . undo-tree-redo)))
 
-(require 'undo-tree)
-(global-set-key (kbd "C-x u") 'undo-tree-visualize)
-(global-set-key (kbd "C-_") 'undo-tree-undo)
-(global-set-key (kbd "M-_") 'undo-tree-redo)
-
-(require 'browse-kill-ring)
-(global-set-key (kbd "C-x C-y") 'browse-kill-ring)
+(use-package browse-kill-ring
+  :bind
+  (("C-x C-y" . browse-kill-ring)))
 
 ;; =======================================
 ;; ===================== Built-in features
@@ -154,4 +155,3 @@
 
 
 (provide 'key-bindings)
-;;; key-bindings.el ends here
