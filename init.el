@@ -2,6 +2,17 @@
 ;; ====================== Interface tweaks
 ;; =======================================
 
+;; Define our directories
+(defconst root-dir "~/.emacs.d/")
+(defconst data-dir (concat root-dir "data/"))
+(defconst backup-dir (concat data-dir "backups/"))
+
+(unless (file-exists-p data-dir)
+  (make-directory data-dir))
+
+(unless (file-exists-p backup-dir)
+  (make-directory backup-dir))
+
 ;; Hide the splash screen
 (setq inhibit-startup-message t)
 
@@ -18,37 +29,33 @@
 ;; =======================================
 
 ;; Add .emacs.d to load-path
-(add-to-list 'load-path user-emacs-directory)
+(add-to-list 'load-path root-dir)
 
 ;; Keep emacs custom settings in a separate file
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-file (concat root-dir "custom.el"))
 (load custom-file)
 
 ;; Save backup and autosave files in data folder
-(defconst storage-dir "~/.emacs.d/data/backups/")
-(unless (file-exists-p storage-dir)
-  (make-directory storage-dir))
-
-(setq backup-directory-alist `((".*" . ,storage-dir)))
-(setq auto-save-file-name-transforms `((".*" ,storage-dir t)))
-(setq auto-save-list-file-prefix storage-dir)
+(setq backup-directory-alist `((".*" . ,backup-dir)))
+(setq auto-save-file-name-transforms `((".*" ,backup-dir t)))
+(setq auto-save-list-file-prefix backup-dir)
 
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
 
 (require 'tramp)
-(setq tramp-persistency-file-name storage-dir)
+(setq tramp-persistency-file-name (concat data-dir ".tramp"))
 
 ;; stop leaking information, you are not a browser
 (require 'url)
 (setq url-privacy-level 'paranoid)
 (url-setup-privacy-info)
-(setq url-temporary-directory storage-dir)
+(setq url-temporary-directory data-dir)
 
 ;; Save point position between sessions
 (require 'saveplace)
 (setq-default save-place t)
-(setq save-place-file (expand-file-name "~/.emacs.d/data/.places" user-emacs-directory))
+(setq save-place-file (concat data-dir ".places"))
 
 ;; =======================================
 ;; ====================== Install packages
@@ -81,9 +88,9 @@
    ;; Themes
    zenburn-theme           ; the great zenburn theme
    ;; Packages
-   use-package
-   auctex                  ; LaTeX editing
+   use-package             ; pretty package initialization
    visual-regexp-steroids  ; better regular expressions
+   auctex                  ; laTeX editing
    browse-kill-ring        ; browse the kill ring
    change-inner            ; easily change the inner or outer content of something
    flx                     ; flexible matching
@@ -147,7 +154,7 @@
   :init
   (progn
     (smex-initialize)
-    (setq smex-save-file "~/.emacs.d/data/.smex-items")))
+    (setq smex-save-file (concat data-dir ".smex-items"))))
 
 (use-package git-gutter+
   :diminish git-gutter+-mode
@@ -158,7 +165,7 @@
   :init (global-flycheck-mode))
 
 (use-package multiple-cursors
-  :init (setq mc/list-file "~/.emacs.d/data/.mc-lists"))
+  :init (setq mc/list-file (concat data-dir ".mc-lists")))
 
 (use-package undo-tree
   :init (setq global-undo-tree-mode t))
