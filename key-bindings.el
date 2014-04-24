@@ -36,9 +36,12 @@
 (global-set-key (kbd "C-S-<up>") 'move-text-up)
 (global-set-key (kbd "C-S-<down>") 'move-text-down)
 
-(require 'visual-regexp)
-(global-set-key (kbd "M-&") 'vr/query-replace)
-(global-set-key (kbd "M-/") 'vr/replace)
+(require 'visual-regexp-steroids)
+(global-set-key (kbd "C-c r") 'vr/replace)
+(global-set-key (kbd "C-c q") 'vr/query-replace)
+(global-set-key (kbd "C-s") 'vr/isearch-forward)
+(global-set-key (kbd "C-r") 'vr/isearch-backward)
+(global-set-key (kbd "C-M-s") 'vr/mc-mark)
 
 (autoload 'magit-status "magit")
 (global-set-key (kbd "C-x m") 'magit-status)

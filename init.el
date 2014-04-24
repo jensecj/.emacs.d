@@ -83,6 +83,7 @@
    ;; Packages
    use-package
    auctex                  ; LaTeX editing
+   visual-regexp-steroids  ; better regular expressions
    browse-kill-ring        ; browse the kill ring
    change-inner            ; easily change the inner or outer content of something
    flx                     ; flexible matching
