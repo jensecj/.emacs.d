@@ -87,7 +87,8 @@
    ("C-M-s" . vr/mc-mark)))
 
 (use-package magit
-  :bind ("C-x m" . magit-status))
+  :bind ("C-x m" . magit-status)
+  :init (setq magit-auto-revert-mode nil))
 
 (use-package undo-tree
   :bind
