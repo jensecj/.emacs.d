@@ -125,64 +125,8 @@
 (require 'setup-hippie)
 
 ;; Load packages
-(require 'use-package)
+(require 'setup-packages)
 
-(use-package expand-region)
-(use-package change-inner)
-(use-package smart-forward)
-
-(use-package fill-column-indicator
-  :init
-  (progn
-    (setq fci-rule-width 1)
-    (setq fci-rule-color "dark gray")
-    (setq fci-rule-column 80)
-    (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-    (global-fci-mode 1)))
-
-(use-package smartparens-config
-  :diminish smartparens-mode
-  :init
-  (progn
-    (setq sp-autoescape-string-quote nil)
-    (smartparens-global-mode t)
-    (show-smartparens-global-mode t)))
-
-(use-package smex
-  :bind
-  (("M-x" . smex)
-   ("M-X" . smex-major-mode-commands))
-  :init
-  (progn
-    (smex-initialize)
-    (setq smex-save-file (concat data-dir ".smex-items"))))
-
-(use-package git-gutter+
-  :diminish git-gutter+-mode
-  :init (global-git-gutter+-mode t))
-
-(use-package flycheck
-  :diminish flycheck-mode
-  :init (global-flycheck-mode))
-
-(use-package multiple-cursors
-  :bind
-  (("C-d" . mc/mark-next-like-this)
-   ("C-S-d" . mc/mark-all-like-this)
-   ("C-M-a" . set-rectangular-region-anchor))
-  :init 
-  (setq mc/list-file (concat data-dir ".mc-lists")))
-
-(use-package undo-tree
-  :init (setq global-undo-tree-mode t))
-
-(use-package browse-kill-ring
-  :init (setq browse-kill-ring-quit-action 'save-and-restore))
-
-;; Default to compiling latex files to pdf
-(setq TeX-PDF-mode t)
-;; Auto save when compiling
-(setq TeX-save-query nil)
 
 ;; load all files in defuns-dir
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
