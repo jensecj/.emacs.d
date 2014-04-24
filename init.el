@@ -86,7 +86,7 @@
    ;; Major modes
    ;; Themes
    zenburn-theme           ; the great zenburn theme
-   ;; Packages
+   ;; Misc
    use-package             ; pretty package initialization
    visual-regexp-steroids  ; better regular expressions
    auctex                  ; laTeX editing
@@ -122,6 +122,7 @@
 (eval-after-load 'ido '(require 'setup-ido))
 (eval-after-load 'dired '(require 'setup-dired))
 (eval-after-load 'magit '(require 'setup-magit))
+(require 'setup-hippie)
 
 ;; Load packages
 (require 'use-package)
@@ -129,8 +130,6 @@
 (use-package expand-region)
 (use-package change-inner)
 (use-package smart-forward)
-
-(use-package setup-hippie)
 
 (use-package fill-column-indicator
   :init
