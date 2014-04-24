@@ -78,8 +78,6 @@
    flycheck                ; linting
    smooth-scrolling        ; add a top and bottom margin when scrolling
    ;; Major modes
-   markdown-mode           ; minor mode for markdown
-   sml-mode                ; major mode for editing Standard ML
    ;; Themes
    zenburn-theme           ; the great zenburn theme
    ;; Packages
@@ -141,8 +139,6 @@
 ;; Language specific setup files
 (eval-after-load 'markdown-mode '(require 'setup-markdown-mode))
 
-;; Map files to modes
-(require 'mode-mappings)
 
 ;; load packages
 (require 'expand-region)
