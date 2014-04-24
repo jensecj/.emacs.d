@@ -125,15 +125,6 @@
 
 (use-package setup-hippie)
 
-;; Default setup of smartparens
-(use-package smartparens-config
-  :diminish smartparens-mode
-  :init
-  (progn
-    (setq sp-autoescape-string-quote nil)
-    (smartparens-global-mode t)
-    (show-smartparens-global-mode t)))
-
 (use-package fill-column-indicator
   :init
   (progn
@@ -143,24 +134,33 @@
     (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
     (global-fci-mode 1)))
 
+(use-package smartparens-config
+  :diminish smartparens-mode
+  :init
+  (progn
+    (setq sp-autoescape-string-quote nil)
+    (smartparens-global-mode t)
+    (show-smartparens-global-mode t)))
+
 (use-package smex
   :init
   (progn
     (smex-initialize)
     (setq smex-save-file "~/.emacs.d/data/.smex-items")))
 
-(use-package multiple-cursors
-  :init (setq mc/list-file "~/.emacs.d/data/.mc-lists"))
-
 (use-package git-gutter+
   :diminish git-gutter+-mode
   :init (global-git-gutter+-mode t))
 
+(use-package flycheck
+  :diminish flycheck-mode
+  :init (global-flycheck-mode))
+
+(use-package multiple-cursors
+  :init (setq mc/list-file "~/.emacs.d/data/.mc-lists"))
+
 (use-package undo-tree
   :init (setq global-undo-tree-mode t))
-
-(use-package flycheck
-  :init (global-flycheck-mode))
 
 (use-package browse-kill-ring
   :init (setq browse-kill-ring-quit-action 'save-and-restore))
