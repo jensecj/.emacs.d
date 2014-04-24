@@ -14,8 +14,8 @@
           dired-do-copy
           dired-create-directory
           wdired-abort-changes)
-        (eval `(defadvice ,it (after revert-buffer activate)
-                 (revert-buffer))))
+  (eval `(defadvice ,it (after revert-buffer activate)
+           (revert-buffer))))
 
 ;; C-a is nicer in dired if it moves back to start of files
 (defun dired-back-to-start-of-files ()
@@ -42,9 +42,6 @@
 
 (define-key dired-mode-map (vector 'remap 'end-of-buffer) 'dired-jump-to-bottom)
 (define-key dired-mode-map (vector 'remap 'smart-down) 'dired-jump-to-bottom)
-
-;; Delete with C-x C-k to match file buffers and magit
-(define-key dired-mode-map (kbd "C-x C-k") 'dired-do-delete)
 
 (eval-after-load "wdired"
   '(progn
