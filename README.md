@@ -1,20 +1,20 @@
-# My emacs settings
+# The beauty
+![Screenshot of my emacs in action](emacs-screen.png?raw=true "Screenshot of my emacs in action")
+# My emacs
 
-Heavily influenced by [magnars](https://github.com/magnars/.emacs.d) and [cjohansen](https://github.com/cjohansen/.emacs.d).
+This was originally a fork of [magnars' great emacs settings](https://github.com/magnars/.emacs.d)
+but has since then evolved into a beast better fitting my own preferences.
 
-## Tips for using these emacs settings
+I would recommend starting out with a blank emacs and then dig through this repo 
+for useful nuggets, instead of forking it directly.
 
-If you want to use my settings straight out of the box, here are some things to note:
+It should however be possible to simply clone the entire repo, drop it into a clean 
+install of emacs, and it should set everything up properly.
 
- * I recommend starting with a blank emacs + [Technomancy's better-defaults package](https://github.com/technomancy/better-defaults),
-   and then dig through this repo for useful nuggets, instead of forking it directly.
+The keybindings are optimized for a [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
 
- * It should be possible to simply clone the entire repo, drop it into a clean 
-   install of emacs, and it should set everything up properly, but your experience may vary!
-
- * The key bindings are optimized for a [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
-
- * Start by reading up on all the cool stuff in setup-packages.el and key-bindings.el.
+You can check out all the package settings and keybindings if you look through
+setup-packages.el and key-bindings.el.
 
  * You quit emacs with `C-x r q`, mnemonic *Really Quit*.
 
