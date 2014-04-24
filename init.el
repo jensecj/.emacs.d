@@ -96,7 +96,6 @@
    multiple-cursors        ; ability to use a lot of cursors
    diminish                ; unclutter the mode line
    magit                   ; magical git interface for emacs
-   magit-log-edit          ; use the old commit log in magit
    move-text               ; easily move lines up/down
    fill-column-indicator   ; line to indicate the fill column
    ))
@@ -115,7 +114,6 @@
 (eval-after-load 'ido '(require 'setup-ido))
 (eval-after-load 'dired '(require 'setup-dired))
 (eval-after-load 'magit '(require 'setup-magit))
-(eval-after-load 'magit '(require 'magit-log-edit))
 
 ;; Load packages
 (require 'use-package)
