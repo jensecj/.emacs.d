@@ -126,3 +126,4 @@ setup-packages.el and key-bindings.el.
 * `F1 t` 		Basic tutorial
 * `F1 k` 		Help for a key binding
 * `F1 r` 		Emacs' extensive documentation
+* `F1 m` 		Help for current mode
