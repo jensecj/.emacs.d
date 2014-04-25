@@ -11,14 +11,14 @@ for useful nuggets, instead of forking it directly.
 It should however be possible to simply clone the entire repo, drop it into a clean 
 install of emacs, and it should set everything up properly.
 
-The keybindings are optimized for a [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
+The key bindings are optimized for a [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
 
-You can check out all the package settings and keybindings if you look through
+You can check out all the package settings and key bindings if you look through
 setup-packages.el and key-bindings.el.
 
  * You quit emacs with `C-x r q`, mnemonic *Really Quit*.
 
-### Custom keybindings
+### Custom key bindings
 
 * `M-j`         Joins the line below to this line
 * `C-c C-k`     Evaluate current buffer
@@ -88,11 +88,13 @@ setup-packages.el and key-bindings.el.
 
 * `C-g` 		Quit out of whatever mess you've gotten yourself into
 * `M-x` 		Run a command by name
-* `C-.` 		Autocomplete
+* `C-.` 		Auto complete
 * `C-_` 		Undo
 * `M-_` 		Redo
 * `C-x u` 		Show the undo-tree
-* `C-x m` 		Open magit. It's a magical git interface for emacs ([cheatsheet](http://daemianmack.com/magit-cheatsheet.html))
+* `C-x m` 		Open magit. It's a magical git interface for emacs ([cheat sheet](http://daemianmack.com/magit-cheatsheet.html))
+* `C-k` 		Kills to the end of the line
+* `C-S-k` 		Kills to the beginning of the line
 
 ### Navigation
 
@@ -116,5 +118,5 @@ setup-packages.el and key-bindings.el.
 ### Help
 
 * `F1 t` 		Basic tutorial
-* `F1 k` 		Help for a keybinding
+* `F1 k` 		Help for a key binding
 * `F1 r` 		Emacs' extensive documentation
