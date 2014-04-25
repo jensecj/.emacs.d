@@ -145,6 +145,7 @@
 (eval-after-load 'dired '(require 'setup-dired))
 (eval-after-load 'magit '(require 'setup-magit))
 (require 'setup-hippie)
+(require 'setup-undo-tree)
 
 ;; Load packages
 (require 'setup-packages)
