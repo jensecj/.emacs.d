@@ -73,7 +73,7 @@
 
 ;; File finding
 (global-set-key (kbd "C-x f") 'recentf-ido-find-file)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "C-x b") 'ibuffer)
 
 ;; Move windows with S-<arrow>
 (windmove-default-keybindings 'shift)

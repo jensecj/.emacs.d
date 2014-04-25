@@ -71,7 +71,8 @@ setup-packages.el and key-bindings.el.
 * `C-x t` 	    Force save this file
 * `C-x C-j` 	Jump to this files' current directory
 * `C-x b` 		Switch to another open file (buffer)
-* `C-x C-b` 	List all open files (buffers)
+* `C-x b` 	    List all open files (buffers)
+* `C-x C-b`     Jump between all open files (buffers)
 * `C-x C-r` 	Reopen file using sudo
 
 ### Cut copy and paste

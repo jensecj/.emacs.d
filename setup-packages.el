@@ -100,6 +100,9 @@
   :bind
   (("C-x C-y" . browse-kill-ring)))
 
+(use-package ace-jump-buffer
+  :bind ("C-x C-b" . ace-jump-buffer))
+
 (use-package smooth-scrolling)
 
 (provide 'setup-packages)

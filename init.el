@@ -100,6 +100,7 @@
    gitignore-mode          ; minor mode for editing git ignore files
    ido-vertical-mode       ; print ido vertically
    ace-jump-mode           ; jump around the buffer with ease
+   ace-jump-buffer         ; jump between buffers
    smartparens             ; automatically add end parens, highlight matching parens
    git-gutter+             ; mark added/changes/removed lines in the gutter
    flycheck                ; linting
