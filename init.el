@@ -35,7 +35,7 @@
 (setq custom-file (concat root-dir "custom.el"))
 (load custom-file)
 
-;; Save backup and autosave files in data folder
+;; Save backup and auto save files in data folder
 (setq backup-directory-alist `((".*" . ,backup-dir)))
 (setq auto-save-file-name-transforms `((".*" ,backup-dir t)))
 (setq auto-save-list-file-prefix backup-dir)
@@ -156,7 +156,7 @@
   (when (file-regular-p file)
     (load file)))
 
-;; Load custom keybindings
+;; Load custom key bindings
 (require 'key-bindings)
 
 (provide  'init)

@@ -76,7 +76,7 @@
   (indent-region (point-min) (point-max)))
 
 (defun cleanup-buffer ()
-  "Perform a bunch of operations on the whitespace content of a buffer.
+  "Perform a bunch of operations on the white space content of a buffer.
 Including indent-buffer, which should not be called automatically on save."
   (interactive)
   (untabify-buffer)

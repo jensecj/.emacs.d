@@ -1,7 +1,7 @@
-;; Dont blink the cursor
+;; Don't blink the cursor
 (blink-cursor-mode 0)
 
-;; Hightlight current line, with a sane color, and transparent foreground
+;; Highlight current line, with a sane color, and transparent foreground
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "gray30")
 (set-face-foreground 'highlight nil)
@@ -73,13 +73,13 @@
 ;; Show me empty lines after buffer end
 (set-default 'indicate-empty-lines t)
 
-;; Easily navigate sillycased words
+;; Easily navigate silly cased words
 (global-subword-mode 1)
 
 ;; Don't break lines for me, please
 (setq-default truncate-lines t)
 
-;; Allow recursive minibuffers
+;; Allow recursive mini buffers
 (setq enable-recursive-minibuffers t)
 
 ;; Don't be so stingy on the memory, we have lots now. It's the distant future.
