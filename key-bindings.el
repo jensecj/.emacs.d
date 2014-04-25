@@ -61,6 +61,9 @@
 ;; Fix spaces / tabs
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
 
+;; Enable backwards killing of lines
+(global-set-key (kbd "C-S-k") 'kill-to-beginning-of-line)
+
 ;; Transpose stuff with M-t
 (global-unset-key (kbd "M-t")) ;; which used to be transpose-words
 (global-set-key (kbd "M-t l") 'transpose-lines)
