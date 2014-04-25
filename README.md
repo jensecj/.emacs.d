@@ -21,6 +21,7 @@ setup-packages.el and key-bindings.el.
 ### Custom key bindings
 
 * `M-j`         Joins the line below to this line
+* `M-J`         Joins the line above to this line
 * `C-c C-k`     Evaluate current buffer
 * `C-c k`       Evaluate current region
 * `C-c n`       Indent, remove trailing white space and untabify the entire buffer
@@ -99,7 +100,7 @@ setup-packages.el and key-bindings.el.
 
 ### Navigation
 
-* `C-<left,right>` Move past words/paragraphs, up, down - moves buffer up/down without moving point
+* `C-<left,right>` Move over words/paragraphs
 * `C-<up,down>` Moves buffer up/down without moving point
 * `C-a` 		Go to start of line
 * `C-e` 		Go to end of line
