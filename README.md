@@ -110,11 +110,13 @@ setup-packages.el and key-bindings.el.
 
 ### Window management
 
-* `C-x 0` 		Close this window
-* `C-x 1` 		Close other windows
+* `C-x o` 		Close this window
+* `C-x p` 		Close other windows
 * `C-x 2` 		Split window horizontally
 * `C-x 3` 		Split window vertically
 * `S-arrow`		Jump to window to the left/right/up/down
+* `C-<tab>`		Rotate window split
+* `M-<tab>`		Rotate windows
 
 ### Help
 

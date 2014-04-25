@@ -51,6 +51,12 @@
 ;; Jump to symbol definitions
 (global-set-key (kbd "C-x C-i") 'imenu)
 
+;; Move the delete windows, mnemonic is C-x OTHER
+(global-set-key (kbd "C-x 0") nil)
+(global-set-key (kbd "C-x 1") nil)
+(global-set-key (kbd "C-x o") 'delete-other-windows)
+(global-set-key (kbd "C-x p") 'delete-window)
+
 ;; =======================================
 ;; ================================ Defuns
 ;; =======================================
@@ -63,6 +69,10 @@
 
 ;; Enable backwards killing of lines
 (global-set-key (kbd "C-S-k") 'kill-to-beginning-of-line)
+
+;; Toggle window split
+(global-set-key (kbd "C-<tab>") 'toggle-window-split)
+(global-set-key (kbd "M-<tab>") 'rotate-windows)
 
 ;; Transpose stuff with M-t
 (global-unset-key (kbd "M-t")) ;; which used to be transpose-words
