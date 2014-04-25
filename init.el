@@ -67,7 +67,15 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
 ;; Install missing packages
-(require 'package-helper)
+(package-initialize)
+;; (package-refresh-contents)
+
+(defun install-packages (packages)
+  (mapc (lambda (package)
+          (unless (package-installed-p package)
+            (package-install package)))
+        packages))
+
 (install-packages
  '(
    ;; Libraries
