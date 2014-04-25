@@ -66,10 +66,23 @@
 ;; Add melpa as a package archive
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
-;; Install missing packages
 (package-initialize)
-;; (package-refresh-contents)
 
+(defun file-age (file)
+  (float-time
+   (time-subtract (current-time)
+                  (nth 5 (file-attributes (file-truename file))))))
+
+;; Refresh package archive if it does not exist or is older than a week
+(defconst melpa-archive (concat root-dir "elpa/archives/melpa"))
+
+(unless (file-exists-p melpa-archive)
+  (package-refresh-contents))
+
+(unless (< (file-age melpa-archive) 604800)
+  (package-refresh-contents))
+
+;; Install missing packages
 (defun install-packages (packages)
   (mapc (lambda (package)
           (unless (package-installed-p package)
