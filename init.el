@@ -35,10 +35,11 @@
 (setq custom-file (concat root-dir "custom.el"))
 (load custom-file)
 
-;; Save backup and auto save files in data folder
+;; Save backup, auto save and temp files in data folder
 (setq backup-directory-alist `((".*" . ,backup-dir)))
 (setq auto-save-file-name-transforms `((".*" ,backup-dir t)))
 (setq auto-save-list-file-prefix backup-dir)
+(setq temporary-file-directory data-dir)
 
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
@@ -50,7 +51,6 @@
 (require 'url)
 (setq url-privacy-level 'paranoid)
 (url-setup-privacy-info)
-(setq url-temporary-directory data-dir)
 
 ;; Save point position between sessions
 (require 'saveplace)
