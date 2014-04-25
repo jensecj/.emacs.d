@@ -107,6 +107,8 @@ setup-packages.el and key-bindings.el.
 * `C-x C-i` 	Go to symbol
 * `C-s` 		Search forward. Press `C-s` again to go further.
 * `C-r` 		Search backward. Press `C-r` again to go further.
+* `Home` 		Go to the beginning of the buffer
+* `End` 		Go to the end of the buffer
 
 ### Window management
 

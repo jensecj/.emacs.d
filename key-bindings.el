@@ -57,6 +57,10 @@
 (global-set-key (kbd "C-x o") 'delete-other-windows)
 (global-set-key (kbd "C-x p") 'delete-window)
 
+;; Make Home and End to to the top and bottom of the buffer, we have C-a/e
+(global-set-key (kbd "<home>") 'beginning-of-buffer)
+(global-set-key (kbd "<end>") 'end-of-buffer)
+
 ;; =======================================
 ;; ================================ Defuns
 ;; =======================================
