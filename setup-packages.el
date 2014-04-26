@@ -39,7 +39,7 @@
   (("C-d" . mc/mark-next-like-this)
    ("C-S-d" . mc/mark-all-like-this)
    ("C-M-a" . set-rectangular-region-anchor))
-  :init
+  :config
   (setq mc/list-file (concat data-dir ".mc-lists")))
 
 (use-package undo-tree
