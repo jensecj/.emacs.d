@@ -105,6 +105,7 @@
    git-gutter+             ; mark added/changes/removed lines in the gutter
    flycheck                ; linting
    smooth-scrolling        ; add a top and bottom margin when scrolling
+   powerline               ; vim-esque powerline
    ;; Major modes
    markdown-mode
    ;; Themes
@@ -147,6 +148,7 @@
 (eval-after-load 'magit '(require 'setup-magit))
 (require 'setup-hippie)
 (require 'setup-undo-tree)
+(require 'setup-powerline)
 
 ;; Load packages
 (require 'setup-packages)
