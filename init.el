@@ -107,7 +107,8 @@
    smooth-scrolling        ; add a top and bottom margin when scrolling
    powerline               ; vim-esque powerline
    ;; Major modes
-   markdown-mode
+   markdown-mode           ; markdown editing
+   lua-mode                ; lua editing
    ;; Themes
    zenburn-theme           ; the great zenburn theme
    ;; Misc
