@@ -1,3 +1,7 @@
+;; Make the mode-line flat
+(set-face-attribute 'mode-line nil :box nil)
+(set-face-attribute 'mode-line-inactive nil :box nil)
+
 ;; Group colors
 (defface face-light '((t (:background "grey35" :inherit mode-line))) "" :group 'powerline)
 (defface face-dark '((t (:background "grey30" :inherit mode-line))) "" :group 'powerline)
