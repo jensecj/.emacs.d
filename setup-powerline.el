@@ -1,3 +1,9 @@
+;; Group colors
+(defface face-light '((t (:background "grey35" :inherit mode-line))) "" :group 'powerline)
+(defface face-dark '((t (:background "grey30" :inherit mode-line))) "" :group 'powerline)
+(defface face-darker '((t (:background "grey25" :inherit mode-line))) "" :group 'powerline)
+(defface face-darkest '((t (:background "grey20" :inherit mode-line))) "" :group 'powerline)
+
 ;; Setup the powerline theme
 (setq-default mode-line-format
               '("%e"
@@ -5,7 +11,11 @@
                  (let* (
                         (active (powerline-selected-window-active))
                         (mode-line (if active 'mode-line 'mode-line-inactive))
-                        (face-dark 'powerline-active1)
+
+                        (face-light 'face-light)
+                        (face-dark 'face-dark)
+                        (face-darker 'face-darker)
+                        (face-darkest 'face-darkest)
 
                         (seperator-> (intern (format "powerline-%s-%s"
                                                      powerline-default-separator
@@ -16,34 +26,34 @@
                                                      (cdr powerline-default-separator-dir))))
 
                         (lhs (list
-                              (powerline-buffer-id nil 'l)
-                              (powerline-raw " ")
+                              (powerline-buffer-id face-darkest 'l)
+                              (powerline-raw " " face-darkest)
 
-                              (funcall seperator-> mode-line face-dark)
-                              (powerline-raw "%4l" face-dark 'r)
-                              (powerline-raw ":" face-dark 'l)
-                              (powerline-raw "%3c " face-dark 'r)
+                              (funcall seperator-> face-darkest face-darker)
 
-                              (funcall seperator-> face-dark mode-line)
+                              (powerline-raw "%4l" face-darker 'r)
+                              (powerline-raw ":" face-darker 'l)
+                              (powerline-raw "%3c " face-darker 'r)
 
-                              (powerline-major-mode mode-line 'l)
-                              (powerline-process mode-line)
-                              (powerline-minor-modes mode-line 'l)
-                              (powerline-narrow mode-line 'l)
+                              (funcall seperator-> face-darker face-dark)
 
-                              (powerline-raw " " mode-line)
+                              (powerline-major-mode face-dark 'l)
+                              (powerline-process face-dark)
+                              (powerline-minor-modes face-dark 'l)
+                              (powerline-narrow face-dark 'l)
 
-                              (funcall seperator-> mode-line face-dark)
+                              (powerline-raw " " face-dark)
+
+                              (funcall seperator-> face-dark face-light)
                               ))
 
                         (rhs (list
-                              (powerline-raw global-mode-string mode-line 'r)
-                              (funcall separator-< face-dark mode-line)
-                              (powerline-vc mode-line)
+                              (funcall separator-< face-light face-darkest)
+                              (powerline-vc face-darkest)
                               )))
                    (concat
                     (powerline-render lhs)
-                    (powerline-fill face-dark (powerline-width rhs))
+                    (powerline-fill face-light (powerline-width rhs))
                     (powerline-render rhs))))))
 
 (provide 'setup-powerline)
