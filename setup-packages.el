@@ -1,13 +1,13 @@
 (require 'use-package)
 
-(use-package fill-column-indicator
-  :init
-  (progn
-    (setq fci-rule-width 1)
-    (setq fci-rule-color "dark gray")
-    (setq fci-rule-column 80)
-    (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-    (global-fci-mode 1)))
+;; (use-package fill-column-indicator
+;;   :init
+;;   (progn
+;;     (setq fci-rule-width 1)
+;;     (setq fci-rule-color "dark gray")
+;;     (setq fci-rule-column 80)
+;;     (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+;;     (global-fci-mode 1)))
 
 (use-package smartparens-config
   :diminish smartparens-mode
