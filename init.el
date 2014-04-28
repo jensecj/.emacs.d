@@ -79,7 +79,7 @@
 (unless (file-exists-p melpa-archive)
   (package-refresh-contents))
 
-(unless (< (file-age melpa-archive) 604800)
+(if (> (file-age melpa-archive) 604800)
   (package-refresh-contents))
 
 ;; Install missing packages
