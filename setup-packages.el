@@ -105,4 +105,10 @@
 
 (use-package smooth-scrolling)
 
+(use-package paredit
+  :commands paredit-mode
+  :init
+  (progn
+    (add-hook 'emacs-lisp-mode-hook 'paredit-mode)))
+
 (provide 'setup-packages)
