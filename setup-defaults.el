@@ -61,6 +61,7 @@
 ;; Save a list of recent files visited.
 (require 'recentf)
 (setq recentf-save-file (recentf-expand-file-name "~/.emacs.d/data/.recentf"))
+(setq recentf-exclude '(".emacs.d/elpa/" ".emacs.d/data/" "COMMIT_EDITMSG"))
 (setq recentf-max-saved-items 100) ;; just 20 is too recent
 (recentf-mode 1)
 
