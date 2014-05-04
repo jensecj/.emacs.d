@@ -106,6 +106,7 @@
    flycheck                ; linting
    smooth-scrolling        ; add a top and bottom margin when scrolling
    powerline               ; vim-esque powerline
+   paredit                 ; mode for playing with S-expression (elisp / scheme / etc.)
    ;; Major modes
    markdown-mode           ; markdown editing
    lua-mode                ; lua editing
