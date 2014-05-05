@@ -107,6 +107,19 @@
 
 (use-package paredit
   :commands paredit-mode
+(use-package latex
+  :defer t
+  :init (add-hook 'LaTeX-mode-hook 'reftex-mode) ;; enable reftex
+  :config
+  (progn
+    (setq-default TeX-PDF-mode t) ;; default to pdf
+    (setq-default TeX-global-PDF-mode t) ;; default to pdf
+    (setq-default TeX-parse-self t) ;; parse on load
+    (setq-default TeX-auto-save t) ;; parse on save
+    (setq-default TeX-save-query nil) ;; save before compiling
+    (setq-default TeX-master nil) ;; try to figure out which file is the master
+    (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
+    ))
   :init
   (progn
     (add-hook 'emacs-lisp-mode-hook 'paredit-mode)))

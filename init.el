@@ -110,12 +110,12 @@
    ;; Major modes
    markdown-mode           ; markdown editing
    lua-mode                ; lua editing
+   auctex                  ; latex editing
    ;; Themes
    zenburn-theme           ; the great zenburn theme
    ;; Misc
    use-package             ; pretty package initialization
    visual-regexp-steroids  ; better regular expressions
-   auctex                  ; laTeX editing
    browse-kill-ring        ; browse the kill ring
    change-inner            ; easily change the inner or outer content of something
    flx                     ; flexible matching
