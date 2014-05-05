@@ -39,8 +39,7 @@
   (("C-d" . mc/mark-next-like-this)
    ("C-S-d" . mc/mark-all-like-this)
    ("C-M-a" . set-rectangular-region-anchor))
-  :config
-  (setq mc/list-file (concat data-dir ".mc-lists")))
+  :init (setq mc/list-file (concat data-dir ".mc-lists")))
 
 (use-package undo-tree
   :init (setq global-undo-tree-mode t))
@@ -97,8 +96,7 @@
    ("M-_" . undo-tree-redo)))
 
 (use-package browse-kill-ring
-  :bind
-  (("C-x C-y" . browse-kill-ring)))
+  :bind ("C-x C-y" . browse-kill-ring))
 
 (use-package ace-jump-buffer
   :bind ("C-x C-b" . ace-jump-buffer))
@@ -106,7 +104,10 @@
 (use-package smooth-scrolling)
 
 (use-package paredit
+  :diminish paredit-mode
   :commands paredit-mode
+  :init (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
+
 (use-package latex
   :defer t
   :init (add-hook 'LaTeX-mode-hook 'reftex-mode) ;; enable reftex
@@ -120,8 +121,14 @@
     (setq-default TeX-master nil) ;; try to figure out which file is the master
     (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
     ))
+
+(use-package flyspell
+  :diminish flyspell-mode
+  :commands flyspell-prog-mode
   :init
   (progn
-    (add-hook 'emacs-lisp-mode-hook 'paredit-mode)))
+    (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode)
+    (add-hook 'lua-mode-hook 'flyspell-prog-mode)))
+
 
 (provide 'setup-packages)
