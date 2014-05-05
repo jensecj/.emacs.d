@@ -80,7 +80,7 @@
   (package-refresh-contents))
 
 (if (> (file-age melpa-archive) 604800)
-  (package-refresh-contents))
+    (package-refresh-contents))
 
 ;; Install missing packages
 (defun install-packages (packages)
@@ -155,7 +155,6 @@
 ;; Load packages
 (require 'setup-packages)
 
-
 ;; load all files in defuns-dir
 (setq defuns-dir (concat root-dir "defuns/"))
 (dolist (file (directory-files defuns-dir t "\\w+"))
@@ -165,4 +164,4 @@
 ;; Load custom key bindings
 (require 'key-bindings)
 
-(provide  'init)
+(provide 'init)
