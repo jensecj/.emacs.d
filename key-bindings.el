@@ -29,6 +29,16 @@
                   (interactive)
                   (join-line)))
 
+;; better copying on M-w
+(global-set-key (kbd "M-w")
+                (lambda ()
+                  (interactive)
+                  (save-excursion
+                    (unless (use-region-p)
+                      (beginning-of-line))
+                    (save-region-or-current-line nil)
+                    (message "copied"))))
+
 ;; Scroll the buffer without moving the point (unless we over-move)
 (global-set-key (kbd "C-<up>")
                 (lambda ()
