@@ -107,6 +107,7 @@
    smooth-scrolling        ; add a top and bottom margin when scrolling
    powerline               ; vim-esque powerline
    paredit                 ; mode for playing with S-expression (elisp / scheme / etc.)
+   auto-complete           ; auto completion
    ;; Major modes
    markdown-mode           ; markdown editing
    lua-mode                ; lua editing
@@ -151,6 +152,7 @@
 (require 'setup-hippie)
 (require 'setup-undo-tree)
 (require 'setup-powerline)
+(require 'setup-autocomplete)
 
 ;; Load packages
 (require 'setup-packages)
