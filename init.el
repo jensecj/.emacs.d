@@ -133,6 +133,7 @@
    magit                   ; magical git interface for emacs
    move-text               ; easily move lines up/down
    fill-column-indicator   ; line to indicate the fill column
+   impatient-mode          ; live web development
    ))
 
 ;; =======================================
