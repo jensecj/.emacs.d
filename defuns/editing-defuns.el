@@ -55,7 +55,7 @@
   "Copy to end of line, or as many lines as prefix argument"
   (interactive "P")
   (if (null arg)
-      (copy-to-end-of-line)
+      (copy-whole-lines 1)
     (copy-whole-lines (prefix-numeric-value arg))))
 
 (defun save-region-or-current-line (arg)
