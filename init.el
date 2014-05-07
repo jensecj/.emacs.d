@@ -155,6 +155,8 @@
 (require 'setup-powerline)
 (require 'setup-autocomplete)
 
+(require 'setup-modes)
+
 ;; Load packages
 (require 'setup-packages)
 
