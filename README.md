@@ -118,7 +118,7 @@ setup-packages.el and key-bindings.el.
 * `C-x 2` 		Split window horizontally
 * `C-x 3` 		Split window vertically
 * `S-arrow`		Jump to window to the left/right/up/down
-* `C-<tab>`		Rotate window split
+* `M-C-<tab>`	Rotate window split
 * `M-<tab>`		Rotate windows
 
 ### Help

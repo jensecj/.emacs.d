@@ -75,7 +75,7 @@
 (global-set-key (kbd "C-S-k") 'kill-to-beginning-of-line)
 
 ;; Toggle window split
-(global-set-key (kbd "C-<tab>") 'toggle-window-split)
+(global-set-key (kbd "M-C-<tab>") 'toggle-window-split)
 (global-set-key (kbd "M-<tab>") 'rotate-windows)
 
 ;; Transpose stuff with M-t
