@@ -48,7 +48,6 @@
 
   (setq ac-clang-flags (mapcar (lambda (item)(concat "-I" item)) c++-include-files))
 
-  (add-to-list 'ac-sources 'ac-source-semantic)
   (add-to-list 'ac-sources 'ac-source-clang)
   (add-to-list 'ac-sources 'ac-source-c-headers)
 
