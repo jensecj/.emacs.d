@@ -108,6 +108,7 @@
    powerline               ; vim-esque powerline
    paredit                 ; mode for playing with S-expression (elisp / scheme / etc.)
    auto-complete           ; auto completion
+   yasnippet               ; more auto-completion
    ;; Major modes
    markdown-mode           ; markdown editing
    lua-mode                ; lua editing

@@ -130,5 +130,12 @@
     (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode)
     (add-hook 'lua-mode-hook 'flyspell-prog-mode)))
 
+(use-package yasnippet
+  :diminish yas-minor-mode
+  :init
+  (progn
+    (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+    (define-key yas-keymap (kbd "<return>") 'yas/exit-all-snippets)
+    (yas-global-mode 1)))
 
 (provide 'setup-packages)
