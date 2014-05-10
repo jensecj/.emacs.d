@@ -34,13 +34,13 @@ setup-packages.el and key-bindings.el.
 
 ### Multiple-cursors
 
-* `C-d` 		To put a new cursor at the next thing like the current selection
-* `C-S-d` 		To put a new cursor at all things like the current selection
+* `C-d` 		To put a new cursor at the next thing like the current region
+* `C-S-d` 		To put a new cursor at all things like the current region
 * `C-M-a`		Drops a rectangular anchor, then use up and down to move
 
 ### Expand-region
 
-* `M-e`			Expand selection onto the next region
+* `M-e`			Expand region onto the next region
 * `C-M-e`		Contracts back to the previous region
 
 ### Move-text
@@ -49,10 +49,10 @@ setup-packages.el and key-bindings.el.
 
 ### Change-inner
 
-* `M-i` 	    Copy contents of inner selection
-* `M-o` 	    Copy contents of outer selection
-* `M-I` 	    Change contents of inner selection
-* `M-O` 	    Change contents of outer selection
+* `M-i` 	    Copy contents of inner region
+* `M-o` 	    Copy contents of outer region
+* `M-I` 	    Change contents of inner region
+* `M-O` 	    Change contents of outer region
 
 ### Files
 
@@ -69,10 +69,10 @@ setup-packages.el and key-bindings.el.
 ### Cut copy and paste
 
 * `C-space` 	Start marking stuff. C-g to cancel.
-* `C-w` 		Cut (aka kill)
+* `C-w` 		Cut (aka kill) current line or region
 * `C-k` 		Cut till end of line
 * `C-S-k` 		Cut till beginning of line
-* `M-w` 		Copy current line / region
+* `M-w` 		Copy current line or region
 * `C-y` 		Paste (aka yank)
 * `M-y` 		Cycle last paste through previous kills
 * `C-x C-y` 	Choose what to paste from previous kills
