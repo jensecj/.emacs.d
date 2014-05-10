@@ -106,7 +106,6 @@
    flycheck                ; linting
    smooth-scrolling        ; add a top and bottom margin when scrolling
    powerline               ; vim-esque powerline
-   paredit                 ; mode for playing with S-expression (elisp / scheme / etc.)
    auto-complete           ; auto completion
    yasnippet               ; more auto-completion
    ;; Major modes

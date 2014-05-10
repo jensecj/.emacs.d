@@ -96,11 +96,6 @@
 
 (use-package smooth-scrolling)
 
-(use-package paredit
-  :diminish paredit-mode
-  :commands paredit-mode
-  :init (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
-
 (use-package latex
   :defer t
   :init (add-hook 'LaTeX-mode-hook 'reftex-mode) ;; enable reftex
