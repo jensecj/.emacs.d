@@ -128,7 +128,13 @@
   :init
   (progn
     (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+    (define-key yas-minor-mode-map (kbd "<tab>") nil)
+    (define-key yas-minor-mode-map (kbd "TAB") nil)
+    (define-key yas-minor-mode-map (kbd "M-<tab>") 'yas-expand)
     (define-key yas-keymap (kbd "<return>") 'yas/exit-all-snippets)
     (yas-global-mode 1)))
+
+(require 'yasnippet)
+
 
 (provide 'setup-packages)

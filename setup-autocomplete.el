@@ -5,7 +5,7 @@
 (diminish 'auto-complete-mode)
 (diminish 'abbrev-mode)
 
-(setq-default ac-sources '(ac-source-words-in-buffer))
+(setq-default ac-sources '(ac-source-words-in-buffer ac-source-yasnippet))
 
 (setq-default ac-auto-start t) ;; auto start completing
 (setq-default ac-auto-show-menu t) ;; show the menu instantly
