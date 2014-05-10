@@ -65,13 +65,6 @@
    ("M-I" . change-inner)
    ("M-O" . change-outer)))
 
-(use-package smart-forward
-  :bind
-  (("M-<up>" . smart-up)
-   ("M-<down>" . smart-down)
-   ("M-<left>" . smart-backward)
-   ("M-<right>" . smart-forward)))
-
 (use-package move-text
   :bind
   (("C-S-<up>" . move-text-up)

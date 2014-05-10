@@ -127,7 +127,6 @@
    smex                    ; better M-x
    expand-region           ; easily expand/contract selections
    undo-tree               ; better undo/redo
-   smart-forward           ; better jumping forward/backwards
    dired-details           ; more details to dired
    multiple-cursors        ; ability to use a lot of cursors
    diminish                ; unclutter the mode line
