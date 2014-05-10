@@ -64,6 +64,13 @@
       (kill-ring-save (region-beginning) (region-end))
     (copy-line arg)))
 
+(defun kill-region-or-current-line (arg)
+  (interactive "P")
+  (if (region-active-p)
+      (kill-region (region-beginning) (region-end))
+    (save-excursion
+      (kill-whole-line arg))))
+
 (defun kill-and-retry-line ()
   "Kill the entire current line and reposition point at indentation"
   (interactive)

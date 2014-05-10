@@ -100,6 +100,7 @@
 
 ;; Copy current line / region
 (global-set-key (kbd "M-w") 'save-region-or-current-line)
+(global-set-key (kbd "C-w") 'kill-region-or-current-line)
 
 ;; Completion that uses many different methods to find options.
 (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
