@@ -76,7 +76,7 @@
 
 ;; Toggle window split
 (global-set-key (kbd "M-C-<tab>") 'toggle-window-split)
-(global-set-key (kbd "M-<tab>") 'rotate-windows)
+(global-set-key (kbd "M-S-<iso-lefttab>") 'rotate-windows)
 
 ;; Transpose stuff with M-t
 (global-unset-key (kbd "M-t")) ;; which used to be transpose-words

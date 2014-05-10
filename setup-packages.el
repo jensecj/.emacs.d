@@ -123,10 +123,10 @@
   :init
   (progn
     (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-    (define-key yas-minor-mode-map (kbd "<tab>") nil)
+    (define-key yas-minor-mode-map (kbd "<tab>") nil) ;; remove default expand key
     (define-key yas-minor-mode-map (kbd "TAB") nil)
-    (define-key yas-minor-mode-map (kbd "M-<tab>") 'yas-expand)
-    (define-key yas-keymap (kbd "<return>") 'yas/exit-all-snippets)
+    (define-key yas-minor-mode-map (kbd "M-<tab>") 'yas-expand) ;; use M-tab instead
+    (define-key yas-keymap (kbd "<return>") 'yas/exit-all-snippets) ;; exit snippets on enter
     (yas-global-mode 1)))
 
 (require 'yasnippet)
