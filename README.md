@@ -40,38 +40,28 @@ setup-packages.el and key-bindings.el.
 
 ### Expand-region
 
-* `M-e`			Expand onto the next region
+* `M-e`			Expand selection onto the next region
 * `C-M-e`		Contracts back to the previous region
-
-### Smart-forward
-
-* `M-arrow` 	up, down, left or right to move onto the next region
 
 ### Move-text
 
-* `C-S-arrow` 	up or down to move a line up or down
-
-### Browse kill ring
-
-* `C-x C-y` 	browse the contents of the kill ring
+* `C-S-<up, down>` 	Move a line / region up or down
 
 ### Change-inner
 
-* `M-i` 	    copy contents of inner selection
-* `M-o` 	    copy contents of outer selection
-* `M-I` 	    change contents of inner selection
-* `M-O` 	    change contents of outer selection
+* `M-i` 	    Copy contents of inner selection
+* `M-o` 	    Copy contents of outer selection
+* `M-I` 	    Change contents of inner selection
+* `M-O` 	    Change contents of outer selection
 
 ### Files
 
 * `C-x C-f` 	Open a file. Starts in the current directory
 * `C-x f` 		Open a recently visited file
-* `C-x o` 		Open a file in the current project (based on .git)
 * `C-x C-s` 	Save this file
 * `C-x C-w` 	Save as ...
 * `C-x t` 	    Force save this file
 * `C-x C-j` 	Jump to this files' current directory
-* `C-x b` 		Switch to another open file (buffer)
 * `C-x b` 	    List all open files (buffers)
 * `C-x C-b`     Jump between all open files (buffers)
 * `C-x C-r` 	Reopen file using sudo
@@ -81,6 +71,7 @@ setup-packages.el and key-bindings.el.
 * `C-space` 	Start marking stuff. C-g to cancel.
 * `C-w` 		Cut (aka kill)
 * `C-k` 		Cut till end of line
+* `C-S-k` 		Cut till beginning of line
 * `M-w` 		Copy current line / region
 * `C-y` 		Paste (aka yank)
 * `M-y` 		Cycle last paste through previous kills
@@ -95,14 +86,12 @@ setup-packages.el and key-bindings.el.
 * `M-_` 		Redo
 * `C-x u` 		Show the undo-tree
 * `C-x m` 		Open magit. It's a magical git interface for emacs ([cheat sheet](http://daemianmack.com/magit-cheatsheet.html))
-* `C-k` 		Kills to the end of the line
-* `C-S-k` 		Kills to the beginning of the line
 
 ### Navigation
 
 * `C-<left,right>` Move over words/paragraphs
 * `C-<up,down>` Moves buffer up/down without moving point
-* `C-a` 		Go to start of line
+* `C-a` 		Go to start of line / indentation (press multiple times to toggle between the two)
 * `C-e` 		Go to end of line
 * `M-g M-g` 	Go to line number
 * `C-x C-i` 	Go to symbol
@@ -117,9 +106,9 @@ setup-packages.el and key-bindings.el.
 * `C-x p` 		Close other windows
 * `C-x 2` 		Split window horizontally
 * `C-x 3` 		Split window vertically
-* `S-arrow`		Jump to window to the left/right/up/down
-* `M-C-<tab>`	Rotate window split
-* `M-<tab>`		Rotate windows
+* `S-<up, right, left, down>` Jump to other windows
+* `M-C-<tab>`	Rotate the way two windows are split
+* `M-S-<tab>`   Rotate windows
 
 ### Help
 
