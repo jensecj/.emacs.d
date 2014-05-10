@@ -4,6 +4,9 @@
 
 ;; Quit emacs, mnemonic is C-x REALLY QUIT
 (global-set-key (kbd "C-x r q") 'save-buffers-kill-terminal)
+;; Kill emacs, mnemonic is C-x REALLY KILL
+(global-set-key (kbd "C-x r k") 'save-buffers-kill-emacs)
+
 (global-set-key (kbd "C-x C-c") 'delete-frame)
 
 ;; Use shell-like backspace C-h, rebind help to F1
