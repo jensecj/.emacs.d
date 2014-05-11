@@ -109,6 +109,7 @@
    yasnippet               ; more auto-completion
    auto-complete           ; auto completion
    auto-complete-auctex    ; auto-completion for auctex
+   god-mode                ; mode that prefixes C-
    ;; Major modes
    markdown-mode           ; markdown editing
    lua-mode                ; lua editing

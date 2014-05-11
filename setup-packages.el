@@ -129,7 +129,8 @@
     (define-key yas-keymap (kbd "<return>") 'yas/exit-all-snippets) ;; exit snippets on enter
     (yas-global-mode 1)))
 
-(require 'yasnippet)
+(use-package god-mode
+  :bind ("<escape>" . god-local-mode))
 
 
 (provide 'setup-packages)

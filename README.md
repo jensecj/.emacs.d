@@ -25,6 +25,8 @@ setup-packages.el and key-bindings.el.
 * `C-c C-k`     Evaluate current buffer
 * `C-c k`       Evaluate current region
 * `C-c n`       Indent, remove trailing white space and untabify the entire buffer
+* `<escape>`    enable god mode
+
 
 ### Ace-jump-mode
 
