@@ -56,18 +56,19 @@
   (set-face-background 'ac-clang-selection-face selection-face-bg)
   (set-face-foreground 'ac-clang-selection-face selection-face-fg)
 
-  (local-set-key (kbd "C-<tab>") 'ac-complete-clang)
-  )
-
+  (local-set-key (kbd "C-<tab>") 'ac-complete-clang))
 (add-hook 'c++-mode-hook 'my-ac-c++-mode-setup)
 
 (defun my-ac-elisp-mode-setup ()
   (add-to-list 'ac-sources 'ac-source-functions) ;; elisp functions
   (add-to-list 'ac-sources 'ac-source-features) ;; elisp features
   (add-to-list 'ac-sources 'ac-source-symbols) ;; elisp symbols
-  (add-to-list 'ac-sources 'ac-source-variables) ;; elisp variables
-  )
-
+  (add-to-list 'ac-sources 'ac-source-variables)) ;; elisp variables
 (add-hook 'emacs-lisp-mode-hook 'my-ac-elisp-mode-setup)
+
+(defun my-ac-latex-mode-setup ()
+  (require 'auto-complete-auctex)
+  (require 'ac-auctex-setup))
+(add-hook 'latex-mode-hook 'my-ac-latex-mode-setup)
 
 (provide 'setup-autocomplete)

@@ -106,8 +106,9 @@
    flycheck                ; linting
    smooth-scrolling        ; add a top and bottom margin when scrolling
    powerline               ; vim-esque powerline
-   auto-complete           ; auto completion
    yasnippet               ; more auto-completion
+   auto-complete           ; auto completion
+   auto-complete-auctex    ; auto-completion for auctex
    ;; Major modes
    markdown-mode           ; markdown editing
    lua-mode                ; lua editing

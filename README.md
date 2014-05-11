@@ -1,4 +1,4 @@
-# The beauty
+# The look
 ![Screenshot of my emacs in action](emacs-screen.png?raw=true "Screenshot of my emacs in action")
 # My emacs
 
