@@ -33,7 +33,8 @@
 
 ;; Keep emacs custom settings in a separate file
 (setq custom-file (concat root-dir "custom.el"))
-(load custom-file)
+(if (file-exists-p custom-file)
+    (load custom-file))
 
 ;; Save backup, auto save and temp files in data folder
 (setq backup-directory-alist `((".*" . ,backup-dir)))
