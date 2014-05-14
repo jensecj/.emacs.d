@@ -130,7 +130,7 @@
     (yas-global-mode 1)))
 
 (use-package god-mode
-  :bind ("<escape>" . god-local-mode))
+  :bind ("<escape>" . god-mode-all))
 
 (use-package goto-chg
   :bind ("M-." . goto-last-change))
