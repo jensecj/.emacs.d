@@ -132,5 +132,7 @@
 (use-package god-mode
   :bind ("<escape>" . god-local-mode))
 
+(use-package goto-chg
+  :bind ("M-." . goto-last-change))
 
 (provide 'setup-packages)

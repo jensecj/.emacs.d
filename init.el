@@ -111,6 +111,7 @@
    auto-complete           ; auto completion
    auto-complete-auctex    ; auto-completion for auctex
    god-mode                ; mode that prefixes C-
+   impatient-mode          ; live web development
    ;; Major modes
    markdown-mode           ; markdown editing
    lua-mode                ; lua editing
@@ -135,7 +136,7 @@
    magit                   ; magical git interface for emacs
    move-text               ; easily move lines up/down
    fill-column-indicator   ; line to indicate the fill column
-   impatient-mode          ; live web development
+   goto-chg                ; go to last change
    ))
 
 ;; =======================================
