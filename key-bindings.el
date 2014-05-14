@@ -50,6 +50,7 @@
 ;; Disable pop ups from the mouse
 (global-set-key (kbd "C-<down-mouse-1>") nil)
 (global-set-key (kbd "C-<down-mouse-3>") nil)
+(global-set-key (kbd "S-<down-mouse-1>") nil)
 
 ;; Jump to symbol definitions
 (global-set-key (kbd "C-x C-i") 'imenu)
