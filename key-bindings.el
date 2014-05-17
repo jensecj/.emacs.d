@@ -22,15 +22,13 @@
 (global-set-key (kbd "C-c k") 'eval-region)
 
 ;; Join lines
-(global-set-key (kbd "M-j") ;; upwards
+(global-set-key (kbd "M-j") ;; downwards
                 (lambda ()
                   (interactive)
-                  (join-line -1)))
-
-(global-set-key (kbd "M-J") ;; downwards
-                (lambda ()
-                  (interactive)
-                  (join-line)))
+                  (if (region-active-p)
+                      (progn
+                        (join-region))
+                    (join-line -1))))
 
 ;; Scroll the buffer without moving the point (unless we over-move)
 (global-set-key (kbd "C-<up>")

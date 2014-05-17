@@ -85,3 +85,15 @@
     (comment-kill (save-excursion
                     (goto-char (point-max))
                     (line-number-at-pos)))))
+
+(defun join-region ()
+  "join all lines in a region"
+  (save-excursion
+    (message "joining region")
+    (let ((beg (region-beginning))
+          (end (copy-marker (region-end))))
+      (goto-char beg)
+      (while (< (point) end)
+        (progn
+          (join-line 1)
+          (end-of-line))))))
