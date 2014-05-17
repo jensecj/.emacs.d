@@ -20,8 +20,7 @@ setup-packages.el and key-bindings.el.
 
 ### Custom key bindings
 
-* `M-j`         Joins the line below to this line
-* `M-J`         Joins the line above to this line
+* `M-j`         Joins the region or the line below the current line
 * `C-c C-k`     Evaluate current buffer
 * `C-c k`       Evaluate current region
 * `C-c n`       Indent, remove trailing white space and untabify the entire buffer
