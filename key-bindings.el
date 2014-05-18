@@ -108,6 +108,12 @@
 
 (global-set-key (kbd "C-x C-r") 'sudo-edit)
 
+;; keybindings for window resizing
+(global-set-key (kbd "M-S-<left>") 'move-border-left)
+(global-set-key (kbd "M-S-<right>") 'move-border-right)
+(global-set-key (kbd "M-S-<up>") 'move-border-up)
+(global-set-key (kbd "M-S-<down>") 'move-border-down)
+
 ;; =======================================
 ;; ================================= Modes
 ;; =======================================
