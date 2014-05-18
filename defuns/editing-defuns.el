@@ -77,8 +77,8 @@
   (back-to-indentation)
   (kill-line))
 
-;; kill all comments in buffer
 (defun comment-kill-all ()
+  "kill all comments in buffer"
   (interactive)
   (save-excursion
     (goto-char (point-min))

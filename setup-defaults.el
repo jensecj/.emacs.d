@@ -100,10 +100,10 @@
 ;; Better title
 (setq frame-title-format "emacs - %b")
 
-;; end files in newlines
+;; And files in newlines
 (setq require-final-newline 't)
 
-;; just save before compiling already
+;; Just save before compiling already
 (setq compilation-ask-about-save nil)
 
 ;; When popping the mark, continue popping until the cursor actually moves

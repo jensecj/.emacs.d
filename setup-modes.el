@@ -6,13 +6,13 @@
 
 ;; use 'C-c C-c' to compile across languages, and use a proper compile command
 (add-hook 'c++-mode-hook
-          '(lambda()
+          '(lambda ()
              (set (make-local-variable 'compile-command)
                   (format "clang++ -std=c++11 %s -o %s" (get-file-name+ext) (get-file-name)))
              (local-set-key (kbd "C-c C-c") 'compile)))
 
 (add-hook 'java-mode-hook
-          '(lambda()
+          '(lambda ()
              (set (make-local-variable 'compile-command)
                   (format "javac %s" (get-file-name+ext)))
              (local-set-key (kbd "C-c C-c") 'compile)))
