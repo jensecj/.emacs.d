@@ -48,11 +48,6 @@
 (require 'tramp)
 (setq tramp-persistency-file-name (concat data-dir ".tramp"))
 
-;; stop leaking information, you are not a browser
-(require 'url)
-(setq url-privacy-level 'paranoid)
-(url-setup-privacy-info)
-
 ;; Save point position between sessions
 (require 'saveplace)
 (setq-default save-place t)
