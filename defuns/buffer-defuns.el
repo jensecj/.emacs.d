@@ -109,21 +109,13 @@
   (interactive "P")
   (move-border-up-or-down arg nil))
 
-(defun untabify-buffer ()
-  (interactive)
-  (untabify (point-min) (point-max)))
-
-(defun indent-buffer ()
-  (interactive)
-  (indent-region (point-min) (point-max)))
-
 (defun cleanup-buffer ()
   "Perform a bunch of operations on the white space content of a buffer.
 Including indent-buffer, which should not be called automatically on save."
   (interactive)
-  (untabify-buffer)
-  (delete-trailing-whitespace)
-  (indent-buffer))
+  (whitespace-cleanup-region (point-min) (point-max))
+  (indent-buffer)
+  (message "cleaned up"))
 
 (require 's)
 
