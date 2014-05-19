@@ -114,7 +114,7 @@
 Including indent-buffer, which should not be called automatically on save."
   (interactive)
   (whitespace-cleanup-region (point-min) (point-max))
-  (indent-buffer)
+  (indent-region (point-min) (point-max))
   (message "cleaned up"))
 
 (require 's)
