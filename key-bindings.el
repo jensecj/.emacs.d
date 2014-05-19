@@ -114,6 +114,8 @@
 (global-set-key (kbd "M-S-<up>") 'move-border-up)
 (global-set-key (kbd "M-S-<down>") 'move-border-down)
 
+(global-set-key (kbd "M-g M-g") 'goto-line-with-feedback)
+
 ;; =======================================
 ;; ================================= Modes
 ;; =======================================
