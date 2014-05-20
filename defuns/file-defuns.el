@@ -66,5 +66,3 @@
   (insert " ")
   (backward-delete-char 1)
   (save-buffer))
-
-(provide 'file-defuns)
