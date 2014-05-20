@@ -113,7 +113,7 @@
   "Perform a bunch of operations on the white space content of a buffer.
 Including indent-buffer, which should not be called automatically on save."
   (interactive)
-  (whitespace-cleanup-region (point-min) (point-max))
+  (whitespace-cleanup)
   (indent-region (point-min) (point-max))
   (message "cleaned up"))
 
