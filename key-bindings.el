@@ -42,7 +42,13 @@
                   (scroll-up 3)))
 
 ;; Comment/uncomment block
-(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-c c")
+                (lambda ()
+                  (interactive)
+                  (if (region-active-p)
+                      (comment-or-uncomment-region (region-beginning) (region-end))
+                    (comment-or-uncomment-region (line-beginning-position) (line-end-position)))))
+
 (global-set-key (kbd "C-c u") 'uncomment-region)
 
 ;; Disable pop ups from the mouse
