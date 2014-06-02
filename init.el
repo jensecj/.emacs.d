@@ -2,17 +2,6 @@
 ;; ====================== Interface tweaks
 ;; =======================================
 
-;; Define our directories
-(defconst root-dir "~/.emacs.d/")
-(defconst data-dir (concat root-dir "data/"))
-(defconst backup-dir (concat data-dir "backups/"))
-
-(unless (file-exists-p data-dir)
-  (make-directory data-dir))
-
-(unless (file-exists-p backup-dir)
-  (make-directory backup-dir))
-
 ;; Hide the splash screen
 (setq inhibit-startup-message t)
 
@@ -28,8 +17,24 @@
 ;; ================ Setup data directories
 ;; =======================================
 
+;; Define our directories
+(defconst root-dir "~/.emacs.d/")
+(defconst data-dir (concat root-dir "data/")) ; config data
+(defconst backup-dir (concat data-dir "backups/")) ; backups and autosaves
+(defconst modes-dir (concat root-dir "modes/")) ; homebrewed modes
+
+(unless (file-exists-p data-dir)
+  (make-directory data-dir))
+
+(unless (file-exists-p modes-dir)
+  (make-directory modes-dir))
+
+(unless (file-exists-p backup-dir)
+  (make-directory backup-dir))
+
 ;; Add .emacs.d to load-path
 (add-to-list 'load-path root-dir)
+(add-to-list 'load-path modes-dir)
 
 ;; Keep emacs custom settings in a separate file
 (setq custom-file (concat root-dir "custom.el"))
