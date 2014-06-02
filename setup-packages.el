@@ -1,5 +1,24 @@
 (require 'use-package)
 
+;;; Major modes
+
+
+(use-package latex
+  :defer t
+  :init (add-hook 'LaTeX-mode-hook 'reftex-mode) ;; enable reftex
+  :config
+  (progn
+    (setq-default TeX-PDF-mode t) ;; default to pdf
+    (setq-default TeX-global-PDF-mode t) ;; default to pdf
+    (setq-default TeX-parse-self t) ;; parse on load
+    (setq-default TeX-auto-save t) ;; parse on save
+    (setq-default TeX-save-query nil) ;; save before compiling
+    (setq-default TeX-master nil) ;; try to figure out which file is the master
+    (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
+    ))
+
+;;; Minor modes
+
 ;; (use-package fill-column-indicator
 ;;   :init
 ;;   (progn
@@ -95,20 +114,6 @@
   :bind ("C-x C-b" . ace-jump-buffer))
 
 (use-package smooth-scrolling)
-
-(use-package latex
-  :defer t
-  :init (add-hook 'LaTeX-mode-hook 'reftex-mode) ;; enable reftex
-  :config
-  (progn
-    (setq-default TeX-PDF-mode t) ;; default to pdf
-    (setq-default TeX-global-PDF-mode t) ;; default to pdf
-    (setq-default TeX-parse-self t) ;; parse on load
-    (setq-default TeX-auto-save t) ;; parse on save
-    (setq-default TeX-save-query nil) ;; save before compiling
-    (setq-default TeX-master nil) ;; try to figure out which file is the master
-    (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
-    ))
 
 (use-package flyspell
   :diminish flyspell-mode
