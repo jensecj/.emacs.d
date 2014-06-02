@@ -9,7 +9,7 @@
   :group 'languages)
 
 (defcustom botcode-comment-char ?\#
-  "*The comment-start character assumed by botcode mode."
+  "The comment-start character assumed by botcode mode."
   :type 'character
   :group 'botcode)
 
@@ -26,7 +26,7 @@
 (if botcode-mode-map
     nil
   (setq botcode-mode-map (make-sparse-keymap))
-  (define-key botcode-mode-map "<tab>" 'botcode-indent)
+  (define-key botcode-mode-map "\C-i" 'botcode-indent)
   )
 
 (defconst botcode-font-lock-keywords
@@ -55,6 +55,8 @@
   (make-local-variable 'botcode-mode-syntax-table)
   (setq botcode-mode-syntax-table (make-syntax-table))
   (set-syntax-table botcode-mode-syntax-table)
+  (setq to-column nil)
+  (setq indent-line-function 'botcode-indent)
 
   (run-hooks 'botcode-mode-set-comment-hook)
 
@@ -77,7 +79,6 @@
     (setq botcode-flush-left-empty-comment-pattern (concat "^" cs cs cs " *$"))
     )
 
-  (setq fill-prefix "\t")
   (run-hooks 'botcode-mode-hook))
 
 (defun botcode-indent ()
