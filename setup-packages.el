@@ -2,6 +2,8 @@
 
 ;;; Major modes
 
+(use-package botcode-mode
+  :mode "\\.bot\\'")
 
 (use-package latex
   :defer t
