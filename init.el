@@ -110,6 +110,8 @@
    yasnippet               ; more auto-completion
    auto-complete           ; auto completion
    auto-complete-auctex    ; auto-completion for auctex
+   auto-complete-clang     ; auto-completion for clang
+   auto-complete-c-headers ; auto-completion for c/c++ header files
    god-mode                ; mode that prefixes C-
    impatient-mode          ; live web development
    ;; Major modes
