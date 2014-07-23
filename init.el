@@ -139,6 +139,7 @@
    move-text               ; easily move lines up/down
    fill-column-indicator   ; line to indicate the fill column
    goto-chg                ; go to last change
+   ag                      ; speedy search
    ))
 
 ;; =======================================

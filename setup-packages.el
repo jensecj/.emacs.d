@@ -142,4 +142,8 @@
 (use-package goto-chg
   :bind ("M-." . goto-last-change))
 
+(use-package ag
+  :bind ("C-M-f" . ag)
+  :config (setq ag-highlight-search t))
+
 (provide 'setup-packages)
