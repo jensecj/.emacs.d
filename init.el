@@ -140,6 +140,7 @@
    fill-column-indicator   ; line to indicate the fill column
    goto-chg                ; go to last change
    ag                      ; speedy search
+   git-timemachine         ; easily check file changes through commits
    ))
 
 ;; =======================================
