@@ -117,4 +117,12 @@
     (dotimes (i 10)
       (when (= p (point)) ad-do-it))))
 
+;; Create nonexistent directories when saving a file
+(add-hook 'before-save-hook
+          (lambda ()
+            (when buffer-file-name
+              (let ((dir (file-name-directory buffer-file-name)))
+                (when (not (file-exists-p dir))
+                  (make-directory dir t))))))
+
 (provide 'setup-defaults)
