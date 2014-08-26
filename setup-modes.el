@@ -17,4 +17,7 @@
                   (format "javac %s" (get-file-name+ext)))
              (local-set-key (kbd "C-c C-c") 'compile)))
 
+;; associate file names with modes
+(add-to-list 'auto-mode-alist '("\\.zsh\\'" . shell-script-mode))
+
 (provide 'setup-modes)
