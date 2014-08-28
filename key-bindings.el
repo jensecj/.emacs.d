@@ -122,13 +122,4 @@
 
 (global-set-key (kbd "M-g M-g") 'goto-line-with-feedback)
 
-;; =======================================
-;; ================================= Modes
-;; =======================================
-
-;; in c++ mode, compile using C-c C-c
-(require 'cc-mode)
-(add-hook 'c++-mode-hook '(lambda() (define-key c++-mode-map (kbd "C-c C-c") 'compile)))
-
-
 (provide 'key-bindings)
