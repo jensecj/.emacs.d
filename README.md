@@ -91,6 +91,7 @@ setup-packages.el and key-bindings.el.
 ### Navigation
 
 * `C-<left,right>` Move over words/paragraphs
+* `M-<left,right>` Move over expressions
 * `C-<up,down>` Moves buffer up/down without moving point
 * `C-a` 		Go to start of line / indentation (press multiple times to toggle between the two)
 * `C-e` 		Go to end of line
