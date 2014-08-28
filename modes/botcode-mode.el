@@ -9,7 +9,7 @@
   :group 'languages)
 
 (defcustom botcode-comment-char ?\#
-  "The comment-start character assumed by botcode mode."
+  "The 'comment-start' character assumed by botcode mode."
   :type 'character
   :group 'botcode)
 
