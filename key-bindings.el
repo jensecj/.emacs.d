@@ -2,6 +2,12 @@
 ;; ===================== Built-in features
 ;; =======================================
 
+;; Insert tilde with a single keystroke
+(global-set-key (kbd "<menu>") (print "~"))
+
+;; Easily mark the entire buffer
+(global-set-key (kbd "C-x a") 'mark-whole-buffer)
+
 ;; Quit emacs, mnemonic is C-x REALLY QUIT
 (global-set-key (kbd "C-x r q") 'save-buffers-kill-terminal)
 ;; Kill emacs, mnemonic is C-x REALLY KILL
