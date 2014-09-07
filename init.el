@@ -173,6 +173,8 @@
   (when (file-regular-p file)
     (load file)))
 
+(require 'notes)
+
 ;; Load custom key bindings
 (require 'key-bindings)
 
