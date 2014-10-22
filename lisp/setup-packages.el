@@ -21,14 +21,14 @@
 
 ;;; Minor modes
 
-;; (use-package fill-column-indicator
-;;   :init
-;;   (progn
-;;     (setq fci-rule-width 1)
-;;     (setq fci-rule-color "dark gray")
-;;     (setq fci-rule-column 80)
-;;     (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-;;     (global-fci-mode 1)))
+(use-package fill-column-indicator
+  :init
+  (progn
+    (setq fci-rule-width 1)
+    (setq fci-rule-color "dark gray")
+    (setq fci-rule-column 80)
+    (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+    (global-fci-mode 1)))
 
 (use-package smartparens-config
   :diminish smartparens-mode
@@ -146,5 +146,10 @@
 (use-package ag
   :bind ("C-S-s" . ag)
   :config (setq ag-highlight-search t))
+
+(use-package dired
+  :init
+  (progn
+    (define-key dired-mode-map (kbd "<backspace>") 'dired-up-directory)))
 
 (provide 'setup-packages)

@@ -19,25 +19,22 @@
 
 ;; Define our directories
 (defconst root-dir "~/.emacs.d/")
-(defconst lisp-dir (concat root-dir "lisp/")) ; home brewed lisp things
+(defconst lisp-dir (concat root-dir "lisp/")) ; config data
 (defconst data-dir (concat root-dir "data/")) ; config data
-(defconst backup-dir (concat data-dir "backups/")) ; backups and auto saves
-(defconst modes-dir (concat root-dir "modes/")) ; home brewed modes
-
-(unless (file-exists-p lisp-dir)
-  (make-directory lisp-dir))
+(defconst backup-dir (concat data-dir "backups/")) ; backups and autosaves
+(defconst modes-dir (concat root-dir "modes/")) ; homebrewed modes
 
 (unless (file-exists-p data-dir)
   (make-directory data-dir))
 
-(unless (file-exists-p backup-dir)
-  (make-directory backup-dir))
-
 (unless (file-exists-p modes-dir)
   (make-directory modes-dir))
 
+(unless (file-exists-p backup-dir)
+  (make-directory backup-dir))
+
 ;; Add .emacs.d to load-path
-(add-to-list 'load-path lisp-dir)
+(add-to-list 'load-path root-dir)
 (add-to-list 'load-path modes-dir)
 
 ;; Keep emacs custom settings in a separate file
@@ -177,7 +174,11 @@
   (when (file-regular-p file)
     (load file)))
 
+(setq ein-dir (concat root-dir "ein/"))
+(add-to-list 'load-path ein-dir)
+
 (require 'notes)
+(require 'hl-fill-column)
 
 ;; Load custom key bindings
 (require 'key-bindings)
