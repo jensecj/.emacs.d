@@ -27,6 +27,7 @@
     nil
   (setq botcode-mode-map (make-sparse-keymap))
   (define-key botcode-mode-map "\C-i" 'botcode-indent)
+  (define-key botcode-mode-map "\C-c\C-c" 'compile)
   )
 
 (defconst botcode-font-lock-keywords
@@ -59,6 +60,9 @@
   (setq indent-line-function 'botcode-indent)
 
   (run-hooks 'botcode-mode-set-comment-hook)
+
+  (set (make-local-variable 'compile-command)
+       (format "java Compiler %s" (get-file-name+ext)))
 
   ;; Make our own local child of botcode-mode-map so we can define our own comment character.
   (use-local-map (nconc (make-sparse-keymap) botcode-mode-map))
