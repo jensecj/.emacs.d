@@ -117,7 +117,6 @@
    auto-complete-clang     ; auto-completion for clang
    auto-complete-c-headers ; auto-completion for c/c++ header files
    god-mode                ; mode that prefixes C-
-   impatient-mode          ; live web development
    ;; Major modes
    markdown-mode           ; markdown editing
    lua-mode                ; lua editing
