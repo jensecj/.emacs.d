@@ -69,7 +69,7 @@
 (require 'package)
 
 ;; Add melpa as a package archive
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 
 (package-initialize)
 
