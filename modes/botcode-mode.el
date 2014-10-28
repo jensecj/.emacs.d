@@ -27,7 +27,8 @@
     nil
   (setq botcode-mode-map (make-sparse-keymap))
   (define-key botcode-mode-map "\C-i" 'botcode-indent)
-  (define-key botcode-mode-map "\C-c\C-c" 'compile)
+  (define-key botcode-mode-map "\C-c\C-c" 'botcode-compile)
+  (define-key botcode-mode-map "\C-c\C-r" 'botcode-run)
   )
 
 (defconst botcode-font-lock-keywords
@@ -62,7 +63,7 @@
   (run-hooks 'botcode-mode-set-comment-hook)
 
   (set (make-local-variable 'compile-command)
-       (format "java Compiler %s" (get-file-name+ext)))
+       (format "java Compiler %s" (buffer-file-name)))
 
   ;; Make our own local child of botcode-mode-map so we can define our own comment character.
   (use-local-map (nconc (make-sparse-keymap) botcode-mode-map))
@@ -94,6 +95,31 @@
         (delete-horizontal-space))
     )
   )
+
+(defun botcode-compile ()
+  (interactive)
+  (let
+      ((default-directory
+         (file-name-directory
+          (directory-file-name
+           (file-name-directory
+            (buffer-file-name))))))
+    (call-interactively 'compile)))
+
+(defun botcode-run ()
+  (interactive)
+  (let
+      ((default-directory
+         (file-name-directory
+          (directory-file-name
+           (file-name-directory
+            (buffer-file-name))))))
+    (start-process
+     "Assembly Robo Wars"
+     nil
+     "java"
+     "Gui"
+     (file-name-directory (buffer-file-name)))))
 
 (provide 'botcode-mode)
 
