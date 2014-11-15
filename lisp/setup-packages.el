@@ -150,9 +150,13 @@
   :bind ("C-S-s" . ag)
   :config (setq ag-highlight-search t))
 
-(use-package dired
+(use-package dired+
+  :bind ("C-x C-d" . dired)
   :init
   (progn
-    (define-key dired-mode-map (kbd "<backspace>") 'dired-up-directory)))
+    (require 'dired)
+    (define-key dired-mode-map (kbd "<backspace>") 'diredp-up-directory-reuse-dir-buffer)
+    (toggle-diredp-find-file-reuse-dir 1)
+    ))
 
 (provide 'setup-packages)

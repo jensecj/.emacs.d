@@ -136,7 +136,7 @@
    smex                    ; better M-x
    expand-region           ; easily expand/contract selections
    undo-tree               ; better undo/redo
-   dired-details           ; more details to dired
+   dired+                  ; more dired features
    multiple-cursors        ; ability to use a lot of cursors
    diminish                ; unclutter the mode line
    magit                   ; magical git interface for emacs
@@ -159,7 +159,6 @@
 
 ;; Setup extensions
 (eval-after-load 'ido '(require 'setup-ido))
-(eval-after-load 'dired '(require 'setup-dired))
 (eval-after-load 'magit '(require 'setup-magit))
 (require 'setup-hippie)
 (require 'setup-undo-tree)
