@@ -106,6 +106,7 @@
    ido-vertical-mode       ; print ido vertically
    ace-jump-mode           ; jump around the buffer with ease
    ace-jump-buffer         ; jump between buffers
+   ace-jump-zap            ; zap-to-char in ace-jump style
    smartparens             ; automatically add end parens, highlight matching parens
    git-gutter+             ; mark added/changes/removed lines in the gutter
    flycheck                ; linting

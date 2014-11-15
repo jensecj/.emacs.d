@@ -74,6 +74,9 @@
    ("C-Ø" . ace-jump-char-mode)
    ("C-'" . ace-jump-line-mode)))
 
+(use-package ace-jump-zap
+  :bind ("C-å" . ace-jump-zap-to-char))
+
 (use-package expand-region
   :bind
   (("M-e" . er/expand-region)
