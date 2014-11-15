@@ -74,6 +74,9 @@
    ("C-Ø" . ace-jump-char-mode)
    ("C-'" . ace-jump-line-mode)))
 
+(use-package ace-jump-buffer
+  :bind ("C-x C-b" . ace-jump-buffer))
+
 (use-package ace-jump-zap
   :bind ("C-å" . ace-jump-zap-to-char))
 
@@ -115,9 +118,6 @@
 
 (use-package browse-kill-ring
   :bind ("C-x C-y" . browse-kill-ring))
-
-(use-package ace-jump-buffer
-  :bind ("C-x C-b" . ace-jump-buffer))
 
 (use-package smooth-scrolling)
 

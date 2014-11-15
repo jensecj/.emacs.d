@@ -165,6 +165,7 @@
 (require 'setup-powerline)
 (require 'setup-autocomplete)
 
+;; Setup local modes
 (require 'setup-modes)
 
 ;; Load packages
