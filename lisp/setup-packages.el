@@ -159,4 +159,7 @@
     (toggle-diredp-find-file-reuse-dir 1)
     ))
 
+(use-package subword
+  :diminish subword-mode)
+
 (provide 'setup-packages)
