@@ -118,7 +118,7 @@
    auto-complete-clang     ; auto-completion for clang
    auto-complete-c-headers ; auto-completion for c/c++ header files
    god-mode                ; mode that prefixes C-
-   workgroups              ; workgroups in emacs
+   workgroups2             ; workgroups in emacs
    ;; Major modes
    markdown-mode           ; markdown editing
    lua-mode                ; lua editing
