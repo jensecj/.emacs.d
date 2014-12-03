@@ -168,6 +168,8 @@
   :init
   (progn
     (setq wg-session-file (concat data-dir ".emacs_workgroups"))
+    (setq wg-emacs-exit-save-behavior nil)
+    (setq wg-workgroups-mode-exit-save-behavior nil)
     (workgroups-mode 1)
     (wg-reload-session)))
 
