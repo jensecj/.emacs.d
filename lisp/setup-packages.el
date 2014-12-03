@@ -164,9 +164,11 @@
 
 (use-package workgroups2
   :diminish workgroups-mode
+  :bind ("C-x w" . wg-switch-to-workgroup)
   :init
   (progn
     (setq wg-session-file (concat data-dir ".emacs_workgroups"))
-    (workgroups-mode 1)))
+    (workgroups-mode 1)
+    (wg-reload-session)))
 
 (provide 'setup-packages)
