@@ -162,4 +162,11 @@
 (use-package subword
   :diminish subword-mode)
 
+(use-package workgroups2
+  :diminish workgroups-mode
+  :init
+  (progn
+    (setq wg-session-file (concat data-dir ".emacs_workgroups"))
+    (workgroups-mode 1)))
+
 (provide 'setup-packages)
