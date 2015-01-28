@@ -76,12 +76,10 @@
   (indent-region (point-min) (point-max))
   (message "cleaned up"))
 
-(require 's)
-
 (defvar user-home-directory (concat (expand-file-name "~") "/"))
 
 (defun shorter-file-name (file-name)
-  (s-chop-prefix user-home-directory file-name))
+  (file-name-nondirectory file-name))
 
 (defun recentf--file-cons (file-name)
   (cons (shorter-file-name file-name) file-name))
