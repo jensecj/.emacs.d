@@ -5,7 +5,7 @@
 ;; =======================================
 
 ;; Insert tilde with a single keystroke
-(define-key my-keys-minor-mode-map (kbd "<menu>") (print "~"))
+(define-key my-keys-minor-mode-map (kbd "<menu>") (lambda () (interactive) (insert "~")))
 
 ;; Easily mark the entire buffer
 (define-key my-keys-minor-mode-map (kbd "C-x a") 'mark-whole-buffer)
