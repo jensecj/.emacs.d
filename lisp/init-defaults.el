@@ -1,3 +1,17 @@
+;; Hide the splash screen
+(setq inhibit-startup-message t)
+
+;; Turn off excess interface early in startup to avoid momentary display
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+;; Use Source Code Pro font if it is available
+(add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10"))
+
+;; Use the zenburn theme
+(load-theme 'zenburn t)
+
 ;; Don't blink the cursor
 (blink-cursor-mode 0)
 
@@ -65,6 +79,14 @@
 (setq recentf-max-saved-items 100) ;; just 20 is too recent
 (recentf-mode 1)
 
+;; Make backups of files, even when they're in version control
+(setq vc-make-backup-files t)
+
+;; Keep emacs custom settings in a separate file
+(setq custom-file (concat root-dir "custom.el"))
+(if (file-exists-p custom-file)
+    (load custom-file))
+
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
 
@@ -125,4 +147,4 @@
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
 
-(provide 'setup-defaults)
+(provide 'init-defaults)
