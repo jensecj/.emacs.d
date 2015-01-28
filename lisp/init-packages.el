@@ -8,11 +8,9 @@
 ;; Refresh package archive if it does not exist or is older than a week
 (defconst melpa-archive (concat root-dir "elpa/archives/melpa"))
 
-(unless (file-exists-p melpa-archive)
-  (package-refresh-contents))
-
-(if (> (file-age melpa-archive) 604800)
-    (package-refresh-contents))
+(if (or (not (file-exists-p melpa-archive)) ;; if there exists no archive cache
+        (> (file-age melpa-archive) 604800)) ;; or if the cache is old (a week = 60s * 60m * 24h * 7d)
+    (package-refresh-contents)) ;; update the package archive cache
 
 ;; Install missing packages
 (defun install-packages (packages)
