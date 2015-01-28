@@ -4,8 +4,8 @@
 (defvar init-files
   '(
     init-directories ;; Setup directories and add things to the load-path
-    init-packages ;; Handle missing packages, then package specific configuration
     init-defuns ;; Load all home made lisp functions
+    init-packages ;; Handle missing packages, then package specific configuration
     init-defaults ;; Setup some better defaults
     init-modes ;; Setup mode specific configuration
     init-keybindings ;; Setup keybindings for everything
