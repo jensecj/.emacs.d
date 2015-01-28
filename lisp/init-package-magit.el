@@ -14,4 +14,4 @@
 (eval-after-load "magit"
   '(define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
 
-(provide 'setup-magit)
+(provide 'init-package-magit)

@@ -12,13 +12,14 @@
         (> (file-age melpa-archive) 604800)) ;; or if the cache is old (a week = 60s * 60m * 24h * 7d)
     (package-refresh-contents)) ;; update the package archive cache
 
-;; Install missing packages
 (defun install-packages (packages)
+  "Install a list of packages, skip packages that are already installed"
   (mapc (lambda (package)
           (unless (package-installed-p package)
             (package-install package)))
         packages))
 
+;; Install missing packages
 (install-packages
  '(
    ;; Libraries
@@ -73,19 +74,14 @@
    git-timemachine         ; easily check file changes through commits
    ))
 
-;; =======================================
-;; ======================== Setup packages
-;; =======================================
-
-;; Setup extensions
-(eval-after-load 'ido '(require 'setup-ido))
-(eval-after-load 'magit '(require 'setup-magit))
-(require 'setup-hippie)
-(require 'setup-undo-tree)
-(require 'setup-powerline)
-(require 'setup-autocomplete)
+(eval-after-load 'ido '(require 'init-package-ido))
+(eval-after-load 'magit '(require 'init-package-magit))
+(require 'init-package-hippie)
+(require 'init-package-undo-tree)
+(require 'init-package-powerline)
+(require 'init-package-autocomplete)
 
 ;; Load packages
-(require 'setup-packages)
+(require 'init-package-use-packages)
 
 (provide 'init-packages)

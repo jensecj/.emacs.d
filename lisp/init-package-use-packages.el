@@ -173,4 +173,4 @@
     (workgroups-mode 1)
     (wg-reload-session)))
 
-(provide 'setup-packages)
+(provide 'init-package-use-packages)

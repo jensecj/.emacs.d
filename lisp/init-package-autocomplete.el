@@ -71,4 +71,4 @@
   (require 'ac-auctex-setup))
 (add-hook 'latex-mode-hook 'my-ac-latex-mode-setup)
 
-(provide 'setup-autocomplete)
+(provide 'init-package-autocomplete)

@@ -60,4 +60,4 @@
                     (powerline-fill face-light (powerline-width rhs))
                     (powerline-render rhs))))))
 
-(provide 'setup-powerline)
+(provide 'init-package-powerline)

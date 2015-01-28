@@ -53,4 +53,4 @@
 (require 'ido-ubiquitous)
 (ido-ubiquitous-mode 1)
 
-(provide 'setup-ido)
+(provide 'init-package-ido)

@@ -10,4 +10,4 @@
         (set-marker m nil))
     ad-do-it))
 
-(provide 'setup-undo-tree)
+(provide 'init-package-undo-tree)
