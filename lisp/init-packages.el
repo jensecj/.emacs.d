@@ -5,11 +5,6 @@
 
 (package-initialize)
 
-(defun file-age (file)
-  (float-time
-   (time-subtract (current-time)
-                  (nth 5 (file-attributes (file-truename file))))))
-
 ;; Refresh package archive if it does not exist or is older than a week
 (defconst melpa-archive (concat root-dir "elpa/archives/melpa"))
 

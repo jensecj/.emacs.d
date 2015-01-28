@@ -1,5 +1,10 @@
 ;; Defuns for working with files
 
+(defun file-age (file)
+  (float-time
+   (time-subtract (current-time)
+                  (nth 5 (file-attributes (file-truename file))))))
+
 (defun rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
