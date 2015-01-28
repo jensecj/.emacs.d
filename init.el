@@ -153,7 +153,7 @@
 ;; =======================================
 
 ;; Use the zenburn theme
-(load-theme 'zenburn)
+(load-theme 'zenburn t)
 
 ;; Lets start with some better defaults
 (require 'setup-defaults)
