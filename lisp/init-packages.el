@@ -74,14 +74,21 @@
    git-timemachine         ; easily check file changes through commits
    ))
 
-(eval-after-load 'ido '(require 'init-package-ido))
-(eval-after-load 'magit '(require 'init-package-magit))
-(require 'init-package-hippie)
-(require 'init-package-undo-tree)
-(require 'init-package-powerline)
-(require 'init-package-autocomplete)
+(defvar package-init-files
+  '(
+    init-package-ido
+    init-package-magit
+    init-package-hippie
+    init-package-undo-tree
+    init-package-powerline
+    init-package-autocomplete
+    init-package-use-packages
+    ))
 
-;; Load packages
-(require 'init-package-use-packages)
+;; Safely load all the package init files
+(message "## Started loading package init files")
+(dolist (file package-init-files)
+  (safe-require file))
+(message "## Finished loading package init files")
 
 (provide 'init-packages)

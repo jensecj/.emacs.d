@@ -16,21 +16,14 @@
   "Safely requires FEATURE."
   (condition-case ex
       (progn
-        (message (format "====== Loading \"%s\"" (symbol-name feature)))
-        (require feature)
-        )
-    ('error
-     (progn
-       (message (format "====== Error loading \"%s\": %s" (symbol-name feature) ex))
-       )
-     )))
-
-(switch-to-buffer "*Messages*")
+        (message (format "@ Loading \"%s\"" (symbol-name feature)))
+        (require feature))
+    ('error (message (format "@ Error loading \"%s\": %s" (symbol-name feature) ex)))))
 
 ;; Safely load all the init files
-(message "=== Started loading init files")
+(message "# Started loading init files")
 (dolist (file init-files)
   (safe-require file))
-(message "=== Finished loading init files")
+(message "# Finished loading init files")
 
 (provide 'init)
