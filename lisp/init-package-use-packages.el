@@ -171,6 +171,6 @@
     (setq wg-emacs-exit-save-behavior nil)
     (setq wg-workgroups-mode-exit-save-behavior nil)
     (workgroups-mode 1)
-    (wg-reload-session)))
+    (wg-open-session wg-session-file)))
 
 (provide 'init-package-use-packages)
