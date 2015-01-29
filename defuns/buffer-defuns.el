@@ -89,5 +89,5 @@
   (interactive)
   (let* ((recent-files (mapcar 'recentf--file-cons recentf-list))
          (files (mapcar 'car recent-files))
-         (file (completing-read "Choose recent file: " files)))
+         (file (completing-read "Choose recent file: " (cdr files) nil t nil nil (car files))))
     (find-file (cdr (assoc file recent-files)))))
