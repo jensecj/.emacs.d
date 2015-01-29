@@ -26,4 +26,6 @@
   (safe-require file))
 (message "# Finished loading init files")
 
+(message (format "Emacs initialized in %s" (emacs-init-time)))
+
 (provide 'init)
