@@ -70,8 +70,8 @@
    move-text               ; easily move lines up/down
    fill-column-indicator   ; line to indicate the fill column
    goto-chg                ; go to last change
-   ag                      ; speedy search
    git-timemachine         ; easily check file changes through commits
+   wgrep                   ; editable grep buffer
    ))
 
 (defvar package-init-files

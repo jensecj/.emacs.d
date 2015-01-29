@@ -146,10 +146,6 @@
 (use-package goto-chg
   :bind ("M-." . goto-last-change))
 
-(use-package ag
-  :bind ("C-S-s" . ag)
-  :config (setq ag-highlight-search t))
-
 (use-package dired+
   :bind ("C-x C-d" . dired)
   :init
@@ -172,5 +168,15 @@
     (setq wg-workgroups-mode-exit-save-behavior nil)
     (workgroups-mode 1)
     (wg-open-session wg-session-file)))
+
+(use-package wgrep
+  :bind ("C-S-g" . rgrep)
+  :init
+  (progn
+    (require 'grep)
+    (define-key grep-mode-map (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode)
+    (define-key grep-mode-map (kbd "C-x C-k") 'wgrep-abort-changes)
+    (define-key grep-mode-map (kbd "C-c C-c") 'wgrep-finish-edit)
+    ))
 
 (provide 'init-package-use-packages)
