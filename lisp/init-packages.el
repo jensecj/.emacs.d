@@ -12,10 +12,19 @@
         (> (file-age melpa-archive) 604800)) ;; or if the cache is old (a week = 60s * 60m * 24h * 7d)
     (package-refresh-contents)) ;; update the package archive cache
 
+(defun package-installed-and-up-to-date-p (package)
+  (when (package-installed-p package)
+    (let* ((newest-desc (cadr (assq package package-archive-contents)))
+           (installed-desc (cadr (or (assq package package-alist)
+                                     (assq package package--builtins))))
+           (newest-version  (package-desc-version newest-desc))
+           (installed-version (package-desc-version installed-desc)))
+      (version-list-<= newest-version installed-version))))
+
 (defun install-packages (packages)
   "Install a list of packages, skip packages that are already installed"
   (mapc (lambda (package)
-          (unless (package-installed-p package)
+          (unless (package-installed-and-up-to-date-p package)
             (package-install package)))
         packages))
 
