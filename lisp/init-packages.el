@@ -81,6 +81,7 @@
    goto-chg                ; go to last change
    git-timemachine         ; easily check file changes through commits
    wgrep                   ; editable grep buffer
+   el-get
    ))
 
 (defvar package-init-files
