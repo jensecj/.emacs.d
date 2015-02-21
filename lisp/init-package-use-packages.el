@@ -186,4 +186,10 @@
     (setq multi-term-program "/bin/zsh")
     ))
 
+(use-package aggressive-indent
+  :init
+  (progn
+    (global-aggressive-indent-mode 1)
+    ))
+
 (provide 'init-package-use-packages)
