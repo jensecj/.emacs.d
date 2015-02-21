@@ -179,4 +179,11 @@
     (define-key grep-mode-map (kbd "C-c C-c") 'wgrep-finish-edit)
     ))
 
+(use-package multi-term
+  :bind ("C-z" . multi-term)
+  :init
+  (progn
+    (setq multi-term-program "/bin/zsh")
+    ))
+
 (provide 'init-package-use-packages)

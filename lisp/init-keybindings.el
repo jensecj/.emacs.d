@@ -21,10 +21,6 @@
 (define-key key-translation-map [?\C-h] [?\C-?])
 (define-key my-keys-minor-mode-map (kbd "<f1>") 'help-command)
 
-;; Make shell more convenient, and suspend-frame less
-(define-key my-keys-minor-mode-map (kbd "C-z") 'shell)
-(define-key my-keys-minor-mode-map (kbd "C-x M-z") 'suspend-frame)
-
 ;; Evaluate the current buffer/region
 (define-key my-keys-minor-mode-map (kbd "C-c C-k") 'eval-buffer)
 (define-key my-keys-minor-mode-map (kbd "C-c k") 'eval-region)

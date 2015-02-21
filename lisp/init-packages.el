@@ -92,7 +92,8 @@
    goto-chg                ; go to last change
    git-timemachine         ; easily check file changes through commits
    wgrep                   ; editable grep buffer
-   el-get
+   el-get                  ; more package management
+   multi-term              ; manage multiple terminals
    ))
 )
 
