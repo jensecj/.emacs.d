@@ -34,7 +34,7 @@
 (defconst botcode-font-lock-keywords
   `(
     (":\\([a-zA-Z_0-9]\\)*" . font-lock-keyword-face) ; label definitions
-    ("^\\(pop\\|push\\|inc\\|dec\\|in\\|out\\|zero\\)[ ]" . font-lock-function-name-face) ; functions
+    ("\\(pop\\|push\\|inc\\|dec\\|in\\|out\\|zero\\)[ ]" . font-lock-function-name-face) ; functions
     ("\\(ax\\|bx\\|cx\\|pc\\)[ ,\n]" . font-lock-constant-face) ; registers
     ("[0-9]+" . font-lock-builtin-face) ; number literals
     ("\\([a-z_0-9]\\)*" . font-lock-keyword-face) ; labels in use
