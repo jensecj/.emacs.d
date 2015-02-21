@@ -28,7 +28,18 @@
             (package-install package)))
         packages))
 
+(require 'cl)
+(defun is-online? ()
+  (if (and (functionp 'network-interface-list)
+           (network-interface-list))
+      (some (lambda (iface) (unless (equal "lo" (car iface))
+                              (member 'up (first (last (network-interface-info
+                                                        (car iface)))))))
+            (network-interface-list))
+    t))
+
 ;; Install missing packages
+(when (is-online?)
 (install-packages
  '(
    ;; Libraries
@@ -83,6 +94,7 @@
    wgrep                   ; editable grep buffer
    el-get
    ))
+)
 
 (defvar package-init-files
   '(
