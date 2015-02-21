@@ -187,6 +187,7 @@
     ))
 
 (use-package aggressive-indent
+  :diminish aggressive-indent-mode
   :init
   (progn
     (global-aggressive-indent-mode 1)
