@@ -153,12 +153,18 @@
     ))
 
 (use-package dired+
-  :bind ("C-x C-d" . dired)
+  :bind (("C-x C-d" . dired)
+         ("C-c C-." . dired-dotfiles-toggle))
   :init
   (progn
     (require 'dired)
     (define-key dired-mode-map (kbd "<backspace>") 'diredp-up-directory-reuse-dir-buffer)
     (toggle-diredp-find-file-reuse-dir 1)
+    (custom-theme-set-faces
+     'zenburn
+     `(diredp-dir-priv ((t (:foreground "#8CD0D3"))))
+     `(diredp-file-name ((t (:foreground "#DCDCCC"))))
+     )
     ))
 
 (use-package subword

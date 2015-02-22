@@ -181,3 +181,29 @@ Both PATTERN and CONTENTS are matched as regular expressions."
   (interactive)
   (kmacro-push-ring)
   (edit-kbd-macro 'view-lossage))
+
+(defun dired-dotfiles-toggle ()
+  "Show/hide dot-files in dired"
+  (interactive)
+  (when (equal major-mode 'dired-mode)
+    (if (or (not (boundp 'dired-dotfiles-show-p)) dired-dotfiles-show-p) ; if currently showing
+        (progn
+          (set (make-local-variable 'dired-dotfiles-show-p) nil)
+          (message "h")
+          (dired-mark-files-regexp "^\\\.")
+          (dired-do-kill-lines))
+      (progn (revert-buffer) ; otherwise just revert to re-show
+             (set (make-local-variable 'dired-dotfiles-show-p) t)))))
+
+(defun mydired-sort ()
+  "Sort dired listings with directories first."
+  (save-excursion
+    (let (buffer-read-only)
+      (forward-line 2) ;; beyond dir. header
+      (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+    (set-buffer-modified-p nil)))
+
+(defadvice dired-readin
+    (after dired-after-updating-hook first () activate)
+  "Sort dired listings with directories first before adding marks."
+  (mydired-sort))
