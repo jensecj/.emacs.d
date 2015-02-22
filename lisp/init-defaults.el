@@ -9,9 +9,6 @@
 ;; Use Source Code Pro font if it is available
 (add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10"))
 
-;; Use the zenburn theme
-(load-theme 'zenburn t)
-
 ;; Don't blink the cursor
 (blink-cursor-mode 0)
 

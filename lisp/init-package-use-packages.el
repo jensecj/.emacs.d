@@ -146,6 +146,12 @@
 (use-package goto-chg
   :bind ("M-." . goto-last-change))
 
+(use-package zenburn-theme
+  :init
+  (progn
+    (load-theme 'zenburn t)
+    ))
+
 (use-package dired+
   :bind ("C-x C-d" . dired)
   :init
