@@ -205,4 +205,10 @@
     (global-aggressive-indent-mode 1)
     ))
 
+(use-package jist
+  :init
+  (progn
+    (setq jist-enable-default-authorized 't)
+    ))
+
 (provide 'init-package-use-packages)

@@ -96,6 +96,7 @@
      multi-term              ; manage multiple terminals
      paradox                 ; better package list / management
      aggressive-indent       ; indent code like a mad man
+     jist                    ; manage github gists from emacs
      )
    )
   )
