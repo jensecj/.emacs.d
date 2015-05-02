@@ -63,7 +63,6 @@
      auto-complete-auctex    ; auto-completion for auctex
      auto-complete-clang     ; auto-completion for clang
      auto-complete-c-headers ; auto-completion for c/c++ header files
-     god-mode                ; mode that prefixes C-
      workgroups2             ; workgroups in emacs
      ;; Major modes
      markdown-mode           ; markdown editing
