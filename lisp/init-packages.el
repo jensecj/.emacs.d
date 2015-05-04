@@ -67,6 +67,7 @@
      ;; Major modes
      markdown-mode           ; markdown editing
      lua-mode                ; lua editing
+     tuareg                  ; ocaml
      ;; Themes
      zenburn-theme           ; the great zenburn theme
      ;; Misc

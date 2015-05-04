@@ -27,6 +27,13 @@
                   (format "xbuild %s" (file-name-directory (buffer-file-name))))
              (local-set-key (kbd "C-c C-c") 'compile)))
 
+(add-hook 'tuareg-mode-hook
+          '(lambda ()
+             (use-local-map nil)
+             (set (make-local-variable 'compile-command)
+                  (format "ocamlopt -o %s %s" (get-file-name) (get-file-name+ext)))
+             (local-set-key (kbd "C-c C-c") 'compile)))
+
 
 ;; associate file names with modes
 (add-to-list 'auto-mode-alist '("\\.zsh\\'" . shell-script-mode))
