@@ -96,6 +96,7 @@
      multi-term              ; manage multiple terminals
      paradox                 ; better package list / management
      jist                    ; manage github gists from emacs
+     hydra                   ; fancy keybindings
      )
    )
   )
