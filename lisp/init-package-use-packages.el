@@ -195,13 +195,6 @@
     (setq multi-term-program "/bin/zsh")
     ))
 
-(use-package aggressive-indent
-  :diminish aggressive-indent-mode
-  :init
-  (progn
-    (global-aggressive-indent-mode 1)
-    ))
-
 (use-package jist
   :init
   (progn
