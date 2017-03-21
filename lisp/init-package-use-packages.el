@@ -64,9 +64,6 @@
    ("C-M-a" . set-rectangular-region-anchor))
   :init (setq mc/list-file (concat data-dir ".mc-lists")))
 
-(use-package undo-tree
-  :init (setq global-undo-tree-mode t))
-
 (use-package browse-kill-ring
   :init (setq browse-kill-ring-quit-action 'save-and-restore))
 
@@ -113,10 +110,10 @@
   :config (setq magit-auto-revert-mode nil))
 
 (use-package undo-tree
-  :bind
-  (("C-x u" . undo-tree-visualize)
-   ("C-_" . undo-tree-undo)
-   ("M-_" . undo-tree-redo)))
+  :init (setq global-undo-tree-mode t)
+  :bind (("C-x u" . undo-tree-visualize)
+         ("C-_" . undo-tree-undo)
+         ("M-_" . undo-tree-redo)))
 
 (use-package browse-kill-ring
   :bind ("C-x C-y" . browse-kill-ring))
