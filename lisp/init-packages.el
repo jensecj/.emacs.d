@@ -118,4 +118,7 @@
   (safe-require file))
 (message "## Finished loading package init files")
 
+(add-to-list 'load-path (concat lisp-dir "misc/"))
+
 (provide 'init-packages)
+;;; init-packages.el ends here
