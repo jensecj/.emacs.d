@@ -1,4 +1,6 @@
-;; Add the emacs directory to the load-path
+(package-initialize)
+
+;; Add the emacs directory to the load path
 (add-to-list 'load-path user-emacs-directory)
 
 (defvar init-files

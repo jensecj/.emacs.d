@@ -23,7 +23,7 @@
       (version-list-<= newest-version installed-version))))
 
 (defun install-packages (packages)
-  "Install a list of packages, skip packages that are already installed"
+  "Install a list of packages, skip packages that are already installed."
   (mapc (lambda (package)
           (unless (package-installed-and-up-to-date-p package)
             (package-install package)))
@@ -112,7 +112,7 @@
     init-package-use-packages
     ))
 
-;; Safely load all the package init files
+;; Safely load all the init files
 (message "## Started loading package init files")
 (dolist (file package-init-files)
   (safe-require file))
