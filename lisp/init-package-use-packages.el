@@ -188,4 +188,10 @@
     (setq jist-enable-default-authorized 't)
     ))
 
+(use-package unicode-fonts
+  :init
+  (progn
+    (unicode-fonts-setup)
+    ))
+
 (provide 'init-package-use-packages)

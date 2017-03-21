@@ -64,12 +64,16 @@
      auto-complete-clang     ; auto-completion for clang
      auto-complete-c-headers ; auto-completion for c/c++ header files
      ;; Major modes
+     dockerfile-mode         ; editing dockerfiles
+     yaml-mode               ; editing yaml/yml files
      markdown-mode           ; markdown editing
      lua-mode                ; lua editing
      tuareg                  ; ocaml
+     scss-mode               ; editing sassy css
      ;; Themes
      zenburn-theme           ; the great zenburn theme
      ;; Misc
+     unicode-fonts           ; support all the unicode characters
      auctex                  ; latex editing
      use-package             ; pretty package initialization
      visual-regexp-steroids  ; better regular expressions
