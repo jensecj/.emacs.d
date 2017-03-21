@@ -97,3 +97,16 @@
         (progn
           (join-line 1)
           (end-of-line))))))
+
+(defun wrap-region (b e text-begin text-end)
+  "Surround current region with given text."
+  (interactive "r\nsStart text: \nsEnd text: ")
+  (if (use-region-p)
+      (save-restriction
+        (narrow-to-region b e)
+        (goto-char (point-max))
+        (insert text-end)
+        (goto-char (point-min))
+        (insert text-begin))
+    (message "wrap-region: Error! invalid region!")
+    ))
