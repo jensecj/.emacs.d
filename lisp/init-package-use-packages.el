@@ -25,7 +25,7 @@
   :init
   (progn
     (setq fci-rule-width 1)
-    (setq fci-rule-color "dark gray")
+    (setq fci-rule-color "grey")
     (setq fci-rule-column 80)
     ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
     ;; (global-fci-mode 1)
@@ -134,7 +134,8 @@
     (define-key yas-minor-mode-map (kbd "TAB") nil)
     (define-key yas-minor-mode-map (kbd "M-<tab>") 'yas-expand) ;; use M-tab instead
     (define-key yas-keymap (kbd "<return>") 'yas/exit-all-snippets) ;; exit snippets on enter
-    (yas-global-mode 1)))
+    (yas-global-mode 1)
+    ))
 
 (use-package goto-chg
   :bind ("M-." . goto-last-change))
@@ -171,6 +172,7 @@
     (define-key grep-mode-map (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode)
     (define-key grep-mode-map (kbd "C-x C-k") 'wgrep-abort-changes)
     (define-key grep-mode-map (kbd "C-c C-c") 'wgrep-finish-edit)
+    (setq wgrep-auto-save-buffer t)
     ))
 
 (use-package multi-term
