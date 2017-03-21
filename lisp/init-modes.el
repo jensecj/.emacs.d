@@ -37,5 +37,6 @@
 
 ;; associate file names with modes
 (add-to-list 'auto-mode-alist '("\\.zsh\\'" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
 
 (provide 'init-modes)
