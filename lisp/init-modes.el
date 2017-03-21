@@ -11,7 +11,7 @@
 (add-hook 'c++-mode-hook
           '(lambda ()
              (set (make-local-variable 'compile-command)
-                  (format "clang++ -std=c++11 %s -o %s" (get-file-name+ext) (get-file-name)))
+                  (format "clang++ -std=c++14 %s -o %s" (get-file-name+ext) (get-file-name)))
              (local-set-key (kbd "C-c C-c") 'compile)))
 
 (add-hook 'java-mode-hook
