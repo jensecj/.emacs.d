@@ -46,7 +46,6 @@
      s                       ; string manipulation library
      dash                    ; list library
      ;; Minor modes
-     git-commit-mode         ; new commit mode
      gitconfig-mode          ; minor mode for editing git config files
      gitignore-mode          ; minor mode for editing git ignore files
      ido-vertical-mode       ; print ido vertically

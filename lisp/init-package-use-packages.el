@@ -27,8 +27,9 @@
     (setq fci-rule-width 1)
     (setq fci-rule-color "dark gray")
     (setq fci-rule-column 80)
-    (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-    (global-fci-mode 1)))
+    ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+    ;; (global-fci-mode 1)
+    ))
 
 (use-package smartparens-config
   :diminish smartparens-mode
@@ -51,9 +52,10 @@
   :diminish git-gutter+-mode
   :init (global-git-gutter+-mode t))
 
-(use-package flycheck
-  :diminish flycheck-mode
-  :init (global-flycheck-mode))
+;; (use-package flycheck
+;;   :diminish flycheck-mode
+;;   :init (global-flycheck-mode)
+;;   )
 
 (use-package multiple-cursors
   :bind
@@ -121,13 +123,13 @@
 
 (use-package smooth-scrolling)
 
-(use-package flyspell
-  :diminish flyspell-mode
-  :commands flyspell-prog-mode
-  :init
-  (progn
-    (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode)
-    (add-hook 'lua-mode-hook 'flyspell-prog-mode)))
+;; (use-package flyspell
+;;   :diminish flyspell-mode
+;;   :commands flyspell-prog-mode
+;;   :init
+;;   (progn
+;;     (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode)
+;;     (add-hook 'lua-mode-hook 'flyspell-prog-mode)))
 
 (use-package yasnippet
   :diminish yas-minor-mode
