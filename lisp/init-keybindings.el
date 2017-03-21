@@ -60,6 +60,9 @@
 (define-key my-keys-minor-mode-map (kbd "C-<down-mouse-3>") nil)
 (define-key my-keys-minor-mode-map (kbd "S-<down-mouse-1>") nil)
 
+;; Disable suspend-frame
+(global-set-key "\C-x\C-z" nil)
+
 ;; Jump to symbol definitions
 (define-key my-keys-minor-mode-map (kbd "C-x C-i") 'imenu)
 

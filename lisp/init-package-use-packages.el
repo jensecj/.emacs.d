@@ -40,9 +40,7 @@
     (show-smartparens-global-mode t)))
 
 (use-package smex
-  :bind
-  (("M-x" . smex)
-   ("M-X" . smex-major-mode-commands))
+  :bind ("M-x" . smex)
   :init
   (progn
     (smex-initialize)
@@ -69,8 +67,7 @@
 
 (use-package ace-jump-mode
   :bind
-  (("C-ø" . ace-jump-mode)
-   ("C-Ø" . ace-jump-char-mode)
+  (("C-ø" . ace-jump-char-mode)
    ("C-'" . ace-jump-line-mode)))
 
 (use-package ace-jump-buffer
@@ -88,8 +85,8 @@
   :bind
   (("M-i" . copy-inner)
    ("M-o" . copy-outer)
-   ("M-I" . change-inner)
-   ("M-O" . change-outer)))
+   ("C-i" . change-inner)
+   ("C-o" . change-outer)))
 
 (use-package move-text
   :bind
