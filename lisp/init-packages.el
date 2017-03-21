@@ -63,7 +63,6 @@
      auto-complete-auctex    ; auto-completion for auctex
      auto-complete-clang     ; auto-completion for clang
      auto-complete-c-headers ; auto-completion for c/c++ header files
-     workgroups2             ; workgroups in emacs
      ;; Major modes
      markdown-mode           ; markdown editing
      lua-mode                ; lua editing
@@ -94,9 +93,7 @@
      wgrep                   ; editable grep buffer
      el-get                  ; more package management
      multi-term              ; manage multiple terminals
-     paradox                 ; better package list / management
      jist                    ; manage github gists from emacs
-     hydra                   ; fancy keybindings
      )
    )
   )

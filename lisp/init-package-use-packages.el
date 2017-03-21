@@ -169,26 +169,6 @@
 (use-package subword
   :diminish subword-mode)
 
-(use-package workgroups2
-  :diminish workgroups-mode
-  :init
-  (progn
-    (defhydra hydra-workgroups (global-map "C-x w" :hint nil)
-      "
-_s_: switch to workgroup
-_c_: create new workgroup
-_r_: reload session
-"
-      ("s" wg-switch-to-workgroup)
-      ("c" wg-create-workgroup)
-      ("r" wg-reload-session)
-      ("q" nil :exit t))
-    (setq wg-session-file (concat data-dir ".emacs_workgroups"))
-    (setq wg-emacs-exit-save-behavior nil)
-    (setq wg-workgroups-mode-exit-save-behavior nil)
-    (workgroups-mode 1)
-    (wg-open-session wg-session-file)))
-
 (use-package wgrep
   :bind ("C-S-g" . rgrep)
   :init
