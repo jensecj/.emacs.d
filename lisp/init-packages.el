@@ -73,6 +73,7 @@
      ;; Themes
      zenburn-theme           ; the great zenburn theme
      ;; Misc
+     exec-path-from-shell    ; grab env variables from outside emacs
      unicode-fonts           ; support all the unicode characters
      auctex                  ; latex editing
      use-package             ; pretty package initialization

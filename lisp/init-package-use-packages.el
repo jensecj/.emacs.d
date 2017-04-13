@@ -194,4 +194,13 @@
     (unicode-fonts-setup)
     ))
 
+(use-package exec-path-from-shell
+  :init
+  (progn
+    ;; try to grab the ssh-agent if it is running
+    (exec-path-from-shell-copy-env "SSH_AGENT_PID")
+    (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")
+    ))
+
+
 (provide 'init-package-use-packages)
