@@ -85,8 +85,8 @@
   :bind
   (("M-i" . copy-inner)
    ("M-o" . copy-outer)
-   ("C-i" . change-inner)
-   ("C-o" . change-outer)))
+   ("M-I" . change-inner)
+   ("M-O" . change-outer)))
 
 (use-package move-text
   :bind
