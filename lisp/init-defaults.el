@@ -6,8 +6,19 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
-;; Use Source Code Pro font if it is available
-(add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10"))
+;; Use Source Code Pro font if it is available. when launching emacs
+;; as a daemon, fonts are not loaded until we actually produce a
+;; frame, so the font list will be empty, focus-in-hook is run when a
+;; frame is created, whether by a user of a daemon
+;; the first frame created will not have the setup, as it is created
+;; before this is run, still looking into this
+(defun init-font-setup ()
+  "setup fonts, then remove self from `focus-in-hook'"
+  (when (find-font (font-spec :name "Source Code Pro Semibold 10"))
+    (add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10")))
+  (remove-hook 'focus-in-hook 'init-font-setup))
+
+(add-hook 'focus-in-hook 'init-font-setup)
 
 ;; Don't blink the cursor
 (blink-cursor-mode 0)
