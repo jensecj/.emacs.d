@@ -1,8 +1,8 @@
 # -*- mode: snippet -*-
 # name: foreach
 # key: foreach
+
 # --
-for (auto ${1:a} : $2)
-{
+for(auto& ${1:a} : $2) {
   $0
 }
