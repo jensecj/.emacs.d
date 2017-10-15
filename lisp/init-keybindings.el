@@ -15,7 +15,7 @@
 ;; Kill emacs, mnemonic is C-x REALLY KILL
 (define-key my-keys-minor-mode-map (kbd "C-x r k") 'save-buffers-kill-emacs)
 
-(define-key my-keys-minor-mode-map (kbd "C-x C-c") 'delete-frame)
+;; (define-key my-keys-minor-mode-map (kbd "C-x C-c") '())
 
 ;; Use shell-like backspace C-h, rebind help to F1
 (define-key key-translation-map [?\C-h] [?\C-?])

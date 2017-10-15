@@ -1,8 +1,8 @@
 (require 'package)
 
 ;; Add melpa as a package archive
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(setq package-archives '(("melpa-stable" . "https://stable.melpa.org/packages/")
+                         ("melpa" . "http://melpa.org/packages/")))
 
 (package-initialize)
 
@@ -47,6 +47,7 @@
      s                       ; string manipulation library
      dash                    ; list library
      ;; Minor modes
+     rust-mode               ; for rust
      gitconfig-mode          ; minor mode for editing git config files
      gitignore-mode          ; minor mode for editing git ignore files
      ido-vertical-mode       ; print ido vertically
@@ -73,6 +74,8 @@
      ;; Themes
      zenburn-theme           ; the great zenburn theme
      ;; Misc
+     chicken-scheme
+     scheme-complete
      exec-path-from-shell    ; grab env variables from outside emacs
      unicode-fonts           ; support all the unicode characters
      auctex                  ; latex editing

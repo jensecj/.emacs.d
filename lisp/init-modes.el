@@ -34,6 +34,8 @@
                   (format "ocamlopt -o %s %s" (get-file-name) (get-file-name+ext)))
              (local-set-key (kbd "C-c C-c") 'compile)))
 
+;; use chicken scheme for scheme things
+(setq scheme-program-name "csi -:c")
 
 ;; associate file names with modes
 (add-to-list 'auto-mode-alist '("\\.zsh\\'" . shell-script-mode))

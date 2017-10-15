@@ -107,6 +107,7 @@
   :config (setq magit-auto-revert-mode nil))
 
 (use-package undo-tree
+  :diminish undo-tree-mode
   :init (setq global-undo-tree-mode t)
   :bind (("C-x u" . undo-tree-visualize)
          ("C-_" . undo-tree-undo)
@@ -159,6 +160,11 @@
      `(diredp-dir-priv ((t (:foreground "#8CD0D3"))))
      `(diredp-file-name ((t (:foreground "#DCDCCC"))))
      )
+    (setq ibuffer-formats
+          '((mark modified read-only " "
+                  (name 60 -1 :left) " "
+                  (filename-and-process 70 -1))
+            (mark " " (name 16 -1) " " filename)))
     ))
 
 (use-package subword
@@ -175,12 +181,27 @@
     (setq wgrep-auto-save-buffer t)
     ))
 
+(require 'multi-term)
+(defun better-multi-term ()
+  "Create new term buffer.
+Will prompt you shell name when you type `C-u' before this command."
+  (interactive)
+  (let ((term-buffer)
+        (buffer-new-name (file-name-directory buffer-file-name)))
+    ;; Set buffer.
+    (setq term-buffer (multi-term-get-buffer current-prefix-arg))
+    (set-buffer term-buffer)
+    ;; Internal handle for `multi-term' buffer.
+    (multi-term-internal)
+    ;; Switch buffer
+    (switch-to-buffer term-buffer)
+    (rename-buffer (concat "*" buffer-new-name "*"))))
+
 (use-package multi-term
-  :bind ("C-z" . multi-term)
+  :bind ("C-z" . better-multi-term)
   :init
   (progn
-    (setq multi-term-program "/bin/zsh")
-    ))
+    (setq multi-term-program "/bin/zsh")))
 
 (use-package jist
   :init

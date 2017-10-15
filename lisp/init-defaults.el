@@ -131,7 +131,7 @@
 ;; Better title
 (setq frame-title-format "emacs - %b")
 
-;; And files in newlines
+;; End files in newlines
 (setq require-final-newline 't)
 
 ;; Just save before compiling already
