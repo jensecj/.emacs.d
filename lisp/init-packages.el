@@ -47,6 +47,8 @@
      s                       ; string manipulation library
      dash                    ; list library
      ;; Minor modes
+     cmake-mode
+     haskell-mode            ; for haskell
      rust-mode               ; for rust
      gitconfig-mode          ; minor mode for editing git config files
      gitignore-mode          ; minor mode for editing git ignore files
@@ -74,6 +76,11 @@
      ;; Themes
      zenburn-theme           ; the great zenburn theme
      ;; Misc
+     ivy                     ; a new type of completion, ala ido
+     swiper                  ; search using ivy
+     counsel                 ; functions rewritten with ivy
+     rtags                   ; tags for c++ using clang
+     clang-format            ; buffer cleanup using clang-format
      chicken-scheme
      scheme-complete
      exec-path-from-shell    ; grab env variables from outside emacs

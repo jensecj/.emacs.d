@@ -102,8 +102,6 @@
 (define-key my-keys-minor-mode-map (kbd "M-t s") 'transpose-sexps)
 ;; (define-key my-keys-minor-mode-map (kbd "M-t p") 'transpose-params) ;; TODO: make this better
 
-;; File finding
-(define-key my-keys-minor-mode-map (kbd "C-x f") 'recentf-ido-find-file)
 (define-key my-keys-minor-mode-map (kbd "C-x b") 'ibuffer)
 
 ;; Move windows with S-<arrow>

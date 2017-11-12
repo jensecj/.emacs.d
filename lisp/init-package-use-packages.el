@@ -97,9 +97,33 @@
   :bind
   (("C-c r" . vr/replace)
    ("C-c q" . vr/query-replace)
-   ("C-s" . vr/isearch-forward)
-   ("C-r" . vr/isearch-backward)
    ("C-M-s" . vr/mc-mark)))
+
+(use-package counsel
+  :diminish counsel-mode
+  :bind
+  (("C-s" . counsel-grep-or-swiper)
+   ("C-S-s" . counsel-rg)
+   ("C-x f" . counsel-recentf)
+   ("M-x" . counsel-M-x)
+   ("M-b" . counsel-bookmark))
+  :config (setq counsel-grep-base-command
+                "rg -i -M 120 --no-heading --line-number --color never '%s' %s"))
+
+(use-package ivy
+  :diminish ivy-mode
+  :init
+  (progn
+    (setq ivy-height 15)
+    (setq ivy-count-format "")
+    (custom-theme-set-faces
+     'zenburn
+     `(ivy-current-match ((t (:background "#4f4f4f" :weight bold)))))))
+
+(use-package rtags
+  :bind
+  (("M-ø" . rtags-find-symbol-at-point)
+   ("M-æ" . rtags-location-stack-back)))
 
 (use-package magit
   :bind (("C-x m" . magit-status)
@@ -108,7 +132,7 @@
 
 (use-package undo-tree
   :diminish undo-tree-mode
-  :init (setq global-undo-tree-mode t)
+  :init (global-undo-tree-mode)
   :bind (("C-x u" . undo-tree-visualize)
          ("C-_" . undo-tree-undo)
          ("M-_" . undo-tree-redo)))
