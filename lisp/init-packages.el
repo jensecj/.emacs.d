@@ -76,6 +76,7 @@
      ;; Themes
      zenburn-theme           ; the great zenburn theme
      ;; Misc
+     beginend                ; better M-< and M->
      ivy                     ; a new type of completion, ala ido
      swiper                  ; search using ivy
      counsel                 ; functions rewritten with ivy
