@@ -52,7 +52,7 @@
      rust-mode               ; for rust
      gitconfig-mode          ; minor mode for editing git config files
      gitignore-mode          ; minor mode for editing git ignore files
-     ido-vertical-mode       ; print ido vertically
+     ;; ido-vertical-mode       ; print ido vertically
      ace-jump-mode           ; jump around the buffer with ease
      ace-jump-buffer         ; jump between buffers
      ace-jump-zap            ; zap-to-char in ace-jump style
@@ -92,9 +92,9 @@
      browse-kill-ring        ; browse the kill ring
      change-inner            ; easily change the inner or outer content of something
      flx                     ; flexible matching
-     flx-ido                 ; flexible matching in ido mode
-     ido-at-point            ; makes completion-at-point use ido
-     ido-ubiquitous          ; use ido everywhere
+     ;; flx-ido                 ; flexible matching in ido mode
+     ;; ido-at-point            ; makes completion-at-point use ido
+     ;; ido-ubiquitous          ; use ido everywhere
      smex                    ; better M-x
      expand-region           ; easily expand/contract selections
      undo-tree               ; better undo/redo
@@ -116,7 +116,7 @@
 
 (defvar package-init-files
   '(
-    init-package-ido
+    ;; init-package-ido
     init-package-magit
     init-package-hippie
     init-package-undo-tree
