@@ -114,10 +114,7 @@
   :diminish ivy-mode
   :config
   (setq ivy-height 15)
-  (setq ivy-count-format "")
-  (custom-theme-set-faces
-   'zenburn
-   `(ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))))
+  (setq ivy-count-format ""))
 
 (use-package counsel-projectile)
 (use-package projectile
@@ -132,9 +129,9 @@
    ("M-æ" . rtags-location-stack-back)))
 
 (use-package magit
-  :bind (("C-x m" . magit-status)
-         ("C-c C-a" . magit-commit-amend))
+  :bind ("C-x m" . magit-status)
   :config
+  (define-key magit-mode-map (kbd "C-c C-a") 'magit-commit-amend)
   (setq magit-auto-revert-mode nil))
 
 (use-package undo-tree
@@ -164,7 +161,12 @@
 
 (use-package zenburn-theme
   :config
-  (load-theme 'zenburn t))
+  (load-theme 'zenburn t)
+  (custom-theme-set-faces
+   'zenburn
+   `(ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))
+   `(diredp-dir-priv ((t (:foreground "#8CD0D3"))))
+   `(diredp-file-name ((t (:foreground "#DCDCCC"))))))
 
 (use-package dired+
   :bind (("C-x C-d" . dired)
@@ -173,10 +175,6 @@
   (require 'dired)
   (define-key dired-mode-map (kbd "<backspace>") 'diredp-up-directory-reuse-dir-buffer)
   (toggle-diredp-find-file-reuse-dir 1)
-  (custom-theme-set-faces
-   'zenburn
-   `(diredp-dir-priv ((t (:foreground "#8CD0D3"))))
-   `(diredp-file-name ((t (:foreground "#DCDCCC")))))
   (setq ibuffer-formats
         '((mark modified read-only " "
                 (name 60 -1 :left) " "
@@ -212,7 +210,9 @@
       ;; Switch buffer
       (switch-to-buffer term-buffer)
       (rename-buffer (concat "*" buffer-new-name "*"))))
-  (setq multi-term-program "/bin/zsh"))
+  (setq multi-term-program "/bin/zsh")
+  (setq term-bind-key-alist '()) ;; clear the binds list, defaulting to emacs binds
+  )
 
 (use-package jist
   :config
