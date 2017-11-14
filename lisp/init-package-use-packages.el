@@ -1,7 +1,5 @@
 (require 'use-package)
 
-;;; Major modes
-
 (use-package botcode-mode
   :mode "\\.bot\\'")
 
@@ -17,8 +15,6 @@
   (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
   (add-hook 'LaTeX-mode-hook 'reftex-mode) ;; enable reftex
   )
-
-;;; Minor modes
 
 (use-package fill-column-indicator
   :diminish fci-mode
@@ -36,12 +32,6 @@
   (setq sp-autoescape-string-quote nil)
   (smartparens-global-mode t)
   (show-smartparens-global-mode t))
-
-(use-package smex
-  :bind ("M-x" . smex)
-  :config
-  (smex-initialize)
-  (setq smex-save-file (concat data-dir ".smex-items")))
 
 (use-package git-gutter+
   :diminish git-gutter+-mode
@@ -95,8 +85,7 @@
 (use-package visual-regexp-steroids
   :bind
   (("C-c r" . vr/replace)
-   ("C-c q" . vr/query-replace)
-   ("C-M-s" . vr/mc-mark)))
+   ("C-c q" . vr/query-replace)))
 
 (use-package counsel
   :diminish counsel-mode

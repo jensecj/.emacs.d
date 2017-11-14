@@ -1,7 +1,8 @@
 (require 'package)
 
 ;; Add melpa as a package archive
-(setq package-archives '(("melpa-stable" . "https://stable.melpa.org/packages/")
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")))
 
 (package-initialize)
@@ -43,16 +44,23 @@
 (when (is-online?)
   (install-packages
    '(
-     ;; Libraries
      s                       ; string manipulation library
      dash                    ; list library
-     ;; Minor modes
-     cmake-mode
+     ;; lispy                ; minimalistic paredit
+     delight                 ; change mode names in the mode-line, works with use-package
+     persp-mode              ; group buffers together into perspectives (and their configurations)
+     workgroups              ; required for persp-mode to save perspectives to file
+     projectile              ; project based behaviours (based on .git / .svn /etc.)
+     counsel-projectile      ; rewritten projectile function using ivy
+     beginend                ; better M-< and M->
+     ivy                     ; a new type of completion, ala ido
+     swiper                  ; search using ivy
+     counsel                 ; functions rewritten with ivy
+     cmake-mode              ; for CMake files
      haskell-mode            ; for haskell
      rust-mode               ; for rust
      gitconfig-mode          ; minor mode for editing git config files
      gitignore-mode          ; minor mode for editing git ignore files
-     ;; ido-vertical-mode       ; print ido vertically
      ace-jump-mode           ; jump around the buffer with ease
      ace-jump-buffer         ; jump between buffers
      ace-jump-zap            ; zap-to-char in ace-jump style
@@ -66,36 +74,25 @@
      auto-complete-auctex    ; auto-completion for auctex
      auto-complete-clang     ; auto-completion for clang
      auto-complete-c-headers ; auto-completion for c/c++ header files
-     ;; Major modes
      dockerfile-mode         ; editing dockerfiles
      yaml-mode               ; editing yaml/yml files
      markdown-mode           ; markdown editing
      lua-mode                ; lua editing
      tuareg                  ; ocaml
      scss-mode               ; editing sassy css
-     ;; Themes
      zenburn-theme           ; the great zenburn theme
-     ;; Misc
-     beginend                ; better M-< and M->
-     ivy                     ; a new type of completion, ala ido
-     swiper                  ; search using ivy
-     counsel                 ; functions rewritten with ivy
      rtags                   ; tags for c++ using clang
      clang-format            ; buffer cleanup using clang-format
      chicken-scheme
      scheme-complete
      exec-path-from-shell    ; grab env variables from outside emacs
      unicode-fonts           ; support all the unicode characters
-     auctex                  ; latex editing
+     ;; auctex                  ; latex editing
      use-package             ; pretty package initialization
      visual-regexp-steroids  ; better regular expressions
      browse-kill-ring        ; browse the kill ring
      change-inner            ; easily change the inner or outer content of something
      flx                     ; flexible matching
-     ;; flx-ido                 ; flexible matching in ido mode
-     ;; ido-at-point            ; makes completion-at-point use ido
-     ;; ido-ubiquitous          ; use ido everywhere
-     smex                    ; better M-x
      expand-region           ; easily expand/contract selections
      undo-tree               ; better undo/redo
      dired+                  ; more dired features
@@ -116,7 +113,6 @@
 
 (defvar package-init-files
   '(
-    ;; init-package-ido
     init-package-magit
     init-package-hippie
     init-package-undo-tree
