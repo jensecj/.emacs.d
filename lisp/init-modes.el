@@ -42,13 +42,4 @@
              (local-set-key (kbd "<S-left>") 'windmove-left)
              (local-set-key (kbd "<S-right>") 'windmove-right)))
 
-
-;; use chicken scheme for scheme things
-(setq scheme-program-name "csi -:c")
-
-;; associate file names with modes
-(add-to-list 'auto-mode-alist '("\\.zsh\\'" . shell-script-mode))
-(add-to-list 'auto-mode-alist '("\\CMakeLists.txt\\'" . cmake-mode))
-(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
-
 (provide 'init-modes)

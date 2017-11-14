@@ -47,6 +47,7 @@
      s                       ; string manipulation library
      dash                    ; list library
      ;; lispy                ; minimalistic paredit
+     smex                    ; better M-x, counsel uses the data from this
      delight                 ; change mode names in the mode-line, works with use-package
      persp-mode              ; group buffers together into perspectives (and their configurations)
      workgroups              ; required for persp-mode to save perspectives to file
@@ -83,8 +84,8 @@
      zenburn-theme           ; the great zenburn theme
      rtags                   ; tags for c++ using clang
      clang-format            ; buffer cleanup using clang-format
-     chicken-scheme
-     scheme-complete
+     chicken-scheme          ; extensions for scheme code
+     scheme-complete         ; auto-completion for scheme
      exec-path-from-shell    ; grab env variables from outside emacs
      unicode-fonts           ; support all the unicode characters
      ;; auctex                  ; latex editing

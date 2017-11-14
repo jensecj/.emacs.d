@@ -1,10 +1,21 @@
 (require 'use-package)
 
+(setq use-package-verbose t)
+
+;; associate file names with modes
 (use-package botcode-mode
   :mode "\\.bot\\'")
+(use-package cmake-mode
+  :mode "\\CmakeLists.txt\\'")
+(use-package octave-mode
+  :mode "\\.m\\'")
+(use-package shell-script-mode
+  :mode "\\.zsh\\'")
+(use-package scheme-mode ;; use chicken scheme
+  :config (setq scheme-program-name "csi -:c"))
 
 (use-package latex
-  :defer t
+  :defer
   :config
   (setq-default TeX-PDF-mode t) ;; default to pdf
   (setq-default TeX-global-PDF-mode t) ;; default to pdf
@@ -25,6 +36,11 @@
   ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
   ;; (global-fci-mode 1)
   )
+
+(use-package smex
+  :config
+  (smex-initialize)
+  (setq smex-save-file (concat data-dir ".smex-items")))
 
 (use-package smartparens-config
   :diminish smartparens-mode
@@ -51,8 +67,8 @@
   (setq mc/list-file (concat data-dir ".mc-lists")))
 
 (use-package browse-kill-ring
-  :config
-  (setq browse-kill-ring-quit-action 'save-and-restore))
+  :bind ("C-x C-y" . browse-kill-ring)
+  :config (setq browse-kill-ring-quit-action 'save-and-restore))
 
 (use-package ace-jump-mode
   :bind
@@ -93,23 +109,26 @@
   (("C-s" . counsel-grep-or-swiper)
    ("C-S-s" . counsel-rg)
    ("C-x f" . counsel-recentf)
+   ("C-x C-f" . counsel-find-file)
    ("M-x" . counsel-M-x)
    ("M-b" . counsel-bookmark))
   :config
-  (setq counsel-grep-base-command
-        "rg -i -M 120 --no-heading --line-number --color never '%s' %s"))
+  (setq
+   counsel-grep-base-command
+   "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
+  (counsel-mode))
 
 (use-package ivy
   :diminish ivy-mode
   :config
   (setq ivy-height 15)
-  (setq ivy-count-format ""))
+  (setq ivy-count-format "")
+  (ivy-mode))
 
 (use-package counsel-projectile)
 (use-package projectile
   :diminish projectile-mode
-  :config
-  (counsel-projectile-on))
+  :config (counsel-projectile-on))
 
 (use-package rtags
   :diminish rtags-mode
@@ -118,43 +137,48 @@
    ("M-æ" . rtags-location-stack-back)))
 
 (use-package magit
-  :bind ("C-x m" . magit-status)
+  :bind
+  (("C-x m" . magit-status)
+   :map magit-mode-map
+   ("C-c C-a" . magit-commit-amend)
+   ("q" . magit-quit-session))
   :config
-  (define-key magit-mode-map (kbd "C-c C-a") 'magit-commit-amend)
-  (define-key magit-mode-map (kbd "q") 'magit-quit-session)
   (setq magit-auto-revert-mode nil))
 
 (use-package undo-tree
   :diminish undo-tree-mode
-  :bind (("C-x u" . undo-tree-visualize)
-         ("C-_" . undo-tree-undo)
-         ("M-_" . undo-tree-redo))
-  :config (global-undo-tree-mode))
-
-(use-package browse-kill-ring
-  :bind ("C-x C-y" . browse-kill-ring))
-
-(use-package smooth-scrolling)
-
-(use-package yasnippet
-  :diminish yas-minor-mode
+  :bind
+  (("C-x u" . undo-tree-visualize)
+   ("C-_" . undo-tree-undo)
+   ("M-_" . undo-tree-redo))
   :config
-  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-  (define-key yas-minor-mode-map (kbd "<tab>") nil) ;; remove default expand key
-  (define-key yas-minor-mode-map (kbd "TAB") nil)
-  (define-key yas-minor-mode-map (kbd "M-<tab>") 'yas-expand) ;; use M-tab instead
-  (define-key yas-keymap (kbd "<return>") 'yas/exit-all-snippets) ;; exit snippets on enter
-  (yas-global-mode 1))
+  (global-undo-tree-mode))
+
+;; (use-package smooth-scrolling)
+
+;; (use-package yasnippet
+;;   :diminish yas-minor-mode
+;;   :bind
+;;   (:map yas-minor-mode-map
+;;         ("<tab>" . nil) ;; remove default expand keys
+;;         ("TAB" . nil)
+;;         ("M-<tab>" . yas-expand) ;; use M-tab instead
+;;         ("<return>" . yas/exit-all-snippets)) ;; exit snippets on enter
+;;   :config
+;;   (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+;;   (yas-global-mode 1))
 
 (use-package goto-chg
   :bind ("M-." . goto-last-change))
 
-(use-package dired+
-  :bind (("C-x C-d" . dired)
-         ("C-c C-." . dired-dotfiles-toggle))
+(use-package dired
+  :init (require 'dired+)
+  :bind
+  (("C-x C-d" . dired)
+   :map dired-mode-map
+   ("C-c C-." . dired-dotfiles-toggle)
+   ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
   :config
-  (require 'dired)
-  (define-key dired-mode-map (kbd "<backspace>") 'diredp-up-directory-reuse-dir-buffer)
   (toggle-diredp-find-file-reuse-dir 1)
   (setq ibuffer-formats
         '((mark modified read-only " "
@@ -166,18 +190,19 @@
   :diminish subword-mode)
 
 (use-package wgrep
-  :bind ("C-S-g" . rgrep)
+  :init (require 'grep)
+  :bind
+  (("C-S-g" . rgrep)
+   :map grep-mode-map
+   ("C-x C-q" . wgrep-change-to-wgrep-mode)
+   ("C-x Ck" . wgrep-abort-changes)
+   ("C-c C-c" . wgrep-finish-edit))
   :config
-  (require 'grep)
-  (define-key grep-mode-map (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode)
-  (define-key grep-mode-map (kbd "C-x C-k") 'wgrep-abort-changes)
-  (define-key grep-mode-map (kbd "C-c C-c") 'wgrep-finish-edit)
   (setq wgrep-auto-save-buffer t))
 
 (use-package multi-term
   :bind ("C-z" . better-multi-term)
   :config
-  (require 'multi-term)
   (defun better-multi-term ()
     "Create new term buffer."
     (interactive)
@@ -196,21 +221,18 @@
   )
 
 (use-package jist
-  :config
-  (setq jist-enable-default-authorized 't))
+  :config (setq jist-enable-default-authorized 't))
 
 (use-package unicode-fonts
-  :config
-  (unicode-fonts-setup))
+  :config (unicode-fonts-setup))
 
 (use-package exec-path-from-shell
-  :init
+  :config
   ;; try to grab the ssh-agent if it is running
   (exec-path-from-shell-copy-env "SSH_AGENT_PID")
   (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
 
 (use-package persp-mode
-  :no-require t
   :config
   (setq wg-morph-on nil)
   (setq persp-auto-resume-time -1)
