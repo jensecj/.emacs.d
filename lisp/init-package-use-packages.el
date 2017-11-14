@@ -149,15 +149,6 @@
 (use-package goto-chg
   :bind ("M-." . goto-last-change))
 
-(use-package zenburn-theme
-  :config
-  (load-theme 'zenburn t)
-  (custom-theme-set-faces
-   'zenburn
-   `(ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))
-   `(diredp-dir-priv ((t (:foreground "#8CD0D3"))))
-   `(diredp-file-name ((t (:foreground "#DCDCCC"))))))
-
 (use-package dired+
   :bind (("C-x C-d" . dired)
          ("C-c C-." . dired-dotfiles-toggle))
@@ -218,5 +209,21 @@
   (exec-path-from-shell-copy-env "SSH_AGENT_PID")
   (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
 
+(use-package persp-mode
+  :no-require t
+  :config
+  (setq wg-morph-on nil)
+  (setq persp-auto-resume-time -1)
+  (persp-mode 1))
+
+(use-package zenburn-theme
+  :config
+  (load-theme 'zenburn t)
+  (custom-theme-set-faces
+   'zenburn
+   `(ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))
+   `(diredp-dir-priv ((t (:foreground "#8CD0D3"))))
+   `(diredp-file-name ((t (:foreground "#DCDCCC"))))
+   `(persp-face-lighter-buffer-not-in-persp ((t (:foreground "#CC9393"))))))
 
 (provide 'init-package-use-packages)
