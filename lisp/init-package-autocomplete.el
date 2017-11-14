@@ -37,11 +37,12 @@
   (setq c++-include-files
         '("/usr/include"
           "/usr/local/include"
-          "/usr/include/c++/4.9.0"
-          "/usr/include/c++/4.9.0/backward"
-          "/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu"
-          "/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include"
-          "/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed"
+          "/usr/include/c++/7.2.0"
+          "/usr/include/c++/7.2.0/backward"
+          "/usr/include/c++/7.2.0/x86_64-unknown-linux-gnu"
+          "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include"
+          "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include-fixed"
+          "/usr/lib/clang/5.0.0/include"
           ))
 
   (setq-default achead:include-directories c++-include-files)
@@ -57,6 +58,7 @@
   (set-face-foreground 'ac-clang-selection-face selection-face-fg)
 
   (local-set-key (kbd "C-<tab>") 'ac-complete-clang))
+
 (add-hook 'c++-mode-hook 'my-ac-c++-mode-setup)
 
 (defun my-ac-elisp-mode-setup ()
