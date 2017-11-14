@@ -132,6 +132,7 @@
   :bind ("C-x m" . magit-status)
   :config
   (define-key magit-mode-map (kbd "C-c C-a") 'magit-commit-amend)
+  (define-key magit-mode-map (kbd "q") 'magit-quit-session)
   (setq magit-auto-revert-mode nil))
 
 (use-package undo-tree

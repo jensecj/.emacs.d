@@ -11,7 +11,4 @@
   (kill-buffer)
   (jump-to-register :magit-fullscreen))
 
-(eval-after-load "magit"
-  '(define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
-
 (provide 'init-package-magit)

@@ -13,13 +13,7 @@
              (set (make-local-variable 'compile-command)
                   (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s" (get-file-name+ext) (get-file-name)))
              (local-set-key (kbd "C-c C-c") 'compile)
-             ;; fix buffer-cleanup, is shadowed by my-keys-minor-mode-map
-             (define-key my-keys-minor-mode-map (kbd "C-c n")
-               (lambda () (interactive)
-                 (if (equal mode-name "C++/l")
-                     (clang-format-buffer)
-                   (cleanup-buffer))))
-             ))
+             (local-set-key (kbd "C-c n") (clang-format-buffer))))
 
 (add-hook 'java-mode-hook
           '(lambda ()
@@ -40,6 +34,14 @@
              (set (make-local-variable 'compile-command)
                   (format "ocamlopt -o %s %s" (get-file-name) (get-file-name+ext)))
              (local-set-key (kbd "C-c C-c") 'compile)))
+
+(add-hook 'org-mode-hook
+          '(lambda ()
+             (local-set-key (kbd "<S-up>") 'windmove-up)
+             (local-set-key (kbd "<S-down>") 'windmove-down)
+             (local-set-key (kbd "<S-left>") 'windmove-left)
+             (local-set-key (kbd "<S-right>") 'windmove-right)))
+
 
 ;; use chicken scheme for scheme things
 (setq scheme-program-name "csi -:c")
