@@ -85,7 +85,11 @@
 (setq recentf-save-file (recentf-expand-file-name "~/.emacs.d/data/.recentf"))
 (setq recentf-exclude '(".emacs.d/elpa/" ".emacs.d/data/" "COMMIT_EDITMSG"))
 (setq recentf-max-saved-items 500) ;; just 20 is too recent
-(run-with-idle-timer 30 t 'recentf-save-list)
+(setq recentf-auto-cleanup 300) ;; cleanup every 5 mins.
+;; save recentf file every 30s, but don't bother us about it
+(setq recentf-auto-save-timer
+      (run-with-idle-timer 30 t '(lambda ()
+                                   (with-supressed-message (recentf-save-list)))))
 (recentf-mode 1)
 
 ;; Make backups of files, even when they're in version control

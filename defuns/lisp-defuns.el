@@ -9,3 +9,11 @@
              (current-buffer))
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
+
+(defmacro with-supressed-message (&rest body)
+  "Saves the current message in the minibuffer, executes body, then
+restores the message."
+  (let ((saved-message-symbol (make-symbol "saved-message")))
+    `(let ((,saved-message-symbol (current-message)))
+       (progn ,@body)
+       (message ,saved-message-symbol))))
