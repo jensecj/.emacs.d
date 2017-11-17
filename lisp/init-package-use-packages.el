@@ -143,6 +143,11 @@
   (counsel-mode))
 
 (use-package ivy
+  :demand
+  :bind
+  (:map ivy-minibuffer-map
+        ("C-d" . ivy-dir-done)
+        ("C-S-<return>" . ivy-immediate-done))
   :diminish ivy-mode
   :config
   (setq ivy-height 15)

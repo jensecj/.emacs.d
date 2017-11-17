@@ -152,7 +152,7 @@
 (defun sudo-edit (&optional arg)
   (interactive "p")
   (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
+      (find-file (concat "/sudo:root@localhost:" (counsel-read-file-name "Sudo edit: ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 (defun add-file-find-hook-with-pattern (pattern fn &optional contents)
