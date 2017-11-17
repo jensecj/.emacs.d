@@ -44,70 +44,84 @@
 (when (is-online?)
   (install-packages
    '(
-     s                       ; string manipulation library
-     dash                    ; list library
-     ;; lispy                ; minimalistic paredit
-     smex                    ; better M-x, counsel uses the data from this
-     delight                 ; change mode names in the mode-line, works with use-package
-     persp-mode              ; group buffers together into perspectives (and their configurations)
-     workgroups              ; required for persp-mode to save perspectives to file
-     projectile              ; project based behaviours (based on .git / .svn /etc.)
-     counsel-projectile      ; rewritten projectile function using ivy
-     beginend                ; better M-< and M->
-     ivy                     ; a new type of completion, ala ido
-     swiper                  ; search using ivy
-     counsel                 ; functions rewritten with ivy
-     cmake-mode              ; for CMake files
-     haskell-mode            ; for haskell
-     rust-mode               ; for rust
-     gitconfig-mode          ; minor mode for editing git config files
-     gitignore-mode          ; minor mode for editing git ignore files
-     ace-jump-mode           ; jump around the buffer with ease
-     ace-jump-buffer         ; jump between buffers
-     ace-jump-zap            ; zap-to-char in ace-jump style
-     smartparens             ; automatically add end parens, highlight matching parens
-     git-gutter+             ; mark added/changes/removed lines in the gutter
-     flycheck                ; linting
-     smooth-scrolling        ; add a top and bottom margin when scrolling
-     powerline               ; vim-esque powerline
-     yasnippet               ; more auto-completion
-     auto-complete           ; auto completion
-     auto-complete-auctex    ; auto-completion for auctex
-     auto-complete-clang     ; auto-completion for clang
-     auto-complete-c-headers ; auto-completion for c/c++ header files
-     dockerfile-mode         ; editing dockerfiles
-     yaml-mode               ; editing yaml/yml files
-     markdown-mode           ; markdown editing
-     lua-mode                ; lua editing
+     ;; libraries
+     dash                    ; list functions library (-map, -fold, etc.)
+     s                       ; string manipulation library (concat, etc.)
+
+     ;; file modes
+     ;; auctex                  ; latex
+     cmake-mode              ; CMake
+     dockerfile-mode         ; dockerfiles
+     gitconfig-mode          ; git config files
+     gitignore-mode          ; git ignore files
+     haskell-mode            ; haskell
+     lua-mode                ; lua
+     markdown-mode           ; markdown
+     rust-mode               ; rust
+     scss-mode               ; sassy css
      tuareg                  ; ocaml
-     scss-mode               ; editing sassy css
-     zenburn-theme           ; the great zenburn theme
-     rtags                   ; tags for c++ using clang
-     clang-format            ; buffer cleanup using clang-format
+     yaml-mode               ; yaml/yml
+
+     ;; programming language specific
+     ;; ac-c-headers            ; auto-complete source for c/c++ header files
+     ;; ac-clang                ; auto-complete source for clang
+     ac-octave               ; auto-complete source for octave
+     ac-rtags                ; auto-complate source for rtags
+     auto-complete           ; the auto completion framework
+     ;; auto-complete-auctex    ; auto-complete source for auctex
      chicken-scheme          ; extensions for scheme code
+     clang-format            ; buffer cleanup using clang-format
+     rtags                   ; tags for c++ using clang
      scheme-complete         ; auto-completion for scheme
-     exec-path-from-shell    ; grab env variables from outside emacs
-     unicode-fonts           ; support all the unicode characters
-     ;; auctex                  ; latex editing
-     use-package             ; pretty package initialization
-     visual-regexp-steroids  ; better regular expressions
+
+     ;; project / workflow related
+     counsel-projectile      ; rewritten projectile function using ivy
+     persp-mode              ; group buffers together into perspectives (and their configurations)
+     projectile              ; project based behaviours (based on .git/.svn/etc.)
+     workgroups              ; required for persp-mode to save perspectives to file
+
+     ;; general emacs things
+     ace-jump-buffer         ; jump between buffers
+     ace-jump-mode           ; jump around the buffer with ease
+     ace-jump-zap            ; zap-to-char in ace-jump style
+     beginend                ; better M-< and M-> (beginning/end of buffer jumps)
      browse-kill-ring        ; browse the kill ring
      change-inner            ; easily change the inner or outer content of something
-     flx                     ; flexible matching
-     expand-region           ; easily expand/contract selections
-     undo-tree               ; better undo/redo
+     counsel                 ; functions rewritten with ivy
+     delight                 ; change mode names in the mode-line, works with use-package
+     diminish                ; unclutter the mode line (hide modes)
      dired+                  ; more dired features
-     multiple-cursors        ; ability to use a lot of cursors
-     diminish                ; unclutter the mode line
+     ;; el-get                  ; more package management, has the coq proofgeneral package
+     exec-path-from-shell    ; grab env variables from outside emacs
+     expand-region           ; easily expand/contract selections
+     fill-column-indicator   ; line to indicate the fill column
+     flx                     ; flexible(fuzzy) matching for completions
+     flycheck                ; linting
+     git-gutter+             ; mark added/changes/removed lines in the gutter
+     git-timemachine         ; easily check file changes through commits
+     goto-chg                ; go to last change
+     ivy                     ; a new type of completion, ala ido
+     jist                    ; manage github gists from emacs
+     kurecolor               ; manipulate color strings by hue / contrast / brightness
      magit                   ; magical git interface for emacs
      move-text               ; easily move lines up/down
-     fill-column-indicator   ; line to indicate the fill column
-     goto-chg                ; go to last change
-     git-timemachine         ; easily check file changes through commits
-     wgrep                   ; editable grep buffer
-     el-get                  ; more package management
      multi-term              ; manage multiple terminals
-     jist                    ; manage github gists from emacs
+     multiple-cursors        ; ability to use a lot of cursors
+     powerline               ; vim-esque powerline
+     rainbow-mode            ; color hex strings
+     smartparens             ; automatically add end parens, highlight matching parens
+     smex                    ; better M-x, counsel uses the data from this for ordering
+     smooth-scrolling        ; add a top and bottom margin when scrolling
+     swiper                  ; buffer isearch using ivy
+     undo-tree               ; better undo/redo, also has a visualizer
+     unicode-fonts           ; support all the unicode characters
+     use-package             ; pretty package initialization
+     visual-regexp-steroids  ; better regular expressions
+     wgrep                   ; editable grep buffer
+     yasnippet               ; insert templates based on snippets
+
+     ;; themes
+     zenburn-theme           ; the great zenburn theme
      )
    )
   )
