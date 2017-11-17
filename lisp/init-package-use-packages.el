@@ -257,6 +257,27 @@
   (exec-path-from-shell-copy-env "SSH_AGENT_PID")
   (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
 
+(use-package beginend
+  :init
+  (global-set-key (kbd "M-<") 'beginning-of-buffer)
+  (global-set-key (kbd "M->") 'end-of-buffer)
+  :diminish (list beginend-bs-mode
+                  beginend-prog-mode
+                  beginend-dired-mode
+                  beginend-occur-mode
+                  beginend-global-mode
+                  beginend-vc-dir-mode
+                  beginend-ibuffer-mode
+                  beginend-message-mode
+                  beginend-prodigy-mode
+                  beginend-org-agenda-mode
+                  beginend-compilation-mode
+                  beginend-magit-status-mode
+                  beginend-elfeed-search-mode
+                  beginend-notmuch-search-mode
+                  beginend-recentf-dialog-mode)
+  :config (beginend-global-mode))
+
 (use-package persp-mode
   :config
   (persp-set-keymap-prefix (kbd "C-M-p"))
