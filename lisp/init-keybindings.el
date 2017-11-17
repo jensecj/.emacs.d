@@ -84,6 +84,11 @@
 (global-set-key (kbd "M-<left>") 'backward-sexp)
 (global-set-key (kbd "M-<right>") 'forward-sexp)
 
+;; find things at point
+(global-set-key (kbd "M-.") 'xref-find-definitions)
+(global-set-key (kbd "C-M-.") 'xref-find-definitions-other-window)
+(global-set-key (kbd "M-,") 'xref-pop-marker-stack)
+
 ;; =======================================
 ;; ================================ Defuns
 ;; =======================================

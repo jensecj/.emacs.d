@@ -157,8 +157,9 @@
 (use-package rtags
   :diminish rtags-mode
   :bind
-  (("M-ø" . rtags-find-symbol-at-point)
-   ("M-æ" . rtags-location-stack-back)))
+  (:map c++-mode-map
+        ("M-." . rtags-find-symbol-at-point)
+        ("M-," . rtags-location-stack-back)))
 
 (use-package magit
   :bind
@@ -193,7 +194,7 @@
 ;;   (yas-global-mode 1))
 
 (use-package goto-chg
-  :bind ("M-." . goto-last-change))
+  :bind ("M-ø" . goto-last-change))
 
 (use-package dired
   :init (require 'dired+)
