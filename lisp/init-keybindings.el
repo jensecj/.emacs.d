@@ -30,33 +30,37 @@
 (global-set-key (kbd "C-c C-k") 'eval-buffer)
 (global-set-key (kbd "C-c k") 'eval-region)
 
-;; Join lines
-(global-set-key (kbd "M-j") ;; downwards
-  (lambda ()
-    (interactive)
-    (if (region-active-p)
-        (progn
-          (join-region))
-      (join-line -1))))
+;; Join lines (pull the below line up to this one)
+(global-set-key
+ (kbd "M-j")
+ (lambda ()
+   (interactive)
+   (if (region-active-p)
+       (progn
+         (join-region))
+     (join-line -1))))
 
 ;; Scroll the buffer without moving the point (unless we over-move)
-(global-set-key (kbd "C-<up>")
-  (lambda ()
-    (interactive)
-    (scroll-down 3)))
+(global-set-key
+ (kbd "C-<up>")
+ (lambda ()
+   (interactive)
+   (scroll-down 3)))
 
-(global-set-key (kbd "C-<down>")
-  (lambda ()
-    (interactive)
-    (scroll-up 3)))
+(global-set-key
+ (kbd "C-<down>")
+ (lambda ()
+   (interactive)
+   (scroll-up 3)))
 
 ;; Comment/uncomment block
-(global-set-key (kbd "C-c c")
-  (lambda ()
-    (interactive)
-    (if (region-active-p)
-        (comment-or-uncomment-region (region-beginning) (region-end))
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position)))))
+(global-set-key
+ (kbd "C-c c")
+ (lambda ()
+   (interactive)
+   (if (region-active-p)
+       (comment-or-uncomment-region (region-beginning) (region-end))
+     (comment-or-uncomment-region (line-beginning-position) (line-end-position)))))
 
 (global-set-key (kbd "C-c u") 'uncomment-region)
 
@@ -67,9 +71,6 @@
 
 ;; Disable suspend-frame
 (global-set-key "\C-x\C-z" nil)
-
-;; Jump to symbol definitions
-(global-set-key (kbd "C-x C-i") 'imenu)
 
 ;; Move the delete windows, mnemonic is C-x OTHER
 (global-set-key (kbd "C-x 0") nil)
