@@ -13,7 +13,7 @@
              (set (make-local-variable 'compile-command)
                   (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s" (get-file-name+ext) (get-file-name)))
              (local-set-key (kbd "C-c C-c") 'compile)
-             (local-set-key (kbd "C-c n") (clang-format-buffer))))
+             (local-set-key (kbd "C-c n") 'clang-format-buffer)))
 
 (add-hook 'java-mode-hook
           '(lambda ()
