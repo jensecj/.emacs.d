@@ -10,8 +10,9 @@
 (use-package octave-mode
   :mode "\\.m\\'")
 (use-package shell-script-mode
-  :mode "\\.zsh\\'")
+  :mode ("\\.sh\\'" "\\.zsh\\'" "\\zshrc\\'"))
 (use-package scheme-mode ;; use chicken scheme
+  :defer
   :config (setq scheme-program-name "csi -:c"))
 
 (use-package latex
@@ -110,6 +111,7 @@
    ("C-S-s" . counsel-rg)
    ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
+   ("C-x C-i" . counsel-imenu)
    ("M-x" . counsel-M-x)
    ("M-b" . counsel-bookmark))
   :config
@@ -154,7 +156,7 @@
   :config
   (global-undo-tree-mode))
 
-;; (use-package smooth-scrolling)
+(use-package smooth-scrolling)
 
 ;; (use-package yasnippet
 ;;   :diminish yas-minor-mode
@@ -234,8 +236,9 @@
 
 (use-package persp-mode
   :config
+  (persp-set-keymap-prefix (kbd "C-M-p"))
   (setq wg-morph-on nil)
-  (setq persp-auto-resume-time -1)
+  ;; (setq persp-auto-resume-time -1)
   (persp-mode 1))
 
 (use-package zenburn-theme
