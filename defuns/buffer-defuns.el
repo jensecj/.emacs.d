@@ -13,8 +13,7 @@
              (setq n (1+ n))
              (get-buffer bufname)))
     (switch-to-buffer (get-buffer-create bufname))
-    (emacs-lisp-mode)
-    ))
+    (emacs-lisp-mode)))
 
 (defun toggle-window-split ()
   "Toggle window splitting between horizontal and vertical"
@@ -52,16 +51,14 @@
          (setq i 1)
          (setq numWindows (count-windows))
          (while  (< i numWindows)
-           (let* (
-                  (w1 (elt (window-list) i))
+           (let* ((w1 (elt (window-list) i))
                   (w2 (elt (window-list) (+ (% i numWindows) 1)))
 
                   (b1 (window-buffer w1))
                   (b2 (window-buffer w2))
 
                   (s1 (window-start w1))
-                  (s2 (window-start w2))
-                  )
+                  (s2 (window-start w2)))
              (set-window-buffer w1  b2)
              (set-window-buffer w2 b1)
              (set-window-start w1 s2)
@@ -75,19 +72,3 @@
   (whitespace-cleanup)
   (indent-region (point-min) (point-max))
   (message "cleaned up"))
-
-(defvar user-home-directory (concat (expand-file-name "~") "/"))
-
-(defun shorter-file-name (file-name)
-  (file-name-nondirectory file-name))
-
-(defun recentf--file-cons (file-name)
-  (cons (shorter-file-name file-name) file-name))
-
-(defun recentf-ido-find-file ()
-  "Find a recent file using ido."
-  (interactive)
-  (let* ((recent-files (mapcar 'recentf--file-cons recentf-list))
-         (files (mapcar 'car recent-files))
-         (file (completing-read "Choose recent file: " (cdr files) nil t nil nil (car files))))
-    (find-file (cdr (assoc file recent-files)))))

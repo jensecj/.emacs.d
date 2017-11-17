@@ -88,8 +88,8 @@
 
 (defun join-region ()
   "join all lines in a region"
+  (interactive)
   (save-excursion
-    (message "joining region")
     (let ((beg (region-beginning))
           (end (copy-marker (region-end))))
       (goto-char beg)
@@ -108,5 +108,4 @@
         (insert text-end)
         (goto-char (point-min))
         (insert text-begin))
-    (message "wrap-region: Error! invalid region!")
-    ))
+    (message "wrap-region: Error! invalid region!")))

@@ -7,7 +7,6 @@
 (defconst data-dir (concat root-dir "data/")) ; config and cache files
 (defconst backup-dir (concat data-dir "backups/")) ; backups and auto saves
 
-
 (unless (file-exists-p lisp-dir)
   (make-directory lisp-dir))
 
