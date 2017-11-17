@@ -38,6 +38,28 @@
   ;; (global-fci-mode 1)
   )
 
+(use-package auto-complete
+  :diminish auto-complete-mode
+  :demand
+  :bind
+  (("C-+" . ac-quick-help-at-point)
+   ("C-<tab>" . auto-complete))
+  :config
+  (setq ac-auto-start t) ;; auto start completing
+  (setq ac-show-menu t) ;; show the menu instantly
+  (setq ac-show-menu-immediately-on-auto-complete t) ;; show the autocompletion menu instantly
+  (setq ac-delay 0.1) ;; show completion menu quickly
+  (setq ac-use-quick-help t) ;; use the help
+  (setq ac-quick-help-delay 0.1) ;; show help quickly
+  (setq ac-use-comphist t)
+  (setq ac-comphist-file "~/.emacs.d/data/.ac-comphist") ;; move the history file
+  (setq ac-ignore-case t)
+  (setq-default ac-sources
+                '(ac-source-imenu
+                  ac-source-words-in-same-mode-buffers))
+  ;; '(ac-source-words-in-buffer ac-source-imenu ac-source-yasnippet)
+  (global-auto-complete-mode t))
+
 (use-package smex
   :config
   (smex-initialize)
@@ -249,6 +271,9 @@
    `(ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))
    `(diredp-dir-priv ((t (:foreground "#8CD0D3"))))
    `(diredp-file-name ((t (:foreground "#DCDCCC"))))
-   `(persp-face-lighter-buffer-not-in-persp ((t (:foreground "#CC9393"))))))
+   `(persp-face-lighter-buffer-not-in-persp ((t (:foreground "#CC9393"))))
+   '(ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
+   '(ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E"))))
+   ))
 
 (provide 'init-package-use-packages)

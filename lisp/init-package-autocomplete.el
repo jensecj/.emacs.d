@@ -1,64 +1,43 @@
 (require 'auto-complete)
 (require 'auto-complete-config)
 
-;; hide auto completion modes from the minibuffers list
-(diminish 'auto-complete-mode)
 (diminish 'abbrev-mode)
 
-(setq-default ac-sources '(ac-source-words-in-buffer ac-source-yasnippet))
-
-(setq-default ac-auto-start t) ;; auto start completing
-(setq-default ac-auto-show-menu t) ;; show the menu instantly
-(setq-default ac-show-menu-immediately-on-auto-complete t) ;; show the autocompletion menu instantly
-(setq-default ac-delay 0.1) ;; show completion menu quickly
-(setq-default ac-use-quick-help t) ;; use the help
-(setq-default ac-quick-help-delay 0.1) ;; show help quickly
-(setq-default ac-comphist-file "~/.emacs.d/data/.ac-comphist") ;; move the history file
-
-;; set face colors
-(setq candidate-face-fg "#F0DFAF")
-(setq candidate-face-bg "#313131")
-(setq selection-face-fg "#FEFEFE")
-(setq selection-face-bg "#3E3E3E")
-
-(set-face-background 'ac-candidate-face candidate-face-bg)
-(set-face-foreground 'ac-candidate-face candidate-face-fg)
-(set-face-background 'ac-selection-face selection-face-bg)
-(set-face-foreground 'ac-selection-face selection-face-fg)
-
-(global-set-key (kbd "C-<tab>") 'auto-complete)
-
-(global-auto-complete-mode t)
+(defun ac-quick-help-at-point ()
+  (interactive)
+  (let* ((position (point))
+         (string-under-cursor
+          (buffer-substring-no-properties
+           (progn (skip-syntax-backward "w_") (point))
+           (progn (skip-syntax-forward "w_") (point)))))
+    (goto-char position)
+    (popup-tip (ac-symbol-documentation (intern string-under-cursor)))))
 
 (defun my-ac-c++-mode-setup ()
-  (require 'auto-complete-clang)
-  (require 'auto-complete-c-headers)
+  ;; (require 'ac-clang)
+  ;; (require 'ac-c-headers)
+  (require 'ac-rtags)
 
   (setq c++-include-files
         '("/usr/include"
-          "/usr/local/include"
           "/usr/include/c++/7.2.0"
           "/usr/include/c++/7.2.0/backward"
           "/usr/include/c++/7.2.0/x86_64-unknown-linux-gnu"
           "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include"
           "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include-fixed"
-          "/usr/lib/clang/5.0.0/include"
-          ))
+          "/usr/lib/clang/5.0.0/include"))
 
   (setq-default achead:include-directories c++-include-files)
 
-  (setq ac-clang-flags (mapcar (lambda (item)(concat "-I" item)) c++-include-files))
+  (add-to-list 'ac-sources 'ac-source-semantic)
+  (add-to-list 'ac-sources 'ac-source-rtags)
+  ;; (add-to-list 'ac-sources 'ac-source-c-headers)
+  ;; (add-to-list 'ac-sources 'ac-source-c-header-symbols t)
 
-  (add-to-list 'ac-sources 'ac-source-clang)
-  (add-to-list 'ac-sources 'ac-source-c-headers)
-
-  (set-face-background 'ac-clang-candidate-face candidate-face-bg)
-  (set-face-foreground 'ac-clang-candidate-face candidate-face-fg)
-  (set-face-background 'ac-clang-selection-face selection-face-bg)
-  (set-face-foreground 'ac-clang-selection-face selection-face-fg)
-
-  (local-set-key (kbd "C-<tab>") 'ac-complete-clang))
-
+  ;; (add-to-list 'ac-sources 'ac-source-clang)
+  ;; (setq ac-clang-flags (mapcar (lambda (item)(concat "-I" item)) c++-include-files))
+  ;; (ac-clang-activate-after-modify)
+  )
 (add-hook 'c++-mode-hook 'my-ac-c++-mode-setup)
 
 (defun my-ac-elisp-mode-setup ()
@@ -68,9 +47,14 @@
   (add-to-list 'ac-sources 'ac-source-variables)) ;; elisp variables
 (add-hook 'emacs-lisp-mode-hook 'my-ac-elisp-mode-setup)
 
-(defun my-ac-latex-mode-setup ()
-  (require 'auto-complete-auctex)
-  (require 'ac-auctex-setup))
-(add-hook 'latex-mode-hook 'my-ac-latex-mode-setup)
+;; (defun my-ac-latex-mode-setup ()
+;;   (require 'auto-complete-auctex)
+;;   (require 'ac-auctex-setup))
+;; (add-hook 'latex-mode-hook 'my-ac-latex-mode-setup)
+
+(defun my-ac-octave-mode-setup ()
+  (require 'ac-octave)
+  (add-to-list 'ac-sources 'ac-complete-octave))
+(add-hook 'octave-mode-hook 'my-ac-octave-mode-setup)
 
 (provide 'init-package-autocomplete)
