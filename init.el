@@ -29,15 +29,6 @@
   (safe-require file))
 (message "# Finished loading init files")
 
-;; don't close emacs
-(global-set-key (kbd "C-x C-c") '())
-
-;; handle special keys
-(define-key key-translation-map [S-dead-circumflex] "^")
-(define-key key-translation-map [dead-tilde] "~")
-(define-key key-translation-map [S-dead-grave] "´")
-(define-key key-translation-map [dead-acute] "`")
-
 (message (format "Emacs initialized in %s" (emacs-init-time)))
 
 (provide 'init)

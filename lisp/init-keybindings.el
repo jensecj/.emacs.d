@@ -2,6 +2,12 @@
 ;; ===================== Built-in features
 ;; =======================================
 
+;; handle special keys
+(define-key key-translation-map [S-dead-circumflex] "^")
+(define-key key-translation-map [dead-tilde] "~")
+(define-key key-translation-map [S-dead-grave] "´")
+(define-key key-translation-map [dead-acute] "`")
+
 ;; Insert tilde with a single keystroke
 (global-set-key (kbd "<menu>") (lambda () (interactive) (insert "~")))
 
@@ -13,7 +19,8 @@
 ;; Kill emacs, mnemonic is C-x REALLY KILL
 (global-set-key (kbd "C-x r k") 'save-buffers-kill-emacs)
 
-;; (global-set-key (kbd "C-x C-c") '())
+;; don't close emacs
+(global-set-key (kbd "C-x C-c") '())
 
 ;; Use shell-like backspace C-h, rebind help to F1
 (define-key key-translation-map [?\C-h] [?\C-?])
