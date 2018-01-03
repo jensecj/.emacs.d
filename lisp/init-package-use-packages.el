@@ -65,9 +65,10 @@
   (smex-initialize)
   (setq smex-save-file (concat data-dir ".smex-items")))
 
-(use-package smartparens-config
+(use-package smartparens
   :diminish smartparens-mode
   :config
+  (require 'smartparens-config)
   (setq sp-autoescape-string-quote nil)
   (smartparens-global-mode t)
   (show-smartparens-global-mode t))
@@ -156,8 +157,9 @@
 
 (use-package counsel-projectile)
 (use-package projectile
+  :after counsel-projectile
   :diminish projectile-mode
-  :config (counsel-projectile-on))
+  :config (counsel-projectile-mode))
 
 (use-package rtags
   :diminish rtags-mode
