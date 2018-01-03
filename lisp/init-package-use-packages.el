@@ -42,7 +42,7 @@
   (setq ac-use-quick-help t) ;; use the help
   (setq ac-quick-help-delay 0.1) ;; show help quickly
   (setq ac-use-comphist t)
-  (setq ac-comphist-file "~/.emacs.d/data/.ac-comphist") ;; move the history file
+  (setq ac-comphist-file (concat data-dir ".ac-comphist")) ;; move the history file
   (setq ac-ignore-case t)
   (setq-default ac-sources
                 '(ac-source-imenu
@@ -146,7 +146,9 @@
 (use-package projectile
   :after counsel-projectile
   :diminish projectile-mode
-  :config (counsel-projectile-mode))
+  :config
+  (setq projectile-known-projects-file (concat data-dir "_projectile-bookmarks"))
+  (counsel-projectile-mode))
 
 (use-package rtags
   :diminish rtags-mode

@@ -4,22 +4,25 @@
 (defconst modes-dir (concat root-dir "modes/")) ; home brewed modes
 (defconst defuns-dir (concat root-dir "defuns/"))
 
+(defconst temp-dir (concat root-dir ".temp/"))
 (defconst data-dir (concat root-dir "data/")) ; config and cache files
 (defconst backup-dir (concat data-dir "backups/")) ; backups and auto saves
 
 (unless (file-exists-p lisp-dir)
   (make-directory lisp-dir))
+(unless (file-exists-p modes-dir)
+  (make-directory modes-dir))
+(unless (file-exists-p defuns-dir)
+  (make-directory defuns-dir))
 
+(unless (file-exists-p temp-dir)
+  (make-directory temp-dir))
 (unless (file-exists-p data-dir)
   (make-directory data-dir))
-
 (unless (file-exists-p backup-dir)
   (make-directory backup-dir))
 
-(unless (file-exists-p modes-dir)
-  (make-directory modes-dir))
-
-;; Add home made things to load-path
+;; Add home made things to load-path, defuns are loaded seperately
 (add-to-list 'load-path lisp-dir)
 (add-to-list 'load-path modes-dir)
 
