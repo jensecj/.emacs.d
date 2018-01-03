@@ -28,16 +28,6 @@
   (add-hook 'LaTeX-mode-hook 'reftex-mode) ;; enable reftex
   )
 
-;; (use-package fill-column-indicator
-;;   :diminish fci-mode
-;;   :config
-;;   (setq fci-rule-width 1)
-;;   (setq fci-rule-color "grey")
-;;   (setq fci-rule-column 80)
-;;   ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-;;   ;; (global-fci-mode 1)
-;;   )
-
 (use-package auto-complete
   :diminish auto-complete-mode
   :demand
@@ -76,11 +66,6 @@
 (use-package git-gutter+
   :diminish git-gutter+-mode
   :config (global-git-gutter+-mode t))
-
-;; (use-package flycheck
-;;   :diminish flycheck-mode
-;;   :init (global-flycheck-mode)
-;;   )
 
 (use-package multiple-cursors
   :bind
@@ -191,18 +176,6 @@
   (setq smooth-scroll-margin 5)
   (smooth-scrolling-mode))
 
-;; (use-package yasnippet
-;;   :diminish yas-minor-mode
-;;   :bind
-;;   (:map yas-minor-mode-map
-;;         ("<tab>" . nil) ;; remove default expand keys
-;;         ("TAB" . nil)
-;;         ("M-<tab>" . yas-expand) ;; use M-tab instead
-;;         ("<return>" . yas/exit-all-snippets)) ;; exit snippets on enter
-;;   :config
-;;   (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-;;   (yas-global-mode 1))
-
 (use-package goto-chg
   :bind ("M-ø" . goto-last-change))
 
@@ -283,6 +256,33 @@
 ;;   (setq wg-morph-on nil)
 ;;   (setq persp-auto-resume-time -1)
 ;;   (persp-mode 1)
+;;   )
+
+;; (use-package fill-column-indicator
+;;   :diminish fci-mode
+;;   :config
+;;   (setq fci-rule-width 1)
+;;   (setq fci-rule-color "grey")
+;;   (setq fci-rule-column 80)
+;;   ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+;;   ;; (global-fci-mode 1)
+;;   )
+
+;; (use-package yasnippet
+;;   :diminish yas-minor-mode
+;;   :bind
+;;   (:map yas-minor-mode-map
+;;         ("<tab>" . nil) ;; remove default expand keys
+;;         ("TAB" . nil)
+;;         ("M-<tab>" . yas-expand) ;; use M-tab instead
+;;         ("<return>" . yas/exit-all-snippets)) ;; exit snippets on enter
+;;   :config
+;;   (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+;;   (yas-global-mode 1))
+
+;; (use-package flycheck
+;;   :diminish flycheck-mode
+;;   :init (global-flycheck-mode)
 ;;   )
 
 (use-package zenburn-theme
