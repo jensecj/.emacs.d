@@ -29,8 +29,8 @@
   )
 
 (use-package auto-complete
+  :demand t
   :diminish auto-complete-mode
-  :demand
   :bind
   (("C-+" . ac-quick-help-at-point)
    ("C-<tab>" . auto-complete))
@@ -113,6 +113,8 @@
    ("C-c q" . vr/query-replace)))
 
 (use-package counsel
+  :demand t
+  :after ivy
   :diminish counsel-mode
   :bind
   (("C-s" . counsel-grep-or-swiper)
@@ -129,12 +131,12 @@
   (counsel-mode))
 
 (use-package ivy
-  :demand
+  :demand t
+  :diminish ivy-mode
   :bind
   (:map ivy-minibuffer-map
         ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
         ("C-S-<return>" . ivy-immediate-done))
-  :diminish ivy-mode
   :config
   (setq ivy-height 15)
   (setq ivy-count-format "")
@@ -198,8 +200,9 @@
 (use-package subword
   :diminish subword-mode)
 
+(use-package grep)
 (use-package wgrep
-  :init (require 'grep)
+  :after grep
   :bind
   (("C-S-g" . rgrep)
    :map grep-mode-map
