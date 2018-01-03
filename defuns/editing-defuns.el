@@ -109,3 +109,11 @@
         (goto-char (point-min))
         (insert text-begin))
     (message "wrap-region: Error! invalid region!")))
+
+(defun one-shot-keybinding (key command)
+  "set keybindings that disappear once you press a key that is not in
+the overlay-map"
+  (set-transient-map
+   (let ((map (make-sparse-keymap)))
+     (define-key map (kbd key) command)
+     map) t))
