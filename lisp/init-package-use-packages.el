@@ -28,15 +28,15 @@
   (add-hook 'LaTeX-mode-hook 'reftex-mode) ;; enable reftex
   )
 
-(use-package fill-column-indicator
-  :diminish fci-mode
-  :config
-  (setq fci-rule-width 1)
-  (setq fci-rule-color "grey")
-  (setq fci-rule-column 80)
-  ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-  ;; (global-fci-mode 1)
-  )
+;; (use-package fill-column-indicator
+;;   :diminish fci-mode
+;;   :config
+;;   (setq fci-rule-width 1)
+;;   (setq fci-rule-color "grey")
+;;   (setq fci-rule-column 80)
+;;   ;; (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+;;   ;; (global-fci-mode 1)
+;;   )
 
 (use-package auto-complete
   :diminish auto-complete-mode
