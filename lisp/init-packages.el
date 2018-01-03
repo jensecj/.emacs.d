@@ -136,10 +136,10 @@
     ))
 
 ;; Safely load all the init files
-(message "## Started loading package init files")
+(message "## \e[36m Started loading package init files \e[0m")
 (dolist (file package-init-files)
-  (safe-require file))
-(message "## Finished loading package init files")
+  (try-require file))
+(message "## \e[36m Finished loading package init files \e[0m")
 
 (add-to-list 'load-path (concat lisp-dir "misc/"))
 

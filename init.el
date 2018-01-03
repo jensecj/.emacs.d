@@ -15,20 +15,20 @@
     init-experimental ;; Initialize things that are works in progress
     ))
 
-(defun safe-require (feature)
-  "Safely requires FEATURE."
+(defun try-require (feature)
+  "Tries to require FEATURE, if an exception is thrown, log it."
   (condition-case ex
       (progn
-        (message (format "@ Loading \"%s\"" (symbol-name feature)))
+        (message (format "@ \e[94m Loading \"%s\" \e[0m" (symbol-name feature)))
         (require feature))
-    ('error (message (format "@ Error loading \"%s\": %s" (symbol-name feature) ex)))))
+    ('error (message (format "@ \e[1m\e[31m Error loading \"%s\": %s \e[0m" (symbol-name feature) ex)))))
 
 ;; Safely load all the init files
-(message "# Started loading init files")
+(message "# \e[96m Started loading init files \e[0m")
 (dolist (file init-files)
-  (safe-require file))
-(message "# Finished loading init files")
+  (try-require file))
+(message "# \e[96m Finished loading init files \e[0m")
 
-(message (format "Emacs initialized in %s" (emacs-init-time)))
+(message (format "= \e[1m\e[32mEmacs initialized in %s\e[0m" (emacs-init-time)))
 
 (provide 'init)
