@@ -186,7 +186,10 @@
   :config
   (global-undo-tree-mode))
 
-(use-package smooth-scrolling)
+(use-package smooth-scrolling
+  :config
+  (setq smooth-scroll-margin 5)
+  (smooth-scrolling-mode))
 
 ;; (use-package yasnippet
 ;;   :diminish yas-minor-mode
