@@ -130,8 +130,6 @@
 (global-set-key (kbd "C-:") 'hippie-expand-lines)
 (global-set-key (kbd "C-,") 'completion-at-point)
 
-(global-set-key (kbd "C-x C-r") 'sudo-edit)
-
 ;; keybindings for window resizing
 (global-set-key (kbd "M-S-<left>") 'move-border-left)
 (global-set-key (kbd "M-S-<right>") 'move-border-right)
