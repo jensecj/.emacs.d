@@ -288,14 +288,12 @@
 (use-package zenburn-theme
   :config
   (load-theme 'zenburn t)
-  (custom-theme-set-faces
-   'zenburn
-   `(ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))
-   `(diredp-dir-priv ((t (:foreground "#8CD0D3"))))
-   `(diredp-file-name ((t (:foreground "#DCDCCC"))))
-   `(persp-face-lighter-buffer-not-in-persp ((t (:foreground "#CC9393"))))
-   '(ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
-   '(ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E"))))
-   ))
+  :custom-face
+  (ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))
+  (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
+  (diredp-file-name ((t (:foreground "#DCDCCC"))))
+  (persp-face-lighter-buffer-not-in-persp ((t (:foreground "#CC9393"))))
+  (ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
+  (ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E")))))
 
 (provide 'init-package-use-packages)
