@@ -22,13 +22,3 @@
             :history 'file-name-history
             :keymap counsel-find-file-map
             :caller 'counsel-read-find-name))
-
-(defun ivy-dir-done ()
-  "Exit the minibuffer with current directory instead of current candidate."
-  (interactive)
-  (delete-minibuffer-contents)
-  (insert (setf (ivy-state-current ivy-last)
-                ivy--directory))
-  (setq ivy-completion-beg ivy-completion-end)
-  (setq ivy-exit 'done)
-  (exit-minibuffer))

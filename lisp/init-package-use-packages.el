@@ -146,7 +146,7 @@
   :demand
   :bind
   (:map ivy-minibuffer-map
-        ("C-d" . ivy-dir-done)
+        ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
         ("C-S-<return>" . ivy-immediate-done))
   :diminish ivy-mode
   :config
@@ -201,10 +201,11 @@
 (use-package goto-chg
   :bind ("M-ø" . goto-last-change))
 
+(use-package dired+)
 (use-package dired
-  :init (require 'dired+)
+  :after dired+
   :bind
-  (("C-x C-d" . dired)
+  (("C-x C-d" . (lambda () (interactive) (dired default-directory)))
    :map dired-mode-map
    ("C-c C-." . dired-dotfiles-toggle)
    ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
