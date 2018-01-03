@@ -27,10 +27,10 @@
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "gray30")
 (set-face-foreground 'highlight nil)
-(set-face-underline-p 'highlight nil)
+(set-face-underline 'highlight nil)
 
 ;; Allow pasting selection outside of Emacs
-(setq x-select-enable-clipboard t)
+(setq select-enable-clipboard t)
 
 ;; Auto refresh buffers
 (global-auto-revert-mode 1)

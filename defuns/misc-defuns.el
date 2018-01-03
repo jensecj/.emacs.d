@@ -75,7 +75,7 @@
     (set-selective-display nil)))
 
 (defun create-temp-selective-display-keymap ()
-  (set-temporary-overlay-map
+  (set-transient-map
    (let ((map (make-sparse-keymap)))
      (define-key map (kbd "+") 'inc-selective-display)
      (define-key map (kbd "-") 'dec-selective-display)
