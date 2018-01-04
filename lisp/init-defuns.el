@@ -1,5 +1,5 @@
-;; load all files in defuns-dir
-(dolist (file (directory-files defuns-dir t "\\w+"))
+;; load all files in my-emacs-defuns-dir
+(dolist (file (directory-files my-emacs-defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))
 

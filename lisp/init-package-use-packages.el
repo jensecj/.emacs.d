@@ -42,7 +42,7 @@
   (setq ac-use-quick-help t) ;; use the help
   (setq ac-quick-help-delay 0.1) ;; show help quickly
   (setq ac-use-comphist t)
-  (setq ac-comphist-file (concat data-dir "ac-history")) ;; move the history file
+  (setq ac-comphist-file (concat my-emacs-data-dir "ac-history")) ;; move the history file
   (setq ac-ignore-case t)
   (setq-default ac-sources
                 '(ac-source-imenu
@@ -53,7 +53,7 @@
 (use-package smex
   :config
   (smex-initialize)
-  (setq smex-save-file (concat data-dir "smex-items")))
+  (setq smex-save-file (concat my-emacs-data-dir "smex-items")))
 
 (use-package smartparens
   :diminish smartparens-mode
@@ -72,8 +72,8 @@
   (("C-d" . mc/mark-next-like-this)
    ("C-S-d" . mc/mark-all-like-this)
    ("C-M-a" . set-rectangular-region-anchor))
-  :config
-  (setq mc/list-file (concat data-dir "mc-lists")))
+  :init
+  (setq mc/list-file (concat my-emacs-data-dir "mc-lists")))
 
 (use-package browse-kill-ring
   :bind ("C-x C-y" . browse-kill-ring)
@@ -147,8 +147,8 @@
   :after counsel-projectile
   :diminish projectile-mode
   :config
-  (setq projectile-known-projects-file (concat data-dir "projectile-bookmarks"))
-  (setq projectile-cache-file (concat temp-dir "projectile.cache"))
+  (setq projectile-known-projects-file (concat my-emacs-data-dir "projectile-bookmarks"))
+  (setq projectile-cache-file (concat my-emacs-data-dir "projectile.cache"))
   (counsel-projectile-mode))
 
 (use-package rtags

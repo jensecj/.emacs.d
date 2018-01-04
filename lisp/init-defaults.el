@@ -85,7 +85,7 @@
 
 ;; Save a list of recent files visited.
 (require 'recentf)
-(setq recentf-save-file (recentf-expand-file-name (concat data-dir "recentf")))
+(setq recentf-save-file (recentf-expand-file-name (concat my-emacs-data-dir "recentf")))
 (setq recentf-exclude '(".emacs.d/elpa/" ".emacs.d/data/" "COMMIT_EDITMSG"))
 (setq recentf-max-saved-items 500) ;; just 20 is too recent
 (setq recentf-auto-cleanup 300) ;; cleanup every 5 mins.
@@ -95,15 +95,18 @@
                                    (with-supressed-message (recentf-save-list)))))
 (recentf-mode 1)
 
+;; change the dir for the persistent cache
+(setq pcache-directory (concat my-emacs-data-dir "pcache/"))
+
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
 
 ;; Keep emacs custom settings in a separate file
-(setq custom-file (concat emacs-dir "custom.el"))
+(setq custom-file (concat my-emacs-dir "custom.el"))
 (if (file-exists-p custom-file)
     (load custom-file))
 
-(setq bookmark-default-file (concat data-dir "bookmarks"))
+(setq bookmark-default-file (concat my-emacs-data-dir "bookmarks"))
 
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)

@@ -7,7 +7,7 @@
 
 (package-initialize)
 
-(defconst melpa-archive (concat emacs-dir "elpa/archives/melpa"))
+(defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
 
 ;; Refresh package archive if it does not exist or is older than a week
 (if (or (not (file-exists-p melpa-archive)) ;; if there exists no archive cache
@@ -142,7 +142,7 @@
   (try-require file))
 (message "## \e[36m Finished loading package init files \e[0m")
 
-(add-to-list 'load-path (concat lisp-dir "misc/"))
+(add-to-list 'load-path (concat my-emacs-lisp-dir "misc/"))
 
 (provide 'init-packages)
 ;;; init-packages.el ends here
