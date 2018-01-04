@@ -1,11 +1,11 @@
 ;; Define our directories
-(defconst root-dir user-emacs-directory)
-(defconst lisp-dir (concat root-dir "lisp/")) ; home brewed lisp things
-(defconst modes-dir (concat root-dir "modes/")) ; home brewed modes
-(defconst defuns-dir (concat root-dir "defuns/"))
+(defconst emacs-dir user-emacs-directory)
+(defconst lisp-dir (concat emacs-dir "lisp/")) ; home brewed lisp things
+(defconst modes-dir (concat emacs-dir "modes/")) ; home brewed modes
+(defconst defuns-dir (concat emacs-dir "defuns/"))
 
-(defconst temp-dir (concat root-dir ".temp/"))
-(defconst data-dir (concat root-dir "data/")) ; config and cache files
+(defconst temp-dir (concat emacs-dir ".temp/"))
+(defconst data-dir (concat emacs-dir "data/")) ; config and cache files
 (defconst backup-dir (concat data-dir "backups/")) ; backups and auto saves
 
 (unless (file-exists-p lisp-dir)
@@ -30,14 +30,14 @@
 (setq backup-directory-alist `((".*" . ,backup-dir)))
 (setq auto-save-file-name-transforms `((".*" ,backup-dir t)))
 (setq auto-save-list-file-prefix backup-dir)
-(setq temporary-file-directory data-dir)
+(setq temporary-file-directory temp-dir)
 
 (require 'tramp)
-(setq tramp-persistency-file-name (concat data-dir ".tramp"))
+(setq tramp-persistency-file-name (concat data-dir "tramp"))
 
 ;; Save point position between sessions
 (require 'saveplace)
 (setq-default save-place t)
-(setq save-place-file (concat data-dir ".places"))
+(setq save-place-file (concat data-dir "saveplaces"))
 
 (provide 'init-directories)
