@@ -119,6 +119,7 @@
      visual-regexp-steroids  ; better regular expressions
      wgrep                   ; editable grep buffer
      yasnippet               ; insert templates based on snippets
+     which-key               ; popup after 1s, showing keybindings based on prefix key pressed
 
      ;; themes
      zenburn-theme           ; the great zenburn theme

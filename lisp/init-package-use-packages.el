@@ -256,6 +256,10 @@
   (mapc (lambda (s) (diminish (cdr s))) beginend-modes)
   (beginend-global-mode))
 
+(use-package which-key
+  :config
+  (which-key-setup-minibuffer))
+
 ;; (use-package persp-mode
 ;;   :config
 ;;   (persp-set-keymap-prefix (kbd "C-M-p"))
