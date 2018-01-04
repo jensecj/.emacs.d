@@ -17,3 +17,15 @@ restores the message."
     `(let ((,saved-message-symbol (current-message)))
        (progn ,@body)
        (message ,saved-message-symbol))))
+
+(defun save-to-file (data filename)
+  "Save lisp object to a file"
+  (with-temp-file filename
+    (prin1 data (current-buffer))))
+
+(defun load-from-file (filename)
+  "Load lisp object from file"
+  (with-temp-buffer
+    (insert-file-contents filename)
+    (cl-assert (eq (point) (point-min)))
+    (read (current-buffer))))

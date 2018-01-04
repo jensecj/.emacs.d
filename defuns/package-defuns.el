@@ -47,3 +47,12 @@
         (set-marker p nil)
         (set-marker m nil))
     ad-do-it))
+
+(defvar ivy-save-file (concat my-emacs-data-dir "ivy-views"))
+(defun ivy-save-views ()
+  (interactive)
+  (save-to-file ivy-views ivy-save-file))
+
+(defun ivy-load-views ()
+  (interactive)
+  (setq ivy-views (load-from-file ivy-save-file)))
