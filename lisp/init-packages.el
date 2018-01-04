@@ -129,8 +129,6 @@
 
 (defvar package-init-files
   '(
-    init-package-magit
-    init-package-undo-tree
     init-package-powerline
     init-package-autocomplete
     init-package-use-packages
