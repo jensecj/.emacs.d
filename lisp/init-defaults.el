@@ -149,6 +149,9 @@
 ;; Just save before compiling already
 (setq compilation-ask-about-save nil)
 
+;;save lots more things in the kill ring
+(setq kill-ring-max 200)
+
 ;; When popping the mark, continue popping until the cursor actually moves
 ;; Also, if the last command was a copy - skip past all the expand-region cruft.
 (defadvice pop-to-mark-command (around ensure-new-position activate)
