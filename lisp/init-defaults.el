@@ -6,6 +6,9 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
+;; enable useful disabled features
+(put 'narrow-to-region 'disabled nil)
+
 ;; Use Source Code Pro font if it is available. when launching emacs
 ;; as a daemon, fonts are not loaded until we actually produce a
 ;; frame, so the font list will be empty, focus-in-hook is run when a
