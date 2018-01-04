@@ -261,8 +261,10 @@
   (beginend-global-mode))
 
 (use-package which-key
+  :diminish which-key-mode
   :config
-  (which-key-setup-minibuffer))
+  (which-key-setup-minibuffer)
+  (which-key-mode))
 
 ;; (use-package persp-mode
 ;;   :config
