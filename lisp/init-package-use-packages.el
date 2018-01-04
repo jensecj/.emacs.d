@@ -134,13 +134,17 @@
   :demand t
   :diminish ivy-mode
   :bind
-  (:map ivy-minibuffer-map
-        ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
-        ("C-S-<return>" . ivy-immediate-done))
+  (("M-p p" . ivy-push-view)
+   ("M-p k" . ivy-pop-view)
+   ("M-p b" . ivy-switch-view)
+   :map ivy-minibuffer-map
+   ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
+   ("C-S-<return>" . ivy-immediate-done))
   :config
   (setq ivy-height 15)
   (setq ivy-count-format "")
-  (ivy-mode))
+  (ivy-mode)
+  (ivy-load-views))
 
 (use-package counsel-projectile)
 (use-package projectile

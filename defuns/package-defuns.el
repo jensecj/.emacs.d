@@ -53,6 +53,10 @@
   (interactive)
   (save-to-file ivy-views ivy-save-file))
 
+;; save ivy-views when pushing/popping views
+(advice-add 'ivy-push-view :after #'ivy-save-views)
+(advice-add 'ivy-pop-view :after #'ivy-save-views)
+
 (defun ivy-load-views ()
   (interactive)
   (setq ivy-views (load-from-file ivy-save-file)))
