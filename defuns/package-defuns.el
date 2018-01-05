@@ -48,8 +48,11 @@
         (set-marker m nil))
     ad-do-it))
 
-(defvar ivy-save-file (concat my-emacs-data-dir "ivy-views"))
+(defvar ivy-save-file (concat my-emacs-data-dir "ivy-views")
+  "The file on disk used to save ivy-views")
+
 (defun ivy-save-views ()
+  "Save ivy-views to disk"
   (interactive)
   (save-to-file ivy-views ivy-save-file))
 
@@ -58,5 +61,14 @@
 (advice-add 'ivy-pop-view :after #'ivy-save-views)
 
 (defun ivy-load-views ()
+  "Load ivy-views from disk"
   (interactive)
   (setq ivy-views (load-from-file ivy-save-file)))
+
+;; use an empty string as the default view name, instead of buffers
+(defun ivy-empty-view-name ()
+  "Default name for a new view, used in push-view prompt."
+  '"{} ")
+
+;; replace the default view-name
+(advice-add 'ivy-default-view-name :override #'ivy-empty-view-name)
