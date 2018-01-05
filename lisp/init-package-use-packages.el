@@ -222,19 +222,6 @@
 (use-package multi-term
   :bind ("C-z" . better-multi-term)
   :config
-  (defun better-multi-term ()
-    "Create new term buffer."
-    (interactive)
-    (let ((term-buffer)
-          (buffer-new-name (file-name-directory buffer-file-name)))
-      ;; Set buffer.
-      (setq term-buffer (multi-term-get-buffer current-prefix-arg))
-      (set-buffer term-buffer)
-      ;; Internal handle for `multi-term' buffer.
-      (multi-term-internal)
-      ;; Switch buffer
-      (switch-to-buffer term-buffer)
-      (rename-buffer (concat "*" buffer-new-name "*"))))
   (setq multi-term-program "/bin/zsh")
   (setq term-bind-key-alist '()) ;; clear the binds list, defaulting to emacs binds
   )

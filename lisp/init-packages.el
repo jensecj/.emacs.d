@@ -131,6 +131,7 @@
   '(
     init-package-powerline
     init-package-autocomplete
+    init-package-multi-term
     init-package-use-packages
     ))
 
