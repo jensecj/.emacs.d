@@ -23,17 +23,19 @@
             :keymap counsel-find-file-map
             :caller 'counsel-read-find-name))
 
-;; full screen magit-status
 (defadvice magit-status (around magit-fullscreen activate)
+  "Saves window configuration, then opens magit in fullscreen"
   (window-configuration-to-register :magit-fullscreen)
   ad-do-it
   (delete-other-windows))
 
-;; 'q' to quit magit session
 (defun magit-quit-session ()
   "Restores the previous window configuration and kills the magit buffer"
   (interactive)
-  (kill-buffer)
+  ;; only kill the buffer if it's the actual buffer, this way we can
+  ;; still get back to our previous configuration if we quit magit weirdly
+  (if (s-prefix? "*magit:" (buffer-name (current-buffer)))
+      (kill-buffer))
   (jump-to-register :magit-fullscreen))
 
 ;; Keep region when undoing in region

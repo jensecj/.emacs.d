@@ -47,6 +47,7 @@
      ;; libraries
      dash                    ; list functions library (-map, -fold, etc.)
      s                       ; string manipulation library (concat, etc.)
+     f                       ; for working with files
 
      ;; file modes
      ;; auctex                  ; latex

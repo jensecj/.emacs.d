@@ -15,6 +15,11 @@
   :defer
   :config (setq scheme-program-name "csi -:c"))
 
+;; some libraries
+(use-package dash) ;; lists (-map, -fold, etc.)
+(use-package s) ;; strings (s-prefix?, etc.)
+(use-package f) ;; files (f-read, etc.)
+
 (use-package latex
   :defer
   :config
