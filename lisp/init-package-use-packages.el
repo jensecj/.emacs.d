@@ -22,6 +22,7 @@
 
 (use-package latex
   :defer
+  :hook (LaTeX-mode-hook . reftex-mode)
   :config
   (setq-default TeX-PDF-mode t) ;; default to pdf
   (setq-default TeX-global-PDF-mode t) ;; default to pdf
@@ -30,7 +31,6 @@
   (setq-default TeX-save-query nil) ;; save before compiling
   (setq-default TeX-master nil) ;; try to figure out which file is the master
   (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
-  (add-hook 'LaTeX-mode-hook 'reftex-mode) ;; enable reftex
   )
 
 (use-package auto-complete
