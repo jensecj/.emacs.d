@@ -244,6 +244,7 @@
   (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
 
 (use-package beginend
+  :diminish beginend-global-mode
   :init
   (global-set-key (kbd "M-<") 'beginning-of-buffer)
   (global-set-key (kbd "M->") 'end-of-buffer)
