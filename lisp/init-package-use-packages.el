@@ -10,7 +10,7 @@
 (use-package octave-mode
   :mode "\\.m\\'")
 (use-package shell-script-mode
-  :mode ("\\.sh\\'" "\\.zsh\\'" "\\zshrc\\'"))
+  :mode ("\\.sh\\'" "\\.zsh\\'" "\\zshrc\\'" "\\PKGBUILD\\'"))
 (use-package scheme-mode ;; use chicken scheme
   :defer
   :config (setq scheme-program-name "csi -:c"))
