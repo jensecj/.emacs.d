@@ -57,8 +57,8 @@
 
 (use-package smex
   :config
-  (smex-initialize)
-  (setq smex-save-file (concat my-emacs-data-dir "smex-items")))
+  (setq smex-save-file (concat my-emacs-data-dir "smex-items"))
+  (smex-initialize))
 
 (use-package smartparens
   :diminish smartparens-mode
