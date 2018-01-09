@@ -3,11 +3,14 @@
 ;; Add melpa as a package archive
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/")))
+                         ("melpa" . "https://melpa.org/packages/")))
 
 (package-initialize)
 
 (defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
+
+;; set the paranoia level to medium, warns if connections are insecure
+(setq network-security-level 'medium)
 
 ;; Refresh package archive if it does not exist or is older than a week
 (if (or (not (file-exists-p melpa-archive)) ;; if there exists no archive cache
