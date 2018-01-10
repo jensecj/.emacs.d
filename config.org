@@ -459,7 +459,6 @@ restores the message."
   (if (s-prefix? "*magit:" (buffer-name (current-buffer)))
       (kill-buffer))
   (jump-to-register :magit-fullscreen))
-
 #+END_SRC
 
 ** Windows
@@ -554,9 +553,50 @@ restores the message."
 (defun move-border-down (arg)
   (interactive "P")
   (move-border-up-or-down arg nil))
+#+END_SRC
+
+** Misc
+#+BEGIN_SRC emacs-lisp
+(defmacro create-simple-keybinding-command (name key)
+  `(defmacro ,name (&rest fns)
+     (list 'global-set-key (kbd ,key) `(lambda ()
+                                         (interactive)
+                                         ,@fns))))
+
+(create-simple-keybinding-command f2 "<f2>")
+(create-simple-keybinding-command f5 "<f5>")
+(create-simple-keybinding-command f6 "<f6>")
+(create-simple-keybinding-command f7 "<f7>")
+(create-simple-keybinding-command f8 "<f8>")
+(create-simple-keybinding-command f9 "<f9>")
+(create-simple-keybinding-command f10 "<f10>")
+(create-simple-keybinding-command f11 "<f11>")
+(create-simple-keybinding-command f12 "<f12>")
+
+(defun goto-line-with-feedback ()
+  "Show line numbers temporarily, while prompting for the line number input"
+  (interactive)
+  (unwind-protect
+      (progn
+        (linum-mode 1)
+        (call-interactively 'goto-line))
+    (linum-mode -1)))
+
+;; format linum mode, makes if readable, but uses some space, fine since it
+;; is only visible when using =goto-line-with-feedback=.
+(setq linum-format (lambda (line)
+                     (propertize
+                      (format (concat " %"
+                                      (number-to-string
+                                       (length (number-to-string
+                                                (line-number-at-pos (point-max)))))
+                                      "d ")
+                              line)
+                      'face 'linum)))
+
 
 #+END_SRC
-** Misc
+
 * Use-packages
 #+BEGIN_SRC emacs-lisp
 ;; give buffers unique names
@@ -642,6 +682,27 @@ Create nonexistent directories when saving a file
         (set-marker p nil)
         (set-marker m nil))
     ad-do-it))
+
+(defun my-counsel-grep-or-swiper (orig-fun &rest args)
+  "Start searching with the region as initial input"
+  (if (region-active-p)
+      (let ((start (region-beginning))
+            (end (region-end)))
+        (deactivate-mark)
+        (apply orig-fun (list (buffer-substring-no-properties start end))))
+    (funcall orig-fun)))
+
+(advice-add 'counsel-grep-or-swiper :around #'my-counsel-grep-or-swiper)
+
+(defun mydired-sort ()
+  "Sort dired listings with directories first."
+  (save-excursion
+    (let (buffer-read-only)
+      (forward-line 2) ;; beyond dir. header
+      (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+    (set-buffer-modified-p nil)))
+
+(advice-add 'dired-readin :after #'mydired-sort)
 #+END_SRC
 
 * Keybindings
