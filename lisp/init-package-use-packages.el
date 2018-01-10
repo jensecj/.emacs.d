@@ -277,7 +277,13 @@
   ;; keep #+BEGIN_SRC blocks aligned with their contents
   (setq org-edit-src-content-indentation 0)
   ;; dont indent things
-  (setq org-adapt-indentation nil))
+  (setq org-adapt-indentation nil)
+  ;; syntax highlight org-mode code blocks when exporting as pdf
+  (setq org-latex-listings 'minted
+        org-latex-packages-alist '(("" "minted"))
+        org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
 
 ;; (use-package persp-mode
 ;;   :config
