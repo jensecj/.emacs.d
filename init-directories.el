@@ -42,4 +42,10 @@
 (setq-default save-place t)
 (setq save-place-file (concat my-emacs-data-dir "saveplaces"))
 
+(require 'savehist)
+(setq savehist-file (concat my-emacs-data-dir "savehist"))
+(setq savehist-autosave-interval 60) ;; save every minute
+(setq savehist-additional-variables '(search-ring regexp-search-ring))
+(savehist-mode 1)
+
 (provide 'init-directories)
