@@ -137,6 +137,7 @@ this.
 (blink-cursor-mode 0)
 
 ;; Highlight current line, with a sane color, and transparent foreground
+;; (so it does not mess with syntax highlighting)
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "gray30")
 (set-face-foreground 'highlight nil)
@@ -178,14 +179,12 @@ this.
 (prefer-coding-system 'utf-8)
 
 ;; Show active region
-(make-variable-buffer-local 'transient-mark-mode)
-(put 'transient-mark-mode 'permanent-local t)
 (transient-mark-mode 1)
 
 ;; Remove text in active region if inserting text
 (delete-selection-mode 1)
 
-;; Always display line and column numbers
+;; display line and column numbers in mode-line
 (setq line-number-mode t)
 (setq column-number-mode t)
 
@@ -195,9 +194,11 @@ this.
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
 
-;; Never insert tabs
+;; use spaces instead of tabs
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
+;; this messes with less things when indenting,
+;; tabs are converted to spaces automatically
 (setq-default indent-line-function 'insert-tab)
 
 ;; Show me empty lines after buffer end
@@ -206,7 +207,7 @@ this.
 ;; Easily navigate silly cased words
 (global-subword-mode 1)
 
-;; Don't break lines for me, please
+;; Don't automatically break lines
 (setq truncate-lines t)
 
 ;; Allow recursive mini buffers
@@ -215,20 +216,16 @@ this.
 ;; Don't be so stingy on the memory, we have lots now. It's the distant future.
 (setq gc-cons-threshold 20000000)
 
-;; Sentences do not need double spaces to end. Period.
-(setq sentence-end-double-space nil)
-
-;; Nic says eval-expression-print-level needs to be set to nil (turned off) so
-;; that you can always see what's happening.
+;; show everything that's happening when evaluating somethingx
 (setq eval-expression-print-level nil)
 
 ;; End files in newlines
 (setq require-final-newline 't)
 
-;; Just save before compiling already
+;; Save before compiling, dont ask
 (setq compilation-ask-about-save nil)
 
-;;save lots more things in the kill ring
+;; save more things in the kill ring
 (setq kill-ring-max 200)
 #+END_SRC
 
@@ -262,35 +259,43 @@ Create nonexistent directories when saving a file
 
 * Use-packages
 #+BEGIN_SRC emacs-lisp
-;; Add parts of each file's directory to the buffer name if not unique
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
+;; give buffers unique names
+(use-package uniquify
+  :config
+  (setq uniquify-buffer-name-style 'forward))
 
-(require 'tramp)
-(setq tramp-persistency-file-name (concat my-emacs-data-dir "tramp"))
+(use-package tramp
+  :config
+  (setq tramp-persistency-file-name (concat my-emacs-data-dir "tramp")))
 
 ;; Save point position between sessions
-(require 'saveplace)
-(setq save-place t)
-(setq save-place-file (concat my-emacs-data-dir "saveplaces"))
+(use-package saveplace
+  :config
+  (setq-default save-place t)
+  (setq save-place-file (concat my-emacs-data-dir "saveplaces")))
 
-(require 'savehist)
-(setq savehist-file (concat my-emacs-data-dir "savehist"))
-(setq savehist-autosave-interval 60) ;; save every minute
-(setq savehist-additional-variables '(search-ring regexp-search-ring))
-(savehist-mode 1)
+;; Persist some vars across sessions
+(use-package savehist
+  :config
+  (setq savehist-file (concat my-emacs-data-dir "savehist"))
+  (setq savehist-autosave-interval 60) ;; save every minute
+  (setq savehist-additional-variables '(search-ring
+                                        regexp-search-ring))
+  (savehist-mode 1))
 
-;; Save a list of recent files visited.
-(require 'recentf)
-(setq recentf-save-file (recentf-expand-file-name (concat my-emacs-data-dir "recentf")))
-(setq recentf-exclude '(".emacs.d/elpa/" ".emacs.d/data/" "COMMIT_EDITMSG"))
-(setq recentf-max-saved-items 500) ;; just 20 is too recent
-(setq recentf-auto-cleanup 300) ;; cleanup every 5 mins.
-;; save recentf file every 30s, but don't bother us about it
-(setq recentf-auto-save-timer
-      (run-with-idle-timer 30 t '(lambda ()
-                                   (with-supressed-message (recentf-save-list)))))
-(recentf-mode 1)
+;; Save a list of recently visited files.
+(use-package recentf
+  :config
+  (setq recentf-save-file (recentf-expand-file-name (concat my-emacs-data-dir "recentf")))
+  (setq recentf-exclude '(".emacs.d/elpa/" ".emacs.d/data/"))
+  (setq recentf-max-saved-items 500) ;; just 20 is too few
+  (setq recentf-auto-cleanup 300) ;; cleanup every 5 mins.
+  ;; save recentf file every 30s, but don't bother us about it
+  (setq recentf-auto-save-timer
+        (run-with-idle-timer 30 t '(lambda ()
+                                     (with-supressed-message (recentf-save-list)))))
+  (recentf-mode 1))
+
 #+END_SRC
 
 * Package specific things
