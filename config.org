@@ -1,5 +1,5 @@
 #+TITLE: Emacs 'literal programming' configuration
-#+HTML_HEAD: <style>html,body { max-width: 800px; margin-left: auto; margin-right: auto; }</style>
+#+HTML_HEAD: <style>html,body { max-width: 800px; margin-left: auto; margin-right: auto; font-family: sans-serif;}</style>
 #+OPTIONS: html-postamble:nil
 
 * Core setup
@@ -251,6 +251,20 @@ Add user lisp directories to the load path
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
 #+END_SRC
+
+* Defuns
+
+* Use-packages
+
+* Package specific things
+
+* Keybindings
+
+* tty
+
+* Homemade modes
+
+* Experimental
 
 * Epilogue
 #+BEGIN_SRC emacs-lisp
