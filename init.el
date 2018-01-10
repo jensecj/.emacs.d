@@ -1,3 +1,5 @@
+(message (format "= \e[1m\e[32mStarted initializing Emacs!\e[0m"))
+
 (package-initialize)
 
 (require 'org)
