@@ -270,6 +270,15 @@
   :config
   (setq browse-url-firefox-program "firefox"))
 
+(use-package org
+  :config
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+  ;; keep #+BEGIN_SRC blocks aligned with their contents
+  (setq org-edit-src-content-indentation 0)
+  ;; dont indent things
+  (setq org-adapt-indentation nil))
+
 ;; (use-package persp-mode
 ;;   :config
 ;;   (persp-set-keymap-prefix (kbd "C-M-p"))
