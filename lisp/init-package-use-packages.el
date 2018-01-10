@@ -261,6 +261,10 @@
   (which-key-setup-minibuffer)
   (which-key-mode))
 
+(use-package browse-url
+  :config
+  (setq browse-url-firefox-program "firefox"))
+
 ;; (use-package persp-mode
 ;;   :config
 ;;   (persp-set-keymap-prefix (kbd "C-M-p"))
