@@ -15,6 +15,11 @@
     (switch-to-buffer (get-buffer-create bufname))
     (emacs-lisp-mode)))
 
+(defun clean-view ()
+  (interactive)
+  (create-scratch-buffer)
+  (delete-other-windows))
+
 (defun toggle-window-split ()
   "Toggle window splitting between horizontal and vertical"
   (interactive)
