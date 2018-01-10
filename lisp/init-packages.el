@@ -3,7 +3,8 @@
 ;; Add melpa as a package archive
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")))
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("org" . "https://orgmode.org/elpa/")))
 
 (package-initialize)
 
@@ -85,6 +86,8 @@
      workgroups              ; required for persp-mode to save perspectives to file
 
      ;; general emacs things
+     org                     ; org-mode
+     htmlize                 ; highlight org-mode codeblocks when exporting
      ace-jump-buffer         ; jump between buffers
      ace-jump-mode           ; jump around the buffer with ease
      ace-jump-zap            ; zap-to-char in ace-jump style
