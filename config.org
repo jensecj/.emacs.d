@@ -1,5 +1,78 @@
-* Initial
+#+TITLE: Emacs 'literal programming' configuration
+#+HTML_HEAD: <style>html,body { max-width: 800px; margin-left: auto; margin-right: auto; }</style>
+#+OPTIONS: html-postamble:nil
 
-  #+BEGIN_SRC emacs-lisp
-(message "Hi from org init file!")
-  #+END_SRC
+* Core setup
+
+User setup
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Jens Christian Jensen")
+(setq user-mail-address "jensecj@gmail.com")
+#+END_SRC
+
+The directories we're going to use.
+#+BEGIN_SRC emacs-lisp
+(defconst my-emacs-dir user-emacs-directory)
+(defconst my-emacs-lisp-dir (concat my-emacs-dir "lisp/"))
+(defconst my-emacs-modes-dir (concat my-emacs-dir "modes/"))
+(defconst my-emacs-defuns-dir (concat my-emacs-dir "defuns/"))
+
+(defconst my-emacs-temp-dir (concat my-emacs-dir ".temp/"))
+;; config and cache files
+(defconst my-emacs-data-dir (concat my-emacs-dir "data/"))
+;; backups and auto saves
+(defconst my-emacs-backup-dir (concat my-emacs-data-dir "backups/"))
+#+END_SRC
+
+Create the directories if they don't already exist.
+#+BEGIN_SRC emacs-lisp
+(unless (file-exists-p my-emacs-lisp-dir)
+  (make-directory my-emacs-lisp-dir))
+(unless (file-exists-p my-emacs-modes-dir)
+  (make-directory my-emacs-modes-dir))
+(unless (file-exists-p my-emacs-defuns-dir)
+  (make-directory my-emacs-defuns-dir))
+
+(unless (file-exists-p my-emacs-temp-dir)
+  (make-directory my-emacs-temp-dir))
+(unless (file-exists-p my-emacs-data-dir)
+  (make-directory my-emacs-data-dir))
+(unless (file-exists-p my-emacs-backup-dir)
+  (make-directory my-emacs-backup-dir))
+#+END_SRC
+
+Add user lisp directories to the load path
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path my-emacs-lisp-dir)
+(add-to-list 'load-path my-emacs-modes-dir)
+#+END_SRC
+
+* Defaults
+#+BEGIN_SRC emacs-lisp
+;; Save backup, auto save files in data folder
+(setq backup-directory-alist `((".*" . ,my-emacs-backup-dir)))
+(setq auto-save-file-name-transforms `((".*" ,my-emacs-backup-dir t)))
+(setq auto-save-list-file-prefix my-emacs-backup-dir)
+
+;; Save temp files in .temp folder
+(setq temporary-file-directory my-emacs-temp-dir)
+
+(require 'tramp)
+(setq tramp-persistency-file-name (concat my-emacs-data-dir "tramp"))
+
+;; Save point position between sessions
+(require 'saveplace)
+(setq-default save-place t)
+(setq save-place-file (concat my-emacs-data-dir "saveplaces"))
+
+(require 'savehist)
+(setq savehist-file (concat my-emacs-data-dir "savehist"))
+(setq savehist-autosave-interval 60) ;; save every minute
+(setq savehist-additional-variables '(search-ring regexp-search-ring))
+(savehist-mode 1)
+#+END_SRC
+
+* Epilogue
+#+BEGIN_SRC emacs-lisp
+(message "done loading init org file")
+#+END_SRC

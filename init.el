@@ -1,11 +1,14 @@
 (package-initialize)
 
+(require 'org)
+(org-babel-load-file (concat user-emacs-directory "config.org"))
+
 ;; Add the emacs directory to the load path
 (add-to-list 'load-path user-emacs-directory)
 
 (defvar init-files
   '(
-    init-directories ;; Setup directories and add things to the load-path
+    ;; init-directories ;; Setup directories and add things to the load-path
     init-defaults ;; Setup some better defaults
     init-defuns ;; Load all home made lisp functions
     init-keybindings ;; Setup keybindings for everything
@@ -31,7 +34,5 @@
 (message "# \e[96m Finished loading init files \e[0m")
 
 (message (format "= \e[1m\e[32mEmacs initialized in %s\e[0m" (emacs-init-time)))
-
-(org-babel-load-file (concat my-emacs-dir "config.org"))
 
 (provide 'init)
