@@ -267,24 +267,20 @@ this.
 ** Editing
 #+BEGIN_SRC emacs-lisp
 (defun open-line-below ()
+  "Inserts a line below the current line, indents it, and moves the the
+  beginning of that line."
   (interactive)
   (end-of-line)
   (newline)
   (indent-for-tab-command))
 
 (defun open-line-above ()
+  "Inserts a line above the current line, indents it, and moves the the
+  beginning of that line."
   (interactive)
   (beginning-of-line)
   (newline)
   (forward-line -1)
-  (indent-for-tab-command))
-
-(defun new-line-in-between ()
-  (interactive)
-  (newline)
-  (save-excursion
-    (newline)
-    (indent-for-tab-command))
   (indent-for-tab-command))
 
 (defun smart-line-beginning ()
@@ -295,67 +291,30 @@ this.
     (when (eq pt (point))
       (beginning-of-line))))
 
-(defun kill-region-or-backward-word ()
-  (interactive)
-  (if (region-active-p)
-      (kill-region (region-beginning) (region-end))
-    (backward-kill-word 1)))
-
 (defun kill-to-beginning-of-line ()
+  "Kills from <point> to the beginning of the current line."
   (interactive)
   (kill-region (save-excursion (beginning-of-line) (point))
                (point)))
 
-(defun copy-to-end-of-line ()
-  (interactive)
-  (kill-ring-save (point)
-                  (line-end-position))
-  (message "Copied to end of line"))
-
-(defun copy-whole-lines (arg)
-  "Copy lines (as many as prefix argument) in the kill ring"
-  (interactive "p")
-  (kill-ring-save (line-beginning-position)
-                  (line-beginning-position (+ 1 arg)))
-  (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
-
-(defun copy-line (arg)
-  "Copy to end of line, or as many lines as prefix argument"
-  (interactive "P")
-  (if (null arg)
-      (copy-whole-lines 1)
-    (copy-whole-lines (prefix-numeric-value arg))))
-
 (defun save-region-or-current-line (arg)
+  "If a region is active then it is saved to the kill-ring, otherwise the current
+line is saved."
   (interactive "P")
   (if (region-active-p)
       (kill-ring-save (region-beginning) (region-end))
     (copy-line arg)))
 
 (defun kill-region-or-current-line (arg)
+  "If a region is active then it is killed, otherwise the current line is killed."
   (interactive "P")
   (if (region-active-p)
       (kill-region (region-beginning) (region-end))
     (save-excursion
       (kill-whole-line arg))))
 
-(defun kill-and-retry-line ()
-  "Kill the entire current line and reposition point at indentation"
-  (interactive)
-  (back-to-indentation)
-  (kill-line))
-
-(defun comment-kill-all ()
-  "kill all comments in buffer"
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (comment-kill (save-excursion
-                    (goto-char (point-max))
-                    (line-number-at-pos)))))
-
 (defun join-region ()
-  "join all lines in a region"
+  "Join all lines in a region into a single line."
   (interactive)
   (save-excursion
     (let ((beg (region-beginning))
@@ -367,7 +326,7 @@ this.
           (end-of-line))))))
 
 (defun wrap-region (b e text-begin text-end)
-  "Surround current region with given text."
+  "Surrounds region with given text."
   (interactive "r\nsStart text: \nsEnd text: ")
   (if (use-region-p)
       (save-restriction
