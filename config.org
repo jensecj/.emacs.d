@@ -1,0 +1,5 @@
+* Initial
+
+  #+BEGIN_SRC emacs-lisp
+(message "Hi from org init file!")
+  #+END_SRC

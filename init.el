@@ -32,4 +32,6 @@
 
 (message (format "= \e[1m\e[32mEmacs initialized in %s\e[0m" (emacs-init-time)))
 
+(org-babel-load-file (concat my-emacs-dir "config.org"))
+
 (provide 'init)
