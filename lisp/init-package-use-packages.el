@@ -230,7 +230,12 @@
   :bind ("C-z" . better-multi-term)
   :config
   (setq multi-term-program "/bin/zsh")
-  (setq term-bind-key-alist '()) ;; clear the binds list, defaulting to emacs binds
+  ;; (setq term-bind-key-alist '()) ;; clear the binds list, defaulting to emacs binds
+  (setq term-buffer-maximum-size 10000)
+  ;; (add-to-list 'term-bind-key-alist '("<C-left>" . term-send-backward-word))
+  ;; (add-to-list 'term-bind-key-alist '("<C-right>" . term-send-forward-word))
+  ;; (add-to-list 'term-bind-key-alist '("<C-backspace>" . (lambda () (interactive) (term-send-raw-string "\C-h")))) ;; backwards-kill-word
+  ;; (add-to-list 'term-bind-key-alist '("<C-del>" . (lambda () (interactive) (term-send-raw-string "\e[3;5~")))) ;; forwards-kill-word
   )
 
 (use-package jist
