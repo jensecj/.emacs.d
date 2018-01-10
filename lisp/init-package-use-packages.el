@@ -196,14 +196,17 @@
   :bind ("M-ø" . goto-last-change))
 
 (use-package dired+)
+(use-package dired-x)
 (use-package dired
-  :after dired+
+  :after (dired+ dired-x)
   :bind
   (("C-x C-d" . (lambda () (interactive) (dired default-directory)))
    :map dired-mode-map
-   ("C-c C-." . dired-dotfiles-toggle)
+   ("C-c C-." . dired-omit-mode)
    ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
   :config
+  (setq dired-omit-files
+        (concat dired-omit-files "\\|^\\..+$"))
   (toggle-diredp-find-file-reuse-dir 1)
   (setq ibuffer-formats
         '((mark modified read-only " "
