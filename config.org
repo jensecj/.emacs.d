@@ -247,7 +247,7 @@ this.
              (setq n (1+ n))
              (get-buffer bufname)))
     (switch-to-buffer (get-buffer-create bufname))
-    (emacs-lisp-mode)))
+    (funcall initial-major-mode)))
 
 (defun clean-view ()
   "Creates a scratch buffer, and makes it the only buffer visible."
