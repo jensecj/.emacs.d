@@ -479,32 +479,6 @@ restores the message."
              (setq i (1+ i)))))))
 #+END_SRC
 ** Misc
-* Advices and Hooks
-
-When popping the mark, continue popping until the cursor actually
-moves. also, if the last command was a copy - skip past all the
-expand-region cruft.
-#+BEGIN_SRC emacs-lisp
-(defadvice pop-to-mark-command (around ensure-new-position activate)
-  (let ((p (point)))
-    (when (eq last-command 'save-region-or-current-line)
-      ad-do-it
-      ad-do-it
-      ad-do-it)
-    (dotimes (i 10)
-      (when (= p (point)) ad-do-it))))
-#+END_SRC
-
-Create nonexistent directories when saving a file
-#+BEGIN_SRC emacs-lisp
-(add-hook 'before-save-hook
-          (lambda ()
-            (when buffer-file-name
-              (let ((dir (file-name-directory buffer-file-name)))
-                (when (not (file-exists-p dir))
-                  (make-directory dir t))))))
-#+END_SRC
-
 * Use-packages
 #+BEGIN_SRC emacs-lisp
 ;; give buffers unique names
@@ -547,6 +521,30 @@ Create nonexistent directories when saving a file
 #+END_SRC
 
 * Package specific things
+* Advices and Hooks
+When popping the mark, continue popping until the cursor actually
+moves. also, if the last command was a copy - skip past all the
+expand-region cruft.
+#+BEGIN_SRC emacs-lisp
+(defadvice pop-to-mark-command (around ensure-new-position activate)
+  (let ((p (point)))
+    (when (eq last-command 'save-region-or-current-line)
+      ad-do-it
+      ad-do-it
+      ad-do-it)
+    (dotimes (i 10)
+      (when (= p (point)) ad-do-it))))
+#+END_SRC
+
+Create nonexistent directories when saving a file
+#+BEGIN_SRC emacs-lisp
+(add-hook 'before-save-hook
+          (lambda ()
+            (when buffer-file-name
+              (let ((dir (file-name-directory buffer-file-name)))
+                (when (not (file-exists-p dir))
+                  (make-directory dir t))))))
+#+END_SRC
 
 * Keybindings
 
