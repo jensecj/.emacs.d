@@ -49,19 +49,43 @@ Add user lisp directories to the load path
 #+END_SRC
 
 * Defaults
-#+BEGIN_SRC emacs-lisp
-;; Hide the splash screen
-(setq inhibit-startup-message t)
+A lot of these settings are single line `(setq ...)` statements,
+simply because it makes it convienient to change a single setting on
+the run and apply the change.
 
-;; Turn off excess interface early in startup to avoid momentary display
+** Frame
+Turn off excess interface early in startup to avoid momentary display
+#+BEGIN_SRC emacs-lisp
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+#+END_SRC
 
-;; Save backup, auto save files in data folder
+
+** Backup
+Make backups of files, even when they're in version control, and set
+how many backups we want to save for each file.
+#+BEGIN_SRC emacs-lisp
+(setq make-backup-files t
+      vc-make-backup-files t
+      version-control t
+      delete-old-versions t
+      kept-old-versions 9
+      kept-new-versions 9
+      auto-save-default t)
+#+END_SRC
+
+Save backup and auto-save files in data folder
+#+BEGIN_SRC emacs-lisp
 (setq backup-directory-alist `((".*" . ,my-emacs-backup-dir)))
 (setq auto-save-file-name-transforms `((".*" ,my-emacs-backup-dir t)))
 (setq auto-save-list-file-prefix my-emacs-backup-dir)
+#+END_SRC
+
+** Misc
+#+BEGIN_SRC emacs-lisp
+;; Hide the splash screen
+(setq inhibit-startup-message t)
 
 ;; Save temp files in .temp folder
 (setq temporary-file-directory my-emacs-temp-dir)
@@ -71,7 +95,7 @@ Add user lisp directories to the load path
 
 ;; Save point position between sessions
 (require 'saveplace)
-(setq-default save-place t)
+(setq save-place t)
 (setq save-place-file (concat my-emacs-data-dir "saveplaces"))
 
 (require 'savehist)
@@ -172,14 +196,6 @@ Add user lisp directories to the load path
 ;; change the dir for the persistent cache
 (setq pcache-directory (concat my-emacs-data-dir "pcache/"))
 
-;; Make backups of files, even when they're in version control
-(setq make-backup-files t
-      vc-make-backup-files t
-      version-control t
-      delete-old-versions t
-      kept-old-versions 9
-      kept-new-versions 9
-      auto-save-default t)
 
 ;; Keep emacs custom settings in a separate file
 (setq custom-file (concat my-emacs-dir "custom.el"))
