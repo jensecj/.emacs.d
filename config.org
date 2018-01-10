@@ -387,12 +387,42 @@ line is saved."
 ** Lisp
 #+BEGIN_SRC emacs-lisp
 (defun one-shot-keybinding (key command)
-  "set keybindings that disappear once you press a key that is not in
+  "Set a keybinding that disappear once you press a key that is not in
 the overlay-map"
   (set-transient-map
    (let ((map (make-sparse-keymap)))
      (define-key map (kbd key) command)
      map) t))
+
+(defun eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+
+(defmacro with-supressed-message (&rest body)
+  "Saves the current message in the minibuffer, executes body, then
+restores the message."
+  (let ((saved-message-symbol (make-symbol "saved-message")))
+    `(let ((,saved-message-symbol (current-message)))
+       (progn ,@body)
+       (message ,saved-message-symbol))))
+
+(defun save-to-file (data filename)
+  "Save lisp object to a file"
+  (with-temp-file filename
+    (prin1 data (current-buffer))))
+
+(defun load-from-file (filename)
+  "Load lisp object from file"
+  (with-temp-buffer
+    (insert-file-contents filename)
+    (cl-assert (eq (point) (point-min)))
+    (read (current-buffer))))
 #+END_SRC
 
 ** Packages
