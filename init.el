@@ -12,6 +12,7 @@
     init-packages ;; Handle missing packages, then package specific configuration
     ;; init-el-get ;; Handle packages managed by el-get
     init-modes ;; Setup mode specific configuration
+    init-tty ;; terminal specific things
     init-experimental ;; Initialize things that are works in progress
     ))
 
