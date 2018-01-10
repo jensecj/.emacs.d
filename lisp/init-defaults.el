@@ -99,7 +99,13 @@
 (setq pcache-directory (concat my-emacs-data-dir "pcache/"))
 
 ;; Make backups of files, even when they're in version control
-(setq vc-make-backup-files t)
+(setq make-backup-files t
+      vc-make-backup-files t
+      version-control t
+      delete-old-versions t
+      kept-old-versions 9
+      kept-new-versions 9
+      auto-save-default t)
 
 ;; Keep emacs custom settings in a separate file
 (setq custom-file (concat my-emacs-dir "custom.el"))
