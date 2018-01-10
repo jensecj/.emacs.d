@@ -29,6 +29,7 @@
   ad-do-it
   (delete-other-windows))
 
+(require 's)
 (defun magit-quit-session ()
   "Restores the previous window configuration and kills the magit buffer"
   (interactive)
