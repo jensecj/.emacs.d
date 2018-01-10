@@ -148,6 +148,8 @@
   :config
   (setq ivy-height 15)
   (setq ivy-count-format "")
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
   (ivy-mode)
   (ivy-load-views))
 
