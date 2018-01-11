@@ -1128,6 +1128,12 @@ Autocomplete
 
 Others
 #+BEGIN_SRC emacs-lisp
+(use-package chicken-scheme :ensure t :defer t)
+(use-package htmlize :ensure t :defer t)
+(use-package flx :ensure t)
+(use-package flycheck :disabled :ensure t)
+(use-package git-timemachine :ensure t :functions git-timemachine :defer t)
+(use-package yasnippet :ensure t :defer t)
 (use-package smex
   :ensure t
   :config
@@ -1202,6 +1208,8 @@ Others
   (("C-c r" . vr/replace)
    ("C-c q" . vr/query-replace)))
 
+(use-package clang-format :ensure t :defer t)
+
 (use-package rtags
   :ensure t
   :diminish rtags-mode
@@ -1269,6 +1277,8 @@ Others
 
 (use-package jist
   :ensure t
+  :functions (jist-region jist-region-public)
+  :defer t
   :config (setq jist-enable-default-authorized 't))
 
 (use-package wgrep
@@ -1297,6 +1307,8 @@ Others
   (setq-default TeX-master nil) ;; try to figure out which file is the master
   (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
   )
+
+(use-package rainbow-mode :ensure t :defer t)
 
 (use-package unicode-fonts
   :disabled
