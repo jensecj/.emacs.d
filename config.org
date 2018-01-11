@@ -965,9 +965,29 @@ Setup some major modes
   :mode "\\.bot\\'")
 
 ;; from repos
-(use-package cmake-mode
-  :ensure t
+(use-package cmake-mode :ensure t
   :mode "\\CmakeLists.txt\\'")
+(use-package dockerfile-mode :ensure t
+  :mode "\\Dockerfile\\'")
+(use-package gitconfig-mode :ensure t
+  :mode "\\.gitconfig\\'")
+(use-package gitignore-mode :ensure t
+  :mode "\\.gitignore\\'")
+(use-package haskell-mode :ensure t
+  :mode "\\.hs\\'")
+(use-package lua-mode :ensure t
+  :mode "\\.lua\\'")
+(use-package markdown-mode :ensure t
+  :mode "\\.md\\'")
+(use-package rust-mode :ensure t
+  :mode "\\.rs\\'")
+(use-package scss-mode :ensure t
+  :mode "\\.scss\\'")
+(use-package tuareg :ensure t
+  :mode "\\.ocaml\\'")
+(use-package yaml-mode :ensure t
+  :mode "\\.yml\\'")
+
 #+END_SRC
 
 Moving on to user defined packages.
