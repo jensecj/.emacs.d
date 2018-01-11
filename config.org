@@ -1273,8 +1273,6 @@ thing.
       (define-key input-decode-map "^[[D" [left])))
 #+END_SRC
 
-* Homemade modes
-
 * Experimental
 
 * Epilogue
