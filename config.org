@@ -552,27 +552,6 @@ restores the message."
 
 ** Misc
 #+BEGIN_SRC emacs-lisp
-(defun goto-line-with-feedback ()
-  "Show line numbers temporarily, while prompting for the line number input"
-  (interactive)
-  (unwind-protect
-      (progn
-        (linum-mode 1)
-        (call-interactively 'goto-line))
-    (linum-mode -1)))
-
-;; format linum mode, makes if readable, but uses some space, fine since it
-;; is only visible when using =goto-line-with-feedback=.
-(setq linum-format (lambda (line)
-                     (propertize
-                      (format (concat " %"
-                                      (number-to-string
-                                       (length (number-to-string
-                                                (line-number-at-pos (point-max)))))
-                                      "d ")
-                              line)
-                      'face 'linum)))
-
 
 #+END_SRC
 
@@ -901,6 +880,33 @@ Config for built-ins
   ;; re-parse files on idle
   (global-semantic-idle-scheduler-mode)
   (semantic-mode))
+
+(use-package linum
+  :bind ("M-g M-g" . goto-line-with-feedback)
+  :config
+  (defun goto-line-with-feedback ()
+    "Show line numbers temporarily, while prompting for the line number input"
+    (interactive)
+    (unwind-protect
+        (progn
+          (linum-mode 1)
+          (call-interactively 'goto-line))
+      (linum-mode -1)))
+
+  ;; format linum mode, makes it readable, but uses some space, fine since it
+  ;; is only visible when using =goto-line-with-feedback=.
+  (setq linum-format
+        (lambda (line)
+          (propertize
+           (format
+            (concat
+             " %"
+             (number-to-string
+              (length (number-to-string
+                       (line-number-at-pos (point-max)))))
+             "d ")
+            line)
+           'face 'linum))))
 
 ;; some extra functionality for dired
 (use-package dired-x)
@@ -1656,8 +1662,6 @@ Keybindings for defuns
 (global-set-key (kbd "M-S-<right>") 'move-border-right)
 (global-set-key (kbd "M-S-<up>") 'move-border-up)
 (global-set-key (kbd "M-S-<down>") 'move-border-down)
-
-(global-set-key (kbd "M-g M-g") 'goto-line-with-feedback)
 #+END_SRC
 
 * tty
