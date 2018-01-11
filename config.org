@@ -630,10 +630,6 @@ restores the message."
 #+END_SRC
 
 * Package installation
-#+BEGIN_SRC emacs-lisp
-(message (format "= \e[1m\e[32mStarted Package Installation\e[0m"))
-#+END_SRC
-
 If the package cache does not exist, or if it is older than a week, refresh it's
 content.
 #+BEGIN_SRC emacs-lisp
@@ -756,10 +752,6 @@ already installed. Update packages through the package manager using =(list-pack
 #+END_SRC
 
 * Package initialization
-#+BEGIN_SRC emacs-lisp
-(message (format "= \e[1m\e[32mStarted Package Initialization\e[0m"))
-#+END_SRC
-
 ** Autocomplete
 #+BEGIN_SRC emacs-lisp
 (require 'auto-complete)
