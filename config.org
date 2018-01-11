@@ -1134,6 +1134,18 @@ Others
 (use-package flycheck :disabled :ensure t)
 (use-package git-timemachine :ensure t :functions git-timemachine :defer t)
 (use-package yasnippet :ensure t :defer t)
+
+(use-package fill-column-indicator
+  :disabled
+  :ensure t
+  :diminish fci-mode
+  :functions fci-mode
+  :defer t
+  :config
+  (setq fci-rule-width 1)
+  (setq fci-rule-color "grey")
+  (setq fci-rule-column 80))
+
 (use-package smex
   :ensure t
   :config
