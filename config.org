@@ -600,22 +600,6 @@ restores the message."
 
 ** Misc
 #+BEGIN_SRC emacs-lisp
-(defmacro create-simple-keybinding-command (name key)
-  `(defmacro ,name (&rest fns)
-     (list 'global-set-key (kbd ,key) `(lambda ()
-                                         (interactive)
-                                         ,@fns))))
-
-(create-simple-keybinding-command f2 "<f2>")
-(create-simple-keybinding-command f5 "<f5>")
-(create-simple-keybinding-command f6 "<f6>")
-(create-simple-keybinding-command f7 "<f7>")
-(create-simple-keybinding-command f8 "<f8>")
-(create-simple-keybinding-command f9 "<f9>")
-(create-simple-keybinding-command f10 "<f10>")
-(create-simple-keybinding-command f11 "<f11>")
-(create-simple-keybinding-command f12 "<f12>")
-
 (defun goto-line-with-feedback ()
   "Show line numbers temporarily, while prompting for the line number input"
   (interactive)
@@ -1433,7 +1417,6 @@ Others
   (ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E")))))
 #+END_SRC
 
-* Package specific things
 * Advices and Hooks
 When popping the mark, continue popping until the cursor actually
 moves. also, if the last command was a copy - skip past all the
