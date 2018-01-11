@@ -1517,6 +1517,7 @@ Setup hooks for major modes
 (add-hook 'org-mode-hook
           '(lambda ()
              ;; reset keys used globally for different things
+             (local-set-key (kbd "C-a") nil)
              (local-set-key (kbd "<S-up>") nil)
              (local-set-key (kbd "<S-down>") nil)
              (local-set-key (kbd "<S-left>") nil)
@@ -1524,7 +1525,9 @@ Setup hooks for major modes
              (local-set-key (kbd "<M-S-right>") nil)
              (local-set-key (kbd "<M-S-left>") nil)
              (local-set-key (kbd "<M-S-up>") nil)
-             (local-set-key (kbd "<M-S-down>") nil)))
+             (local-set-key (kbd "<M-S-down>") nil)
+             (local-set-key (kbd "<C-S-up>") nil)
+             (local-set-key (kbd "<C-S-down>") nil)))
 #+END_SRC
 
 * Keybindings
