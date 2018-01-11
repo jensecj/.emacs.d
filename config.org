@@ -468,42 +468,6 @@ restores the message."
     (read (current-buffer))))
 #+END_SRC
 
-** Packages
-#+BEGIN_SRC emacs-lisp
-(defun counsel-read-file-name (prompt &optional initial-input)
-  "Query for a file path using counsel and ivy"
-  (interactive)
-  (ivy-read prompt 'read-file-name-internal
-            :matcher #'counsel--find-file-matcher
-            :initial-input initial-input
-            :action
-            (lambda (x)
-              (with-ivy-window
-                (if (and counsel-find-file-speedup-remote
-                         (file-remote-p ivy--directory))
-                    (let ((find-file-hook nil))
-                      (expand-file-name x ivy--directory))
-                  (expand-file-name x ivy--directory))))
-            :preselect (when counsel-find-file-at-point
-                         (require 'ffap)
-                         (let ((f (ffap-guesser)))
-                           (when f (expand-file-name f))))
-            :require-match 'confirm-after-completion
-            :history 'file-name-history
-            :keymap counsel-find-file-map
-            :caller 'counsel-read-find-name))
-
-(require 's)
-(defun magit-quit-session ()
-  "Restores the previous window configuration and kills the magit buffer"
-  (interactive)
-  ;; only kill the buffer if it's the actual buffer, this way we can
-  ;; still get back to our previous configuration if we quit magit weirdly
-  (if (s-prefix? "*magit:" (buffer-name (current-buffer)))
-      (kill-buffer))
-  (jump-to-register :magit-fullscreen))
-#+END_SRC
-
 ** Windows
 #+BEGIN_SRC emacs-lisp
 (defun toggle-window-split ()
@@ -1254,13 +1218,22 @@ Others
 
 (use-package magit
   :ensure t
+  :functions magit-quit-session
   :bind
   (("C-x m" . magit-status)
    :map magit-mode-map
    ("C-c C-a" . magit-commit-amend)
    ("q" . magit-quit-session))
   :config
-  (setq magit-auto-revert-mode nil))
+  (setq magit-auto-revert-mode nil)
+  (defun magit-quit-session ()
+    "Restores the previous window configuration and kills the magit buffer"
+    (interactive)
+    ;; only kill the buffer if it's the actual buffer, this way we can
+    ;; still get back to our previous configuration if we quit magit weirdly
+    (if (s-prefix? "*magit:" (buffer-name (current-buffer)))
+        (kill-buffer))
+    (jump-to-register :magit-fullscreen)))
 
 (use-package undo-tree
   :ensure t
@@ -1380,6 +1353,7 @@ Others
   :demand t
   :after ivy
   :diminish counsel-mode
+  :functions counsel-read-file-name
   :bind
   (("C-s" . counsel-grep-or-swiper)
    ("C-S-s" . counsel-rg)
@@ -1392,6 +1366,30 @@ Others
   (setq
    counsel-grep-base-command
    "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
+
+  (defun counsel-read-file-name (prompt &optional initial-input)
+    "Query for a file path using counsel and ivy"
+    (interactive)
+    (ivy-read prompt 'read-file-name-internal
+              :matcher #'counsel--find-file-matcher
+              :initial-input initial-input
+              :action
+              (lambda (x)
+                (with-ivy-window
+                  (if (and counsel-find-file-speedup-remote
+                           (file-remote-p ivy--directory))
+                      (let ((find-file-hook nil))
+                        (expand-file-name x ivy--directory))
+                    (expand-file-name x ivy--directory))))
+              :preselect (when counsel-find-file-at-point
+                           (require 'ffap)
+                           (let ((f (ffap-guesser)))
+                             (when f (expand-file-name f))))
+              :require-match 'confirm-after-completion
+              :history 'file-name-history
+              :keymap counsel-find-file-map
+              :caller 'counsel-read-find-name))
+
   (counsel-mode))
 
 (use-package counsel-projectile :ensure t)
