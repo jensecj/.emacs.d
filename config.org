@@ -59,14 +59,8 @@ Setup package archives
 (defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
 #+END_SRC
 
-First, a bit of setup, we want to see what use-package has to say when running.
-And we need to include some things that are used a lot, like common lisp
-function, and libraries for working with lists, strings and files.
+We need to include some libraries for working with lists, strings and files.
 #+BEGIN_SRC emacs-lisp
-(require 'cl)
-
-(require 'use-package)
-(setq use-package-verbose t)
 
 (use-package dash :ensure t)
 (use-package s :ensure t)
