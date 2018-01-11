@@ -59,9 +59,18 @@ Setup package archives
 (defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
 #+END_SRC
 
-Some includes that a lot of things use
+First, a bit of setup, we want to see what use-package has to say when running.
+And we need to include some things that are used a lot, like common lisp
+function, and libraries for working with lists, strings and files.
 #+BEGIN_SRC emacs-lisp
 (require 'cl)
+
+(require 'use-package)
+(setq use-package-verbose t)
+
+(use-package dash :ensure t)
+(use-package s :ensure t)
+(use-package f :ensure t)
 #+END_SRC
 
 * Defaults
@@ -893,24 +902,11 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 #+END_SRC
 
 * Use-packages
-First, a bit of setup, we want to see what use-package has to say when running.
-#+BEGIN_SRC emacs-lisp
-(require 'use-package)
-(setq use-package-verbose t)
-#+END_SRC
-
 We are going to use the bind-key (=:bind=) and diminish (=:diminish=)
 functionalities, so we need to have those packages.
 #+BEGIN_SRC emacs-lisp
 (use-package bind-key :ensure t)
 (use-package diminish :ensure t)
-#+END_SRC
-
-Load some very useful libraries for working with lists, strings and files.
-#+BEGIN_SRC emacs-lisp
-(use-package dash :ensure t) ;; lists (-map, -fold, etc.)
-(use-package s :ensure t) ;; strings (s-prefix?, etc.)
-(use-package f :ensure t) ;; files (f-read, etc.)
 #+END_SRC
 
 Config for built-ins
