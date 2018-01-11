@@ -11,7 +11,6 @@
   '(
     init-keybindings ;; Setup keybindings for everything
     init-modes ;; Setup mode specific configuration
-    init-tty ;; terminal specific things
     ))
 
 (defun try-require (feature)
