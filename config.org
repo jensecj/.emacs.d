@@ -146,6 +146,7 @@ this.
 
 ;; enable useful disabled features
 (put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
 
 ;; Don't blink the cursor
 (blink-cursor-mode -1)
