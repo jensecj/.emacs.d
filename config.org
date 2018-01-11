@@ -1179,7 +1179,7 @@ buffer.
 #+END_SRC
 
 Setup hooks for major modes
-#+BEGIN_SRC
+#+BEGIN_SRC emacs-lisp
 ;; use 'C-c C-c' to compile across languages, and use a proper compile command
 (add-hook 'c++-mode-hook
           '(lambda ()
