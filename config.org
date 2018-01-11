@@ -48,6 +48,22 @@ Add user lisp directories to the load path
 (add-to-list 'load-path my-emacs-modes-dir)
 #+END_SRC
 
+Setup package archives
+#+BEGIN_SRC emacs-lisp
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("melpa-stable" . "https://stable.melpa.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("org" . "https://orgmode.org/elpa/")))
+
+(defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
+#+END_SRC
+
+Some includes that a lot of things use
+#+BEGIN_SRC emacs-lisp
+(require 'cl)
+
+#+END_SRC
+
 * Defaults
 A lot of these settings are single line =(setq ...)= statements,
 simply because it makes it convienient to change a single setting on
@@ -125,10 +141,12 @@ this.
 #+END_SRC
 
 ** Misc
-
 #+BEGIN_SRC emacs-lisp
 ;; Hide the splash screen
 (setq inhibit-startup-message t)
+
+;; set the paranoia level to medium, warns if connections are insecure
+(setq network-security-level 'medium)
 
 ;; enable useful disabled features
 (put 'narrow-to-region 'disabled nil)
@@ -232,7 +250,6 @@ this.
 * Defuns
 ** Buffers
 #+BEGIN_SRC emacs-lisp
-(require 'cl)
 (require 'imenu)
 
 (defun create-scratch-buffer nil
@@ -303,7 +320,7 @@ line is saved."
   (interactive "P")
   (if (region-active-p)
       (kill-ring-save (region-beginning) (region-end))
-    (copy-line arg)))
+    (kill-ring-save (line-beginning-position) (line-end-position))))
 
 (defun kill-region-or-current-line (arg)
   "If a region is active then it is killed, otherwise the current line is killed."
@@ -595,6 +612,164 @@ restores the message."
                       'face 'linum)))
 
 
+#+END_SRC
+
+* Package installation
+#+BEGIN_SRC emacs-lisp
+(message (format "= \e[1m\e[32mStarted Package Installation\e[0m"))
+#+END_SRC
+
+If the package cache does not exist, or if it is older than a week, refresh it's
+content.
+#+BEGIN_SRC emacs-lisp
+(if (or (not (file-exists-p melpa-archive)) ;; if there exists no archive cache
+        (> (file-age melpa-archive) 604800)) ;; or if the cache is old (a week = 60s * 60m * 24h * 7d)
+    (package-refresh-contents)) ;; update the package archive cache
+#+END_SRC
+
+Some helpers we need to install packages from the package archive.
+#+BEGIN_SRC emacs-lisp
+(defun install-packages (packages)
+  "Install a list of packages, skip packages that are already installed."
+  (mapc (lambda (package)
+          (unless (package-installed-p package)
+            (package-install package)))
+        packages))
+
+(defun is-online? ()
+  "Returns a non-nil value if we have a network connection."
+  (if (and (functionp 'network-interface-list)
+           (network-interface-list))
+      (some (lambda (iface) (unless (equal "lo" (car iface))
+                              (member 'up (first (last (network-interface-info
+                                                        (car iface)))))))
+            (network-interface-list))
+    t))
+#+END_SRC
+
+Install packages if we are online, this only installs packages that are not
+already installed. Update packages through the package manager using =(list-packages)=.
+#+BEGIN_SRC emacs-lisp
+(when (is-online?)
+  (install-packages
+   '(
+     ;; libraries
+     dash                    ; list functions library (-map, -fold, etc.)
+     s                       ; string manipulation library (concat, etc.)
+     f                       ; for working with files
+
+     ;; file modes
+     ;; auctex                  ; latex
+     cmake-mode              ; CMake
+     dockerfile-mode         ; dockerfiles
+     gitconfig-mode          ; git config files
+     gitignore-mode          ; git ignore files
+     haskell-mode            ; haskell
+     lua-mode                ; lua
+     markdown-mode           ; markdown
+     rust-mode               ; rust
+     scss-mode               ; sassy css
+     tuareg                  ; ocaml
+     yaml-mode               ; yaml/yml
+
+     ;; programming language specific
+     ;; ac-c-headers            ; auto-complete source for c/c++ header files
+     ;; ac-clang                ; auto-complete source for clang
+     ;; ac-octave               ; auto-complete source for octave
+     ac-rtags                ; auto-complate source for rtags
+     auto-complete           ; the auto completion framework
+     ;; auto-complete-auctex    ; auto-complete source for auctex
+     chicken-scheme          ; extensions for scheme code
+     clang-format            ; buffer cleanup using clang-format
+     rtags                   ; tags for c++ using clang
+     scheme-complete         ; auto-completion for scheme
+
+     ;; project / workflow related
+     counsel-projectile      ; rewritten projectile function using ivy
+     persp-mode              ; group buffers together into perspectives (and their configurations)
+     projectile              ; project based behaviours (based on .git/.svn/etc.)
+     workgroups              ; required for persp-mode to save perspectives to file
+
+     ;; general emacs things
+     org                     ; org-mode
+     htmlize                 ; highlight org-mode codeblocks when exporting
+     ace-jump-buffer         ; jump between buffers
+     ace-jump-mode           ; jump around the buffer with ease
+     ace-jump-zap            ; zap-to-char in ace-jump style
+     beginend                ; better M-< and M-> (beginning/end of buffer jumps)
+     browse-kill-ring        ; browse the kill ring
+     change-inner            ; easily change the inner or outer content of something
+     counsel                 ; functions rewritten with ivy
+     delight                 ; change mode names in the mode-line, works with use-package
+     diminish                ; unclutter the mode line (hide modes)
+     dired+                  ; more dired features
+     ;; el-get                  ; more package management, has the coq proofgeneral package
+     exec-path-from-shell    ; grab env variables from outside emacs
+     expand-region           ; easily expand/contract selections
+     fill-column-indicator   ; line to indicate the fill column
+     flx                     ; flexible(fuzzy) matching for completions
+     flycheck                ; linting
+     git-gutter+             ; mark added/changes/removed lines in the gutter
+     git-timemachine         ; easily check file changes through commits
+     goto-chg                ; go to last change
+     ivy                     ; a new type of completion, ala ido
+     jist                    ; manage github gists from emacs
+     kurecolor               ; manipulate color strings by hue / contrast / brightness
+     magit                   ; magical git interface for emacs
+     move-text               ; easily move lines up/down
+     multi-term              ; manage multiple terminals
+     multiple-cursors        ; ability to use a lot of cursors
+     powerline               ; vim-esque powerline
+     rainbow-mode            ; color hex strings
+     smartparens             ; automatically add end parens, highlight matching parens
+     smex                    ; better M-x, counsel uses the data from this for ordering
+     smooth-scrolling        ; add a top and bottom margin when scrolling
+     swiper                  ; buffer isearch using ivy
+     undo-tree               ; better undo/redo, also has a visualizer
+     unicode-fonts           ; support all the unicode characters
+     use-package             ; pretty package initialization
+     visual-regexp-steroids  ; better regular expressions
+     wgrep                   ; editable grep buffer
+     yasnippet               ; insert templates based on snippets
+     which-key               ; popup after 1s, showing keybindings based on prefix key pressed
+
+     ;; themes
+     zenburn-theme           ; the great zenburn theme
+     )
+   )
+  )
+#+END_SRC
+
+* Package initialization
+#+BEGIN_SRC emacs-lisp
+(message (format "= \e[1m\e[32mStarted Package Initialization\e[0m"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun try-require (feature)
+  "Tries to require FEATURE, if an exception is thrown, log it."
+  (condition-case ex
+      (progn
+        (message (format "@ \e[94m Loading \"%s\" \e[0m" (symbol-name feature)))
+        (require feature))
+    ('error (message (format "@ \e[1m\e[31m Error loading \"%s\": %s \e[0m" (symbol-name feature) ex)))))
+
+(defvar package-init-files
+  '(
+    init-package-powerline
+    init-package-autocomplete
+    init-package-multi-term
+    init-package-ivy
+    init-package-use-packages
+    ))
+
+;; Safely load all the init files
+(message "## \e[36m Started loading package init files \e[0m")
+(dolist (file package-init-files)
+  (try-require file))
+(message "## \e[36m Finished loading package init files \e[0m")
+
+(add-to-list 'load-path (concat my-emacs-lisp-dir "misc/"))
 #+END_SRC
 
 * Use-packages
