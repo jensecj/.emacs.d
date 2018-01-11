@@ -3,6 +3,10 @@
 #+OPTIONS: html-postamble:nil
 
 * Core setup
+#+BEGIN_SRC emacs-lisp
+(message (format "= \e[1m\e[32mStarted Core Setup\e[0m"))
+#+END_SRC
+
 This sets up the things the rest of the config uses, user credentials,
 default directories, etc.
 
@@ -61,7 +65,6 @@ Setup package archives
 Some includes that a lot of things use
 #+BEGIN_SRC emacs-lisp
 (require 'cl)
-
 #+END_SRC
 
 * Defaults
@@ -846,7 +849,7 @@ in when saved.
 (defvar multi-term-save-file (concat my-emacs-data-dir "multi-terms")
   "File on disk used to store the list of saved terminals")
 
-(defun better-multi-term (&optional jump-to-buffer)
+(defun better-multi-term (&optional open-term-in-background)
   "Create new term buffer."
   (interactive)
   (let ((term-buffer)
@@ -858,7 +861,7 @@ in when saved.
     ;; Internal handle for `multi-term' buffer.
     (multi-term-internal)
     ;; Switch buffer
-    (if jump-to-buffer
+    (if (not open-term-in-background)
         (switch-to-buffer term-buffer))
     (rename-buffer buffer-new-name)))
 
@@ -888,7 +891,7 @@ in when saved.
   (ignore-errors
     (dolist (trm multi-term-saved-terms)
       (let ((default-directory trm))
-        (better-multi-term nil)))))
+        (better-multi-term t)))))
 
 (defun multi-term-list-saves ()
   "List all saved terminals"
