@@ -1,12 +1,12 @@
-#+TITLE: Emacs 'literal programming' configuration
+#+TITLE: Emacs Configuration
 #+HTML_HEAD: <style>html,body { max-width: 800px; margin-left: auto; margin-right: auto; font-family: sans-serif;}</style>
 #+OPTIONS: html-postamble:nil
 
-* Core setup
 #+BEGIN_SRC emacs-lisp
-(message (format "= \e[1m\e[32mStarted Core Setup\e[0m"))
+(message (format "= \e[1m\e[32mStarted initializing emacs!\e[0m"))
 #+END_SRC
 
+* Core setup
 This sets up the things the rest of the config uses, user credentials,
 default directories, etc.
 
