@@ -967,5 +967,5 @@ buffer.
 
 * Epilogue
 #+BEGIN_SRC emacs-lisp
-(message "done loading init org file")
+(message (format "= \e[1m\e[32mEmacs initialized in %s\e[0m" (emacs-init-time)))
 #+END_SRC
