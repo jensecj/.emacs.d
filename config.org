@@ -664,13 +664,32 @@ Create nonexistent directories when saving a file
                   (make-directory dir t))))))
 #+END_SRC
 
+When using =magit-status=, just fill the entire screen, and jump back the the
+previous window configuration when quitting magit.
 #+BEGIN_SRC emacs-lisp
 (defadvice magit-status (around magit-fullscreen activate)
   "Saves window configuration, then opens magit in fullscreen"
   (window-configuration-to-register :magit-fullscreen)
   ad-do-it
   (delete-other-windows))
+#+END_SRC
 
+If a region is active, use that as the initial input for searching in the
+buffer.
+#+BEGIN_SRC emacs-lisp
+(defun my-counsel-grep-or-swiper (orig-fun &rest args)
+  "Start searching with the region as initial input"
+  (if (region-active-p)
+      (let ((start (region-beginning))
+            (end (region-end)))
+        (deactivate-mark)
+        (apply orig-fun (list (buffer-substring-no-properties start end))))
+    (funcall orig-fun)))
+
+(advice-add 'counsel-grep-or-swiper :around #'my-counsel-grep-or-swiper)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
 (defadvice undo-tree-undo (around keep-region activate)
   "Keep the region when undoing inside region"
   (if (use-region-p)
@@ -682,17 +701,6 @@ Create nonexistent directories when saving a file
         (set-marker p nil)
         (set-marker m nil))
     ad-do-it))
-
-(defun my-counsel-grep-or-swiper (orig-fun &rest args)
-  "Start searching with the region as initial input"
-  (if (region-active-p)
-      (let ((start (region-beginning))
-            (end (region-end)))
-        (deactivate-mark)
-        (apply orig-fun (list (buffer-substring-no-properties start end))))
-    (funcall orig-fun)))
-
-(advice-add 'counsel-grep-or-swiper :around #'my-counsel-grep-or-swiper)
 
 (defun mydired-sort ()
   "Sort dired listings with directories first."
