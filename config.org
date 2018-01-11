@@ -20,7 +20,6 @@ The directories we're going to use.
 (defconst my-emacs-dir user-emacs-directory)
 (defconst my-emacs-lisp-dir (concat my-emacs-dir "lisp/"))
 (defconst my-emacs-modes-dir (concat my-emacs-dir "modes/"))
-(defconst my-emacs-defuns-dir (concat my-emacs-dir "defuns/"))
 
 (defconst my-emacs-temp-dir (concat my-emacs-dir ".temp/"))
 ;; config and cache files
@@ -35,8 +34,6 @@ Create the directories if they don't already exist.
   (make-directory my-emacs-lisp-dir))
 (unless (file-exists-p my-emacs-modes-dir)
   (make-directory my-emacs-modes-dir))
-(unless (file-exists-p my-emacs-defuns-dir)
-  (make-directory my-emacs-defuns-dir))
 
 (unless (file-exists-p my-emacs-temp-dir)
   (make-directory my-emacs-temp-dir))
@@ -224,9 +221,6 @@ this.
 
 ;; Show me empty lines after buffer end
 (setq-default indicate-empty-lines t)
-
-;; Easily navigate silly cased words
-(global-subword-mode 1)
 
 ;; Don't automatically break lines
 (setq truncate-lines t)
@@ -425,6 +419,14 @@ the overlay-map"
    (let ((map (make-sparse-keymap)))
      (define-key map (kbd key) command)
      map) t))
+
+(defun try-require (feature)
+  "Tries to require FEATURE, if an exception is thrown, log it."
+  (condition-case ex
+      (progn
+        (message (format "@ \e[94m Loading \"%s\" \e[0m" (symbol-name feature)))
+        (require feature))
+    ('error (message (format "@ \e[1m\e[31m Error loading \"%s\": %s \e[0m" (symbol-name feature) ex)))))
 
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
@@ -665,13 +667,13 @@ already installed. Update packages through the package manager using =(list-pack
   (install-packages
    '(
      ;; libraries
-     dash                    ; list functions library (-map, -fold, etc.)
-     s                       ; string manipulation library (concat, etc.)
-     f                       ; for working with files
+     ;; dash                    ; list functions library (-map, -fold, etc.)
+     ;; s                       ; string manipulation library (concat, etc.)
+     ;; f                       ; for working with files
 
      ;; file modes
      ;; auctex                  ; latex
-     cmake-mode              ; CMake
+     ;; cmake-mode              ; CMake
      dockerfile-mode         ; dockerfiles
      gitconfig-mode          ; git config files
      gitignore-mode          ; git ignore files
@@ -688,7 +690,7 @@ already installed. Update packages through the package manager using =(list-pack
      ;; ac-clang                ; auto-complete source for clang
      ;; ac-octave               ; auto-complete source for octave
      ac-rtags                ; auto-complate source for rtags
-     auto-complete           ; the auto completion framework
+     ;; auto-complete           ; the auto completion framework
      ;; auto-complete-auctex    ; auto-complete source for auctex
      chicken-scheme          ; extensions for scheme code
      clang-format            ; buffer cleanup using clang-format
@@ -752,68 +754,6 @@ already installed. Update packages through the package manager using =(list-pack
 #+END_SRC
 
 * Package initialization
-** Autocomplete
-#+BEGIN_SRC emacs-lisp
-(require 'auto-complete)
-(require 'auto-complete-config)
-
-;; (diminish 'abbrev-mode)
-
-(defun ac-quick-help-at-point ()
-  (interactive)
-  (let* ((position (point))
-         (string-under-cursor
-          (buffer-substring-no-properties
-           (progn (skip-syntax-backward "w_") (point))
-           (progn (skip-syntax-forward "w_") (point)))))
-    (goto-char position)
-    (popup-tip (ac-symbol-documentation (intern string-under-cursor)))))
-
-(defun my-ac-c++-mode-setup ()
-  ;; (require 'ac-clang)
-  ;; (require 'ac-c-headers)
-  (require 'ac-rtags)
-
-  (setq c++-include-files
-        '("/usr/include"
-          "/usr/include/c++/7.2.0"
-          "/usr/include/c++/7.2.0/backward"
-          "/usr/include/c++/7.2.0/x86_64-unknown-linux-gnu"
-          "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include"
-          "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include-fixed"
-          "/usr/lib/clang/5.0.0/include"))
-
-  (setq-default achead:include-directories c++-include-files)
-
-  (add-to-list 'ac-sources 'ac-source-semantic)
-  (add-to-list 'ac-sources 'ac-source-rtags)
-  ;; (add-to-list 'ac-sources 'ac-source-c-headers)
-  ;; (add-to-list 'ac-sources 'ac-source-c-header-symbols t)
-
-  ;; (add-to-list 'ac-sources 'ac-source-clang)
-  ;; (setq ac-clang-flags (mapcar (lambda (item)(concat "-I" item)) c++-include-files))
-  ;; (ac-clang-activate-after-modify)
-  )
-(add-hook 'c++-mode-hook 'my-ac-c++-mode-setup)
-
-(defun my-ac-elisp-mode-setup ()
-  (add-to-list 'ac-sources 'ac-source-functions) ;; elisp functions
-  (add-to-list 'ac-sources 'ac-source-features) ;; elisp features
-  (add-to-list 'ac-sources 'ac-source-symbols) ;; elisp symbols
-  (add-to-list 'ac-sources 'ac-source-variables)) ;; elisp variables
-(add-hook 'emacs-lisp-mode-hook 'my-ac-elisp-mode-setup)
-
-;; (defun my-ac-latex-mode-setup ()
-;;   (require 'auto-complete-auctex)
-;;   (require 'ac-auctex-setup))
-;; (add-hook 'latex-mode-hook 'my-ac-latex-mode-setup)
-
-;;(defun my-ac-octave-mode-setup ()
-;;  (require 'ac-octave)
-;;  (add-to-list 'ac-sources 'ac-complete-octave))
-;; (add-hook 'octave-mode-hook 'my-ac-octave-mode-setup)
-#+END_SRC
-
 ** Multi-term
 Sets up the ability to store a multi-term using =multi-term-save-term=, all
 terminals saved this was will be reopened when starting a new session.
@@ -952,22 +892,40 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (advice-add 'ivy-pop-view :after #'ivy-save-views)
 #+END_SRC
 
-** Misc
-Add stuff from =lisp/misc/= the the load path.
-#+BEGIN_SRC
-(add-to-list 'load-path (concat my-emacs-lisp-dir "misc/"))
+* Use-packages
+First, a bit of setup, we want to see what use-package has to say when running.
+#+BEGIN_SRC emacs-lisp
+(require 'use-package)
+(setq use-package-verbose t)
 #+END_SRC
 
-* Use-packages
+We are going to use the bind-key (=:bind=) and diminish (=:diminish=)
+functionalities, so we need to have those packages.
 #+BEGIN_SRC emacs-lisp
+(use-package bind-key :ensure t)
+(use-package diminish :ensure t)
+#+END_SRC
+
+Load some very useful libraries for working with lists, strings and files.
+#+BEGIN_SRC emacs-lisp
+(use-package dash :ensure t) ;; lists (-map, -fold, etc.)
+(use-package s :ensure t) ;; strings (s-prefix?, etc.)
+(use-package f :ensure t) ;; files (f-read, etc.)
+#+END_SRC
+
+Config for built-ins
+#+BEGIN_SRC emacs-lisp
+;; Easily navigate silly cased words
+(use-package subword
+  :diminish subword-mode
+  :config (global-subword-mode 1))
+
 ;; give buffers unique names
 (use-package uniquify
-  :config
-  (setq uniquify-buffer-name-style 'forward))
+  :config (setq uniquify-buffer-name-style 'forward))
 
 (use-package tramp
-  :config
-  (setq tramp-persistency-file-name (concat my-emacs-data-dir "tramp")))
+  :config (setq tramp-persistency-file-name (concat my-emacs-data-dir "tramp")))
 
 ;; Save point position between sessions
 (use-package saveplace
@@ -1012,7 +970,74 @@ Add stuff from =lisp/misc/= the the load path.
   (global-semantic-idle-scheduler-mode)
   (semantic-mode))
 
+;; some extra functionality for dired
+(use-package dired-x)
+(use-package dired+ :ensure t)
+(use-package dired
+  :after (dired-x dired+)
+  :bind
+  (("C-x C-d" . (lambda () (interactive) (dired default-directory)))
+   :map dired-mode-map
+   ("C-c C-." . dired-omit-mode)
+   ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
+  :config
+  (setq dired-omit-files
+        (concat dired-omit-files "\\|^\\..+$"))
+  (toggle-diredp-find-file-reuse-dir 1)
+  (setq ibuffer-formats
+        '((mark modified read-only " "
+                (name 60 -1 :left) " "
+                (filename-and-process 70 -1))
+          (mark " " (name 16 -1) " " filename))))
+
+;; use firefox as the default browser
+(use-package browse-url
+  :config (setq browse-url-firefox-program "firefox"))
+
+(use-package org
+  :config
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+  ;; keep #+BEGIN_SRC blocks aligned with their contents
+  (setq org-edit-src-content-indentation 0)
+  ;; dont indent things
+  (setq org-adapt-indentation nil)
+  ;; syntax highlight org-mode code blocks when exporting as pdf
+  (setq org-latex-listings 'minted
+        org-latex-packages-alist '(("" "minted"))
+        org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+#+END_SRC
+
+Setup some major modes
+#+BEGIN_SRC emacs-lisp
+;; built-ins
+(use-package shell-script-mode
+  :mode ("\\.sh\\'" "\\.zsh\\'" "\\zshrc\\'" "\\PKGBUILD\\'"))
+(use-package octave-mode
+  :mode "\\.m\\'")
+(use-package scheme-mode
+  :defer
+  ;; use chicken scheme
+  :config (setq scheme-program-name "csi -:c"))
+
+;; homemade
+(use-package botcode-mode
+  :mode "\\.bot\\'")
+
+;; from repos
+(use-package cmake-mode
+  :ensure t
+  :mode "\\CmakeLists.txt\\'")
+#+END_SRC
+
+Moving on to user defined packages.
+
+Setup =powerline=, the fancy modeline replacement.
+#+BEGIN_SRC emacs-lisp
 (use-package powerline
+  :ensure t
   :demand t
   :config
   ;; Make the mode-line flat
@@ -1077,22 +1102,339 @@ Add stuff from =lisp/misc/= the the load path.
                       (powerline-fill face-light (powerline-width rhs))
                       (powerline-render rhs))))))
   )
-
 #+END_SRC
 
+Autocomplete
 #+BEGIN_SRC emacs-lisp
-(defun try-require (feature)
-  "Tries to require FEATURE, if an exception is thrown, log it."
-  (condition-case ex
-      (progn
-        (message (format "@ \e[94m Loading \"%s\" \e[0m" (symbol-name feature)))
-        (require feature))
-    ('error (message (format "@ \e[1m\e[31m Error loading \"%s\": %s \e[0m" (symbol-name feature) ex)))))
+(use-package auto-complete
+  :ensure t
+  :demand t
+  :diminish auto-complete-mode
+  :functions (ac-quick-help-at-point my-ac-c++-mode-setup)
+  :bind
+  (("C-+" . ac-quick-help-at-point)
+   ("C-<tab>" . auto-complete))
+  :config
+  (require 'auto-complete-config)
 
+  (setq ac-auto-start t) ;; auto start completing
+  (setq ac-show-menu t) ;; show the menu instantly
+  (setq ac-show-menu-immediately-on-auto-complete t) ;; show the autocompletion menu instantly
+  (setq ac-delay 0.1) ;; show completion menu quickly
+  (setq ac-use-quick-help t) ;; use the help
+  (setq ac-quick-help-delay 0.1) ;; show help quickly
+  (setq ac-use-comphist t)
+  (setq ac-comphist-file (concat my-emacs-data-dir "ac-history")) ;; move the history file
+  (setq ac-ignore-case t)
+  (setq-default ac-sources
+                '(ac-source-imenu
+                  ac-source-words-in-same-mode-buffers))
+  ;; '(ac-source-words-in-buffer ac-source-imenu ac-source-yasnippet)
 
-(message "## \e[36m Started loading package init files \e[0m")
-(try-require 'init-package-use-packages)
-(message "## \e[36m Finished loading package init files \e[0m")
+  (defun ac-quick-help-at-point ()
+    (interactive)
+    (let* ((position (point))
+           (string-under-cursor
+            (buffer-substring-no-properties
+             (progn (skip-syntax-backward "w_") (point))
+             (progn (skip-syntax-forward "w_") (point)))))
+      (goto-char position)
+      (popup-tip (ac-symbol-documentation (intern string-under-cursor)))))
+
+  (defun my-ac-c++-mode-setup ()
+    ;; (require 'ac-clang)
+    ;; (require 'ac-c-headers)
+    (require 'ac-rtags)
+
+    (setq c++-include-files
+          '("/usr/include"
+            "/usr/include/c++/7.2.0"
+            "/usr/include/c++/7.2.0/backward"
+            "/usr/include/c++/7.2.0/x86_64-unknown-linux-gnu"
+            "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include"
+            "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include-fixed"
+            "/usr/lib/clang/5.0.0/include"))
+
+    (setq-default achead:include-directories c++-include-files)
+
+    (add-to-list 'ac-sources 'ac-source-semantic)
+    (add-to-list 'ac-sources 'ac-source-rtags)
+    ;; (add-to-list 'ac-sources 'ac-source-c-headers)
+    ;; (add-to-list 'ac-sources 'ac-source-c-header-symbols t)
+
+    ;; (add-to-list 'ac-sources 'ac-source-clang)
+    ;; (setq ac-clang-flags (mapcar (lambda (item)(concat "-I" item)) c++-include-files))
+    ;; (ac-clang-activate-after-modify)
+    )
+  (add-hook 'c++-mode-hook 'my-ac-c++-mode-setup)
+
+  (defun my-ac-elisp-mode-setup ()
+    (add-to-list 'ac-sources 'ac-source-functions) ;; elisp functions
+    (add-to-list 'ac-sources 'ac-source-features) ;; elisp features
+    (add-to-list 'ac-sources 'ac-source-symbols) ;; elisp symbols
+    (add-to-list 'ac-sources 'ac-source-variables)) ;; elisp variables
+  (add-hook 'emacs-lisp-mode-hook 'my-ac-elisp-mode-setup)
+
+  ;; (defun my-ac-latex-mode-setup ()
+  ;;   (require 'auto-complete-auctex)
+  ;;   (require 'ac-auctex-setup))
+  ;; (add-hook 'latex-mode-hook 'my-ac-latex-mode-setup)
+
+  ;;(defun my-ac-octave-mode-setup ()
+  ;;  (require 'ac-octave)
+  ;;  (add-to-list 'ac-sources 'ac-complete-octave))
+  ;; (add-hook 'octave-mode-hook 'my-ac-octave-mode-setup)
+
+  (global-auto-complete-mode t))
+#+END_SRC
+
+Others
+#+BEGIN_SRC emacs-lisp
+(use-package smex
+  :ensure t
+  :config
+  (setq smex-save-file (concat my-emacs-data-dir "smex-items"))
+  (smex-initialize))
+
+(use-package smartparens
+  :ensure t
+  :diminish smartparens-mode
+  :config
+  (require 'smartparens-config)
+  (setq sp-autoescape-string-quote nil)
+  (smartparens-global-mode t)
+  (show-smartparens-global-mode t))
+
+(use-package git-gutter+
+  :ensure t
+  :diminish git-gutter+-mode
+  :config (global-git-gutter+-mode t))
+
+(use-package multiple-cursors
+  :ensure t
+  :bind
+  (("C-d" . mc/mark-next-like-this)
+   ("C-S-d" . mc/mark-all-like-this)
+   ("C-M-a" . set-rectangular-region-anchor))
+  :init
+  (setq mc/list-file (concat my-emacs-data-dir "mc-lists")))
+
+(use-package browse-kill-ring
+  :ensure t
+  :bind ("C-x C-y" . browse-kill-ring)
+  :config (setq browse-kill-ring-quit-action 'save-and-restore))
+
+(use-package ace-jump-mode
+  :ensure t
+  :bind
+  (("C-ø" . ace-jump-char-mode)
+   ("C-'" . ace-jump-line-mode)))
+
+(use-package ace-jump-buffer
+  :ensure t
+  :bind ("C-x C-b" . ace-jump-buffer))
+
+(use-package ace-jump-zap
+  :ensure t
+  :bind ("C-å" . ace-jump-zap-to-char))
+
+(use-package expand-region
+  :ensure t
+  :bind
+  (("M-e" . er/expand-region)
+   ("C-M-e" . er/contract-region)))
+
+(use-package change-inner
+  :ensure t
+  :bind
+  (("M-i" . copy-inner)
+   ("M-o" . copy-outer)
+   ("M-I" . change-inner)
+   ("M-O" . change-outer)))
+
+(use-package move-text
+  :ensure t
+  :bind
+  (("C-S-<up>" . move-text-up)
+   ("C-S-<down>" . move-text-down)))
+
+(use-package visual-regexp-steroids
+  :ensure t
+  :bind
+  (("C-c r" . vr/replace)
+   ("C-c q" . vr/query-replace)))
+
+(use-package rtags
+  :ensure t
+  :diminish rtags-mode
+  :bind
+  (:map c++-mode-map
+        ("M-." . rtags-find-symbol-at-point)
+        ("M-," . rtags-location-stack-back)))
+
+(use-package magit
+  :ensure t
+  :bind
+  (("C-x m" . magit-status)
+   :map magit-mode-map
+   ("C-c C-a" . magit-commit-amend)
+   ("q" . magit-quit-session))
+  :config
+  (setq magit-auto-revert-mode nil))
+
+(use-package undo-tree
+  :ensure t
+  :diminish undo-tree-mode
+  :bind
+  (("C-x u" . undo-tree-visualize)
+   ("C-_" . undo-tree-undo)
+   ("M-_" . undo-tree-redo))
+  :config
+  (global-undo-tree-mode))
+
+(use-package smooth-scrolling
+  :ensure t
+  :config
+  (setq smooth-scroll-margin 5)
+  (smooth-scrolling-mode))
+
+(use-package goto-chg
+  :ensure t
+  :bind ("M-ø" . goto-last-change))
+
+(use-package beginend
+  :ensure t
+  :diminish beginend-global-mode
+  :init
+  (global-set-key (kbd "M-<") 'beginning-of-buffer)
+  (global-set-key (kbd "M->") 'end-of-buffer)
+  :config
+  ;; diminish all the beginend modes
+  (mapc (lambda (s) (diminish (cdr s))) beginend-modes)
+  (beginend-global-mode))
+
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :config
+  (which-key-setup-minibuffer)
+  (which-key-mode))
+
+(use-package jist
+  :ensure t
+  :config (setq jist-enable-default-authorized 't))
+
+(use-package wgrep
+  :ensure t
+  :after grep
+  :bind
+  (("C-S-g" . rgrep)
+   :map grep-mode-map
+   ("C-x C-q" . wgrep-change-to-wgrep-mode)
+   ("C-x Ck" . wgrep-abort-changes)
+   ("C-c C-c" . wgrep-finish-edit))
+  :config
+  (setq wgrep-auto-save-buffer t))
+
+(use-package AUCTeX
+  :disabled
+  ;; :ensure t
+  :defer
+  :hook (LaTeX-mode-hook . reftex-mode)
+  :config
+  (setq-default TeX-PDF-mode t) ;; default to pdf
+  (setq-default TeX-global-PDF-mode t) ;; default to pdf
+  (setq-default TeX-parse-self t) ;; parse on load
+  (setq-default TeX-auto-save t) ;; parse on save
+  (setq-default TeX-save-query nil) ;; save before compiling
+  (setq-default TeX-master nil) ;; try to figure out which file is the master
+  (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
+  )
+
+(use-package unicode-fonts
+  :disabled
+  :ensure t
+  :config (unicode-fonts-setup))
+
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  ;; try to grab the ssh-agent if it is running
+  (exec-path-from-shell-copy-env "SSH_AGENT_PID")
+  (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
+
+(use-package multi-term
+  :ensure t
+  :bind ("C-z" . better-multi-term)
+  :config
+  (setq multi-term-program "/bin/zsh")
+  ;; (setq term-bind-key-alist '()) ;; clear the binds list, defaulting to emacs binds
+  (setq term-buffer-maximum-size 10000)
+  ;; (add-to-list 'term-bind-key-alist '("<C-left>" . term-send-backward-word))
+  ;; (add-to-list 'term-bind-key-alist '("<C-right>" . term-send-forward-word))
+  ;; (add-to-list 'term-bind-key-alist '("<C-backspace>" . (lambda () (interactive) (term-send-raw-string "\C-h")))) ;; backwards-kill-word
+  ;; (add-to-list 'term-bind-key-alist '("<C-del>" . (lambda () (interactive) (term-send-raw-string "\e[3;5~")))) ;; forwards-kill-word
+  )
+
+(use-package ivy
+  :ensure t
+  :demand t
+  :diminish ivy-mode
+  :bind
+  (("M-p p" . ivy-push-view)
+   ("M-p k" . ivy-pop-view)
+   ("M-p b" . ivy-switch-view)
+   :map ivy-minibuffer-map
+   ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
+   ("C-S-<return>" . ivy-immediate-done))
+  :config
+  (setq ivy-height 15)
+  (setq ivy-count-format "")
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  (ivy-mode)
+  (ivy-load-views))
+
+(use-package counsel
+  :ensure t
+  :demand t
+  :after ivy
+  :diminish counsel-mode
+  :bind
+  (("C-s" . counsel-grep-or-swiper)
+   ("C-S-s" . counsel-rg)
+   ("C-x f" . counsel-recentf)
+   ("C-x C-f" . counsel-find-file)
+   ("C-x C-i" . counsel-imenu)
+   ("M-x" . counsel-M-x)
+   ("M-b" . counsel-bookmark))
+  :config
+  (setq
+   counsel-grep-base-command
+   "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
+  (counsel-mode))
+
+(use-package counsel-projectile :ensure t)
+(use-package projectile
+  :ensure t
+  :after counsel-projectile
+  :diminish projectile-mode
+  :config
+  (setq projectile-known-projects-file (concat my-emacs-data-dir "projectile-bookmarks"))
+  (setq projectile-cache-file (concat my-emacs-data-dir "projectile.cache"))
+  (counsel-projectile-mode))
+
+(use-package zenburn-theme
+  :ensure t
+  :config
+  (load-theme 'zenburn t)
+  :custom-face
+  (ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))
+  (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
+  (diredp-file-name ((t (:foreground "#DCDCCC"))))
+  (persp-face-lighter-buffer-not-in-persp ((t (:foreground "#CC9393"))))
+  (ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
+  (ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E")))))
 #+END_SRC
 
 * Package specific things
