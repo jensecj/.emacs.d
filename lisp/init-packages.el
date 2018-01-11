@@ -17,6 +17,8 @@
     (package-refresh-contents)) ;; update the package archive cache
 
 (defun package-installed-and-up-to-date-p (package)
+  "Returns whether a package is already installed, and if it is, whether it is
+up to date."
   (when (package-installed-p package)
     (let* ((newest-desc (cadr (assq package package-archive-contents)))
            (installed-desc (cadr (or (assq package package-alist)
@@ -34,6 +36,7 @@
 
 (require 'cl)
 (defun is-online? ()
+  "Returns a non-nil value if we have a network connection."
   (if (and (functionp 'network-interface-list)
            (network-interface-list))
       (some (lambda (iface) (unless (equal "lo" (car iface))
