@@ -1043,6 +1043,25 @@ Setup =powerline=, the fancy modeline replacement.
 #+END_SRC
 
 Autocomplete
+
+Setup autocompletion sources for different languages
+
+#+BEGIN_SRC emacs-lisp
+(use-package ac-rtags :ensure t :defer t)
+;; auto-complete source for c/c++ header files
+(use-package ac-c-headers :disabled :ensure t :defer t)
+;; auto-complete source for clang
+(use-package ac-clang :disabled :ensure t :defer t)
+
+;; auto-complete source for octave
+(use-package ac-octave :disabled :ensure t :defer t)
+;; auto-complete source for auctex
+(use-package auto-complete-auctex :disabled :ensure t :defer t)
+;; auto-completion source for scheme
+(use-package scheme-complete :ensure t :defer t)
+
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
 (use-package auto-complete
   :ensure t
