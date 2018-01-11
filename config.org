@@ -1545,10 +1545,15 @@ Setup hooks for major modes
 
 (add-hook 'org-mode-hook
           '(lambda ()
-             (local-set-key (kbd "<S-up>") 'windmove-up)
-             (local-set-key (kbd "<S-down>") 'windmove-down)
-             (local-set-key (kbd "<S-left>") 'windmove-left)
-             (local-set-key (kbd "<S-right>") 'windmove-right)))
+             ;; reset keys used globally for different things
+             (local-set-key (kbd "<S-up>") nil)
+             (local-set-key (kbd "<S-down>") nil)
+             (local-set-key (kbd "<S-left>") nil)
+             (local-set-key (kbd "<S-right>") nil)
+             (local-set-key (kbd "<M-S-right>") nil)
+             (local-set-key (kbd "<M-S-left>") nil)
+             (local-set-key (kbd "<M-S-up>") nil)
+             (local-set-key (kbd "<M-S-down>") nil)))
 #+END_SRC
 
 * Keybindings
