@@ -360,6 +360,18 @@ line is saved."
 
 ** Files
 #+BEGIN_SRC emacs-lisp
+(defun get-file-name+ext ()
+  "Get the file name and extension of the file belonging to the current buffer."
+  (file-name-nondirectory buffer-file-name))
+
+(defun get-file-name ()
+  "Get the file name of the file belonging to the current buffer."
+  (file-name-sans-extension (get-file-name+ext)))
+
+(defun get-file-directory ()
+  "Get the directory of the file belonging to the current buffer"
+  (file-name-directory (buffer-file-name)))
+
 (defun file-age (file)
   "Returns the number of seconds since the file was last modified."
   (float-time
@@ -1164,6 +1176,45 @@ buffer.
     (set-buffer-modified-p nil)))
 
 (advice-add 'dired-readin :after #'mydired-sort)
+#+END_SRC
+
+Setup hooks for major modes
+#+BEGIN_SRC
+;; use 'C-c C-c' to compile across languages, and use a proper compile command
+(add-hook 'c++-mode-hook
+          '(lambda ()
+             (set (make-local-variable 'compile-command)
+                  (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s" (get-file-name+ext) (get-file-name)))
+             (local-set-key (kbd "C-d") nil)
+             (local-set-key (kbd "C-c C-c") 'compile)
+             (local-set-key (kbd "C-c n") 'clang-format-buffer)))
+
+(add-hook 'java-mode-hook
+          '(lambda ()
+             (use-local-map nil)
+             (set (make-local-variable 'compile-command)
+                  (format "javac %s" (get-file-name+ext)))
+             (local-set-key (kbd "C-c C-c") 'compile)))
+
+(add-hook 'csharp-mode-hook
+          '(lambda ()
+             (set (make-local-variable 'compile-command)
+                  (format "xbuild %s" (file-name-directory (buffer-file-name))))
+             (local-set-key (kbd "C-c C-c") 'compile)))
+
+(add-hook 'tuareg-mode-hook
+          '(lambda ()
+             (use-local-map nil)
+             (set (make-local-variable 'compile-command)
+                  (format "ocamlopt -o %s %s" (get-file-name) (get-file-name+ext)))
+             (local-set-key (kbd "C-c C-c") 'compile)))
+
+(add-hook 'org-mode-hook
+          '(lambda ()
+             (local-set-key (kbd "<S-up>") 'windmove-up)
+             (local-set-key (kbd "<S-down>") 'windmove-down)
+             (local-set-key (kbd "<S-left>") 'windmove-left)
+             (local-set-key (kbd "<S-right>") 'windmove-right)))
 #+END_SRC
 
 * Keybindings
