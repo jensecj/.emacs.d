@@ -1,12 +1,7 @@
 # The look
 ![Screenshot of my emacs in action](emacs-screen.png?raw=true "Screenshot of my emacs in action")
+
 # My emacs
-
-This was originally a fork of
-[magnars' great emacs settings](https://github.com/magnars/.emacs.d),
-but has since then evolved into a different beast, more suiting my own
-preferences.
-
 I would recommend starting out with a blank emacs and then dig through
 this repo for useful nuggets, instead of forking it directly.
 
@@ -18,12 +13,8 @@ new machine.
 The keybindings are optimized for a
 [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
 
-You can check out the package settings and keybindings if you look
-through the
-[init-package-use-packages.el](https://github.com/jensecj/.emacs.d/blob/master/lisp/init-package-use-packages.el)
-and
-[init-keybindings.el](https://github.com/jensecj/.emacs.d/blob/master/lisp/init-keybindings.el)
-files.
+This configuration is made by [Literate Programming](https://en.wikipedia.org/wiki/Literate_programming).
+All configuration takes place in [config.org](https://github.com/jensecj/.emacs.d/blob/org-init-file-rewrite/config.org), it tries to be concise, but have enough comments to make it easy to grok.
 
 You quit emacs with `C-x r q`, mnemonic for *Really Quit*.
 
