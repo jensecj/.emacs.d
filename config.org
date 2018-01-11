@@ -61,7 +61,6 @@ Setup package archives
 
 We need to include some libraries for working with lists, strings and files.
 #+BEGIN_SRC emacs-lisp
-
 (use-package dash :ensure t)
 (use-package s :ensure t)
 (use-package f :ensure t)
@@ -80,16 +79,10 @@ Turn off excess interface early in startup to avoid momentary display
 (scroll-bar-mode -1)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-;; Better title
-(setq frame-title-format "emacs - %b")
-#+END_SRC
-
 ** Directories used by built-ins
 Save temp files in the =.temp= folder
 #+BEGIN_SRC emacs-lisp
 (setq temporary-file-directory my-emacs-temp-dir)
-
 #+END_SRC
 
 Keep emacs custom settings in a separate file, and load it if it exists.
@@ -135,7 +128,7 @@ the setup, as it is created before this is run, still looking into
 this.
 #+BEGIN_SRC emacs-lisp
 (defun init-font-setup ()
-  "setup fonts, then remove self from `focus-in-hook'"
+  "Setup fonts, then remove self from `focus-in-hook' so we only run once."
   (when (find-font (font-spec :name "Source Code Pro Semibold 10"))
     (add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10")))
   (remove-hook 'focus-in-hook 'init-font-setup))
@@ -155,7 +148,7 @@ this.
 (put 'narrow-to-region 'disabled nil)
 
 ;; Don't blink the cursor
-(blink-cursor-mode 0)
+(blink-cursor-mode -1)
 
 ;; Highlight current line, with a sane color, and transparent foreground
 ;; (so it does not mess with syntax highlighting)
@@ -933,6 +926,7 @@ Config for built-ins
   :config (setq browse-url-firefox-program "firefox"))
 
 (use-package org
+  :defer t
   :config
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
@@ -956,8 +950,7 @@ Setup some major modes
 (use-package octave-mode
   :mode "\\.m\\'")
 (use-package scheme-mode
-  :defer
-  ;; use chicken scheme
+  :mode "\\.scm\\'"
   :config (setq scheme-program-name "csi -:c"))
 
 ;; homemade
@@ -1286,7 +1279,7 @@ Others
 (use-package AUCTeX
   :disabled
   ;; :ensure t
-  :defer
+  :defer t
   :hook (LaTeX-mode-hook . reftex-mode)
   :config
   (setq-default TeX-PDF-mode t) ;; default to pdf
@@ -1653,9 +1646,9 @@ Keybindings for defuns
 (global-set-key (kbd "C-w") 'kill-region-or-current-line)
 
 ;; Completion that uses many different methods to find options.
-(global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
-(global-set-key (kbd "C-:") 'hippie-expand-lines)
-(global-set-key (kbd "C-,") 'completion-at-point)
+;; (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
+;; (global-set-key (kbd "C-:") 'hippie-expand-lines)
+;; (global-set-key (kbd "C-,") 'completion-at-point)
 
 ;; keybindings for window resizing
 (global-set-key (kbd "M-S-<left>") 'move-border-left)
