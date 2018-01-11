@@ -871,7 +871,7 @@ Add stuff from =lisp/misc/= the the load path.
 (use-package recentf
   :config
   (setq recentf-save-file (recentf-expand-file-name (concat my-emacs-data-dir "recentf")))
-  (setq recentf-exclude '(".emacs.d/elpa/" ".emacs.d/data/"))
+  (setq recentf-exclude '(".emacs.d/elpa/" ".emacs.d/data/" "COMMIT_EDITMSG"))
   (setq recentf-max-saved-items 500) ;; just 20 is too few
   (setq recentf-auto-cleanup 300) ;; cleanup every 5 mins.
   ;; save recentf file every 30s, but don't bother us about it
