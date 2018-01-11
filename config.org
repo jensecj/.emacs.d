@@ -758,7 +758,7 @@ already installed. Update packages through the package manager using =(list-pack
   '(
     ;; init-package-powerline
     ;; init-package-autocomplete
-    init-package-multi-term
+    ;; init-package-multi-term
     init-package-ivy
     init-package-use-packages
     ))
@@ -833,9 +833,73 @@ already installed. Update packages through the package manager using =(list-pack
 #+END_SRC
 
 ** Multi-term
+Sets up the ability to store a multi-term using =multi-term-save-term=, all
+terminals saved this was will be reopened when starting a new session.
+
+It does not restart programs, just starts the terminals in the folders they were
+in when saved.
+#+BEGIN_SRC emacs-lisp
+(require 'multi-term)
+
+(defvar multi-term-saved-terms '()
+  "List of saved terminals")
+(defvar multi-term-save-file (concat my-emacs-data-dir "multi-terms")
+  "File on disk used to store the list of saved terminals")
+
+(defun better-multi-term (&optional jump-to-buffer)
+  "Create new term buffer."
+  (interactive)
+  (let ((term-buffer)
+        (buffer-new-name (concat "*" default-directory "*")))
+    ;; Set buffer.
+    (setq term-buffer (multi-term-get-buffer current-prefix-arg))
+    (setq multi-term-buffer-list (nconc multi-term-buffer-list (list term-buffer)))
+    (set-buffer term-buffer)
+    ;; Internal handle for `multi-term' buffer.
+    (multi-term-internal)
+    ;; Switch buffer
+    (if jump-to-buffer
+        (switch-to-buffer term-buffer))
+    (rename-buffer buffer-new-name)))
+
+(defun multi-term-save-term ()
+  "Pick an open terminal and save it"
+  (interactive)
+  (if (null multi-term-buffer-list)
+      (error "Error: No open terminals."))
+  (let ((buf (get-buffer (ivy-read "Select term:" (mapcar 'buffer-name multi-term-buffer-list)))))
+    (with-current-buffer buf
+      (if (member default-directory multi-term-saved-terms)
+          (error "That term is already saved"))
+      (add-to-list 'multi-term-saved-terms default-directory)))
+  (save-to-file multi-term-saved-terms multi-term-save-file))
+
+(defun multi-term-unsave-term ()
+  "Pick a saved terminal to remove from the saved list"
+  (interactive)
+  (let ((trm (ivy-read "Select term:" multi-term-saved-terms)))
+    (setq multi-term-saved-terms (delete trm multi-term-saved-terms)))
+  (save-to-file multi-term-saved-terms multi-term-save-file))
+
+(defun multi-term-restore-terms ()
+  "Restores all terminals from the saved list"
+  (interactive)
+  (setq multi-term-saved-terms (load-from-file multi-term-save-file))
+  (ignore-errors
+    (dolist (trm multi-term-saved-terms)
+      (let ((default-directory trm))
+        (better-multi-term nil)))))
+
+(defun multi-term-list-saves ()
+  "List all saved terminals"
+  (interactive)
+  (ivy-read "All saved terms:" (load-from-file multi-term-save-file)))
+
+;; restore all saved terminals at startup
+(multi-term-restore-terms)
+#+END_SRC
+
 ** Ivy
-
-
 Add stuff from =lisp/misc/= the the load path.
 #+BEGIN_SRC
 (add-to-list 'load-path (concat my-emacs-lisp-dir "misc/"))
