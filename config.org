@@ -880,6 +880,20 @@ Add stuff from =lisp/misc/= the the load path.
                                      (with-supressed-message (recentf-save-list)))))
   (recentf-mode 1))
 
+;; Semantic analysis in supported modes (cpp, java, etc.)
+(use-package semantic
+  ;; :hook ((emacs-lisp-mode python-mode c++-mode java-mode) . semantic-mode)
+  :config
+  ;; persist the semantic parse database
+  (setq semanticdb-default-save-directory (concat my-emacs-data-dir "semantic/"))
+  (unless (file-exists-p semanticdb-default-save-directory)
+    (make-directory semanticdb-default-save-directory))
+
+  ;; save parsing results into a persistent database
+  (global-semanticdb-minor-mode)
+  ;; re-parse files on idle
+  (global-semantic-idle-scheduler-mode)
+  (semantic-mode))
 
 (use-package powerline
   :demand t
