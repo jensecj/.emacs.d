@@ -10,15 +10,10 @@
 
 (defvar init-files
   '(
-    ;; init-directories ;; Setup directories and add things to the load-path
     ;; init-defaults ;; Setup some better defaults
-    init-defuns ;; Load all home made lisp functions
     init-keybindings ;; Setup keybindings for everything
-    init-packages ;; Handle missing packages, then package specific configuration
-    ;; init-el-get ;; Handle packages managed by el-get
     init-modes ;; Setup mode specific configuration
     init-tty ;; terminal specific things
-    init-experimental ;; Initialize things that are works in progress
     ))
 
 (defun try-require (feature)
@@ -34,7 +29,5 @@
 (dolist (file init-files)
   (try-require file))
 (message "# \e[96m Finished loading init files \e[0m")
-
-(message (format "= \e[1m\e[32mEmacs initialized in %s\e[0m" (emacs-init-time)))
 
 (provide 'init)
