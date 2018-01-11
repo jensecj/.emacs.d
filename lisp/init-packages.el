@@ -6,8 +6,6 @@
                          ("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")))
 
-(package-initialize)
-
 (defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
 
 ;; set the paranoia level to medium, warns if connections are insecure
