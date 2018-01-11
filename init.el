@@ -1,5 +1,4 @@
-(message (format "= \e[1m\e[32mStarted initializing Emacs!\e[0m"))
-
+;; load default packages
 (package-initialize)
 
 (require 'org)
