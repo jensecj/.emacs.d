@@ -748,31 +748,6 @@ already installed. Update packages through the package manager using =(list-pack
 (message (format "= \e[1m\e[32mStarted Package Initialization\e[0m"))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(defun try-require (feature)
-  "Tries to require FEATURE, if an exception is thrown, log it."
-  (condition-case ex
-      (progn
-        (message (format "@ \e[94m Loading \"%s\" \e[0m" (symbol-name feature)))
-        (require feature))
-    ('error (message (format "@ \e[1m\e[31m Error loading \"%s\": %s \e[0m" (symbol-name feature) ex)))))
-
-(defvar package-init-files
-  '(
-    ;; init-package-powerline
-    ;; init-package-autocomplete
-    ;; init-package-multi-term
-    init-package-ivy
-    init-package-use-packages
-    ))
-
-;; Safely load all the init files
-(message "## \e[36m Started loading package init files \e[0m")
-(dolist (file package-init-files)
-  (try-require file))
-(message "## \e[36m Finished loading package init files \e[0m")
-#+END_SRC
-
 ** Autocomplete
 #+BEGIN_SRC emacs-lisp
 (require 'auto-complete)
@@ -1028,6 +1003,21 @@ Add stuff from =lisp/misc/= the the load path.
                       (powerline-render rhs))))))
   )
 
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun try-require (feature)
+  "Tries to require FEATURE, if an exception is thrown, log it."
+  (condition-case ex
+      (progn
+        (message (format "@ \e[94m Loading \"%s\" \e[0m" (symbol-name feature)))
+        (require feature))
+    ('error (message (format "@ \e[1m\e[31m Error loading \"%s\": %s \e[0m" (symbol-name feature) ex)))))
+
+
+(message "## \e[36m Started loading package init files \e[0m")
+(try-require 'init-package-use-packages)
+(message "## \e[36m Finished loading package init files \e[0m")
 #+END_SRC
 
 * Package specific things
