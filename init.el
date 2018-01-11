@@ -9,7 +9,6 @@
 
 (defvar init-files
   '(
-    ;; init-defaults ;; Setup some better defaults
     init-keybindings ;; Setup keybindings for everything
     init-modes ;; Setup mode specific configuration
     init-tty ;; terminal specific things
