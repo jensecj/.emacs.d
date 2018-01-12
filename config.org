@@ -565,75 +565,7 @@ restores the message."
 
 * Package initialization
 #+BEGIN_SRC emacs-lisp
-(use-package multi-term :ensure t)
 (use-package ivy :ensure t)
-#+END_SRC
-
-** Multi-term
-Sets up the ability to store a multi-term using =multi-term-save-term=, all
-terminals saved this was will be reopened when starting a new session.
-
-It does not restart programs, just starts the terminals in the folders they were
-in when saved.
-#+BEGIN_SRC emacs-lisp
-(require 'multi-term)
-
-(defvar multi-term-saved-terms '()
-  "List of saved terminals")
-(defvar multi-term-save-file (concat my-emacs-data-dir "multi-terms")
-  "File on disk used to store the list of saved terminals")
-
-(defun better-multi-term (&optional open-term-in-background)
-  "Create new term buffer."
-  (interactive)
-  (let ((term-buffer)
-        (buffer-new-name (concat "*" default-directory "*")))
-    ;; Set buffer.
-    (setq term-buffer (multi-term-get-buffer current-prefix-arg))
-    (setq multi-term-buffer-list (nconc multi-term-buffer-list (list term-buffer)))
-    (set-buffer term-buffer)
-    ;; Internal handle for `multi-term' buffer.
-    (multi-term-internal)
-    ;; Switch buffer
-    (if (not open-term-in-background)
-        (switch-to-buffer term-buffer))
-    (rename-buffer buffer-new-name)))
-
-(defun multi-term-save-term ()
-  "Pick an open terminal and save it"
-  (interactive)
-  (if (null multi-term-buffer-list)
-      (error "Error: No open terminals."))
-  (let ((buf (get-buffer (ivy-read "Select term:" (mapcar 'buffer-name multi-term-buffer-list)))))
-    (with-current-buffer buf
-      (if (member default-directory multi-term-saved-terms)
-          (error "That term is already saved"))
-      (add-to-list 'multi-term-saved-terms default-directory)))
-  (save-to-file multi-term-saved-terms multi-term-save-file))
-
-(defun multi-term-unsave-term ()
-  "Pick a saved terminal to remove from the saved list"
-  (interactive)
-  (let ((trm (ivy-read "Select term:" multi-term-saved-terms)))
-    (setq multi-term-saved-terms (delete trm multi-term-saved-terms)))
-  (save-to-file multi-term-saved-terms multi-term-save-file))
-
-(defun multi-term-restore-terms ()
-  "Restores all terminals from the saved list"
-  (interactive)
-  (setq multi-term-saved-terms (load-from-file multi-term-save-file))
-  (ignore-errors
-    (dolist (trm multi-term-saved-terms)
-      (let ((default-directory trm))
-        (better-multi-term t)))))
-
-(defun multi-term-list-saves ()
-  "List all saved terminals"
-  (interactive)
-  (ivy-read "All saved terms:" (load-from-file multi-term-save-file)))
-
-;; restore all saved terminals at startup
-(multi-term-restore-terms)
 #+END_SRC
 
 ** Ivy
@@ -1284,7 +1216,14 @@ Others
 
 (use-package multi-term
   :ensure t
-  :bind ("C-z" . better-multi-term)
+  :demand t
+  :functions (my-multi-term
+              multi-term-save-term
+              multi-term-unsave-term
+              multi-term-restore-terms
+              multi-term-list-saves)
+  :defines (multi-term-save-file multi-term-saved-terms)
+  :bind ("C-z" . my-multi-term)
   :config
   (setq multi-term-program "/bin/zsh")
   ;; (setq term-bind-key-alist '()) ;; clear the binds list, defaulting to emacs binds
@@ -1293,7 +1232,69 @@ Others
   ;; (add-to-list 'term-bind-key-alist '("<C-right>" . term-send-forward-word))
   ;; (add-to-list 'term-bind-key-alist '("<C-backspace>" . (lambda () (interactive) (term-send-raw-string "\C-h")))) ;; backwards-kill-word
   ;; (add-to-list 'term-bind-key-alist '("<C-del>" . (lambda () (interactive) (term-send-raw-string "\e[3;5~")))) ;; forwards-kill-word
-  )
+
+
+  ;; Sets up the ability to store a multi-term using =multi-term-save-term=, all
+  ;; terminals saved this was will be reopened when starting a new session.
+
+  ;; It does not restart programs, just starts the terminals in the folders they were
+  ;; in when saved.
+  (defvar multi-term-saved-terms '()
+    "List of saved terminals")
+  (defvar multi-term-save-file (concat my-emacs-data-dir "multi-terms")
+    "File on disk used to store the list of saved terminals")
+
+  (defun my-multi-term (&optional open-term-in-background)
+    "Create new term buffer."
+    (interactive)
+    (let ((term-buffer)
+          (buffer-new-name (concat "*" default-directory "*")))
+      ;; Set buffer.
+      (setq term-buffer (multi-term-get-buffer current-prefix-arg))
+      (setq multi-term-buffer-list (nconc multi-term-buffer-list (list term-buffer)))
+      (set-buffer term-buffer)
+      ;; Internal handle for `multi-term' buffer.
+      (multi-term-internal)
+      ;; Switch buffer
+      (if (not open-term-in-background)
+          (switch-to-buffer term-buffer))
+      (rename-buffer buffer-new-name)))
+
+  (defun multi-term-save-term ()
+    "Pick an open terminal and save it"
+    (interactive)
+    (if (null multi-term-buffer-list)
+        (error "Error: No open terminals."))
+    (let ((buf (get-buffer (ivy-read "Select term:" (mapcar 'buffer-name multi-term-buffer-list)))))
+      (with-current-buffer buf
+        (if (member default-directory multi-term-saved-terms)
+            (error "That term is already saved"))
+        (add-to-list 'multi-term-saved-terms default-directory)))
+    (save-to-file multi-term-saved-terms multi-term-save-file))
+
+  (defun multi-term-unsave-term ()
+    "Pick a saved terminal to remove from the saved list"
+    (interactive)
+    (let ((trm (ivy-read "Select term:" multi-term-saved-terms)))
+      (setq multi-term-saved-terms (delete trm multi-term-saved-terms)))
+    (save-to-file multi-term-saved-terms multi-term-save-file))
+
+  (defun multi-term-restore-terms ()
+    "Restores all terminals from the saved list"
+    (interactive)
+    (setq multi-term-saved-terms (load-from-file multi-term-save-file))
+    (ignore-errors
+      (dolist (trm multi-term-saved-terms)
+        (let ((default-directory trm))
+          (my-multi-term t)))))
+
+  (defun multi-term-list-saves ()
+    "List all saved terminals"
+    (interactive)
+    (ivy-read "All saved terms:" (load-from-file multi-term-save-file)))
+
+  ;; restore all saved terminals at startup
+  (multi-term-restore-terms))
 
 (use-package ivy
   :ensure t
