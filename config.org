@@ -1032,7 +1032,7 @@ Others
   ;; exclude some things from popping up in smex
   (setq smex-excludes '(kill-emacs))
 
-  (defun purge-smex-excludes-from-cache ()
+  (defun smex-cache-exclude ()
     (dolist (e smex-excludes)
       ;; we remove the excludes straight from the 'smex-ido-cache', which is the one
       ;; used for 'M-x' completion, this still keeps the data from the excluded
@@ -1045,7 +1045,12 @@ Others
       ;; add the excludes to the back of the list, so we can still find them in 'M-x'.
       (setq smex-ido-cache (nconc smex-ido-cache (seq-map 'symbol-name smex-excludes)))))
 
-  (advice-add 'counsel-M-x :before #'purge-smex-excludes-from-cache))
+  ;; advice the M-x function used
+  ;; maybe advice smex-rebuild-cache?
+  (advice-add 'counsel-M-x :before #'smex-cache-exclude)
+  ;; purge the cache so we dont see the wrong thing the first time we run,
+  ;; because this is using deferred loading.
+  (smex-cache-exclude))
 
 (use-package smartparens
   :ensure t
@@ -1525,6 +1530,7 @@ Keybindings for built-in things
 (define-key key-translation-map [dead-tilde] "~")
 (define-key key-translation-map [S-dead-grave] "´")
 (define-key key-translation-map [dead-acute] "`")
+(define-key key-translation-map [dead-diaeresis] "¨")
 
 ;; Insert tilde with a single keystroke
 (global-set-key (kbd "<menu>") (lambda () (interactive) (insert "~")))
@@ -1540,7 +1546,7 @@ Keybindings for built-in things
 ;; don't close emacs
 (global-set-key (kbd "C-x C-c") '())
 
-;; Use shell-like backspace C-h, rebind help to F1
+;; Rebind help to F1
 (define-key key-translation-map [?\C-h] [?\C-?])
 (global-set-key (kbd "<f1>") 'help-command)
 
