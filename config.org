@@ -1059,11 +1059,10 @@ Others
       ;; add the excludes to the back of the list, so we can still find them in 'M-x'.
       (setq smex-ido-cache (nconc smex-ido-cache (seq-map 'symbol-name smex-excludes)))))
 
-  ;; advice the M-x function used
-  ;; maybe advice smex-rebuild-cache?
-  (advice-add 'counsel-M-x :before #'jens/smex-cache-exclude)
-  ;; purge the cache so we dont see the wrong thing the first time we run,
-  ;; because this is using deferred loading.
+  ;; purge the cache every time it is rebuilt
+  (advice-add 'smex-rebuild-cache' :after #'jens/smex-cache-exclude)
+  ;; purge the cache manually so we dont see the wrong thing the first time we
+  ;; run, because this is using deferred loading.
   (jens/smex-cache-exclude))
 
 (use-package smartparens
