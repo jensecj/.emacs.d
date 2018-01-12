@@ -1154,6 +1154,15 @@ Others
    ("q" . jens/magit-quit-session))
   :config
   (setq magit-auto-revert-mode nil)
+
+  ;; When using =magit-status=, just fill the entire screen, and jump back the the
+  ;; previous window configuration when quitting magit.
+  (defadvice magit-status (around magit-fullscreen activate)
+    "Saves window configuration, then opens magit in fullscreen"
+    (window-configuration-to-register :magit-fullscreen)
+    ad-do-it
+    (delete-other-windows))
+
   (defun jens/magit-quit-session ()
     "Restores the previous window configuration and kills the magit buffer"
     (interactive)
@@ -1161,7 +1170,8 @@ Others
     ;; still get back to our previous configuration if we quit magit weirdly
     (if (s-prefix? "*magit:" (buffer-name (current-buffer)))
         (kill-buffer))
-    (jump-to-register :magit-fullscreen)))
+    (jump-to-register :magit-fullscreen))
+  )
 
 (use-package undo-tree
   :ensure t
@@ -1447,16 +1457,6 @@ Create nonexistent directories when saving a file
               (let ((dir (file-name-directory buffer-file-name)))
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
-#+END_SRC
-
-When using =magit-status=, just fill the entire screen, and jump back the the
-previous window configuration when quitting magit.
-#+BEGIN_SRC emacs-lisp
-(defadvice magit-status (around magit-fullscreen activate)
-  "Saves window configuration, then opens magit in fullscreen"
-  (window-configuration-to-register :magit-fullscreen)
-  ad-do-it
-  (delete-other-windows))
 #+END_SRC
 
 If a region is active, use that as the initial input for searching in the
