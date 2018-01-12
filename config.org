@@ -755,6 +755,7 @@ Config for built-ins
 (use-package dired+ :ensure t)
 (use-package dired
   :after (dired-x dired+)
+  :functions jens/dired-sort
   :bind
   (("C-x C-d" . (lambda () (interactive) (dired default-directory)))
    :map dired-mode-map
@@ -768,7 +769,17 @@ Config for built-ins
         '((mark modified read-only " "
                 (name 60 -1 :left) " "
                 (filename-and-process 70 -1))
-          (mark " " (name 16 -1) " " filename))))
+          (mark " " (name 16 -1) " " filename)))
+
+  (defun jens/dired-sort ()
+    "Sort dired listings with directories first."
+    (save-excursion
+      (let (buffer-read-only)
+        (forward-line 2) ;; beyond dir. header
+        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+      (set-buffer-modified-p nil)))
+
+  (advice-add 'dired-readin :after #'jens/dired-sort))
 
 ;; use firefox as the default browser
 (use-package browse-url
@@ -1476,15 +1487,7 @@ buffer.
         (set-marker m nil))
     ad-do-it))
 
-(defun jens/dired-sort ()
-  "Sort dired listings with directories first."
-  (save-excursion
-    (let (buffer-read-only)
-      (forward-line 2) ;; beyond dir. header
-      (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
-    (set-buffer-modified-p nil)))
 
-(advice-add 'dired-readin :after #'jens/dired-sort)
 #+END_SRC
 
 Setup hooks for major modes
