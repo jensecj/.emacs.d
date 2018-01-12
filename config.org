@@ -1185,17 +1185,22 @@ Others
    ("C-_" . undo-tree-undo)
    ("M-_" . undo-tree-redo))
   :config
-  (defadvice undo-tree-undo (around keep-region activate)
+  (setq undo-tree-visualizer-timestamps t)
+  (setq undo-tree-visualizer-diff t)
+
+  ;; TODO: fix undo-tree-undo in region, in some cases it freezes.
+  (defun jens/undo-tree-undo (orig-fun &rest args)
     "Keep the region when undoing inside region"
     (if (use-region-p)
         (let ((m (set-marker (make-marker) (mark)))
               (p (set-marker (make-marker) (point))))
-          ad-do-it
+          (apply orig-fun args)
           (goto-char p)
           (set-mark m)
           (set-marker p nil)
           (set-marker m nil))
-      ad-do-it))
+      (apply orig-fun args)))
+  (advice-add 'undo-tree-undo :around #'jens/undo-tree-undo)
 
   (global-undo-tree-mode))
 
