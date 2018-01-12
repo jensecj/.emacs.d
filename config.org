@@ -127,13 +127,13 @@ whether by a user or a daemon, the first frame created will not have
 the setup, as it is created before this is run, still looking into
 this.
 #+BEGIN_SRC emacs-lisp
-(defun init-font-setup ()
+(defun jens/init-font-setup ()
   "Setup fonts, then remove self from `focus-in-hook' so we only run once."
   (when (find-font (font-spec :name "Source Code Pro Semibold 10"))
     (add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10")))
-  (remove-hook 'focus-in-hook 'init-font-setup))
+  (remove-hook 'focus-in-hook 'jens/init-font-setup))
 
-(add-hook 'focus-in-hook 'init-font-setup)
+(add-hook 'focus-in-hook 'jens/init-font-setup)
 #+END_SRC
 
 ** Misc
@@ -246,7 +246,7 @@ this.
 #+BEGIN_SRC emacs-lisp
 (require 'imenu)
 
-(defun create-scratch-buffer nil
+(defun jens/create-scratch-buffer nil
   "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
   (interactive)
   (let ((n 0)
@@ -260,13 +260,13 @@ this.
     (switch-to-buffer (get-buffer-create bufname))
     (funcall initial-major-mode)))
 
-(defun clean-view ()
+(defun jens/clean-view ()
   "Creates a scratch buffer, and makes it the only buffer visible."
   (interactive)
-  (create-scratch-buffer)
+  (jens/create-scratch-buffer)
   (delete-other-windows))
 
-(defun cleanup-buffer ()
+(defun jens/cleanup-buffer ()
   "Perform a bunch of operations on the white space content of a buffer.
    Including indent-buffer, which should not be called automatically on save."
   (interactive)
@@ -277,7 +277,7 @@ this.
 
 ** Editing
 #+BEGIN_SRC emacs-lisp
-(defun open-line-below ()
+(defun jens/open-line-below ()
   "Inserts a line below the current line, indents it, and moves the the
   beginning of that line."
   (interactive)
@@ -285,7 +285,7 @@ this.
   (newline)
   (indent-for-tab-command))
 
-(defun open-line-above ()
+(defun jens/open-line-above ()
   "Inserts a line above the current line, indents it, and moves the the
   beginning of that line."
   (interactive)
@@ -294,7 +294,7 @@ this.
   (forward-line -1)
   (indent-for-tab-command))
 
-(defun smart-line-beginning ()
+(defun jens/smart-line-beginning ()
   "Move point to the beginning of line or beginning of text"
   (interactive)
   (let ((pt (point)))
@@ -302,13 +302,13 @@ this.
     (when (eq pt (point))
       (beginning-of-line))))
 
-(defun kill-to-beginning-of-line ()
+(defun jens/kill-to-beginning-of-line ()
   "Kills from <point> to the beginning of the current line."
   (interactive)
   (kill-region (save-excursion (beginning-of-line) (point))
                (point)))
 
-(defun save-region-or-current-line (arg)
+(defun jens/save-region-or-current-line (arg)
   "If a region is active then it is saved to the kill-ring, otherwise the current
 line is saved."
   (interactive "P")
@@ -316,7 +316,7 @@ line is saved."
       (kill-ring-save (region-beginning) (region-end))
     (kill-ring-save (line-beginning-position) (+ 1 (line-end-position)))))
 
-(defun kill-region-or-current-line (arg)
+(defun jens/kill-region-or-current-line (arg)
   "If a region is active then it is killed, otherwise the current line is killed."
   (interactive "P")
   (if (region-active-p)
@@ -324,7 +324,7 @@ line is saved."
     (save-excursion
       (kill-whole-line arg))))
 
-(defun join-region ()
+(defun jens/join-region ()
   "Join all lines in a region into a single line."
   (interactive)
   (save-excursion
@@ -336,15 +336,15 @@ line is saved."
           (join-line 1)
           (end-of-line))))))
 
-(defun join-region-or-line ()
+(defun jens/join-region-or-line ()
   "If region is active, join all lines in region to a single line. Otherwise join
 the line below the current line, with the current line, placing it after."
   (interactive)
   (if (region-active-p)
-      (join-region)
+      (jens/join-region)
     (join-line -1)))
 
-(defun wrap-region (b e text-begin text-end)
+(defun jens/wrap-region (b e text-begin text-end)
   "Surrounds region with given text."
   (interactive "r\nsStart text: \nsEnd text: ")
   (if (use-region-p)
@@ -356,7 +356,7 @@ the line below the current line, with the current line, placing it after."
         (insert text-begin))
     (message "wrap-region: Error! invalid region!")))
 
-(defun comment-uncomment-region-or-line ()
+(defun jens/comment-uncomment-region-or-line ()
   "If region is active, comment or uncomment it (based on what it currently is),
 otherwise comment or uncomment the current line."
   (interactive)
@@ -367,25 +367,25 @@ otherwise comment or uncomment the current line."
 
 ** Files
 #+BEGIN_SRC emacs-lisp
-(defun get-file-name+ext ()
+(defun jens/get-buffer-file-name+ext ()
   "Get the file name and extension of the file belonging to the current buffer."
   (file-name-nondirectory buffer-file-name))
 
-(defun get-file-name ()
+(defun jens/get-buffer-file-name ()
   "Get the file name of the file belonging to the current buffer."
-  (file-name-sans-extension (get-file-name+ext)))
+  (file-name-sans-extension (jens/get-buffer-file-name+ext)))
 
-(defun get-file-directory ()
+(defun jens/get-buffer-file-directory ()
   "Get the directory of the file belonging to the current buffer"
   (file-name-directory (buffer-file-name)))
 
-(defun file-age (file)
+(defun jens/file-age (file)
   "Returns the number of seconds since the file was last modified."
   (float-time
    (time-subtract (current-time)
                   (nth 5 (file-attributes (file-truename file))))))
 
-(defun rename-current-buffer-file ()
+(defun jens/rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
   (let ((name (buffer-name))
@@ -402,7 +402,7 @@ otherwise comment or uncomment the current line."
           (message "File '%s' successfully renamed to '%s'"
                    name (file-name-nondirectory new-name)))))))
 
-(defun delete-current-buffer-file ()
+(defun jens/delete-current-buffer-file ()
   "Removes file connected to current buffer and kills buffer."
   (interactive)
   (let ((filename (buffer-file-name))
@@ -415,7 +415,7 @@ otherwise comment or uncomment the current line."
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
-(defun touch-buffer-file ()
+(defun jens/touch-buffer-file ()
   "Touches the current buffer, marking it as dirty."
   (interactive)
   (insert " ")
@@ -425,7 +425,7 @@ otherwise comment or uncomment the current line."
 
 ** Lisp
 #+BEGIN_SRC emacs-lisp
-(defun one-shot-keybinding (key command)
+(defun jens/one-shot-keybinding (key command)
   "Set a keybinding that disappear once you press a key that is not in
 the overlay-map"
   (set-transient-map
@@ -433,7 +433,7 @@ the overlay-map"
      (define-key map (kbd key) command)
      map) t))
 
-(defun try-require (feature)
+(defun jens/try-require (feature)
   "Tries to require FEATURE, if an exception is thrown, log it."
   (condition-case ex
       (progn
@@ -441,7 +441,7 @@ the overlay-map"
         (require feature))
     ('error (message (format "@ \e[1m\e[31m Error loading \"%s\": %s \e[0m" (symbol-name feature) ex)))))
 
-(defun eval-and-replace ()
+(defun jens/eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
   (backward-kill-sexp)
@@ -451,7 +451,7 @@ the overlay-map"
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
-(defmacro with-supressed-message (&rest body)
+(defmacro jens/with-supressed-message (&rest body)
   "Saves the current message in the minibuffer, executes body, then
 restores the message."
   (let ((saved-message-symbol (make-symbol "saved-message")))
@@ -459,12 +459,12 @@ restores the message."
        (progn ,@body)
        (message ,saved-message-symbol))))
 
-(defun save-to-file (data filename)
+(defun jens/save-to-file (data filename)
   "Save lisp object to a file"
   (with-temp-file filename
     (prin1 data (current-buffer))))
 
-(defun load-from-file (filename)
+(defun jens/load-from-file (filename)
   "Load lisp object from file"
   (with-temp-buffer
     (insert-file-contents filename)
@@ -474,7 +474,7 @@ restores the message."
 
 ** Windows
 #+BEGIN_SRC emacs-lisp
-(defun toggle-window-split ()
+(defun jens/toggle-window-split ()
   "Toggle window splitting between horizontal and vertical"
   (interactive)
   (if (= (count-windows) 2)
@@ -501,7 +501,7 @@ restores the message."
           (if this-win-2nd (other-window 1))))
     (message "You can only toggle split of two windows!")))
 
-(defun rotate-windows ()
+(defun jens/rotate-windows ()
   "Rotate your windows"
   (interactive)
   (cond ((not (> (count-windows)1))
@@ -529,8 +529,8 @@ restores the message."
   (or (and b1 b2)
       (and (not b1) (not b2))))
 
-(defun move-border-left-or-right (arg dir)
-  "General function covering move-border-left and move-border-right.
+(defun jens/move-border-left-or-right (arg dir)
+  "General function covering jens/move-border-left and jens/move-border-right.
    If DIR is t, then move left, otherwise move right."
   (interactive)
   (if (null arg) (setq arg 3))
@@ -539,8 +539,8 @@ restores the message."
         (shrink-window arg t)
       (enlarge-window arg t))))
 
-(defun move-border-up-or-down (arg dir)
-  "General function covering move-border-up and move-border-down.
+(defun jens/move-border-up-or-down (arg dir)
+  "General function covering jens/move-border-up and jens/move-border-down.
    If DIR is t, then move up, otherwise move down."
   (interactive)
   (if (null arg) (setq arg 3))
@@ -549,26 +549,26 @@ restores the message."
         (shrink-window arg nil)
       (enlarge-window arg nil))))
 
-(defun move-border-left (arg)
+(defun jens/move-border-left (arg)
   (interactive "P")
-  (move-border-left-or-right arg t))
+  (jens/move-border-left-or-right arg t))
 
-(defun move-border-right (arg)
+(defun jens/move-border-right (arg)
   (interactive "P")
-  (move-border-left-or-right arg nil))
+  (jens/move-border-left-or-right arg nil))
 
-(defun move-border-up (arg)
+(defun jens/move-border-up (arg)
   (interactive "P")
-  (move-border-up-or-down arg t))
+  (jens/move-border-up-or-down arg t))
 
-(defun move-border-down (arg)
+(defun jens/move-border-down (arg)
   (interactive "P")
-  (move-border-up-or-down arg nil))
+  (jens/move-border-up-or-down arg nil))
 #+END_SRC
 
 ** Misc
 #+BEGIN_SRC emacs-lisp
-(defun is-online? ()
+(defun jens/is-online-p ()
   "Returns a non-nil value if we have a network connection."
   (if (and (functionp 'network-interface-list)
            (network-interface-list))
@@ -597,12 +597,12 @@ changing the default name for views.
 (defun ivy-save-views ()
   "Save ivy-views to disk"
   (interactive)
-  (save-to-file ivy-views ivy-save-file))
+  (jens/save-to-file ivy-views ivy-save-file))
 
 (defun ivy-load-views ()
   "Load ivy-views from disk"
   (interactive)
-  (setq ivy-views (load-from-file ivy-save-file)))
+  (setq ivy-views (jens/load-from-file ivy-save-file)))
 
 ;; use an empty string as the default view name, instead of buffers
 (defun ivy-empty-default-view-name ()
@@ -702,7 +702,7 @@ Config for built-ins
   ;; save recentf file every 30s, but don't bother us about it
   (setq recentf-auto-save-timer
         (run-with-idle-timer 30 t '(lambda ()
-                                     (with-supressed-message (recentf-save-list)))))
+                                     (jens/with-supressed-message (recentf-save-list)))))
   (recentf-mode 1))
 
 ;; Semantic analysis in supported modes (cpp, java, etc.)
@@ -1289,19 +1289,19 @@ Others
         (if (member default-directory multi-term-saved-terms)
             (error "That term is already saved"))
         (add-to-list 'multi-term-saved-terms default-directory)))
-    (save-to-file multi-term-saved-terms multi-term-save-file))
+    (jens/save-to-file multi-term-saved-terms multi-term-save-file))
 
   (defun multi-term-unsave-term ()
     "Pick a saved terminal to remove from the saved list"
     (interactive)
     (let ((trm (ivy-read "Select term:" multi-term-saved-terms)))
       (setq multi-term-saved-terms (delete trm multi-term-saved-terms)))
-    (save-to-file multi-term-saved-terms multi-term-save-file))
+    (jens/save-to-file multi-term-saved-terms multi-term-save-file))
 
   (defun multi-term-restore-terms ()
     "Restores all terminals from the saved list"
     (interactive)
-    (setq multi-term-saved-terms (load-from-file multi-term-save-file))
+    (setq multi-term-saved-terms (jens/load-from-file multi-term-save-file))
     (ignore-errors
       (dolist (trm multi-term-saved-terms)
         (let ((default-directory trm))
@@ -1310,7 +1310,7 @@ Others
   (defun multi-term-list-saves ()
     "List all saved terminals"
     (interactive)
-    (ivy-read "All saved terms:" (load-from-file multi-term-save-file)))
+    (ivy-read "All saved terms:" (jens/load-from-file multi-term-save-file)))
 
   ;; restore all saved terminals at startup
   (multi-term-restore-terms))
@@ -1408,7 +1408,7 @@ expand-region cruft.
 #+BEGIN_SRC emacs-lisp
 (defadvice pop-to-mark-command (around ensure-new-position activate)
   (let ((p (point)))
-    (when (eq last-command 'save-region-or-current-line)
+    (when (eq last-command 'jens/save-region-or-current-line)
       ad-do-it
       ad-do-it
       ad-do-it)
@@ -1481,7 +1481,7 @@ Setup hooks for major modes
 (add-hook 'c++-mode-hook
           '(lambda ()
              (set (make-local-variable 'compile-command)
-                  (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s" (get-file-name+ext) (get-file-name)))
+                  (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s" (jens/get-buffer-file-name+ext) (jens/get-buffer-file-name)))
              (local-set-key (kbd "C-d") nil)
              (local-set-key (kbd "C-c C-c") 'compile)
              (local-set-key (kbd "C-c n") 'clang-format-buffer)))
@@ -1490,7 +1490,7 @@ Setup hooks for major modes
           '(lambda ()
              (use-local-map nil)
              (set (make-local-variable 'compile-command)
-                  (format "javac %s" (get-file-name+ext)))
+                  (format "javac %s" (jens/get-buffer-file-name+ext)))
              (local-set-key (kbd "C-c C-c") 'compile)))
 
 (add-hook 'csharp-mode-hook
@@ -1503,7 +1503,7 @@ Setup hooks for major modes
           '(lambda ()
              (use-local-map nil)
              (set (make-local-variable 'compile-command)
-                  (format "ocamlopt -o %s %s" (get-file-name) (get-file-name+ext)))
+                  (format "ocamlopt -o %s %s" (jens/get-buffer-file-name) (jens/get-buffer-file-name+ext)))
              (local-set-key (kbd "C-c C-c") 'compile)))
 
 (add-hook 'org-mode-hook
@@ -1597,23 +1597,23 @@ Keybindings for built-in things
 Keybindings for defuns
 #+BEGIN_SRC emacs-lisp
 ;; Better C-a
-(global-set-key (kbd "C-a") 'smart-line-beginning)
+(global-set-key (kbd "C-a") 'jens/smart-line-beginning)
 
 ;; Join lines (pull the below line up to this one)
-(global-set-key (kbd "M-j") 'join-region-or-line)
+(global-set-key (kbd "M-j") 'jens/join-region-or-line)
 
 ;; Comment/uncomment block
-(global-set-key (kbd "C-c c") 'comment-uncomment-region-or-line)
+(global-set-key (kbd "C-c c") 'jens/comment-uncomment-region-or-line)
 
 ;; Fix spaces / tabs
-(global-set-key (kbd "C-c n") 'cleanup-buffer)
+(global-set-key (kbd "C-c n") 'jens/cleanup-buffer)
 
 ;; Enable backwards killing of lines
-(global-set-key (kbd "C-S-k") 'kill-to-beginning-of-line)
+(global-set-key (kbd "C-S-k") 'jens/kill-to-beginning-of-line)
 
 ;; Toggle window split
-(global-set-key (kbd "M-C-<tab>") 'toggle-window-split)
-(global-set-key (kbd "M-S-<iso-lefttab>") 'rotate-windows)
+(global-set-key (kbd "M-C-<tab>") 'jens/toggle-window-split)
+(global-set-key (kbd "M-S-<iso-lefttab>") 'jens/rotate-windows)
 
 ;; Transpose stuff with M-t
 (global-unset-key (kbd "M-t")) ;; which used to be transpose-words
@@ -1627,11 +1627,11 @@ Keybindings for defuns
 (windmove-default-keybindings 'shift)
 
 ;; Force save a file, mnemonic is C-x TOUCH
-(global-set-key (kbd "C-x t") 'touch-buffer-file)
+(global-set-key (kbd "C-x t") 'jens/touch-buffer-file)
 
 ;; Copy current line / region
-(global-set-key (kbd "M-w") 'save-region-or-current-line)
-(global-set-key (kbd "C-w") 'kill-region-or-current-line)
+(global-set-key (kbd "M-w") 'jens/save-region-or-current-line)
+(global-set-key (kbd "C-w") 'jens/kill-region-or-current-line)
 
 ;; Completion that uses many different methods to find options.
 ;; (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
@@ -1639,10 +1639,10 @@ Keybindings for defuns
 ;; (global-set-key (kbd "C-,") 'completion-at-point)
 
 ;; keybindings for window resizing
-(global-set-key (kbd "M-S-<left>") 'move-border-left)
-(global-set-key (kbd "M-S-<right>") 'move-border-right)
-(global-set-key (kbd "M-S-<up>") 'move-border-up)
-(global-set-key (kbd "M-S-<down>") 'move-border-down)
+(global-set-key (kbd "M-S-<left>") 'jens/move-border-left)
+(global-set-key (kbd "M-S-<right>") 'jens/move-border-right)
+(global-set-key (kbd "M-S-<up>") 'jens/move-border-up)
+(global-set-key (kbd "M-S-<down>") 'jens/move-border-down)
 #+END_SRC
 
 * tty
