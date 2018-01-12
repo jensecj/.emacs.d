@@ -1080,7 +1080,25 @@ Others
   :ensure t
   :config
   (setq smex-save-file (concat my-emacs-data-dir "smex-items"))
-  (smex-initialize))
+  (smex-initialize)
+
+  ;; exclude some things from popping up in smex
+  (setq smex-excludes '(kill-emacs))
+
+  (defun purge-smex-excludes-from-cache ()
+    (dolist (e smex-excludes)
+      ;; we remove the excludes straight from the 'smex-ido-cache', which is the one
+      ;; used for 'M-x' completion, this still keeps the data from the excluded
+      ;; commands in the smex history, if we ever want a command back.
+      (setq smex-ido-cache
+            (remove-if
+             (lambda (x)
+               (string-match-p (concat (symbol-name 'kill-emacs) "$") x))
+             smex-ido-cache))
+      ;; add the excludes to the back of the list, so we can still find them in 'M-x'.
+      (setq smex-ido-cache (nconc smex-ido-cache (seq-map 'symbol-name smex-excludes)))))
+
+  (advice-add 'counsel-M-x :before #'purge-smex-excludes-from-cache))
 
 (use-package smartparens
   :ensure t
