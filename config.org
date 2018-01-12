@@ -161,13 +161,6 @@ this.
 ;; Allow pasting selection outside of Emacs
 (setq select-enable-clipboard t)
 
-;; Also auto refresh dired, but be quiet about it
-(setq global-auto-revert-non-file-buffers t)
-(setq auto-revert-verbose nil)
-
-;; Auto refresh buffers
-(global-auto-revert-mode 1)
-
 ;; Show keystrokes in progress
 (setq echo-keystrokes 0.1)
 
@@ -704,6 +697,16 @@ Config for built-ins
         (run-with-idle-timer 30 t '(lambda ()
                                      (jens/with-supressed-message (recentf-save-list)))))
   (recentf-mode 1))
+
+(use-package autorevert
+  :diminish auto-revert-mode
+  :config
+  ;; Also auto refresh dired, but be quiet about it
+  (setq global-auto-revert-non-file-buffers t)
+  (setq auto-revert-verbose nil)
+
+  ;; Auto refresh buffers
+  (global-auto-revert-mode 1))
 
 ;; Semantic analysis in supported modes (cpp, java, etc.)
 (use-package semantic
