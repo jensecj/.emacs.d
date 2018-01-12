@@ -681,8 +681,12 @@ Config for built-ins
   :config
   (setq savehist-file (concat my-emacs-data-dir "savehist"))
   (setq savehist-autosave-interval 60) ;; save every minute
-  (setq savehist-additional-variables '(search-ring
+  (setq savehist-additional-variables '(kill-ring
+                                        search-ring
                                         regexp-search-ring))
+  ;; just keep all history
+  (setq history-length t)
+  (setq history-delete-duplicates t)
   (savehist-mode 1))
 
 ;; Save a list of recently visited files.
