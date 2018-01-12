@@ -148,6 +148,9 @@ this.
 (put 'narrow-to-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
+;; load newer files, even if they have (outdated) byte-compiled counterparts
+(setq load-prefer-newer t)
+
 ;; Don't blink the cursor
 (blink-cursor-mode -1)
 
