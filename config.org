@@ -1409,6 +1409,18 @@ Others
               :keymap counsel-find-file-map
               :caller 'counsel-read-find-name))
 
+  ;; If a region is active, use that as the initial input for searching in the
+  ;; buffer.
+  (defun jens/counsel-grep-or-swiper (orig-fun &rest args)
+    "Start searching with the region as initial input"
+    (if (region-active-p)
+        (let ((start (region-beginning))
+              (end (region-end)))
+          (deactivate-mark)
+          (apply orig-fun (list (buffer-substring-no-properties start end))))
+      (funcall orig-fun)))
+  (advice-add 'counsel-grep-or-swiper :around #'jens/counsel-grep-or-swiper)
+
   (counsel-mode))
 
 (use-package counsel-projectile :ensure t)
@@ -1459,20 +1471,7 @@ Create nonexistent directories when saving a file
                   (make-directory dir t))))))
 #+END_SRC
 
-If a region is active, use that as the initial input for searching in the
-buffer.
-#+BEGIN_SRC emacs-lisp
-(defun jens/counsel-grep-or-swiper (orig-fun &rest args)
-  "Start searching with the region as initial input"
-  (if (region-active-p)
-      (let ((start (region-beginning))
-            (end (region-end)))
-        (deactivate-mark)
-        (apply orig-fun (list (buffer-substring-no-properties start end))))
-    (funcall orig-fun)))
 
-(advice-add 'counsel-grep-or-swiper :around #'jens/counsel-grep-or-swiper)
-#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (defadvice undo-tree-undo (around keep-region activate)
