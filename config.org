@@ -336,6 +336,14 @@ line is saved."
           (join-line 1)
           (end-of-line))))))
 
+(defun join-region-or-line ()
+  "If region is active, join all lines in region to a single line. Otherwise join
+the line below the current line, with the current line, placing it after."
+  (interactive)
+  (if (region-active-p)
+      (join-region)
+    (join-line -1)))
+
 (defun wrap-region (b e text-begin text-end)
   "Surrounds region with given text."
   (interactive "r\nsStart text: \nsEnd text: ")
@@ -347,6 +355,14 @@ line is saved."
         (goto-char (point-min))
         (insert text-begin))
     (message "wrap-region: Error! invalid region!")))
+
+(defun comment-uncomment-region-or-line ()
+  "If region is active, comment or uncomment it (based on what it currently is),
+otherwise comment or uncomment the current line."
+  (interactive)
+  (if (region-active-p)
+      (comment-or-uncomment-region (region-beginning) (region-end))
+    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
 #+END_SRC
 
 ** Files
@@ -1532,16 +1548,6 @@ Keybindings for built-in things
 (global-set-key (kbd "C-c C-k") 'eval-buffer)
 (global-set-key (kbd "C-c k") 'eval-region)
 
-;; Join lines (pull the below line up to this one)
-(global-set-key
- (kbd "M-j")
- (lambda ()
-   (interactive)
-   (if (region-active-p)
-       (progn
-         (join-region))
-     (join-line -1))))
-
 ;; Scroll the buffer without moving the point (unless we over-move)
 (global-set-key
  (kbd "C-<up>")
@@ -1554,17 +1560,6 @@ Keybindings for built-in things
  (lambda ()
    (interactive)
    (scroll-up 3)))
-
-;; Comment/uncomment block
-(global-set-key
- (kbd "C-c c")
- (lambda ()
-   (interactive)
-   (if (region-active-p)
-       (comment-or-uncomment-region (region-beginning) (region-end))
-     (comment-or-uncomment-region (line-beginning-position) (line-end-position)))))
-
-(global-set-key (kbd "C-c u") 'uncomment-region)
 
 ;; Disable pop ups from the mouse
 (global-set-key (kbd "C-<down-mouse-1>") nil)
@@ -1597,6 +1592,12 @@ Keybindings for defuns
 #+BEGIN_SRC emacs-lisp
 ;; Better C-a
 (global-set-key (kbd "C-a") 'smart-line-beginning)
+
+;; Join lines (pull the below line up to this one)
+(global-set-key (kbd "M-j") 'join-region-or-line)
+
+;; Comment/uncomment block
+(global-set-key (kbd "C-c c") 'comment-uncomment-region-or-line)
 
 ;; Fix spaces / tabs
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
