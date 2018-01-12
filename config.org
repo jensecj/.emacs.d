@@ -1180,6 +1180,18 @@ Others
    ("C-_" . undo-tree-undo)
    ("M-_" . undo-tree-redo))
   :config
+  (defadvice undo-tree-undo (around keep-region activate)
+    "Keep the region when undoing inside region"
+    (if (use-region-p)
+        (let ((m (set-marker (make-marker) (mark)))
+              (p (set-marker (make-marker) (point))))
+          ad-do-it
+          (goto-char p)
+          (set-mark m)
+          (set-marker p nil)
+          (set-marker m nil))
+      ad-do-it))
+
   (global-undo-tree-mode))
 
 (use-package smooth-scrolling
@@ -1468,24 +1480,6 @@ Create nonexistent directories when saving a file
               (let ((dir (file-name-directory buffer-file-name)))
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
-#+END_SRC
-
-
-
-#+BEGIN_SRC emacs-lisp
-(defadvice undo-tree-undo (around keep-region activate)
-  "Keep the region when undoing inside region"
-  (if (use-region-p)
-      (let ((m (set-marker (make-marker) (mark)))
-            (p (set-marker (make-marker) (point))))
-        ad-do-it
-        (goto-char p)
-        (set-mark m)
-        (set-marker p nil)
-        (set-marker m nil))
-    ad-do-it))
-
-
 #+END_SRC
 
 Setup hooks for major modes
