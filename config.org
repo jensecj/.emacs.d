@@ -1156,11 +1156,12 @@ Others
 
   ;; When using =magit-status=, just fill the entire screen, and jump back the the
   ;; previous window configuration when quitting magit.
-  (defadvice magit-status (around magit-fullscreen activate)
+  (defun jens/magit-status-fullscreen (orig-fun &rest args)
     "Saves window configuration, then opens magit in fullscreen"
     (window-configuration-to-register :magit-fullscreen)
-    ad-do-it
+    (apply orig-fun args)
     (delete-other-windows))
+  (advice-add 'magit-status :around #'jens/magit-status-fullscreen)
 
   (defun jens/magit-quit-session ()
     "Restores the previous window configuration and kills the magit buffer"
