@@ -1400,6 +1400,7 @@ Others
    ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
    ("C-x C-i" . counsel-imenu)
+   ("M-æ" . counsel-mark-ring)
    ("M-x" . counsel-M-x)
    ("M-b" . counsel-bookmark))
   :config
@@ -1472,14 +1473,18 @@ When popping the mark, continue popping until the cursor actually
 moves. also, if the last command was a copy - skip past all the
 expand-region cruft.
 #+BEGIN_SRC emacs-lisp
-(defadvice pop-to-mark-command (around ensure-new-position activate)
+(defun jens/pop-to-mark-command (orig-fun &rest args)
+  "Call ORIG-FUN until the cursor moves. Try the repeated popping up to 10
+  times."
   (let ((p (point)))
-    (when (eq last-command 'jens/save-region-or-current-line)
-      ad-do-it
-      ad-do-it
-      ad-do-it)
     (dotimes (i 10)
-      (when (= p (point)) ad-do-it))))
+      (when (= p (point))
+        (apply orig-fun args)))))
+(advice-add 'pop-to-mark-command :around #'jens/pop-to-mark-command)
+
+;; allows us to type 'C-u C-SPC C-SPC...' instead of having to re-type 'C-u'
+;; every time.
+(setq set-mark-command-repeat-pop t)
 #+END_SRC
 
 Create nonexistent directories when saving a file
