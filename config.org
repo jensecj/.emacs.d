@@ -888,7 +888,7 @@ Setup =powerline=, the fancy modeline replacement.
 
                                 (funcall seperator-> face-darkest face-darker)
 
-                                (powerline-raw "%4l" face-darker 'r)
+                                (powerline-raw "%4l (%p)" face-darker 'r)
                                 (powerline-raw ":" face-darker 'l)
                                 (powerline-raw "%3c " face-darker 'r)
 
