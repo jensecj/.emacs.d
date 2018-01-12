@@ -587,28 +587,28 @@ changing the default name for views.
 (defvar ivy-save-file (concat my-emacs-data-dir "ivy-views")
   "The file on disk used to save ivy-views")
 
-(defun ivy-save-views ()
+(defun jens/ivy-save-views ()
   "Save ivy-views to disk"
   (interactive)
   (jens/save-to-file ivy-views ivy-save-file))
 
-(defun ivy-load-views ()
+(defun jens/ivy-load-views ()
   "Load ivy-views from disk"
   (interactive)
   (setq ivy-views (jens/load-from-file ivy-save-file)))
 
 ;; use an empty string as the default view name, instead of buffers
-(defun ivy-empty-default-view-name ()
+(defun jens/ivy-empty-default-view-name ()
   "Default name for a new view, used in push-view prompt."
   '"{} ")
 
-(defun ivy-views-find (view)
+(defun jens/ivy-views-find (view)
   "Find a view from its name"
   (dolist (v ivy-views)
     (if (string= view (car v))
         (return v))))
 
-(defun my-ivy-push-view ()
+(defun jens/ivy-push-view ()
   "Push the current window tree on `ivy-views'.
 Currently, the split configuration (i.e. horizonal or vertical)
 and point positions are saved, but the split positions aren't.
@@ -634,18 +634,18 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
                               :initial-input (ivy-default-view-name))))
     (when view-name
       ;; pop the view if it already exists, so we replace it
-      (ivy-pop-view-action (ivy-views-find view-name))
+      (ivy-pop-view-action (jens/ivy-views-find view-name))
       (push (list view-name view) ivy-views))))
 
-(advice-add 'ivy-push-view :override #'my-ivy-push-view)
+(advice-add 'ivy-push-view :override #'jens/ivy-push-view)
 
 ;; replace the default view-name
-(advice-add 'ivy-default-view-name :override #'ivy-empty-default-view-name)
-;; (advice-remove 'ivy-default-view-name #'ivy-empty-default-view-name)
+(advice-add 'ivy-default-view-name :override #'jens/ivy-empty-default-view-name)
+;; (advice-remove 'ivy-default-view-name #'jens/ivy-empty-default-view-name)
 
 ;; save ivy-views when pushing/popping views
-(advice-add 'ivy-push-view :after #'ivy-save-views)
-(advice-add 'ivy-pop-view :after #'ivy-save-views)
+(advice-add 'ivy-push-view :after #'jens/ivy-save-views)
+(advice-add 'ivy-pop-view :after #'jens/ivy-save-views)
 #+END_SRC
 
 * Use-packages
@@ -724,9 +724,9 @@ Config for built-ins
   (semantic-mode))
 
 (use-package linum
-  :bind ("M-g M-g" . goto-line-with-feedback)
+  :bind ("M-g M-g" . jens/goto-line-with-feedback)
   :config
-  (defun goto-line-with-feedback ()
+  (defun jens/goto-line-with-feedback ()
     "Show line numbers temporarily, while prompting for the line number input"
     (interactive)
     (unwind-protect
@@ -736,7 +736,7 @@ Config for built-ins
       (linum-mode -1)))
 
   ;; format linum mode, makes it readable, but uses some space, fine since it
-  ;; is only visible when using =goto-line-with-feedback=.
+  ;; is only visible when using =jens/goto-line-with-feedback=.
   (setq linum-format
         (lambda (line)
           (propertize
@@ -929,9 +929,9 @@ Setup autocompletion sources for different languages
   :ensure t
   :demand t
   :diminish auto-complete-mode
-  :functions (ac-quick-help-at-point my-ac-c++-mode-setup)
+  :functions (jens/ac-quick-help-at-point jens/ac-c++-mode-setup jens/ac-elisp-mode-setup)
   :bind
-  (("C-+" . ac-quick-help-at-point)
+  (("C-+" . jens/ac-quick-help-at-point)
    ("C-<tab>" . auto-complete))
   :config
   (require 'auto-complete-config)
@@ -950,7 +950,7 @@ Setup autocompletion sources for different languages
                   ac-source-words-in-same-mode-buffers))
   ;; '(ac-source-words-in-buffer ac-source-imenu ac-source-yasnippet)
 
-  (defun ac-quick-help-at-point ()
+  (defun jens/ac-quick-help-at-point ()
     (interactive)
     (let* ((position (point))
            (string-under-cursor
@@ -960,7 +960,7 @@ Setup autocompletion sources for different languages
       (goto-char position)
       (popup-tip (ac-symbol-documentation (intern string-under-cursor)))))
 
-  (defun my-ac-c++-mode-setup ()
+  (defun jens/ac-c++-mode-setup ()
     ;; (require 'ac-clang)
     ;; (require 'ac-c-headers)
     (require 'ac-rtags)
@@ -985,14 +985,14 @@ Setup autocompletion sources for different languages
     ;; (setq ac-clang-flags (mapcar (lambda (item)(concat "-I" item)) c++-include-files))
     ;; (ac-clang-activate-after-modify)
     )
-  (add-hook 'c++-mode-hook 'my-ac-c++-mode-setup)
+  (add-hook 'c++-mode-hook 'jens/ac-c++-mode-setup)
 
-  (defun my-ac-elisp-mode-setup ()
+  (defun jens/ac-elisp-mode-setup ()
     (add-to-list 'ac-sources 'ac-source-functions) ;; elisp functions
     (add-to-list 'ac-sources 'ac-source-features) ;; elisp features
     (add-to-list 'ac-sources 'ac-source-symbols) ;; elisp symbols
     (add-to-list 'ac-sources 'ac-source-variables)) ;; elisp variables
-  (add-hook 'emacs-lisp-mode-hook 'my-ac-elisp-mode-setup)
+  (add-hook 'emacs-lisp-mode-hook 'jens/ac-elisp-mode-setup)
 
   ;; (defun my-ac-latex-mode-setup ()
   ;;   (require 'auto-complete-auctex)
@@ -1032,10 +1032,10 @@ Others
   (setq smex-save-file (concat my-emacs-data-dir "smex-items"))
   (smex-initialize)
 
-  ;; exclude some things from popping up in smex
-  (setq smex-excludes '(kill-emacs))
+  (defvar smex-excludes '(kill-emacs)
+    "List of entries to exclude when providing smex-ido-cache")
 
-  (defun smex-cache-exclude ()
+  (defun jens/smex-cache-exclude ()
     (dolist (e smex-excludes)
       ;; we remove the excludes straight from the 'smex-ido-cache', which is the one
       ;; used for 'M-x' completion, this still keeps the data from the excluded
@@ -1050,10 +1050,10 @@ Others
 
   ;; advice the M-x function used
   ;; maybe advice smex-rebuild-cache?
-  (advice-add 'counsel-M-x :before #'smex-cache-exclude)
+  (advice-add 'counsel-M-x :before #'jens/smex-cache-exclude)
   ;; purge the cache so we dont see the wrong thing the first time we run,
   ;; because this is using deferred loading.
-  (smex-cache-exclude))
+  (jens/smex-cache-exclude))
 
 (use-package smartparens
   :ensure t
@@ -1135,15 +1135,15 @@ Others
 
 (use-package magit
   :ensure t
-  :functions magit-quit-session
+  :functions jens/magit-quit-session
   :bind
   (("C-x m" . magit-status)
    :map magit-mode-map
    ("C-c C-a" . magit-commit-amend)
-   ("q" . magit-quit-session))
+   ("q" . jens/magit-quit-session))
   :config
   (setq magit-auto-revert-mode nil)
-  (defun magit-quit-session ()
+  (defun jens/magit-quit-session ()
     "Restores the previous window configuration and kills the magit buffer"
     (interactive)
     ;; only kill the buffer if it's the actual buffer, this way we can
@@ -1239,24 +1239,33 @@ Others
 (use-package multi-term
   :ensure t
   :demand t
-  :functions (my-multi-term
-              multi-term-save-term
-              multi-term-unsave-term
-              multi-term-restore-terms
-              multi-term-list-saves)
+  :functions (jens/multi-term
+              jens/multi-term-save-term
+              jens/multi-term-unsave-term
+              jens/multi-term-restore-terms
+              jens/multi-term-list-saves)
   :defines (multi-term-save-file multi-term-saved-terms)
-  :bind ("C-z" . my-multi-term)
+  :bind ("C-z" . jens/multi-term)
   :config
   (setq multi-term-program "/bin/zsh")
   ;; (setq term-bind-key-alist '()) ;; clear the binds list, defaulting to emacs binds
   (setq term-buffer-maximum-size 10000)
+
+  (defun jens/term-paste (&optional string)
+    "Paste a string to the process of the current buffer, fixes paste for
+    multi-term mode."
+    (interactive)
+    (process-send-string
+     (get-buffer-process (current-buffer))
+     (if string string (current-kill 0))))
+  (define-key term-raw-map (kbd "C-y") 'jens/term-paste)
   ;; (add-to-list 'term-bind-key-alist '("<C-left>" . term-send-backward-word))
   ;; (add-to-list 'term-bind-key-alist '("<C-right>" . term-send-forward-word))
   ;; (add-to-list 'term-bind-key-alist '("<C-backspace>" . (lambda () (interactive) (term-send-raw-string "\C-h")))) ;; backwards-kill-word
   ;; (add-to-list 'term-bind-key-alist '("<C-del>" . (lambda () (interactive) (term-send-raw-string "\e[3;5~")))) ;; forwards-kill-word
 
 
-  ;; Sets up the ability to store a multi-term using =multi-term-save-term=, all
+  ;; Sets up the ability to store a multi-term using =jens/multi-term-save-term=, all
   ;; terminals saved this was will be reopened when starting a new session.
 
   ;; It does not restart programs, just starts the terminals in the folders they were
@@ -1266,7 +1275,7 @@ Others
   (defvar multi-term-save-file (concat my-emacs-data-dir "multi-terms")
     "File on disk used to store the list of saved terminals")
 
-  (defun my-multi-term (&optional open-term-in-background)
+  (defun jens/multi-term (&optional open-term-in-background)
     "Create new term buffer."
     (interactive)
     (let ((term-buffer)
@@ -1282,7 +1291,7 @@ Others
           (switch-to-buffer term-buffer))
       (rename-buffer buffer-new-name)))
 
-  (defun multi-term-save-term ()
+  (defun jens/multi-term-save-term ()
     "Pick an open terminal and save it"
     (interactive)
     (if (null multi-term-buffer-list)
@@ -1294,29 +1303,29 @@ Others
         (add-to-list 'multi-term-saved-terms default-directory)))
     (jens/save-to-file multi-term-saved-terms multi-term-save-file))
 
-  (defun multi-term-unsave-term ()
+  (defun jens/multi-term-unsave-term ()
     "Pick a saved terminal to remove from the saved list"
     (interactive)
     (let ((trm (ivy-read "Select term:" multi-term-saved-terms)))
       (setq multi-term-saved-terms (delete trm multi-term-saved-terms)))
     (jens/save-to-file multi-term-saved-terms multi-term-save-file))
 
-  (defun multi-term-restore-terms ()
+  (defun jens/multi-term-restore-terms ()
     "Restores all terminals from the saved list"
     (interactive)
     (setq multi-term-saved-terms (jens/load-from-file multi-term-save-file))
     (ignore-errors
       (dolist (trm multi-term-saved-terms)
         (let ((default-directory trm))
-          (my-multi-term t)))))
+          (jens/multi-term t)))))
 
-  (defun multi-term-list-saves ()
+  (defun jens/multi-term-list-saves ()
     "List all saved terminals"
     (interactive)
     (ivy-read "All saved terms:" (jens/load-from-file multi-term-save-file)))
 
   ;; restore all saved terminals at startup
-  (multi-term-restore-terms))
+  (jens/multi-term-restore-terms))
 
 (use-package ivy
   :ensure t
@@ -1335,14 +1344,14 @@ Others
   (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t)
   (ivy-mode)
-  (ivy-load-views))
+  (jens/ivy-load-views))
 
 (use-package counsel
   :ensure t
   :demand t
   :after ivy
   :diminish counsel-mode
-  :functions counsel-read-file-name
+  :functions jens/counsel-read-file-name
   :bind
   (("C-s" . counsel-grep-or-swiper)
    ("C-S-s" . counsel-rg)
@@ -1356,7 +1365,7 @@ Others
    counsel-grep-base-command
    "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
 
-  (defun counsel-read-file-name (prompt &optional initial-input)
+  (defun jens/counsel-read-file-name (prompt &optional initial-input)
     "Query for a file path using counsel and ivy"
     (interactive)
     (ivy-read prompt 'read-file-name-internal
@@ -1442,7 +1451,7 @@ previous window configuration when quitting magit.
 If a region is active, use that as the initial input for searching in the
 buffer.
 #+BEGIN_SRC emacs-lisp
-(defun my-counsel-grep-or-swiper (orig-fun &rest args)
+(defun jens/counsel-grep-or-swiper (orig-fun &rest args)
   "Start searching with the region as initial input"
   (if (region-active-p)
       (let ((start (region-beginning))
@@ -1451,7 +1460,7 @@ buffer.
         (apply orig-fun (list (buffer-substring-no-properties start end))))
     (funcall orig-fun)))
 
-(advice-add 'counsel-grep-or-swiper :around #'my-counsel-grep-or-swiper)
+(advice-add 'counsel-grep-or-swiper :around #'jens/counsel-grep-or-swiper)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1467,7 +1476,7 @@ buffer.
         (set-marker m nil))
     ad-do-it))
 
-(defun mydired-sort ()
+(defun jens/dired-sort ()
   "Sort dired listings with directories first."
   (save-excursion
     (let (buffer-read-only)
@@ -1475,7 +1484,7 @@ buffer.
       (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
     (set-buffer-modified-p nil)))
 
-(advice-add 'dired-readin :after #'mydired-sort)
+(advice-add 'dired-readin :after #'jens/dired-sort)
 #+END_SRC
 
 Setup hooks for major modes
