@@ -1427,15 +1427,17 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
   (counsel-mode))
 
-(use-package counsel-projectile :ensure t)
 (use-package projectile
   :ensure t
-  :after counsel-projectile
   :diminish projectile-mode
   :config
   (setq projectile-known-projects-file (concat my-emacs-data-dir "projectile-bookmarks"))
-  (setq projectile-cache-file (concat my-emacs-data-dir "projectile.cache"))
-  (counsel-projectile-mode))
+  (setq projectile-cache-file (concat my-emacs-data-dir "projectile.cache")))
+
+(use-package counsel-projectile
+  :ensure t
+  :after (counsel projectile)
+  :config (counsel-projectile-mode))
 
 (use-package zenburn-theme
   :ensure t
