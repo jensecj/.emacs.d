@@ -4,11 +4,15 @@
 ;; include the commomn lisp functions
 (require 'cl)
 
+(message (format "= \e[1m\e[32mStarted initializing emacs!\e[0m"))
+
 ;; setup package archives
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")))
+
+(defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
 
 ;; install use-package if we don't already have it
 (unless (package-installed-p 'use-package)
@@ -29,5 +33,7 @@
 (use-package org :ensure t :pin org)
 
 (org-babel-load-file (concat user-emacs-directory "config.org"))
+
+(message (format "= \e[1m\e[32mEmacs initialized in %s\e[0m" (emacs-init-time)))
 
 (provide 'init)
