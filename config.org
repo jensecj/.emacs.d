@@ -65,7 +65,7 @@ Turn off excess interface early in startup to avoid momentary display
 (scroll-bar-mode -1)
 #+END_SRC
 
-** Directories used by built-ins
+** Directories
 Save temp files in the =.temp= folder
 #+BEGIN_SRC emacs-lisp
 (setq temporary-file-directory my-emacs-temp-dir)
@@ -226,8 +226,6 @@ this.
 * Defuns
 ** Buffers
 #+BEGIN_SRC emacs-lisp
-(require 'imenu)
-
 (defun jens/create-scratch-buffer nil
   "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
   (interactive)
