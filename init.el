@@ -12,7 +12,7 @@
                          ("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")))
 
-(defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
+(defconst melpa-archive (concat user-emacs-directory "elpa/archives/melpa"))
 
 ;; install use-package if we don't already have it
 (unless (package-installed-p 'use-package)
