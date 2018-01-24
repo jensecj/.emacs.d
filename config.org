@@ -202,7 +202,7 @@ this.
 (setq-default indicate-empty-lines t)
 
 ;; Don't automatically break lines
-(setq truncate-lines t)
+(setq truncate-lines nil)
 
 ;; Allow recursive mini buffers
 (setq enable-recursive-minibuffers t)
