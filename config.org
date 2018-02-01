@@ -221,6 +221,10 @@ this.
 
 ;; save more things in the kill ring
 (setq kill-ring-max 200)
+
+;; enable gpg pinentry through the minibuffer
+(setq epa-pinentry-mode 'loopback)
+(pinentry-start)
 #+END_SRC
 
 * Defuns
