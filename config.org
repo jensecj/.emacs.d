@@ -1546,7 +1546,14 @@ Setup hooks for major modes
              (local-set-key (kbd "<M-S-up>") nil)
              (local-set-key (kbd "<M-S-down>") nil)
              (local-set-key (kbd "<C-S-up>") nil)
-             (local-set-key (kbd "<C-S-down>") nil)))
+             (local-set-key (kbd "<C-S-down>") nil)
+             (local-set-key (kbd "C-c n") (lambda ()
+                                            (interactive)
+                                            (if (region-active-p)
+                                                (org-indent-region (region-beginning) (region-end)))
+                                            (org-indent-line)
+                                            (message "indented"))
+                            )))
 #+END_SRC
 
 * Keybindings
