@@ -561,6 +561,10 @@ restores the message."
                                                         (car iface)))))))
             (network-interface-list))
     t))
+
+(defun jens/insert-todays-date ()
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d")))
 #+END_SRC
 
 * Use-packages
