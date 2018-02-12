@@ -722,7 +722,11 @@ Config for built-ins
         org-latex-packages-alist '(("" "minted"))
         org-latex-pdf-process
         '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  ;; try to get non-fuzzy latex fragments
+  (plist-put org-format-latex-options :scale 1.6)
+  (setq org-latex-create-formula-image-program 'dvisvgm)
+)
 #+END_SRC
 
 Setup some major modes

@@ -30,7 +30,7 @@
 (setq package--builtins (assq-delete-all 'org package--builtins))
 
 ;; install upstream org-mode
-(use-package org :ensure t :pin org)
+(use-package org :ensure org-plus-contrib :pin org)
 
 (org-babel-load-file (concat user-emacs-directory "config.org"))
 
