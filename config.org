@@ -225,6 +225,7 @@ this.
 ;; enable gpg pinentry through the minibuffer
 (setq epa-pinentry-mode 'loopback)
 (pinentry-start)
+(setenv "GPG_AGENT_INFO" nil)
 #+END_SRC
 
 * Defuns
