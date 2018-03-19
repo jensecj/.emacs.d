@@ -727,6 +727,9 @@ Config for built-ins
   ;; try to get non-fuzzy latex fragments
   (plist-put org-format-latex-options :scale 1.6)
   (setq org-latex-create-formula-image-program 'dvisvgm)
+
+  ;; use some noise in scheduling org-drills
+  (setq org-drill-add-random-noise-to-intervals-p t)
 )
 #+END_SRC
 
@@ -759,7 +762,7 @@ Setup some major modes
 (use-package lua-mode :ensure t
   :mode "\\.lua\\'")
 (use-package markdown-mode :ensure t
-  :mode "\\.md\\'")
+  :mode ("\\.md\\'" "\\.card\\'"))
 (use-package rust-mode :ensure t
   :mode "\\.rs\\'")
 (use-package scss-mode :ensure t
