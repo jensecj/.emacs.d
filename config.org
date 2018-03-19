@@ -1789,3 +1789,36 @@ thing.
 #+END_SRC
 
 * Experimental
+
+#+BEGIN_SRC elisp
+(defun get-title-from-link (link)
+  (let ((curl-command (concat "curl '" link "' -so - | grep -iPo '(?<=<title>)(.*)(?=</title>)'")))
+    (s-trim (shell-command-to-string curl-command))))
+
+;; (get-title-from-link "https://www.youtube.com/watch?v=mO3Q4bRQZ3k")
+
+(defun paste-website-title-above ()
+  (interactive)
+  (if (region-active-p)
+      (let ((link (buffer-substring (region-beginning) (region-end))))
+        (save-excursion
+          (beginning-of-line)
+          (newline-and-indent)
+          (previous-line)
+          (insert (get-title-from-link link))))))
+
+(defun link-to-markdown-link ()
+  (interactive)
+  (if (region-active-p)
+      (let ((link (buffer-substring (region-beginning) (region-end))))
+        (save-excursion
+          (goto-char (region-end))
+          (insert ")")
+          (goto-char (region-beginning))
+          (insert "(")
+
+          (beginning-of-line)
+          (insert "[")
+          (insert (get-title-from-link link))
+          (insert "]")))))
+#+end_src
