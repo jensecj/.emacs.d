@@ -1506,6 +1506,15 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (use-package ggtags :ensure t)
 (use-package dumb-jump :ensure t)
 
+(require 'flyspell)
+(add-hook 'flyspell-mode (lambda () (ispell-change-dictionary "english")))
+
+(defun enable-spellchecking ()
+  (interactive)
+  (ispell-change-dictionary "english")
+  (require 'flyspell)
+  (flyspell-mode))
+
 (use-package zenburn-theme
   :ensure t
   :config
