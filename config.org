@@ -1233,6 +1233,14 @@ Others
                             (concat "QUICKLISP_HOME="
                                     (file-name-as-directory directory) "quicklisp/")))))
 
+(use-package elpy
+  :ensure t
+  :diminish elpy-mode
+  :config
+  (define-key elpy-mode-map (kbd "<C-up>") nil)
+  (define-key elpy-mode-map (kbd "<C-down>") nil)
+  )
+
 (use-package rainbow-mode :ensure t :defer t)
 
 (use-package unicode-fonts
