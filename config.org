@@ -871,7 +871,9 @@ Setup autocompletion sources for different languages
   :ensure t
   :demand t
   :diminish auto-complete-mode
-  :functions (jens/ac-quick-help-at-point jens/ac-c++-mode-setup jens/ac-elisp-mode-setup)
+  :functions (jens/ac-quick-help-at-point
+              jens/ac-c++-mode-setup
+              jens/ac-elisp-mode-setup)
   :bind
   (("C-+" . jens/ac-quick-help-at-point)
    ("C-<tab>" . auto-complete))
@@ -909,12 +911,12 @@ Setup autocompletion sources for different languages
 
     (setq c++-include-files
           '("/usr/include"
-            "/usr/include/c++/7.2.0"
-            "/usr/include/c++/7.2.0/backward"
-            "/usr/include/c++/7.2.0/x86_64-unknown-linux-gnu"
-            "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include"
-            "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.2.0/include-fixed"
-            "/usr/lib/clang/5.0.0/include"))
+            "/usr/include/c++/7.3.0"
+            "/usr/include/c++/7.3.0/backward"
+            "/usr/include/c++/7.3.0/x86_64-unknown-linux-gnu"
+            "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include"
+            "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include-fixed"
+            "/usr/lib/clang/5.0.1/include"))
 
     (setq-default achead:include-directories c++-include-files)
 
