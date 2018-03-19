@@ -1186,9 +1186,8 @@ Others
   :config
   (setq wgrep-auto-save-buffer t))
 
-(use-package AUCTeX
-  :disabled
-  ;; :ensure t
+(use-package auctex
+  :ensure t
   :defer t
   :hook (LaTeX-mode-hook . reftex-mode)
   :config
@@ -1199,6 +1198,24 @@ Others
   (setq-default TeX-save-query nil) ;; save before compiling
   (setq-default TeX-master nil) ;; try to figure out which file is the master
   (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
+  (setq doc-view-resolution 300)
+
+  ;; (setq TeX-view-program-selection (quote ((output-pdf "zathura") (output-dvi "xdvi"))))
+  (TeX-source-correlate-mode)        ; activate forward/reverse search
+  (TeX-PDF-mode)
+  ;; (add-to-list 'TeX-view-program-list
+  ;;              '("Zathura" "zathura " (mode-io-correlate "--synctex-forward %n:1:%b") " %o"))
+  ;; (add-to-list 'TeX-view-program-selection
+  ;;              '(output-pdf "Zathura"))
+
+  (add-to-list 'TeX-view-program-list
+               '("Zathura"
+                 ("zathura "
+                  (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
+                  " %o")
+                 "zathura"))
+  (add-to-list 'TeX-view-program-selection
+               '(output-pdf "Zathura"))
   )
 
 (use-package slime
