@@ -845,11 +845,19 @@ Setup =powerline=, the fancy modeline replacement.
                       (powerline-render rhs))))))
   )
 #+END_SRC
-
 Autocomplete
-
 Setup autocompletion sources for different languages
 
+company-mode:
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :ensure t
+  :defer t
+  :config
+  (company-quickhelp-mode t))
+#+END_SRC
+
+auto-complete-mode:
 #+BEGIN_SRC emacs-lisp
 (use-package ac-rtags :ensure t :defer t)
 ;; auto-complete source for c/c++ header files
