@@ -771,7 +771,7 @@ Setup some major modes
 (use-package yaml-mode :ensure t
   :mode "\\.yml\\'")
 (use-package clojure-mode :ensure t
-  :after (company-mode cider)
+  :after (company-mode cider cljr-refactor)
   :config
   (defun jens/clojure-mode-setup ()
     (interactive)
@@ -799,8 +799,18 @@ Setup some major modes
                      (buffer-substring-no-properties (point-min) (point-max))))))
     )
   (add-hook 'clojure-mode-hook 'jens/clojure-mode-setup))
-(use-package cider :ensure t)
-(use-package clj-refactor :ensure t)
+
+(use-package cider :ensure t
+  :config
+  (setq cider-repl-use-pretty-printing t)
+  (setq cider-prompt-for-symbol nil)
+  (setq cider-pprint-fn 'pprint))
+
+(use-package clj-refactor :ensure t
+  :config
+  ;; dont warn on refactor evals
+  (setq cljr-warn-on-eval nil)
+)
 
 (pos-tip-show)
 
