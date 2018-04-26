@@ -8,7 +8,6 @@ default directories, etc.
 
 #+BEGIN_SRC emacs-lisp
 (setq user-full-name "Jens Christian Jensen")
-(setq user-mail-address "jensecj+emacs@gmail.com")
 #+END_SRC
 
 The directories we're going to use.
@@ -771,6 +770,41 @@ Setup some major modes
   :mode "\\.ocaml\\'")
 (use-package yaml-mode :ensure t
   :mode "\\.yml\\'")
+(use-package clojure-mode :ensure t
+  :after (company-mode cider)
+  :config
+  (defun jens/clojure-mode-setup ()
+    (interactive)
+    ;; use company for clojure
+    (auto-complete-mode -1)
+    (company-mode +1)
+    (add-to-list 'company-backends 'company-capf)
+    (define-key clojure-mode-map (kbd "<tab>") #'company-indent-or-complete-common)
+    (define-key clojure-mode-map (kbd "C-+") #'jens/company-clojure-quickhelp-at-point)
+
+    ;; clojure emacs power settings
+    (cider-mode +1)
+    (clj-refactor-mode +1)
+
+    (defun jens/company-clojure-quickhelp-at-point ()
+      (interactive)
+      (let* ((position (point))
+             (string-under-cursor
+              (buffer-substring-no-properties
+               (progn (skip-syntax-backward "w_") (point))
+               (progn (skip-syntax-forward "w_") (point)))))
+        (goto-char position)
+        (cider-try-symbol-at-point "symbol to show doc for" #'cider-create-doc-buffer)
+        (popup-tip (with-current-buffer "*cider-doc*"
+                     (buffer-substring-no-properties (point-min) (point-max))))))
+    )
+  (add-hook 'clojure-mode-hook 'jens/clojure-mode-setup))
+(use-package cider :ensure t)
+(use-package clj-refactor :ensure t)
+
+(pos-tip-show)
+
+(cider-create-doc-buffer (make-symbol "print"))
 
 #+END_SRC
 
@@ -915,7 +949,6 @@ auto-complete-mode:
   (defun jens/ac-rust-mode-setup ()
     (add-hook 'rust-mode-hook #'racer-mode)
     (add-hook 'racer-mode-hook #'eldoc-mode)
-
     (define-key rust-mode-map (kbd "<C-tab>") #'company-indent-or-complete-common)
     (setq company-tooltip-align-annotations t)
     )
@@ -1530,6 +1563,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :config
   (load-theme 'zenburn t)
   :custom-face
+  (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b"))))
   (ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))
   (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
   (diredp-file-name ((t (:foreground "#DCDCCC"))))
