@@ -809,13 +809,7 @@ Setup some major modes
 (use-package clj-refactor :ensure t
   :config
   ;; dont warn on refactor evals
-  (setq cljr-warn-on-eval nil)
-)
-
-(pos-tip-show)
-
-(cider-create-doc-buffer (make-symbol "print"))
-
+  (setq cljr-warn-on-eval nil))
 #+END_SRC
 
 Moving on to user defined packages.
