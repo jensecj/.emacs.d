@@ -786,6 +786,12 @@ Setup some major modes
     (cider-mode +1)
     (clj-refactor-mode +1)
 
+    (setq cider-cljs-lein-repl
+          "(do (require 'figwheel-sidecar.repl-api)
+           (figwheel-sidecar.repl-api/start-figwheel!)
+           (figwheel-sidecar.repl-api/cljs-repl))")
+
+
     (defun jens/company-clojure-quickhelp-at-point ()
       (interactive)
       (let* ((position (point))
@@ -804,7 +810,11 @@ Setup some major modes
   :config
   (setq cider-repl-use-pretty-printing t)
   (setq cider-prompt-for-symbol nil)
-  (setq cider-pprint-fn 'pprint))
+  (setq cider-pprint-fn 'pprint)
+  (setq cider-default-cljs-repl nil)
+  (setq cider-check-cljs-repl-requirements nil)
+)
+
 
 (use-package clj-refactor :ensure t
   :config
