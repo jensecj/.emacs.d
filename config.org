@@ -1126,7 +1126,10 @@ Others
          ("M-t f" . paxedit-transpose-forward)
          ("M-k" . paxedit-kill)
          ("M-<prior>" . paxedit-backward-up)
-         ("M-<next>" . paxedit-backward-end)))
+         ("M-<next>" . paxedit-backward-end))
+  :init
+  (add-hook 'emacs-lisp-mode-hook 'paxedit-mode)
+  (add-hook 'clojure-mode-hook 'paxedit-mode))
 
 (use-package git-gutter+
   :ensure t
@@ -1781,9 +1784,6 @@ Keybindings for built-in things
 ;; Make Home and End to to the top and bottom of the buffer, we have C-a/e
 (global-set-key (kbd "<home>") 'beginning-of-buffer)
 (global-set-key (kbd "<end>") 'end-of-buffer)
-
-(global-set-key (kbd "M-<left>") 'backward-sexp)
-(global-set-key (kbd "M-<right>") 'forward-sexp)
 
 ;; find things at point
 (global-set-key (kbd "M-.") 'xref-find-definitions)
