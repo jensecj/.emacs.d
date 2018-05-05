@@ -1072,7 +1072,6 @@ restores the message."
 
   (global-auto-complete-mode t))
 
-
 ;;;;;;;;;;;;;;;;;;;
 ;; misc packages ;;
 ;;;;;;;;;;;;;;;;;;;
@@ -1766,7 +1765,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
                   (format "ocamlopt -o %s %s" (jens/get-buffer-file-name) (jens/get-buffer-file-name+ext)))
              (local-set-key (kbd "C-c C-c") 'compile)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybindings for built-in things ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1845,7 +1843,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (global-set-key (kbd "C-M-.") 'xref-find-definitions-other-window)
 (global-set-key (kbd "M-,") 'xref-pop-marker-stack)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybindings for defuns ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1897,12 +1894,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (global-set-key (kbd "M-S-<up>") 'jens/move-border-up)
 (global-set-key (kbd "M-S-<down>") 'jens/move-border-down)
 
-
-
 ;;;;;;;;;;;;;;;;
 ;; tty things ;;
 ;;;;;;;;;;;;;;;;
-
 
 ;; Setup for when emacs is running in the terminal (i.e. =emacs -nw=).
 ;; It tries to fix some of the keys that terminals normally scramble or forget to
@@ -1953,7 +1947,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
       (define-key input-decode-map "^[[B" [down])
       (define-key input-decode-map "^[[C" [right])
       (define-key input-decode-map "^[[D" [left])))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; experimantal things ;;
