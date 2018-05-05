@@ -196,7 +196,7 @@
 
 ;; use spaces instead of tabs
 (setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
+(setq-default tab-width 2)
 ;; this messes with less things when indenting,
 ;; tabs are converted to spaces automatically
 (setq-default indent-line-function 'insert-tab)
@@ -307,7 +307,7 @@
   (kill-region (save-excursion (beginning-of-line) (point))
                (point)))
 
-(defun jens/save-region-or-current-line ()
+(defun jens/save-region-or-current-line (arg)
   "If a region is active then it is saved to the kill-ring, otherwise the current
 line is saved."
   (interactive "P")
@@ -702,23 +702,23 @@ restores the message."
             line)
            'face 'linum))))
 
-;; some extra functionality for dired
-(use-package dired-x :defer t)
-(use-package dired+ :defer t)
 (use-package dired
-  :defer t
-  :after (dired-x dired+)
-  :functions jens/dired-sort
+  :demand t
   :bind
   (("C-x C-d" . (lambda () (interactive) (dired default-directory)))
    :map dired-mode-map
-   ("C-c C-." . dired-omit-mode)
+   ("C-." . dired-omit-mode)
    ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
   :config
-  (setq dired-listing-switches "-gholXN")
-  (setq dired-omit-files
-        (concat dired-omit-files "\\|^\\..+$"))
+  ;; pull in extra functionality for dired
+  (require 'dired-x)
+  (require 'dired+)
+
+  (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
+  (setq dired-listing-switches "-agholXN")
+
   (toggle-diredp-find-file-reuse-dir 1)
+
   (setq ibuffer-formats
         '((mark modified read-only " "
                 (name 60 -1 :left) " "
@@ -805,29 +805,41 @@ restores the message."
   :mode "\\.bot\\'")
 
 ;; from repos
-(use-package cmake-mode :ensure t
+(use-package cmake-mode
+  :ensure t
   :mode "\\CmakeLists.txt\\'")
-(use-package dockerfile-mode :ensure t
+(use-package dockerfile-mode
+  :ensure t
   :mode "\\Dockerfile\\'")
-(use-package gitconfig-mode :ensure t
+(use-package gitconfig-mode
+  :ensure t
   :mode "\\.gitconfig\\'")
-(use-package gitignore-mode :ensure t
+(use-package gitignore-mode
+  :ensure t
   :mode "\\.gitignore\\'")
-(use-package haskell-mode :ensure t
+(use-package haskell-mode
+  :ensure t
   :mode "\\.hs\\'")
-(use-package lua-mode :ensure t
+(use-package lua-mode
+  :ensure t
   :mode "\\.lua\\'")
-(use-package markdown-mode :ensure t
+(use-package markdown-mode
+  :ensure t
   :mode ("\\.md\\'" "\\.card\\'"))
-(use-package rust-mode :ensure t
+(use-package rust-mode
+  :ensure t
   :mode "\\.rs\\'")
-(use-package scss-mode :ensure t
+(use-package scss-mode
+  :ensure t
   :mode "\\.scss\\'")
-(use-package tuareg :ensure t
+(use-package tuareg
+  :ensure t
   :mode "\\.ocaml\\'")
-(use-package yaml-mode :ensure t
+(use-package yaml-mode
+  :ensure t
   :mode "\\.yml\\'")
-(use-package clojure-mode :ensure t
+(use-package clojure-mode
+  :ensure t
   :defer t
   :after (company-mode cider cljr-refactor)
   :config
@@ -859,7 +871,8 @@ restores the message."
   (add-hook 'clojure-mode-hook 'jens/clojure-mode-setup))
 
 ;; extensions to major modes:
-(use-package cider :ensure t
+(use-package cider
+  :ensure t
   :defer t
   :config
   (setq cider-repl-use-pretty-printing t
@@ -869,7 +882,8 @@ restores the message."
         cider-default-cljs-repl nil
         cider-check-cljs-repl-requirements nil))
 
-(use-package clj-refactor :ensure t
+(use-package clj-refactor
+  :ensure t
   :defer t
   :config
   ;; dont warn on refactor evals
@@ -891,56 +905,57 @@ restores the message."
   (defface face-darkest '((t (:background "grey20" :inherit mode-line))) "" :group 'powerline)
 
   ;; Setup the powerline theme
-  (setq-default mode-line-format
-                '("%e"
-                  (:eval
-                   (let* (
-                          (active (powerline-selected-window-active))
-                          (mode-line (if active 'mode-line 'mode-line-inactive))
+  (setq-default
+   mode-line-format
+   '("%e"
+     (:eval
+      (let* (
+             (active (powerline-selected-window-active))
+             (mode-line (if active 'mode-line 'mode-line-inactive))
 
-                          (face-light 'face-light)
-                          (face-dark 'face-dark)
-                          (face-darker 'face-darker)
-                          (face-darkest 'face-darkest)
+             (face-light 'face-light)
+             (face-dark 'face-dark)
+             (face-darker 'face-darker)
+             (face-darkest 'face-darkest)
 
-                          (seperator-> (intern (format "powerline-%s-%s"
-                                                       powerline-default-separator
-                                                       (car powerline-default-separator-dir))))
+             (seperator-> (intern (format "powerline-%s-%s"
+                                          powerline-default-separator
+                                          (car powerline-default-separator-dir))))
 
-                          (separator-< (intern (format "powerline-%s-%s"
-                                                       powerline-default-separator
-                                                       (cdr powerline-default-separator-dir))))
+             (separator-< (intern (format "powerline-%s-%s"
+                                          powerline-default-separator
+                                          (cdr powerline-default-separator-dir))))
 
-                          (lhs (list
-                                (powerline-buffer-id face-darkest 'l)
-                                (powerline-raw " " face-darkest)
+             (lhs (list
+                   (powerline-buffer-id face-darkest 'l)
+                   (powerline-raw " " face-darkest)
 
-                                (funcall seperator-> face-darkest face-darker)
+                   (funcall seperator-> face-darkest face-darker)
 
-                                (powerline-raw "%4l (%p)" face-darker 'r)
-                                (powerline-raw ":" face-darker 'l)
-                                (powerline-raw "%3c " face-darker 'r)
+                   (powerline-raw "%4l (%p)" face-darker 'r)
+                   (powerline-raw ":" face-darker 'l)
+                   (powerline-raw "%3c " face-darker 'r)
 
-                                (funcall seperator-> face-darker face-dark)
+                   (funcall seperator-> face-darker face-dark)
 
-                                (powerline-major-mode face-dark 'l)
-                                (powerline-process face-dark)
-                                (powerline-minor-modes face-dark 'l)
-                                (powerline-narrow face-dark 'l)
+                   (powerline-major-mode face-dark 'l)
+                   (powerline-process face-dark)
+                   (powerline-minor-modes face-dark 'l)
+                   (powerline-narrow face-dark 'l)
 
-                                (powerline-raw " " face-dark)
+                   (powerline-raw " " face-dark)
 
-                                (funcall seperator-> face-dark face-light)
-                                ))
+                   (funcall seperator-> face-dark face-light)
+                   ))
 
-                          (rhs (list
-                                (funcall separator-< face-light face-darkest)
-                                (powerline-vc face-darkest)
-                                )))
-                     (concat
-                      (powerline-render lhs)
-                      (powerline-fill face-light (powerline-width rhs))
-                      (powerline-render rhs)))))))
+             (rhs (list
+                   (funcall separator-< face-light face-darkest)
+                   (powerline-vc face-darkest)
+                   )))
+        (concat
+         (powerline-render lhs)
+         (powerline-fill face-light (powerline-width rhs))
+         (powerline-render rhs)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; auto completion ;;
@@ -1009,8 +1024,7 @@ restores the message."
     (add-hook 'rust-mode-hook #'racer-mode)
     (add-hook 'racer-mode-hook #'eldoc-mode)
     (define-key rust-mode-map (kbd "<C-tab>") #'company-indent-or-complete-common)
-    (setq company-tooltip-align-annotations t)
-    )
+    (setq company-tooltip-align-annotations t))
 
   (defun jens/ac-c++-mode-setup ()
     ;; (require 'ac-clang)
@@ -1018,13 +1032,13 @@ restores the message."
     (require 'ac-rtags)
 
     (defvar c++-include-files
-          '("/usr/include"
-            "/usr/include/c++/7.3.0"
-            "/usr/include/c++/7.3.0/backward"
-            "/usr/include/c++/7.3.0/x86_64-unknown-linux-gnu"
-            "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include"
-            "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include-fixed"
-            "/usr/lib/clang/5.0.1/include"))
+      '("/usr/include"
+        "/usr/include/c++/7.3.0"
+        "/usr/include/c++/7.3.0/backward"
+        "/usr/include/c++/7.3.0/x86_64-unknown-linux-gnu"
+        "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include"
+        "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include-fixed"
+        "/usr/lib/clang/5.0.1/include"))
 
     (setq-default achead:include-directories c++-include-files)
 
@@ -1250,8 +1264,7 @@ restores the message."
     ;; still get back to our previous configuration if we quit magit weirdly
     (if (s-prefix? "*magit:" (buffer-name (current-buffer)))
         (kill-buffer))
-    (jump-to-register :magit-fullscreen))
-  )
+    (jump-to-register :magit-fullscreen)))
 
 (use-package undo-tree
   :ensure t
@@ -1353,15 +1366,17 @@ restores the message."
   ;; (add-to-list 'TeX-view-program-selection
   ;;              '(output-pdf "Zathura"))
 
-  (add-to-list 'TeX-view-program-list
-               '("Zathura"
-                 ("zathura "
-                  (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
-                  " %o")
-                 "zathura"))
-  (add-to-list 'TeX-view-program-selection
-               '(output-pdf "Zathura"))
-  )
+  (add-to-list
+   'TeX-view-program-list
+   '("Zathura"
+     ("zathura "
+      (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
+      " %o")
+     "zathura"))
+
+  (add-to-list
+   'TeX-view-program-selection
+   '(output-pdf "Zathura")))
 
 (use-package slime
   :defer t
@@ -1384,8 +1399,7 @@ restores the message."
   :diminish elpy-mode
   :config
   (define-key elpy-mode-map (kbd "<C-up>") nil)
-  (define-key elpy-mode-map (kbd "<C-down>") nil)
-  )
+  (define-key elpy-mode-map (kbd "<C-down>") nil))
 
 (use-package rainbow-mode :ensure t :defer t)
 
