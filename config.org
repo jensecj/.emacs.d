@@ -1054,11 +1054,29 @@ Others
 (use-package smartparens
   :ensure t
   :diminish smartparens-mode
+  :bind (("M-<up>" .  sp-backward-barf-sexp)
+         ("M-<down>" . sp-forward-barf-sexp)
+         ("M-<left>" . sp-backward-slurp-sexp)
+         ("M-<right>" . sp-forward-slurp-sexp)
+         ("M-k" . sp-kill-sexp)
+         ("M-K" . sp-backward-kill-sexp)
+         ([(control shift e)] . sp-end-of-sexp)
+         ([(control e)] . end-of-line)
+         ([(shift next)] . sp-split-sexp)
+         ([(shift prior)] . sp-join-sexp))
   :config
   (require 'smartparens-config)
   (setq sp-autoescape-string-quote nil)
   (smartparens-global-mode t)
   (show-smartparens-global-mode t))
+
+(use-package paxedit
+  :ensure t
+  :bind (("M-t b" . paxedit-transpose-backward)
+         ("M-t f" . paxedit-transpose-forward)
+         ("M-k" . paxedit-kill)
+         ("M-<prior>" . paxedit-backward-up)
+         ("M-<next>" . paxedit-backward-end)))
 
 (use-package git-gutter+
   :ensure t
