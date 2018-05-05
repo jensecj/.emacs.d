@@ -4,7 +4,7 @@
 
 ;; disable some things that slow down startup
 ;; there's no need to be stirngent about garbage collection when starting up
-(setq gc-cons-threshold 402653184 gc-cons-percentage 0.6)
+(setq gc-cons-threshold (* 500 1000 1000) gc-cons-percentage 0.6)
 ;; also we dont need to figure out the file-handlers for the files we visit,
 ;; we're only visiting config files
 (defvar default-file-name-handler-alist file-name-handler-alist)
@@ -210,9 +210,6 @@
 ;; Allow recursive mini buffers
 (setq enable-recursive-minibuffers t)
 
-;; Don't be so stingy on the memory, we have lots now. It's the distant future.
-(setq gc-cons-threshold 20000000)
-
 ;; show everything that's happening when evaluating somethingx
 (setq eval-expression-print-level nil)
 
@@ -224,6 +221,10 @@
 
 ;; save more things in the kill ring
 (setq kill-ring-max 500)
+
+;; keep a lot more undo history (expressed in bytes)
+(setq undo-limit (* 500 1000))
+(setq undo-strong-limit (* 800 1000))
 
 (setq initial-scratch-message "")
 
@@ -1989,7 +1990,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (message (format "= \e[1m\e[32mEmacs initialized in %s\e[0m" (emacs-init-time)))
 
 ;; reset the things we disables earlier
-(setq gc-cons-threshold 16777216 gc-cons-percentage 0.1)
+(setq gc-cons-threshold (* 20 1000 1000) gc-cons-percentage 0.1)
 (setq file-name-handler-alist default-file-name-handler-alist)
 
 (provide 'init)
