@@ -1121,6 +1121,10 @@ Others
 
 (use-package clang-format :ensure t :defer t)
 
+(use-package hideshow
+  :bind (("C-c @ h" . hs-hide-block)
+         ("C-c @ s" . hs-show-block)))
+
 (use-package rtags
   :ensure t
   :diminish rtags-mode
