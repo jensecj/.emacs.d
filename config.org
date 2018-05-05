@@ -639,6 +639,7 @@ Config for built-ins
 
 ;; Semantic analysis in supported modes (cpp, java, etc.)
 (use-package semantic
+  :disabled
   ;; :hook ((emacs-lisp-mode python-mode c++-mode java-mode) . semantic-mode)
   :config
   ;; persist the semantic parse database
