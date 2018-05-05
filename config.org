@@ -1081,6 +1081,7 @@ Others
 
 (use-package smartparens
   :ensure t
+  :demand t
   :diminish smartparens-mode
   :bind (("M-<up>" .  sp-backward-barf-sexp)
          ("M-<down>" . sp-forward-barf-sexp)
@@ -1603,6 +1604,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :config (counsel-projectile-mode))
 
 (use-package beacon
+  :diminish beacon-mode
   :after (ace-jump-mode)
   :config
   (advice-add 'ace-jump-done :after #'beacon-blink))
