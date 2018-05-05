@@ -730,8 +730,28 @@ Config for built-ins
   :defer t
   :bind
   (:map org-mode-map
-        ([(tab)] . company-indent-or-complete-common))
+        ([(tab)] . company-indent-or-complete-common)
+        ;; unbind things that are used for other things
+        ("C-a" . nil)
+        ("<S-up>" . nil)
+        ("<S-down>" . nil)
+        ("<S-left>" . nil)
+        ("<S-right>" . nil)
+        ("<M-S-right>" . nil)
+        ("<M-S-left>" . nil)
+        ("<M-S-up>" . nil)
+        ("<M-S-down>" . nil)
+        ("<C-S-up>" . nil)
+        ("<C-S-down>" . nil)
+        ("C-c n" . jens/org-indent))
   :config
+  (defun jens/org-indent ()
+    (interactive)
+    (if (region-active-p)
+        (org-indent-region (region-beginning) (region-end)))
+    (org-indent-line)
+    (message "indented"))
+
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
   ;; keep #+BEGIN_SRC blocks aligned with their contents
@@ -1697,28 +1717,6 @@ Setup hooks for major modes
              (set (make-local-variable 'compile-command)
                   (format "ocamlopt -o %s %s" (jens/get-buffer-file-name) (jens/get-buffer-file-name+ext)))
              (local-set-key (kbd "C-c C-c") 'compile)))
-
-(add-hook 'org-mode-hook
-          '(lambda ()
-             ;; reset keys used globally for different things
-             (local-set-key (kbd "C-a") nil)
-             (local-set-key (kbd "<S-up>") nil)
-             (local-set-key (kbd "<S-down>") nil)
-             (local-set-key (kbd "<S-left>") nil)
-             (local-set-key (kbd "<S-right>") nil)
-             (local-set-key (kbd "<M-S-right>") nil)
-             (local-set-key (kbd "<M-S-left>") nil)
-             (local-set-key (kbd "<M-S-up>") nil)
-             (local-set-key (kbd "<M-S-down>") nil)
-             (local-set-key (kbd "<C-S-up>") nil)
-             (local-set-key (kbd "<C-S-down>") nil)
-             (local-set-key (kbd "C-c n") (lambda ()
-                                            (interactive)
-                                            (if (region-active-p)
-                                                (org-indent-region (region-beginning) (region-end)))
-                                            (org-indent-line)
-                                            (message "indented"))
-                            )))
 #+END_SRC
 
 * Keybindings
