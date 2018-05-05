@@ -727,6 +727,9 @@ Config for built-ins
 
 (use-package org
   :defer t
+  :bind
+  (:map org-mode-map
+        ([(tab)] . company-indent-or-complete-common))
   :config
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
@@ -745,8 +748,7 @@ Config for built-ins
   (setq org-latex-create-formula-image-program 'dvisvgm)
 
   ;; use some noise in scheduling org-drills
-  (setq org-drill-add-random-noise-to-intervals-p t)
-)
+  (setq org-drill-add-random-noise-to-intervals-p t))
 #+END_SRC
 
 Setup some major modes
