@@ -1141,12 +1141,6 @@ restores the message."
   (add-hook 'emacs-lisp-mode-hook 'paxedit-mode)
   (add-hook 'clojure-mode-hook 'paxedit-mode))
 
-(use-package git-gutter+
-  :disabled
-  :ensure t
-  :diminish git-gutter+-mode
-  :config (global-git-gutter+-mode t))
-
 (use-package diff-hl
   :ensure t
   :diminish diff-hl-mode
