@@ -225,7 +225,10 @@ this.
 (setq compilation-ask-about-save nil)
 
 ;; save more things in the kill ring
-(setq kill-ring-max 200)
+(setq kill-ring-max 500)
+
+(setq initial-scratch-message "")
+
 ;; show trailing whitespace by default
 (setq-default show-trailing-whitespace nil)
 (defun jens/show-trailing-whitespace ()
@@ -822,13 +825,12 @@ Setup some major modes
 
 (use-package cider :ensure t
   :config
-  (setq cider-repl-use-pretty-printing t)
-  (setq cider-prompt-for-symbol nil)
-  (setq cider-pprint-fn 'pprint)
-  (setq cider-default-cljs-repl nil)
-  (setq cider-check-cljs-repl-requirements nil)
-)
-
+  (setq cider-repl-use-pretty-printing t
+        cider-prompt-for-symbol nil
+        cider-pprint-fn 'pprint
+        cider-repl-pop-to-buffer-on-connect nil
+        cider-default-cljs-repl nil
+        cider-check-cljs-repl-requirements nil))
 
 (use-package clj-refactor :ensure t
   :config
