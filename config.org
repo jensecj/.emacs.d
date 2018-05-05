@@ -6,6 +6,12 @@
 This sets up the things the rest of the config uses, user credentials,
 default directories, etc.
 
+use lexical binding when tangling this file.
+#+BEGIN_SRC emacs-lisp
+;;; -*- lexical-binding: t -*-
+(setq-default lexical-binding t)
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
 (setq user-full-name "Jens Christian Jensen")
 #+END_SRC
