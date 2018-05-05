@@ -1744,7 +1744,7 @@ Keybindings for built-in things
 (global-set-key (kbd "C-x r k") 'save-buffers-kill-emacs)
 
 ;; don't close emacs
-(global-set-key (kbd "C-x C-c") '())
+(global-set-key (kbd "C-x C-c") nil)
 
 ;; Rebind help to F1
 (define-key key-translation-map [?\C-h] [?\C-?])
@@ -1767,13 +1767,22 @@ Keybindings for built-in things
    (interactive)
    (scroll-up 3)))
 
-;; Disable pop ups from the mouse
+;; dont use the mouse
+(global-set-key (kbd "<down-mouse-1>") nil)
+(global-set-key (kbd "<down-mouse-2>") nil)
+(global-set-key (kbd "<down-mouse-3>") nil)
 (global-set-key (kbd "C-<down-mouse-1>") nil)
+(global-set-key (kbd "C-<down-mouse-2>") nil)
 (global-set-key (kbd "C-<down-mouse-3>") nil)
 (global-set-key (kbd "S-<down-mouse-1>") nil)
+(global-set-key (kbd "S-<down-mouse-2>") nil)
+(global-set-key (kbd "S-<down-mouse-3>") nil)
+(global-set-key (kbd "M-<down-mouse-1>") nil)
+(global-set-key (kbd "M-<down-mouse-2>") nil)
+(global-set-key (kbd "M-<down-mouse-3>") nil)
 
 ;; Disable suspend-frame
-(global-set-key "\C-x\C-z" nil)
+(global-set-key (kbd "C-x C-z") nil)
 
 ;; Move the delete windows, mnemonic is C-x OTHER
 (global-set-key (kbd "C-x 0") nil)
