@@ -1598,6 +1598,11 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :after (counsel projectile)
   :config (counsel-projectile-mode))
 
+(use-package beacon
+  :after (ace-jump-mode)
+  :config
+  (advice-add 'ace-jump-done :after #'beacon-blink))
+
 (use-package ggtags :ensure t)
 (use-package dumb-jump :ensure t)
 
