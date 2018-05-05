@@ -226,6 +226,13 @@ this.
 
 ;; save more things in the kill ring
 (setq kill-ring-max 200)
+;; show trailing whitespace by default
+(setq-default show-trailing-whitespace nil)
+(defun jens/show-trailing-whitespace ()
+  (interactive)
+  (setq show-trailing-whitespace t))
+(add-hook 'text-mode-hook 'jens/show-trailing-whitespace)
+(add-hook 'prog-mode-hook 'jens/show-trailing-whitespace)
 
 ;; enable gpg pinentry through the minibuffer
 (setq epa-pinentry-mode 'loopback)
