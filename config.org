@@ -702,6 +702,7 @@ Config for built-ins
    ("C-c C-." . dired-omit-mode)
    ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
   :config
+  (setq dired-listing-switches "-gholXN")
   (setq dired-omit-files
         (concat dired-omit-files "\\|^\\..+$"))
   (toggle-diredp-find-file-reuse-dir 1)
@@ -1240,6 +1241,7 @@ Others
   (global-undo-tree-mode))
 
 (use-package smooth-scrolling
+  :disabled
   :ensure t
   :config
   (setq smooth-scroll-margin 5)
@@ -1612,14 +1614,15 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (use-package ggtags :ensure t)
 (use-package dumb-jump :ensure t)
 
-(require 'flyspell)
-(add-hook 'flyspell-mode (lambda () (ispell-change-dictionary "english")))
-
-(defun enable-spellchecking ()
-  (interactive)
+(use-package flyspell
+  :functions enable-spellchecking
+  :config
   (ispell-change-dictionary "english")
-  (require 'flyspell)
-  (flyspell-mode))
+
+  (defun enable-spellchecking ()
+    (interactive)
+    (ispell-change-dictionary "english")
+    (flyspell-mode)))
 
 (use-package zenburn-theme
   :ensure t
