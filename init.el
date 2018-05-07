@@ -71,7 +71,7 @@
 ;; some libraries that are frequently used
 (use-package dash  ;; functional things, -map, -fold, etc
   :ensure t
-  :commands -some)
+  :commands (-some -remove))
 (use-package s ;; string manipulations
   :ensure t
   :commands (s-trim s-prefix?))
@@ -747,7 +747,16 @@ restores the message."
   :defer t
   :config (setq browse-url-firefox-program "firefox"))
 
+;; I want to use the new version of org-mode from upstream.
+;; remove the built-in org-mode from the load path, so it does not get loaded
+(setq load-path (-remove (lambda (x) (string-match-p "org$" x)) load-path))
+;; remove org-mode from the built-ins list, because we're using upstream
+(setq package--builtins (assq-delete-all 'org package--builtins))
+
+;; install upstream org-mode
 (use-package org
+  :ensure org-plus-contrib
+  :pin org
   :defer t
   :commands (org-indent-region org-indent-line)
   :bind
@@ -852,6 +861,8 @@ restores the message."
   :after (company-mode cider cljr-refactor)
   :functions (jens/clojure-mode-setup
               jens/company-clojure-quickhelp-at-point)
+  :commands (cider-create-doc-buffer
+             cider-try-symbol-at-point)
   :config
   (defun jens/clojure-mode-setup ()
     (interactive)
@@ -1350,6 +1361,8 @@ restores the message."
   :ensure t
   :defer t
   :hook (LaTeX-mode-hook . reftex-mode)
+  :defines (TeX-view-program-selection
+            TeX-view-program-list)
   :functions (TeX-PDF-mode TeX-source-correlate-mode)
   :config
   (setq-default TeX-PDF-mode t) ;; default to pdf
@@ -1999,17 +2012,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
           (insert "[")
           (insert (get-title-from-link link))
           (insert "]")))))
-
-;; I want to use the new version of org-mode from upstream.
-;; remove the built-in org-mode from the load path, so it does not get loaded
-;; (setq load-path (remove-if (lambda (x) (string-match-p "org$" x)) load-path))
-;; remove org-mode from the built-ins list, because we're using upstream
-;; (setq package--builtins (assq-delete-all 'org package--builtins))
-
-;; install upstream org-mode
-;; (use-package org :ensure org-plus-contrib :pin org)
-
-;; (org-babel-load-file (concat user-emacs-directory "config.org"))
 
 (message (format "= \e[1m\e[32mEmacs initialized in %s\e[0m" (emacs-init-time)))
 
