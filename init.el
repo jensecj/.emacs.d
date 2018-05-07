@@ -950,6 +950,8 @@ restores the message."
              (face-darker 'face-darker)
              (face-darkest 'face-darkest)
 
+             (powerline-default-separator 'arrow)
+
              (seperator-> (intern (format "powerline-%s-%s"
                                           powerline-default-separator
                                           (car powerline-default-separator-dir))))
@@ -964,7 +966,7 @@ restores the message."
 
                    (funcall seperator-> face-darkest face-darker)
 
-                   (powerline-raw "%4l (%p)" face-darker 'r)
+                   (powerline-raw " %4l (%p)" face-darker 'r)
                    (powerline-raw ":" face-darker 'l)
                    (powerline-raw "%3c " face-darker 'r)
 
@@ -977,13 +979,11 @@ restores the message."
 
                    (powerline-raw " " face-dark)
 
-                   (funcall seperator-> face-dark face-light)
-                   ))
+                   (funcall seperator-> face-dark face-light)))
 
              (rhs (list
                    (funcall separator-< face-light face-darkest)
-                   (powerline-vc face-darkest)
-                   )))
+                   (powerline-vc face-darkest))))
         (concat
          (powerline-render lhs)
          (powerline-fill face-light (powerline-width rhs))
