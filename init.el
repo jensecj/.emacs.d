@@ -1030,13 +1030,13 @@ restores the message."
    ("C-<tab>" . auto-complete))
   :config
   (require 'auto-complete-config)
-
   (setq ac-auto-start t) ;; auto start completing
   (setq ac-show-menu t) ;; show the menu instantly
   (setq ac-show-menu-immediately-on-auto-complete t) ;; show the autocompletion menu instantly
   (setq ac-delay 0.1) ;; show completion menu quickly
-  (setq ac-use-quick-help nil) ;; use the help
+  (setq ac-use-quick-help t) ;; use the help
   (setq ac-quick-help-delay 0.1) ;; show help quickly
+  (setq ac-quick-help-prefer-pos-tip nil) ;; use popup-tips
   (setq ac-use-comphist t)
   (setq ac-comphist-file (concat my-emacs-data-dir "ac-history")) ;; move the history file
   (setq ac-ignore-case t)
