@@ -1103,29 +1103,7 @@ restores the message."
   :defer 1
   :config
   (setq smex-save-file (concat my-emacs-data-dir "smex-items"))
-  (smex-initialize)
-
-  (defvar smex-excludes '(kill-emacs)
-    "List of entries to exclude when providing smex-ido-cache")
-
-  (defun jens/smex-cache-exclude ()
-    (dolist (e smex-excludes)
-      ;; we remove the excludes straight from the 'smex-ido-cache', which is the one
-      ;; used for 'M-x' completion, this still keeps the data from the excluded
-      ;; commands in the smex history, if we ever want a command back.
-      (setq smex-ido-cache
-            (remove-if
-             (lambda (x)
-               (string-match-p (concat (symbol-name 'kill-emacs) "$") x))
-             smex-ido-cache))
-      ;; add the excludes to the back of the list, so we can still find them in 'M-x'.
-      (setq smex-ido-cache (nconc smex-ido-cache (seq-map 'symbol-name smex-excludes)))))
-
-  ;; purge the cache every time it is rebuilt
-  (advice-add 'smex-rebuild-cache' :after #'jens/smex-cache-exclude)
-  ;; purge the cache manually so we dont see the wrong thing the first time we
-  ;; run, because this is using deferred loading.
-  (jens/smex-cache-exclude))
+  (smex-initialize))
 
 (use-package smartparens
   :ensure t
