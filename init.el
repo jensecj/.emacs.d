@@ -1844,13 +1844,13 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
  (kbd "C-<up>")
  (lambda ()
    (interactive)
-   (scroll-down 3)))
+   (scroll-down 5)))
 
 (global-set-key
  (kbd "C-<down>")
  (lambda ()
    (interactive)
-   (scroll-up 3)))
+   (scroll-up 5)))
 
 ;; dont use the mouse
 (global-set-key (kbd "<down-mouse-1>") nil)
