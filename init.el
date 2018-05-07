@@ -1083,6 +1083,11 @@ restores the message."
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
 
+(use-package direnv
+  :ensure t
+  :config
+  (advice-add 'cider-jack-in :before 'direnv-update-environment))
+
 (use-package fill-column-indicator
   :disabled
   :ensure t
