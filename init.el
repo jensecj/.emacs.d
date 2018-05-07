@@ -2,6 +2,9 @@
 ;; use lexical binding for initialization code
 (setq-default lexical-binding t)
 
+;; setup some things that other packages may depend on
+(setq user-full-name "Jens Christian Jensen")
+
 ;; disable some things that slow down startup
 ;; there's no need to be stirngent about garbage collection when starting up
 (setq gc-cons-threshold (* 500 1000 1000) gc-cons-percentage 0.6)
@@ -16,9 +19,6 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-
-;; setup some things that other packages may depend on
-(setq user-full-name "Jens Christian Jensen")
 
 ;; directories for things related to emacs
 (defconst my-emacs-dir user-emacs-directory)
@@ -51,16 +51,13 @@
 ;; load and activate default packages
 (package-initialize)
 
-;; include the commomn lisp functions
-(require 'cl)
-
 ;; setup package archives
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")))
 
-(defconst melpa-archive (concat user-emacs-directory "elpa/archives/melpa"))
+(defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
 
 ;; install use-package if we don't already have it
 (unless (package-installed-p 'use-package)
@@ -72,8 +69,12 @@
 (setq use-package-verbose t)
 
 ;; some libraries that are frequently used
-(use-package dash :ensure t) ;; functional things, -map, -fold, etc
-(use-package s :ensure t) ;; string manipulations
+(use-package dash  ;; functional things, -map, -fold, etc
+  :ensure t
+  :commands -some)
+(use-package s ;; string manipulations
+  :ensure t
+  :commands (s-trim s-prefix?))
 (use-package f :ensure t) ;; handling the file-system
 
 ;; Use =Source Code Pro= font if it is available. When launching emacs as a
@@ -575,10 +576,10 @@ restores the message."
   "Returns a non-nil value if we have a network connection."
   (if (and (functionp 'network-interface-list)
            (network-interface-list))
-      (some (lambda (iface) (unless (equal "lo" (car iface))
-                              (member 'up (first (last (network-interface-info
-                                                        (car iface)))))))
-            (network-interface-list))
+      (-some (lambda (iface) (unless (equal "lo" (car iface))
+                               (member 'up (first (last (network-interface-info
+                                                         (car iface)))))))
+             (network-interface-list))
     t))
 
 (defun jens/insert-todays-date ()
@@ -592,13 +593,14 @@ restores the message."
 ;; We are going to use the bind-key (=:bind=) and diminish (=:diminish=)
 ;; functionalities, so we need to have those packages.
 (use-package bind-key :ensure t)
-(use-package diminish :ensure t)
+(use-package diminish :ensure t :commands diminish)
 
 ;; some built-in packages
 
 ;; Easily navigate silly cased words
 (use-package subword
   :diminish subword-mode
+  :commands global-subword-mode
   :config (global-subword-mode 1))
 
 ;; give buffers unique names
@@ -618,6 +620,7 @@ restores the message."
 ;; Persist some vars across sessions
 (use-package savehist
   :defer 2
+  :commands savehist-mode
   :config
   (setq savehist-file (concat my-emacs-data-dir "savehist"))
   (setq savehist-autosave-interval 60) ;; save every minute
@@ -631,6 +634,7 @@ restores the message."
 
 ;; Save a list of recently visited files.
 (use-package recentf
+  :commands recentf-mode
   :config
   (setq recentf-save-file (recentf-expand-file-name (concat my-emacs-data-dir "recentf")))
   (setq recentf-exclude '(".emacs.d/elpa/" ".emacs.d/data/" "COMMIT_EDITMSG"))
@@ -644,6 +648,7 @@ restores the message."
 
 (use-package autorevert
   :diminish auto-revert-mode
+  :commands global-auto-revert-mode
   :config
   ;; Also auto refresh dired, but be quiet about it
   (setq global-auto-revert-non-file-buffers t)
@@ -676,6 +681,7 @@ restores the message."
 
 (use-package linum
   :defer t
+  :commands linum-mode
   :bind ("M-g M-g" . jens/goto-line-with-feedback)
   :config
   (defun jens/goto-line-with-feedback ()
@@ -704,6 +710,7 @@ restores the message."
 
 (use-package dired
   :demand t
+  :commands dired
   :bind
   (("C-x C-d" . (lambda () (interactive) (dired default-directory)))
    :map dired-mode-map
@@ -742,6 +749,7 @@ restores the message."
 
 (use-package org
   :defer t
+  :commands (org-indent-region org-indent-line)
   :bind
   (:map org-mode-map
         ([(tab)] . company-indent-or-complete-common)
@@ -842,6 +850,8 @@ restores the message."
   :ensure t
   :defer t
   :after (company-mode cider cljr-refactor)
+  :functions (jens/clojure-mode-setup
+              jens/company-clojure-quickhelp-at-point)
   :config
   (defun jens/clojure-mode-setup ()
     (interactive)
@@ -966,7 +976,7 @@ restores the message."
   :ensure t
   :defer t
   :config
-  ;; (company-quickhelp-mode t)
+  (company-quickhelp-mode nil)
   )
 
 ;; AUTO-COMPLETE-MODE
@@ -987,6 +997,9 @@ restores the message."
   :ensure t
   :demand t
   :diminish auto-complete-mode
+  :commands (global-auto-complete-mode
+             ac-symbol-documentation
+             company-indent-or-complete-common)
   :functions (jens/ac-quick-help-at-point
               jens/ac-c++-mode-setup
               jens/ac-elisp-mode-setup)
@@ -1109,6 +1122,8 @@ restores the message."
   :ensure t
   :demand t
   :diminish smartparens-mode
+  :commands (show-smartparens-global-mode
+             smartparens-global-mode)
   :bind (("M-<up>" .  sp-backward-barf-sexp)
          ("M-<down>" . sp-forward-barf-sexp)
          ("M-<left>" . sp-backward-slurp-sexp)
@@ -1141,6 +1156,7 @@ restores the message."
 (use-package diff-hl
   :ensure t
   :diminish diff-hl-mode
+  :commands global-diff-hl-mode
   :config (global-diff-hl-mode))
 
 (use-package multiple-cursors
@@ -1252,12 +1268,13 @@ restores the message."
   :ensure t
   :defer t
   :diminish undo-tree-mode
+  :commands global-undo-tree-mode
   :bind
   (("C-x u" . undo-tree-visualize)
    ("C-_" . undo-tree-undo)
    ("M-_" . undo-tree-redo))
   :config
-  (setq undo-tree-visualizer-timestamps t)
+  ;; (setq undo-tree-visualizer-timestamps nil)
   (setq undo-tree-visualizer-diff t)
 
   ;; TODO: fix undo-tree-undo in region, in some cases it freezes.
@@ -1292,6 +1309,7 @@ restores the message."
   :ensure t
   :defer t
   :diminish beginend-global-mode
+  :commands beginend-global-mode
   :bind (("M-<" . beginning-of-buffer)
          ("M->" . end-of-buffer))
   :config
@@ -1302,6 +1320,8 @@ restores the message."
 (use-package which-key
   :ensure t
   :diminish which-key-mode
+  :commands (which-key-mode
+             which-key-setup-side-window-right)
   :config
   ;; (which-key-setup-minibuffer)
   (which-key-setup-side-window-right)
@@ -1330,6 +1350,7 @@ restores the message."
   :ensure t
   :defer t
   :hook (LaTeX-mode-hook . reftex-mode)
+  :functions (TeX-PDF-mode TeX-source-correlate-mode)
   :config
   (setq-default TeX-PDF-mode t) ;; default to pdf
   (setq-default TeX-global-PDF-mode t) ;; default to pdf
@@ -1363,6 +1384,7 @@ restores the message."
 (use-package slime
   :defer t
   :functions qlot-slime
+  :commands slime-start
   :config
   (defun qlot-slime (directory)
     (interactive (list (read-directory-name "Project directory: ")))
@@ -1395,6 +1417,7 @@ restores the message."
   :defer 3
   :ensure t
   :demand t
+  :commands exec-path-from-shell-copy-env
   :config
   ;; try to grab the ssh-agent if it is running
   (exec-path-from-shell-copy-env "SSH_AGENT_PID")
@@ -1408,7 +1431,10 @@ restores the message."
               jens/multi-term-unsave-term
               jens/multi-term-restore-terms
               jens/multi-term-list-saves)
-  :defines (multi-term-save-file multi-term-saved-terms)
+  :defines (multi-term-save-file
+            multi-term-saved-terms)
+  :commands (multi-term-get-buffer
+             multi-term-internal)
   :bind ("C-z" . jens/multi-term)
   :config
   (setq multi-term-program "/bin/zsh")
@@ -1495,6 +1521,11 @@ restores the message."
   :ensure t
   :demand t
   :diminish ivy-mode
+  :commands (ivy-read
+             ivy-mode
+             ivy-pop-view-action
+             ivy-default-view-name
+             ivy--get-window)
   :bind
   (("M-p p" . ivy-push-view)
    ("M-p k" . ivy-pop-view)
@@ -1585,6 +1616,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :defer 1
   :diminish counsel-mode
   :functions jens/counsel-read-file-name
+  :commands (counsel-mode counsel--find-file-matcher)
   :bind
   (("C-s" . counsel-grep-or-swiper)
    ("C-S-s" . counsel-rg)
@@ -1648,6 +1680,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :ensure t
   :defer t
   :after (counsel projectile)
+  :commands counsel-projectile-mode
   :config (counsel-projectile-mode))
 
 (use-package beacon
@@ -1666,6 +1699,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :ensure t
   :defer t
   :functions enable-spellchecking
+  :commands flyspell-mode
   :config
   (ispell-change-dictionary "english")
 
