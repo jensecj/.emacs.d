@@ -13,7 +13,18 @@
 (defvar default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
-(message (format "= \e[1m\e[32mStarted initializing emacs!\e[0m"))
+(defun text-red (txt) (format "\e[1m\e[31m%s\e[0m" txt))
+(defun text-green (txt) (format "\e[1m\e[32m%s\e[0m" txt))
+(defun text-yellow (txt) (format "\e[1m\e[33m%s\e[0m" txt))
+(defun text-blue (txt) (format "\e[1m\e[34m%s\e[0m" txt))
+(defun text-magenta (txt) (format "\e[1m\e[35m%s\e[0m" txt))
+(defun text-cyan (txt) (format "\e[1m\e[36m%s\e[0m" txt))
+
+(defun msg-info (txt) (message (text-yellow txt)))
+(defun msg-warning (txt) (message (text-red txt)))
+(defun msg-success (txt) (message (text-green txt)))
+
+(msg-info "Started initializing emacs!")
 
 ;; Turn off excess interface early in startup to avoid momentary display
 (menu-bar-mode -1)
@@ -61,7 +72,7 @@
 
 ;; install use-package if we don't already have it
 (unless (package-installed-p 'use-package)
-  (message (format "= \e[1m\e[31muse-package is not installed! installing...\e[0m"))
+  (msg-warning "use-package is not installed. installing...")
   (package-refresh-contents)
   (package-install 'use-package))
 
@@ -438,9 +449,9 @@ the overlay-map"
   "Tries to require FEATURE, if an exception is thrown, log it."
   (condition-case ex
       (progn
-        (message (format "@ \e[94m Loading \"%s\" \e[0m" (symbol-name feature)))
+        (msg-info (format "@ Loading \"%s\" " (symbol-name feature)))
         (require feature))
-    ('error (message (format "@ \e[1m\e[31m Error loading \"%s\": %s \e[0m" (symbol-name feature) ex)))))
+    ('error (msg-warning (format "@ Error loading \"%s\": %s" (symbol-name feature) ex)))))
 
 (defun jens/eval-and-replace ()
   "Replace the preceding sexp with its value."
@@ -2013,7 +2024,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
           (insert (get-title-from-link link))
           (insert "]")))))
 
-(message (format "= \e[1m\e[32mEmacs initialized in %s\e[0m" (emacs-init-time)))
+(msg-success (format "Emacs initialized in %s" (emacs-init-time)))
 
 ;; reset the things we disables earlier
 (setq gc-cons-threshold (* 20 1000 1000) gc-cons-percentage 0.1)
