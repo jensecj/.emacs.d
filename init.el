@@ -1441,8 +1441,10 @@ restores the message."
   :defer 3
   :ensure t
   :demand t
-  :commands exec-path-from-shell-copy-env
+  :commands (exec-path-from-shell-copy-env
+             exec-path-from-shell-initialize)
   :config
+  (exec-path-from-shell-initialize)
   ;; try to grab the ssh-agent if it is running
   (exec-path-from-shell-copy-env "SSH_AGENT_PID")
   (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
