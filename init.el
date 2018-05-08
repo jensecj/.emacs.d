@@ -436,6 +436,11 @@ otherwise comment or uncomment the current line."
 ;;;;;;;;;;;;;;;;;
 ;; lisp defuns ;;
 ;;;;;;;;;;;;;;;;;
+;; easy interactive lambda forms
+(defmacro xi (lam)
+  `(lambda ()
+     (interactive)
+     ,lam))
 
 (defun jens/one-shot-keybinding (key command)
   "Set a keybinding that disappear once you press a key that is not in
@@ -445,7 +450,7 @@ the overlay-map"
      (define-key map (kbd key) command)
      map) t))
 ;; example
-;; (jens/one-shot-keybinding "a" (lambda () (interactive) (message "a")))
+;; (jens/one-shot-keybinding "a" (xi (previous-line)))
 
 (defun jens/one-shot-keymap (key-command-pairs)
   "Set a keybinding that disappear once you press a key that is not in
@@ -458,11 +463,12 @@ the overlay-map"
          (define-key map (kbd key) cmd)))
      map) t))
 ;; example:
+;; (does not work yet, use explicit interactive lambda form)
 ;; (jens/one-shot-keymap
-;;  '(("a" . (lambda () (interactive) (message "a")))
-;;    ("b" . (lambda () (interactive) (message "b")))
-;;    ("c" . (lambda () (interactive) (message "c")))
-;;    ("d" . (lambda () (interactive) (message "d")))))
+;;  '(("a" . (xi (message "a")))
+;;    ("b" . (xi (message "b")))
+;;    ("c" . (xi (message "c")))
+;;    ("d" . (xi (message "d")))))
 
 (defun jens/try-require (feature)
   "Tries to require FEATURE, if an exception is thrown, log it."
@@ -1017,8 +1023,7 @@ restores the message."
   :ensure t
   :defer t
   :config
-  (company-quickhelp-mode nil)
-  )
+  (company-quickhelp-mode nil))
 
 ;; AUTO-COMPLETE-MODE
 (use-package ac-rtags :ensure t :defer t)
@@ -1185,9 +1190,12 @@ restores the message."
   :ensure t
   :defer t
   :diminish paxedit-mode
-  :bind (("M-t t" . (lambda () (interactive)
-                      (jens/one-shot-keymap '(("f" . paxedit-transpose-forward)
-                                              ("b" . paxedit-transpose-backward)))))
+  :bind (("M-t t" .
+          (lambda ()
+            (interactive)
+            (message "f -> transpose forward\nb -> transpose backward")
+            (jens/one-shot-keymap '(("f" . paxedit-transpose-forward)
+                                    ("b" . paxedit-transpose-backward)))))
          ("M-k" . paxedit-kill)
          ("M-<prior>" . paxedit-backward-up)
          ("M-<next>" . paxedit-backward-end))
@@ -1199,7 +1207,9 @@ restores the message."
   :ensure t
   :diminish diff-hl-mode
   :commands global-diff-hl-mode
-  :config (global-diff-hl-mode))
+  :config (global-diff-hl-mode +1)
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
 (use-package multiple-cursors
   :ensure t
