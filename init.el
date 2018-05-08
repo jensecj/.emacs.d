@@ -256,6 +256,9 @@
 (pinentry-start)
 (setenv "GPG_AGENT_INFO" nil)
 
+(setq auth-sources
+      '("~/.authinfo" "~/.authinfo.gpg" "~/.netrc" "~/vault/authinfo.gpg"))
+
 ;;;;;;;;;;;;;;;;;;;;
 ;; editing defuns ;;
 ;;;;;;;;;;;;;;;;;;;;
@@ -1474,15 +1477,39 @@ restores the message."
 
 (use-package rainbow-mode :ensure t :defer t)
 
+(use-package auth-source-pass
+  :ensure t
+  ;; using authinfo.gpg
+  ;; (letrec ((auth (auth-source-search :host "freenode"))
+  ;;          (user (plist-get (car auth) :user))
+  ;;          (secret (plist-get (car auth) :secret)))
+  ;;   (message (format "user: %s, secret: %s" user (funcall secret))))
+
+  ;; using password-store
+  ;; (auth-source-pass-get 'secret "irc/freenode/nickserv")
+  )
+
 (use-package erc-hl-nicks :ensure t :defer t)
 (use-package erc
   :defer t
-  :after erc-hl-nicks
+  :after (auth-source-pass erc-hl-nicks)
+  :functions ercgo
   :config
   (setq erc-rename-buffers t
         erc-interpret-mirc-color t
+        erc-prompt ">"
         erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
-  (erc-hl-nicks-enable))
+
+  (setq erc-user-full-name "Jens Christian Jensen")
+  (erc-hl-nicks-enable)
+
+  (defun ercgo ()
+    (interactive)
+    (erc-tls :server "irc.freenode.net"
+             :port 6697
+             :nick "jensecj"
+             :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
+
 
 (use-package unicode-fonts
   :disabled
