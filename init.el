@@ -77,7 +77,8 @@
   (package-install 'use-package))
 
 ;; make use-package tell us what its doing
-(setq use-package-verbose t)
+(setq use-package-verbose t
+      use-package-enable-imenu-support t)
 
 ;; some libraries that are frequently used
 (use-package dash  ;; functional things, -map, -fold, etc
@@ -238,6 +239,13 @@
 (setq undo-limit (* 500 1000))
 (setq undo-strong-limit (* 800 1000))
 
+(setq message-log-max 10000)
+
+(setq auto-window-vscroll nil)
+;; if moving the poijt more than 10 lines away,
+;; center point in the middle of the window, otherwise be conservative.
+(setq scroll-conservatively 10)
+
 (setq initial-scratch-message "")
 
 ;; used to be transpose-words, used for new keybindings
@@ -250,6 +258,10 @@
   (setq show-trailing-whitespace t))
 (add-hook 'text-mode-hook 'jens/show-trailing-whitespace)
 (add-hook 'prog-mode-hook 'jens/show-trailing-whitespace)
+
+;; gpg and auth
+(require 'epa-file)
+(epa-file-enable)
 
 ;; enable gpg pinentry through the minibuffer
 (setq epa-pinentry-mode 'loopback)
@@ -1224,6 +1236,12 @@ restores the message."
   :diminish diff-hl-mode
   :commands global-diff-hl-mode
   :config (global-diff-hl-mode +1)
+  (defun jens/diff-hl-refresh ()
+    "refresh diff-hl"
+    (interactive)
+    (diff-hl-mode nil)
+    (diff-hl-mode +1))
+
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
@@ -1479,6 +1497,8 @@ restores the message."
 
 (use-package auth-source-pass
   :ensure t
+  :config
+  (auth-source-pass-enable)
   ;; using authinfo.gpg
   ;; (letrec ((auth (auth-source-search :host "freenode"))
   ;;          (user (plist-get (car auth) :user))
@@ -1498,6 +1518,7 @@ restores the message."
   (setq erc-rename-buffers t
         erc-interpret-mirc-color t
         erc-prompt ">"
+        erc-insert-timestamp-function 'erc-insert-timestamp-left
         erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
 
   (setq erc-user-full-name "Jens Christian Jensen")
@@ -1788,15 +1809,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :after (counsel projectile)
   :commands counsel-projectile-mode
   :config (counsel-projectile-mode))
-
-(use-package beacon
-  :disabled
-  :ensure t
-  :demand t
-  :diminish beacon-mode
-  :after (ace-jump-mode)
-  :config
-  (advice-add 'ace-jump-done :after #'beacon-blink))
 
 (use-package ggtags :ensure t :defer t)
 (use-package dumb-jump :ensure t :defer t)
