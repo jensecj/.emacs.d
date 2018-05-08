@@ -444,6 +444,25 @@ the overlay-map"
    (let ((map (make-sparse-keymap)))
      (define-key map (kbd key) command)
      map) t))
+;; example
+;; (jens/one-shot-keybinding "a" (lambda () (interactive) (message "a")))
+
+(defun jens/one-shot-keymap (key-command-pairs)
+  "Set a keybinding that disappear once you press a key that is not in
+the overlay-map"
+  (set-transient-map
+   (let ((map (make-sparse-keymap)))
+     (dolist (kvp key-command-pairs)
+       (let ((key (car kvp))
+             (cmd (cdr kvp)))
+         (define-key map (kbd key) cmd)))
+     map) t))
+;; example:
+;; (jens/one-shot-keymap
+;;  '(("a" . (lambda () (interactive) (message "a")))
+;;    ("b" . (lambda () (interactive) (message "b")))
+;;    ("c" . (lambda () (interactive) (message "c")))
+;;    ("d" . (lambda () (interactive) (message "d")))))
 
 (defun jens/try-require (feature)
   "Tries to require FEATURE, if an exception is thrown, log it."
@@ -1166,8 +1185,9 @@ restores the message."
   :ensure t
   :defer t
   :diminish paxedit-mode
-  :bind (("M-t b" . paxedit-transpose-backward)
-         ("M-t f" . paxedit-transpose-forward)
+  :bind (("M-t t" . (lambda () (interactive)
+                      (jens/one-shot-keymap '(("f" . paxedit-transpose-forward)
+                                              ("b" . paxedit-transpose-backward)))))
          ("M-k" . paxedit-kill)
          ("M-<prior>" . paxedit-backward-up)
          ("M-<next>" . paxedit-backward-end))
