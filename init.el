@@ -1474,6 +1474,16 @@ restores the message."
 
 (use-package rainbow-mode :ensure t :defer t)
 
+(use-package erc-hl-nicks :ensure t :defer t)
+(use-package erc
+  :defer t
+  :after erc-hl-nicks
+  :config
+  (setq erc-rename-buffers t
+        erc-interpret-mirc-color t
+        erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+  (erc-hl-nicks-enable))
+
 (use-package unicode-fonts
   :disabled
   :ensure t
