@@ -946,6 +946,19 @@ restores the message."
   ;; dont warn on refactor evals
   (setq cljr-warn-on-eval nil))
 
+(use-package minimap
+  :ensure t
+  :config
+  (setq minimap-update-delay 0)
+  (setq minimap-width-fraction 0.1)
+  (setq minimap-minimum-width 30)
+  (setq minimap-window-location 'right)
+  (setq minimap-hide-fringes t)
+  (setq minimap-recreate-window nil)
+  :custom-face
+  (minimap-font-face  ((t (:family "Source Code Pro" :height 15))))
+  (minimap-active-region-background ((t (:background "gray20")))))
+
 ;; fancy modeline replacement
 (use-package powerline
   :ensure t
