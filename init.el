@@ -1485,6 +1485,19 @@ restores the message."
                             (concat "QUICKLISP_HOME="
                                     (file-name-as-directory directory) "quicklisp/")))))
 
+(use-package elfeed
+  :config
+  (setq-default elfeed-search-filter "@1-month-ago +unread ")
+
+  (defface youtube-elfeed '((t :foreground "#E0CF9F")) "face for youtube.com entries")
+  (push '(youtube youtube-elfeed) elfeed-search-face-alist)
+  (defface reddit-elfeed '((t :foreground "#9FC59F")) "face for reddit.com entries")
+  (push '(reddit reddit-elfeed) elfeed-search-face-alist)
+  (defface blog-elfeed '((t :foreground "#DCA3A3")) "face for blog entries")
+  (push '(blog blog-elfeed) elfeed-search-face-alist)
+
+  (setq elfeed-feeds (jens/load-from-file "elfeeds.el")))
+
 (use-package elpy
   :ensure t
   :defer t
@@ -1530,7 +1543,6 @@ restores the message."
              :port 6697
              :nick "jensecj"
              :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
-
 
 (use-package unicode-fonts
   :disabled
