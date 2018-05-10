@@ -1251,8 +1251,16 @@ restores the message."
   :ensure t
   :bind
   (("C-d" . mc/mark-next-like-this)
-   ("C-S-d" . mc/mark-all-like-this)
-   ("C-M-a" . set-rectangular-region-anchor))
+   ("C-S-d" . mc/mark-previous-like-this)
+   ("C-M-a" . mc/mark-all-like-this)
+   ("C-M-m" . (lambda ()
+                (interactive)
+                (message "n -> mark next \nN -> skip to next \np -> mark previous \nP -> skip to previous")
+                (jens/one-shot-keymap
+                 '(("n" . mc/mark-next-like-this)
+                   ("N" . mc/skip-to-next-like-this)
+                   ("p" . mc/mark-previous-like-this)
+                   ("P" . mc/skip-to-previous-like-this))))))
   :init
   (setq mc/list-file (concat my-emacs-data-dir "mc-lists")))
 
