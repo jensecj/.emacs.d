@@ -1625,7 +1625,7 @@ restores the message."
     (interactive)
     (if (null multi-term-buffer-list)
         (error "Error: No open terminals."))
-    (let ((buf (get-buffer (ivy-read "Select term:" (mapcar 'buffer-name multi-term-buffer-list)))))
+    (let ((buf (get-buffer (completing-read "Select term:" (mapcar 'buffer-name multi-term-buffer-list)))))
       (with-current-buffer buf
         (if (member default-directory multi-term-saved-terms)
             (error "That term is already saved"))
@@ -1635,7 +1635,7 @@ restores the message."
   (defun jens/multi-term-unsave-term ()
     "Pick a saved terminal to remove from the saved list"
     (interactive)
-    (let ((trm (ivy-read "Select term:" multi-term-saved-terms)))
+    (let ((trm (completing-read "Select term:" multi-term-saved-terms)))
       (setq multi-term-saved-terms (delete trm multi-term-saved-terms)))
     (jens/save-to-file multi-term-saved-terms multi-term-save-file))
 
@@ -1645,13 +1645,15 @@ restores the message."
     (setq multi-term-saved-terms (jens/load-from-file multi-term-save-file))
     (ignore-errors
       (dolist (trm multi-term-saved-terms)
-        (let ((default-directory trm))
-          (jens/multi-term t)))))
+        (if (f-exists? trm)
+            (let ((default-directory trm))
+              (jens/multi-term t))
+          (message (format "multi-term-restore error, path does not exist: %s" trm))))))
 
   (defun jens/multi-term-list-saves ()
     "List all saved terminals"
     (interactive)
-    (ivy-read "All saved terms:" (jens/load-from-file multi-term-save-file)))
+    (completing-read "All saved terms:" (jens/load-from-file multi-term-save-file)))
 
   ;; restore all saved terminals at startup
   (jens/multi-term-restore-terms))
