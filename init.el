@@ -81,13 +81,15 @@
       use-package-enable-imenu-support t)
 
 ;; some libraries that are frequently used
-(use-package dash  ;; functional things, -map, -fold, etc
+(use-package dash ;; functional things, -map, -fold, etc
   :ensure t
   :commands (-some -remove))
 (use-package s ;; string manipulations
   :ensure t
   :commands (s-trim s-prefix?))
-(use-package f :ensure t) ;; handling the file-system
+(use-package f ;; handling the file-system
+  :ensure t
+  :commands f-exists?)
 
 ;; Use =Source Code Pro= font if it is available. When launching emacs as a
 ;; daemon, fonts are not loaded until we actually produce a frame, so the
@@ -1234,7 +1236,7 @@ restores the message."
 (use-package diff-hl
   :ensure t
   :diminish diff-hl-mode
-  :commands global-diff-hl-mode
+  :commands (global-diff-hl-mode diff-hl-mode)
   :config (global-diff-hl-mode +1)
   (defun jens/diff-hl-refresh ()
     "refresh diff-hl"
@@ -1510,6 +1512,7 @@ restores the message."
 
 (use-package auth-source-pass
   :ensure t
+  :commands (auth-source-pass-enable auth-source-pass-get)
   :config
   (auth-source-pass-enable)
   ;; using authinfo.gpg
@@ -1522,11 +1525,15 @@ restores the message."
   ;; (auth-source-pass-get 'secret "irc/freenode/nickserv")
   )
 
-(use-package erc-hl-nicks :ensure t :defer t)
+(use-package erc-hl-nicks
+  :ensure t
+  :defer t
+  :commands erc-hl-nicks-enable)
 (use-package erc
   :defer t
   :after (auth-source-pass erc-hl-nicks)
   :functions ercgo
+  :commands erc-tls
   :config
   (setq erc-rename-buffers t
         erc-interpret-mirc-color t
