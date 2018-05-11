@@ -1505,6 +1505,8 @@ restores the message."
   (push '(reddit reddit-elfeed) elfeed-search-face-alist)
   (defface blog-elfeed '((t :foreground "#DCA3A3")) "face for blog entries")
   (push '(blog blog-elfeed) elfeed-search-face-alist)
+  (defface emacs-elfeed '((t :foreground "#94BFF3")) "face for emacs entries")
+  (push '(emacs emacs-elfeed) elfeed-search-face-alist)
 
   (setq elfeed-feeds (jens/load-from-file "elfeeds.el")))
 
@@ -1695,6 +1697,8 @@ restores the message."
   (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t)
 
+  (setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+
   ;; Adds functionality to persist ivy-views across sessions.
   ;; You could simple add =ivy-views= to =savehist-additional-variables=, but I
   ;; decided to do it this way, so it saves the view straight to disk when added, and
@@ -1868,6 +1872,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (persp-face-lighter-buffer-not-in-persp ((t (:foreground "#CC9393"))))
   (ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
   (ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E")))))
+
+(use-package fullscreen
+  :bind ("M-f" . fullscreen-toggle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; advices and hooks ;;
