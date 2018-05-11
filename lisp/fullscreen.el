@@ -34,16 +34,13 @@
 (defun fullscreen ()
   "Make the current buffer fill the entire window."
   (interactive)
-  (window-configuration-to-register :fullscreen-register)
-  (add-to-list 'fullscreen-alist (pop register-alist))
+  (add-to-list 'fullscreen-alist (window-state-get))
   (delete-other-windows))
 
 (defun fullscreen-quit ()
   "Return to the previous window configuration."
   (interactive)
-  (add-to-list 'register-alist (pop fullscreen-alist))
-  (jump-to-register :fullscreen-register)
-  (pop register-alist))
+  (window-state-put (pop fullscreen-alist)))
 
 (defun fullscreen-toggle ()
   "Toggle fullscreen state of a single buffer."
