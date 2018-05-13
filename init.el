@@ -1131,7 +1131,7 @@ restores the message."
 
     (setq-default achead:include-directories c++-include-files)
 
-    (add-to-list 'ac-sources 'ac-source-semantic)
+    ;; (add-to-list 'ac-sources 'ac-source-semantic)
     (add-to-list 'ac-sources 'ac-source-rtags)
     ;; (add-to-list 'ac-sources 'ac-source-c-headers)
     ;; (add-to-list 'ac-sources 'ac-source-c-header-symbols t)
@@ -1697,7 +1697,7 @@ restores the message."
   (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t)
 
-  (setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+  (setq ivy-re-builders-alist '((t . ivy--regex-plus)))
 
   ;; Adds functionality to persist ivy-views across sessions.
   ;; You could simple add =ivy-views= to =savehist-additional-variables=, but I
@@ -1875,6 +1875,8 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (use-package fullscreen
   :bind ("M-f" . fullscreen-toggle))
+
+(use-package today)
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; advices and hooks ;;

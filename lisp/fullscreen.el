@@ -34,12 +34,14 @@
 (defun fullscreen ()
   "Make the current buffer fill the entire window."
   (interactive)
+  (message "entered fullscreen")
   (add-to-list 'fullscreen-alist (window-state-get))
   (delete-other-windows))
 
 (defun fullscreen-quit ()
   "Return to the previous window configuration."
   (interactive)
+  (message "exited fullscreen")
   (window-state-put (pop fullscreen-alist)))
 
 (defun fullscreen-toggle ()
