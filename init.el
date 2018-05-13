@@ -856,6 +856,15 @@ restores the message."
   ;; use some noise in scheduling org-drills
   (setq org-drill-add-random-noise-to-intervals-p t))
 
+(use-package ob-async
+  :ensure t
+  :defer t)
+
+(use-package ob-clojure
+  :config
+  (require 'cider)
+  (setq org-babel-clojure-backend 'cider))
+
 ;;;;;;;;;;;;;;;;;
 ;; major modes ;;
 ;;;;;;;;;;;;;;;;;
