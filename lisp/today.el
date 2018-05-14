@@ -68,6 +68,14 @@
     (today--create-file todays-file)
     (find-file todays-file)))
 
+(defun today-go-to ()
+  "Prompt for date, and go to corresponding planning file."
+  (interactive)
+  (letrec ((date (org-read-date))
+           (file (today--file-from-date date)))
+    (today--create-file file)
+    (find-file file)))
+
 (defun today-move-to-tomorrow ()
   "Move a subtree from a planning file to tomorrows planning file."
   (interactive)
