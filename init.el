@@ -861,9 +861,18 @@ restores the message."
   :defer t)
 
 (use-package ob-clojure
+  :ensure t
   :config
   (require 'cider)
   (setq org-babel-clojure-backend 'cider))
+
+(use-package ox-pandoc
+  :ensure t
+  :defer t)
+
+(use-package org-ref
+  :ensure t
+  :defer t)
 
 ;;;;;;;;;;;;;;;;;
 ;; major modes ;;
