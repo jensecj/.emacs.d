@@ -4,7 +4,7 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: fullscreen
-;; Package-Version: 20180513
+;; Package-Version: 20180514
 ;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 ;; a simple daily planner, using `today' will create a new planning file for
 ;; the current date.
 ;; a subtree can be moved to tomorrows file with `today-move-to-tomorrow'.
+;; or it can be moved to an arbitraty date using `today-move-to-date'.
 
 ;;; Code:
 
@@ -44,6 +45,10 @@
 
 (defun today--create-file (path)
   "Creates a planning file with PATH."
+  (let ((dir (f-dirname path)))
+    (unless (f-exists? dir)
+      (f-mkdir dir)))
+
   (unless (f-exists? path)
     (f-touch path)))
 
@@ -80,5 +85,19 @@
         (org-mode)
         (goto-char (point-max))
         (yank)))))
+
+(defun today-move-to-date ()
+  "Moves a subtree to the selected date."
+  (interactive)
+  (letrec ((date (org-read-date))
+           (new-file (today--file-from-date date)))
+    (today--create-file new-file)
+
+    (org-cut-subtree)
+
+    (with-current-buffer (find-file new-file)
+      (org-mode)
+      (goto-char (point-max))
+      (yank))))
 
 (provide 'today)
