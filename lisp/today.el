@@ -40,7 +40,7 @@
 
 (defun today--file-from-date (date)
   "Planning file corresponding to DATE."
-  (f-join today-directory (concat date ".org")))
+  (f-join today-directory date (concat date ".org")))
 
 (defun today--create-file (path)
   "Creates a planning file with PATH."
@@ -51,6 +51,10 @@
   "Open todays planning file, create it if it does not exist."
   (interactive)
   ;; create the planning directory if it does not exist
+  (unless (f-directory? today-directory)
+    (f-mkdir today-directory))
+
+  ;; create todays directory if it does not exist
   (unless (f-directory? today-directory)
     (f-mkdir today-directory))
 
