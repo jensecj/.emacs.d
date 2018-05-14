@@ -1032,7 +1032,7 @@ restores the message."
              (face-darker 'face-darker)
              (face-darkest 'face-darkest)
 
-             (powerline-default-separator 'arrow)
+             (powerline-default-separator 'bar)
 
              (seperator-> (intern (format "powerline-%s-%s"
                                           powerline-default-separator
