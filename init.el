@@ -845,6 +845,10 @@ restores the message."
 
   (advice-add 'org-agenda :before #'jens/load-org-agenda-files)
 
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((emacs-lisp . t)
+                                 (gnuplot . t)))
+
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
   ;; keep #+BEGIN_SRC blocks aligned with their contents
