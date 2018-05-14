@@ -22,10 +22,20 @@
 
 ;;; Commentary:
 
-;; a simple daily planner, using `today' will create a new planning file for
-;; the current date.
-;; a subtree can be moved to tomorrows file with `today-move-to-tomorrow'.
-;; or it can be moved to an arbitraty date using `today-move-to-date'.
+;; a simple daily planner, using org-mode.
+;; `today' will create a new planning file for the current date.
+;; `today-move-to-tomorrow' will move the subtree-at-point to tomorrows file.
+;; `today-move-to-date' will prompt for a date using the org-calendar, and
+;; move the subtree-at-point to the planning file for that date.
+;; `today-go-to' will prompt for a date using the org-calendar, then jump to the
+;; corresponding planning file for that date.
+
+;; you can add all the planning files to `org-agenda-files' by adding the
+;; `today-directory', and then changing `org-agenda-file-regex' to match the
+;; subdirectories of `today-directory'.
+;; a less intrusive way is to hook `org-agenda', and find all the .org files
+;; recursively on each invocation. (note: this will be slow for big collections
+;; for files)
 
 ;;; Code:
 
