@@ -813,21 +813,22 @@ restores the message."
   :defer t
   :commands (org-indent-region org-indent-line)
   :bind
-  (:map org-mode-map
-        ([(tab)] . company-indent-or-complete-common)
-        ;; unbind things that are used for other things
-        ("C-a" . nil)
-        ("<S-up>" . nil)
-        ("<S-down>" . nil)
-        ("<S-left>" . nil)
-        ("<S-right>" . nil)
-        ("<M-S-right>" . nil)
-        ("<M-S-left>" . nil)
-        ("<M-S-up>" . nil)
-        ("<M-S-down>" . nil)
-        ("<C-S-up>" . nil)
-        ("<C-S-down>" . nil)
-        ("C-c n" . jens/org-indent))
+  (("C-x g " . org-agenda)
+   :map org-mode-map
+   ([(tab)] . company-indent-or-complete-common)
+   ;; unbind things that are used for other things
+   ("C-a" . nil)
+   ("<S-up>" . nil)
+   ("<S-down>" . nil)
+   ("<S-left>" . nil)
+   ("<S-right>" . nil)
+   ("<M-S-right>" . nil)
+   ("<M-S-left>" . nil)
+   ("<M-S-up>" . nil)
+   ("<M-S-down>" . nil)
+   ("<C-S-up>" . nil)
+   ("<C-S-down>" . nil)
+   ("C-c n" . jens/org-indent))
   :config
   (defun jens/org-indent ()
     (interactive)
@@ -835,6 +836,14 @@ restores the message."
         (org-indent-region (region-beginning) (region-end)))
     (org-indent-line)
     (message "indented"))
+
+  (defun jens/load-org-agenda-files ()
+    (interactive)
+    (setq org-agenda-files
+          (append '("")
+                  (f-glob "**/*.org" "~/vault/org/planning"))))
+
+  (advice-add 'org-agenda :before #'jens/load-org-agenda-files)
 
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
@@ -1352,6 +1361,8 @@ restores the message."
   :functions jens/magit-quit-session
   :bind
   (("C-x m" . magit-status)
+   :map magit-file-mode-map
+   ("C-x g" . nil)
    :map magit-mode-map
    ("C-c C-a" . magit-commit-amend)
    ("q" . jens/magit-quit-session))
@@ -1896,7 +1907,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (use-package today
   :config
-  (setq today-directory "~/vault/planning/"))
+  (setq today-directory "~/vault/org/planning/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; advices and hooks ;;
