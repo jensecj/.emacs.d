@@ -97,8 +97,10 @@
   "Move a subtree from a planning file to tomorrows planning file."
   (interactive)
   (letrec ((todays-date-in-seconds (float-time))
+           (current-files-date (f-base (f-no-ext (buffer-file-name))))
+           (current-files-time-in-seconds (float-time (date-to-time (concat current-files-date " 12:00:00 EST"))))
            (seconds-in-a-day (* 60 60 24))
-           (tomorrows-date-in-seconds (+ todays-date-in-seconds seconds-in-a-day))
+           (tomorrows-date-in-seconds (+ current-files-time-in-seconds seconds-in-a-day))
            (tomorrows-date (format-time-string "%Y-%m-%d" tomorrows-date-in-seconds))
            (tomorrows-file (today--file-from-date tomorrows-date)))
     (today--create-path tomorrows-file)
