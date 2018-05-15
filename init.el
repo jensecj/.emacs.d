@@ -2193,6 +2193,66 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (msg-success (format "Emacs initialized in %s" (emacs-init-time)))
 
+(use-package evil
+  :ensure t
+  :config)
+
+(defun modal-movement ()
+  (interactive)
+  (message "MODAL MOVEMENT MODE")
+  (jens/one-shot-keymap
+   '(("i" . (lambda () (interactive) (previous-line)))
+     ("k" . (lambda () (interactive) (next-line)))
+     ("j" . (lambda () (interactive) (backward-char)))
+     ("l" . (lambda () (interactive) (forward-char)))
+
+     ("C-i" . (lambda () (interactive) (scroll-down 5)))
+     ("C-k" . (lambda () (interactive) (scroll-up 5)))
+     ("C-j" . (lambda () (interactive) (left-word)))
+     ("C-l" . (lambda () (interactive) (right-word)))
+
+     ("w" . (lambda (arg) (interactive "P") (jens/kill-region-or-current-line arg)))
+     ("e" . (lambda () (interactive) (end-of-line)))
+     ("a" . (lambda () (interactive) (beginning-of-line)))
+     ("u" . (lambda () (interactive) (scroll-down-command)))
+     ("o" . (lambda () (interactive) (scroll-up-command)))
+     ))
+  )
+
+(global-set-key (kbd "<escape>") 'modal-movement)
+
+(use-package modalka
+  :ensure t
+  :config
+  (modalka-define-kbd "W" "M-w")
+  (modalka-define-kbd "Y" "M-y")
+
+  (modalka-define-kbd "a" "C-a")
+  (modalka-define-kbd "e" "C-e")
+  (modalka-define-kbd "n" "C-n")
+  (modalka-define-kbd "p" "C-p")
+  (modalka-define-kbd "f" "C-f")
+  (modalka-define-kbd "b" "C-b")
+
+  (define-key modalka-mode-map (kbd "C-n") (xi (scroll-up 5)))
+  (define-key modalka-mode-map (kbd "C-p") (xi (scroll-down 5)))
+  (define-key modalka-mode-map (kbd "C-f") (xi (right-word)))
+  (define-key modalka-mode-map (kbd "C-b") (xi (left-word)))
+
+  (modalka-define-kbd "m" "C-m")
+  (modalka-define-kbd "j" "M-j")
+
+  (modalka-define-kbd "w" "C-w")
+  (modalka-define-kbd "y" "C-y")
+
+  (modalka-define-kbd "g" "C-g")
+  (modalka-define-kbd "SPC" "C-SPC")
+
+  (global-set-key (kbd "<escape>") #'modalka-mode)
+
+  ;; (modalka-global-mode -1)
+  )
+
 ;; reset the things we disables earlier
 (setq gc-cons-threshold (* 20 1000 1000) gc-cons-percentage 0.1)
 (setq file-name-handler-alist default-file-name-handler-alist)
