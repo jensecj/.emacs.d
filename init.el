@@ -1877,6 +1877,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :config (counsel-projectile-mode))
 
 (use-package ggtags :ensure t :defer t)
+
 (use-package dumb-jump :ensure t :defer t)
 
 (use-package flyspell
@@ -2048,7 +2049,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 ;; find things at point
 (global-set-key (kbd "M-.") 'xref-find-definitions)
-(global-set-key (kbd "C-M-.") 'xref-find-definitions-other-window)
 (global-set-key (kbd "M-,") 'xref-pop-marker-stack)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2160,8 +2160,15 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;; experimantal things ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defvar user-agent-string "-A \"Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5\"")
+(defvar user-agent-string "-H \"User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36\"")
+
 (defun get-title-from-link (link)
-  (let ((curl-command (concat "curl '" link "' -so - | grep -iPo '(?<=<title>)(.*)(?=</title>)'")))
+  (let ((curl-command (concat "curl " user-agent-string " '" link "' -so - | grep -iPo '(?<=<title>)(.*)(?=</title>)'")))
+    (s-trim (shell-command-to-string curl-command))))
+
+(defun get-title-from-link (link)
+  (let ((curl-command (concat "wget -qO- '" link "' | perl -l -0777 -ne 'print $1 if /<title.*?>\\s*(.*?)(?: - youtube)?\\s*<\\/title/si'")))
     (s-trim (shell-command-to-string curl-command))))
 
 ;; (get-title-from-link "https://www.youtube.com/watch?v=mO3Q4bRQZ3k")
