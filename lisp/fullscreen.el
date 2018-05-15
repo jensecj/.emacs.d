@@ -28,8 +28,8 @@
 ;;; Code:
 
 (defvar fullscreen-alist
-  "List of window-configurations stored before calling ´fullscreen´."
-  nil)
+  nil
+  "List of window-configurations stored before calling ´fullscreen´.")
 
 (defun fullscreen ()
   "Make the current buffer fill the entire window."

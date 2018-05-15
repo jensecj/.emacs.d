@@ -1911,6 +1911,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :bind ("M-f" . fullscreen-toggle))
 
 (use-package today
+  :demand t
   :config
   (setq today-directory "~/vault/org/planning/"))
 
