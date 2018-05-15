@@ -105,12 +105,12 @@
 
     (org-cut-subtree)
 
-    (save-excursion
-      (let ((tomorrows-buffer (find-file-other-window tomorrows-file)))
-        (with-current-buffer tomorrows-buffer
-          (org-mode)
-          (goto-char (point-max))
-          (yank))))))
+    (let ((tomorrows-buffer (find-file tomorrows-file)))
+      (with-current-buffer tomorrows-buffer
+        (org-mode)
+        (goto-char (point-max))
+        (yank)
+        (previous-buffer)))))
 
 (defun today-move-to-date ()
   "Moves a subtree to the selected date."
