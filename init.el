@@ -1573,7 +1573,7 @@ restores the message."
 (use-package erc
   :defer t
   :after (auth-source-pass erc-hl-nicks)
-  :functions ercgo
+  :defines ercgo
   :commands erc-tls
   :config
   (setq erc-rename-buffers t
@@ -1584,6 +1584,8 @@ restores the message."
 
   (setq erc-user-full-name "Jens Christian Jensen")
   (erc-hl-nicks-enable)
+
+  (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs" "##java")))
 
   (defun ercgo ()
     (interactive)
