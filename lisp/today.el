@@ -93,6 +93,18 @@
   (letrec ((date (org-read-date)))
     (today--find-file-by-date date)))
 
+(defun today--move-subtree-action (destination-file)
+  "Move the org subtree at point, to the bottom of DESTINATION-FILE."
+  (org-cut-subtree)
+  (save-buffer)
+
+  (with-current-buffer (find-file destination-file)
+    (org-mode)
+    (goto-char (point-max))
+    (yank)
+    (save-buffer)
+    (previous-buffer)))
+
 (defun today-move-to-tomorrow ()
   "Move a subtree from a planning file to tomorrows planning file."
   (interactive)
@@ -104,15 +116,7 @@
            (tomorrows-date (format-time-string "%Y-%m-%d" tomorrows-date-in-seconds))
            (tomorrows-file (today--file-from-date tomorrows-date)))
     (today--create-path tomorrows-file)
-
-    (org-cut-subtree)
-
-    (let ((tomorrows-buffer (find-file tomorrows-file)))
-      (with-current-buffer tomorrows-buffer
-        (org-mode)
-        (goto-char (point-max))
-        (yank)
-        (previous-buffer)))))
+    (today--move-subtree-action tomorrows-file)))
 
 (defun today-move-to-date ()
   "Moves a subtree to the selected date."
@@ -120,12 +124,6 @@
   (letrec ((date (org-read-date))
            (new-file (today--file-from-date date)))
     (today--create-path new-file)
-
-    (org-cut-subtree)
-
-    (with-current-buffer (find-file new-file)
-      (org-mode)
-      (goto-char (point-max))
-      (yank))))
+    (today--move-subtree-action new-file)))
 
 (provide 'today)
