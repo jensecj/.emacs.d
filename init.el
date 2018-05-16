@@ -1541,7 +1541,7 @@ restores the message."
   (defface emacs-elfeed '((t :foreground "#94BFF3")) "face for emacs entries")
   (push '(emacs emacs-elfeed) elfeed-search-face-alist)
 
-  (setq elfeed-feeds (jens/load-from-file "elfeeds.el")))
+  (setq elfeed-feeds (jens/load-from-file (concat my-emacs-dir "elfeeds.el"))))
 
 (use-package elpy
   :ensure t
