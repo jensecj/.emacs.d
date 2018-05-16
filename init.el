@@ -47,8 +47,7 @@
   (make-directory my-emacs-lisp-dir))
 (unless (file-exists-p my-emacs-modes-dir)
   (make-directory my-emacs-modes-dir))
-
-(unless (file-exists-p my-emacs-temp-dir)
+(unless (file-exists-p my-emacs-temp-dxir)
   (make-directory my-emacs-temp-dir))
 (unless (file-exists-p my-emacs-data-dir)
   (make-directory my-emacs-data-dir))
@@ -97,7 +96,6 @@
 ;; whether by a user or a daemon, the first frame created will not have
 ;; the setup, as it is created before this is run, still looking into
 ;; this.
-
 (defun jens/init-font-setup ()
   "Setup fonts, then remove self from `focus-in-hook' so we only run once."
   (when (find-font (font-spec :name "Source Code Pro Semibold 10"))
@@ -1935,7 +1933,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;; every time.
 (setq set-mark-command-repeat-pop t)
 
-
 ;; Create nonexistent directories when saving a file
 (add-hook 'before-save-hook
           (lambda ()
@@ -1943,7 +1940,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
               (let ((dir (file-name-directory buffer-file-name)))
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
-
 
 ;; for major modes, replace with use-package
 ;; use 'C-c C-c' to compile across languages, and use a proper compile command
