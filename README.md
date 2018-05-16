@@ -13,13 +13,14 @@ new machine.
 The keybindings are optimized for a
 [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
 
-This configuration is made by [Literate Programming](https://en.wikipedia.org/wiki/Literate_programming).
-All configuration takes place in [config.org](https://github.com/jensecj/.emacs.d/blob/org-init-file-rewrite/config.org), it tries to be concise, but have enough comments to make it easy to grok.
+All configuration takes place in
+[init.el](https://github.com/jensecj/.emacs.d/blob/monolithic-init/init.el), it
+tries to be concise, but have enough comments to make it easy to grok.
 
 You quit emacs with `C-x r q`, mnemonic for *Really Quit*.
 
-I use this in conjunction with the emacs daemon,
-so when I want to kill the entire thing, I run `(kill-emacs)`.
+I use this in conjunction with the emacs daemon, so when I want to kill the
+entire thing, I run `(kill-emacs)` bound to `C-x r k` *Really Kill*.
 
 I symlink this script to `/usr/bin/em`:
 
