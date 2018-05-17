@@ -1551,6 +1551,12 @@ restores the message."
 
 (use-package rainbow-mode :ensure t :defer t)
 
+(use-package abbrev
+  :demand t
+  :config
+  (setq abbrev-file-name (concat my-emacs-data-dir "abbreviations"))
+  (read-abbrev-file))
+
 (use-package auth-source-pass
   :ensure t
   :commands (auth-source-pass-enable auth-source-pass-get)
