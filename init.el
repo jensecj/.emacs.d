@@ -269,7 +269,7 @@
 (setenv "GPG_AGENT_INFO" nil)
 
 (setq auth-sources
-      '("~/.authinfo" "~/.authinfo.gpg" "~/.netrc" "~/vault/authinfo.gpg"))
+      '("~/vault/authinfo.gpg" "~/.netrc"))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; editing defuns ;;
@@ -1276,6 +1276,12 @@ restores the message."
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
+(use-package pdf-tools
+  :config
+  (pdf-tools-install)
+  ;; need to use plain isearch, pdf-tools hooks into it to handle searching
+  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+
 (use-package multiple-cursors
   :ensure t
   :bind
@@ -1390,6 +1396,12 @@ restores the message."
     (if (s-prefix? "*magit:" (buffer-name (current-buffer)))
         (kill-buffer))
     (jump-to-register :magit-fullscreen)))
+
+(use-package magithub
+  :ensure t
+  :after magit
+  :config
+  (magithub-feature-autoinject t))
 
 (use-package undo-tree
   :ensure t
