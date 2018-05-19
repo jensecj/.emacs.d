@@ -271,6 +271,26 @@
 (setq auth-sources
       '("~/vault/authinfo.gpg" "~/.netrc"))
 
+(defun jens/kill-idle-gpg-buffers ()
+  "Kill .gpg buffers after they have not been used for 60 seconds."
+  (interactive)
+  (let ((buffers-killed 0))
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (when (string-match ".*\.gpg$" (buffer-name buffer))
+          (let ((current-time (second (current-time)))
+                (last-displayed-time (second buffer-display-time)))
+            (when (> (- current-time last-displayed-time) 60)
+              (message "killing %s" (buffer-name buffer))
+              (when (buffer-modified-p buffer)
+                (save-buffer))
+              (kill-buffer buffer)
+              (incf buffers-killed))))))
+    (unless (zerop buffers-killed)
+      (message "%s .gpg buffers have been saved and killed" buffers-killed))))
+
+(setq jens/kill-idle-gpg-buffers-timer (run-with-idle-timer 60 t 'jens/kill-idle-gpg-buffers))
+
 ;;;;;;;;;;;;;;;;;;;;
 ;; editing defuns ;;
 ;;;;;;;;;;;;;;;;;;;;
