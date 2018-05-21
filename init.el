@@ -745,10 +745,10 @@ restores the message."
     (make-directory semanticdb-default-save-directory))
 
   ;; save parsing results into a persistent database
-  (global-semanticdb-minor-mode)
+  (global-semanticdb-minor-mode -1)
   ;; re-parse files on idle
-  (global-semantic-idle-scheduler-mode)
-  (semantic-mode))
+  (global-semantic-idle-scheduler-mode -1)
+  (semantic-mode -1))
 
 (use-package linum
   :defer t
@@ -1015,6 +1015,7 @@ restores the message."
   (setq cljr-warn-on-eval nil))
 
 (use-package minimap
+  :disabled t
   :ensure t
   :config
   (setq minimap-update-delay 0)
@@ -2272,7 +2273,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (use-package evil
   :ensure t
-  :config)
+  :disabled t)
 
 (defun modal-movement ()
   (interactive)
@@ -2297,38 +2298,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   )
 
 (global-set-key (kbd "<escape>") 'modal-movement)
-
-(use-package modalka
-  :ensure t
-  :config
-  (modalka-define-kbd "W" "M-w")
-  (modalka-define-kbd "Y" "M-y")
-
-  (modalka-define-kbd "a" "C-a")
-  (modalka-define-kbd "e" "C-e")
-  (modalka-define-kbd "n" "C-n")
-  (modalka-define-kbd "p" "C-p")
-  (modalka-define-kbd "f" "C-f")
-  (modalka-define-kbd "b" "C-b")
-
-  (define-key modalka-mode-map (kbd "C-n") (xi (scroll-up 5)))
-  (define-key modalka-mode-map (kbd "C-p") (xi (scroll-down 5)))
-  (define-key modalka-mode-map (kbd "C-f") (xi (right-word)))
-  (define-key modalka-mode-map (kbd "C-b") (xi (left-word)))
-
-  (modalka-define-kbd "m" "C-m")
-  (modalka-define-kbd "j" "M-j")
-
-  (modalka-define-kbd "w" "C-w")
-  (modalka-define-kbd "y" "C-y")
-
-  (modalka-define-kbd "g" "C-g")
-  (modalka-define-kbd "SPC" "C-SPC")
-
-  (global-set-key (kbd "<escape>") #'modalka-mode)
-
-  ;; (modalka-global-mode -1)
-  )
 
 ;; reset the things we disables earlier
 (setq gc-cons-threshold (* 20 1000 1000) gc-cons-percentage 0.1)
