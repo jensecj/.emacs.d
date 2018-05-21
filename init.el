@@ -785,7 +785,7 @@ restores the message."
 
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
   (setq dired-listing-switches "-agholXN")
-
+  (setq dired-create-destination-dirs 'always)
   (toggle-diredp-find-file-reuse-dir 1)
 
   (setq ibuffer-formats
