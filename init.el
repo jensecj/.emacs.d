@@ -756,9 +756,9 @@ restores the message."
   (global-semantic-idle-scheduler-mode -1)
   (semantic-mode -1))
 
-(use-package linum
+(use-package display-line-numbers
   :defer t
-  :commands linum-mode
+  :commands display-line-numbers-mode
   :bind ("M-g M-g" . jens/goto-line-with-feedback)
   :config
   (defun jens/goto-line-with-feedback ()
@@ -766,24 +766,9 @@ restores the message."
     (interactive)
     (unwind-protect
         (progn
-          (linum-mode 1)
+          (display-line-numbers-mode 1)
           (call-interactively 'goto-line))
-      (linum-mode -1)))
-
-  ;; format linum mode, makes it readable, but uses some space, fine since it
-  ;; is only visible when using =jens/goto-line-with-feedback=.
-  (setq linum-format
-        (lambda (line)
-          (propertize
-           (format
-            (concat
-             " %"
-             (number-to-string
-              (length (number-to-string
-                       (line-number-at-pos (point-max)))))
-             "d ")
-            line)
-           'face 'linum))))
+      (display-line-numbers-mode -1))))
 
 (use-package dired
   :demand t
