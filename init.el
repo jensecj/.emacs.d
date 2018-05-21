@@ -68,7 +68,7 @@
   (require 'use-package))
 
 ;; make use-package tell us what its doing
-(setq use-package-verbose t
+(setq use-package-verbose nil
       use-package-enable-imenu-support t)
 
 ;; some libraries that are frequently used
