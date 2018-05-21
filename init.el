@@ -260,13 +260,21 @@
 (add-hook 'prog-mode-hook 'jens/show-trailing-whitespace)
 
 ;; gpg and auth
-(require 'epa-file)
-(epa-file-enable)
+(use-package epa-file
+  :demand t
+  :commands epa-file-enable
+  :config
+  (epa-file-enable)
+  (setq epa-pinentry-mode 'loopback))
 
 ;; enable gpg pinentry through the minibuffer
-(setq epa-pinentry-mode 'loopback)
-(pinentry-start)
-(setenv "GPG_AGENT_INFO" nil)
+(use-package pinentry
+  :ensure t
+  :demand t
+  :commands pinentry-start
+  :config
+  (pinentry-start)
+  (setenv "GPG_AGENT_INFO" nil))
 
 (setq auth-sources
       '("~/vault/authinfo.gpg" "~/.netrc"))
