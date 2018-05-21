@@ -412,6 +412,10 @@ otherwise comment or uncomment the current line."
 ;; file defuns ;;
 ;;;;;;;;;;;;;;;;;
 
+(defun jens/byte-recompile-this-file ()
+  (interactive)
+  (byte-recompile-file (buffer-file-name)))
+
 (defun jens/get-buffer-file-name+ext ()
   "Get the file name and extension of the file belonging to the current buffer."
   (file-name-nondirectory buffer-file-name))
