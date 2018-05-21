@@ -88,7 +88,7 @@
   :commands (s-trim s-prefix?))
 (use-package f ;; handling the file-system
   :ensure t
-  :commands f-exists?)
+  :commands (f-exists? f-glob))
 
 ;; Use =Source Code Pro= font if it is available. When launching emacs as a
 ;; daemon, fonts are not loaded until we actually produce a frame, so the
@@ -829,7 +829,10 @@ restores the message."
   :ensure org-plus-contrib
   :pin org
   :defer t
-  :commands (org-indent-region org-indent-line)
+  :commands (org-indent-region
+             org-indent-line
+             org-babel-do-load-languages)
+  :defines jens/load-org-agenda-files
   :bind
   (("C-x g " . org-agenda)
    :map org-mode-map
@@ -874,25 +877,24 @@ restores the message."
   ;; dont indent things
   (setq org-adapt-indentation nil)
   ;; syntax highlight org-mode code blocks when exporting as pdf
-  (setq org-latex-listings 'minted
-        org-latex-packages-alist '(("" "minted"))
-        org-latex-pdf-process
-        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  (setq-default org-latex-listings 'minted
+                org-latex-packages-alist '(("" "minted"))
+                org-latex-pdf-process
+                '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   ;; try to get non-fuzzy latex fragments
   (plist-put org-format-latex-options :scale 1.6)
   ;; (setq org-latex-create-formula-image-program 'dvisvgm) ;; obsolete as of org 9.0
-  (setq org-preview-latex-default-process 'dvisvgm)
+  (setq-default org-preview-latex-default-process 'dvisvgm)
 
   ;; use some noise in scheduling org-drills
-  (setq org-drill-add-random-noise-to-intervals-p t))
+  (setq-default org-drill-add-random-noise-to-intervals-p t))
 
 (use-package ob-async
   :ensure t
   :defer t)
 
 (use-package ob-clojure
-  :ensure t
   :config
   (require 'cider)
   (setq org-babel-clojure-backend 'cider))
@@ -1297,6 +1299,7 @@ restores the message."
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
 (use-package pdf-tools
+  :commands pdf-tools-install
   :config
   (pdf-tools-install)
   ;; need to use plain isearch, pdf-tools hooks into it to handle searching
@@ -1562,13 +1565,21 @@ restores the message."
   :config
   (setq-default elfeed-search-filter "@1-month-ago +unread ")
 
-  (defface youtube-elfeed '((t :foreground "#E0CF9F")) "face for youtube.com entries")
+  (defface youtube-elfeed '((t :foreground "#E0CF9F"))
+    "face for youtube.com entries"
+    :group 'elfeed-faces)
   (push '(youtube youtube-elfeed) elfeed-search-face-alist)
-  (defface reddit-elfeed '((t :foreground "#9FC59F")) "face for reddit.com entries")
+  (defface reddit-elfeed '((t :foreground "#9FC59F"))
+    "face for reddit.com entries"
+    :group 'elfeed-faces)
   (push '(reddit reddit-elfeed) elfeed-search-face-alist)
-  (defface blog-elfeed '((t :foreground "#DCA3A3")) "face for blog entries")
+  (defface blog-elfeed '((t :foreground "#DCA3A3"))
+    "face for blog entries"
+    :group 'elfeed-faces)
   (push '(blog blog-elfeed) elfeed-search-face-alist)
-  (defface emacs-elfeed '((t :foreground "#94BFF3")) "face for emacs entries")
+  (defface emacs-elfeed '((t :foreground "#94BFF3"))
+    "face for emacs entries"
+    :group 'elfeed-faces)
   (push '(emacs emacs-elfeed) elfeed-search-face-alist)
 
   (setq elfeed-feeds (jens/load-from-file (concat my-emacs-dir "elfeeds.el"))))
@@ -1585,6 +1596,7 @@ restores the message."
 
 (use-package abbrev
   :demand t
+  :commands read-abbrev-file
   :config
   (setq abbrev-file-name (concat my-emacs-data-dir "abbreviations"))
   (read-abbrev-file))
@@ -1611,7 +1623,7 @@ restores the message."
 (use-package erc
   :defer t
   :after (auth-source-pass erc-hl-nicks)
-  :defines ercgo
+  :functions ercgo
   :commands erc-tls
   :config
   (setq erc-rename-buffers t
