@@ -1005,7 +1005,8 @@ restores the message."
         cider-pprint-fn 'pprint
         cider-repl-pop-to-buffer-on-connect nil
         cider-default-cljs-repl nil
-        cider-check-cljs-repl-requirements nil))
+        cider-check-cljs-repl-requirements nil)
+  (advice-add 'cider-jack-in :before #'direnv-update-environment))
 
 (use-package clj-refactor
   :ensure t
