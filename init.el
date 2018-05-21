@@ -1249,7 +1249,7 @@ restores the message."
          ("M-<left>" . sp-backward-slurp-sexp)
          ("M-<right>" . sp-forward-slurp-sexp)
          ("M-k" . sp-kill-sexp)
-         ("M-K" . sp-backward-kill-sexp)
+         ("M-K" . sp-copy-sexp)
          ([(control shift e)] . sp-end-of-sexp)
          ([(control e)] . end-of-line)
          ([(shift next)] . sp-split-sexp)
@@ -1271,6 +1271,7 @@ restores the message."
             (jens/one-shot-keymap '(("f" . paxedit-transpose-forward)
                                     ("b" . paxedit-transpose-backward)))))
          ("M-k" . paxedit-kill)
+         ("M-K" . paxedit-copy)
          ("M-<prior>" . paxedit-backward-up)
          ("M-<next>" . paxedit-backward-end))
   :init
