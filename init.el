@@ -2197,18 +2197,17 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;; experimantal things ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar user-agent-string "-A \"Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5\"")
-(defvar user-agent-string "-H \"User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36\"")
-
+(defvar user-agent-string "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36")
 (defun get-title-from-link (link)
-  (let ((curl-command (concat "curl " user-agent-string " '" link "' -so - | grep -iPo '(?<=<title>)(.*)(?=</title>)'")))
+  (letrec ((-silence-output " -so - ")
+           (-follow-redirects "-L")
+           (-use-user-agent "'-A User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36'")
+           (grep-title "grep -iPo '(?<=<title>)(.*)(?=</title>)'")
+           (recode-to-utf8 "recode html..utf8")
+           (curl-command (concat "curl" " " -follow-redirects " " -use-user-agent " '" link "'" -silence-output " | " grep-title " | " recode-to-utf8)))
     (s-trim (shell-command-to-string curl-command))))
 
-(defun get-title-from-link (link)
-  (let ((curl-command (concat "wget -qO- '" link "' | perl -l -0777 -ne 'print $1 if /<title.*?>\\s*(.*?)(?: - youtube)?\\s*<\\/title/si'")))
-    (s-trim (shell-command-to-string curl-command))))
-
-;; (get-title-from-link "https://www.youtube.com/watch?v=mO3Q4bRQZ3k")
+;;(get-title-from-link "https://www.youtube.com/watch?v=mO3Q4bRQZ3k")
 
 (defun paste-website-title-above ()
   (interactive)
@@ -2233,6 +2232,28 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
           (beginning-of-line)
           (insert "[")
           (insert (get-title-from-link link))
+          (insert "]")))))
+
+(defun link-to-markdown-link ()
+  (interactive)
+  (if (region-active-p)
+      (letrec ((link (buffer-substring (region-beginning) (region-end)))
+               (link-title (get-title-from-link link)))
+        (save-excursion
+          (delete-region (region-beginning) (region-end))
+          (insert "[" link-title "]")
+          (insert "(" link ")")))))
+
+(defun link-to-org-link ()
+  (interactive)
+  (if (region-active-p)
+      (letrec ((link (buffer-substring (region-beginning) (region-end)))
+               (link-title (get-title-from-link link)))
+        (save-excursion
+          (delete-region (region-beginning) (region-end))
+          (insert "[")
+          (insert "[" link "]")
+          (insert "[" link-title "]")
           (insert "]")))))
 
 (msg-success (format "Emacs initialized in %s" (emacs-init-time)))
