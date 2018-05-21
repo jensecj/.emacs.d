@@ -89,6 +89,7 @@
     (today--find-file-by-date todays-date)))
 
 (defun today-capture-link ()
+  "Captures a LINK-TASK into todays planning file."
   (interactive)
   (letrec ((todays-date (format-time-string "%Y-%m-%d"))
            (task (completing-read "task: " today-capture-tasks))
