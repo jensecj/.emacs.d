@@ -1558,6 +1558,7 @@ restores the message."
                                     (file-name-as-directory directory) "quicklisp/")))))
 
 (use-package elfeed
+  :defer t
   :config
   (setq-default elfeed-search-filter "@1-month-ago +unread ")
 
