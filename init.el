@@ -99,10 +99,11 @@
 (defun jens/init-font-setup ()
   "Setup fonts, then remove self from `focus-in-hook' so we only run once."
   (when (find-font (font-spec :name "Source Code Pro Semibold 10"))
-    (add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10")))
-  (remove-hook 'focus-in-hook 'jens/init-font-setup))
+    (add-to-list 'default-frame-alist '(font . "Source Code Pro Semibold 10"))
+    (set-frame-font "Source Code Pro Semibold 10"))
+  (remove-hook 'server-after-make-frame-hook 'jens/init-font-setup))
 
-(add-hook 'focus-in-hook 'jens/init-font-setup)
+(add-hook 'server-after-make-frame-hook 'jens/init-font-setup)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; temp files, etc. ;;
