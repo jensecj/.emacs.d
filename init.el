@@ -5,14 +5,6 @@
 ;; setup some things that other packages may depend on
 (setq user-full-name "Jens Christian Jensen")
 
-;; disable some things that slow down startup
-;; there's no need to be stirngent about garbage collection when starting up
-(setq gc-cons-threshold (* 500 1000 1000) gc-cons-percentage 0.6)
-;; also we dont need to figure out the file-handlers for the files we visit,
-;; we're only visiting config files
-(defvar default-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-
 (defun text-red (txt) (format "\e[1m\e[31m%s\e[0m" txt))
 (defun text-green (txt) (format "\e[1m\e[32m%s\e[0m" txt))
 (defun text-yellow (txt) (format "\e[1m\e[33m%s\e[0m" txt))
@@ -2282,8 +2274,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (global-set-key (kbd "<escape>") 'modal-movement)
 
-;; reset the things we disables earlier
-(setq gc-cons-threshold (* 20 1000 1000) gc-cons-percentage 0.1)
+;; reset the things we disabled earlier
+;; set garbage collection to 20 mb
+(setq gc-cons-threshold 16777216 gc-cons-percentage 0.1)
 (setq file-name-handler-alist default-file-name-handler-alist)
 
 (provide 'init)
