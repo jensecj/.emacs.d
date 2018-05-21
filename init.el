@@ -58,9 +58,6 @@
 (add-to-list 'load-path my-emacs-lisp-dir)
 (add-to-list 'load-path my-emacs-modes-dir)
 
-;; load and activate default packages
-;; (package-initialize)
-
 ;; setup package archives
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
