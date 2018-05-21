@@ -1433,6 +1433,8 @@ restores the message."
   :config
   ;; (setq undo-tree-visualizer-timestamps nil)
   (setq undo-tree-visualizer-diff t)
+  (setq undo-tree-auto-save-history t)
+  (setq undo-tree-history-directory-alist `(("." . ,my-emacs-temp-dir)))
 
   ;; TODO: fix undo-tree-undo in region, in some cases it freezes.
   (defun jens/undo-tree-undo (orig-fun &rest args)
