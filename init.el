@@ -64,6 +64,9 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+(eval-when-compile
+  (require 'use-package))
+
 ;; make use-package tell us what its doing
 (setq use-package-verbose t
       use-package-enable-imenu-support t)
@@ -767,7 +770,7 @@ restores the message."
       (display-line-numbers-mode -1))))
 
 (use-package dired
-  :demand t
+  :defer t
   :commands dired
   :bind
   (("C-x C-d" . (lambda () (interactive) (dired default-directory)))
@@ -882,8 +885,8 @@ restores the message."
   :defer t)
 
 (use-package ob-clojure
+  :requires cider
   :config
-  (require 'cider)
   (setq org-babel-clojure-backend 'cider))
 
 (use-package ox-pandoc
@@ -1515,7 +1518,7 @@ restores the message."
   (setq-default TeX-save-query nil) ;; save before compiling
   (setq-default TeX-master nil) ;; try to figure out which file is the master
   (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
-  (setq doc-view-resolution 300)
+  (setq-default doc-view-resolution 300)
 
   ;; (setq TeX-view-program-selection (quote ((output-pdf "zathura") (output-dvi "xdvi"))))
   (TeX-source-correlate-mode)        ; activate forward/reverse search
