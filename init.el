@@ -1288,8 +1288,10 @@ restores the message."
 
 (use-package diff-hl
   :ensure t
+  :demand t
   :diminish diff-hl-mode
   :commands (global-diff-hl-mode diff-hl-mode)
+  :defines jens/diff-hl-refresh
   :config (global-diff-hl-mode +1)
   (defun jens/diff-hl-refresh ()
     "refresh diff-hl"
