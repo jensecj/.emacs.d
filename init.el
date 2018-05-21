@@ -476,6 +476,7 @@ otherwise comment or uncomment the current line."
 ;;;;;;;;;;;;;;;;;
 ;; lisp defuns ;;
 ;;;;;;;;;;;;;;;;;
+
 ;; easy interactive lambda forms
 (defmacro xi (lam)
   `(lambda ()
@@ -647,7 +648,6 @@ restores the message."
 ;; misc defuns ;;
 ;;;;;;;;;;;;;;;;;
 
-;;;autoload
 (defun jens/is-online-p ()
   "Returns a non-nil value if we have a network connection."
   (if (and (functionp 'network-interface-list)
@@ -2251,7 +2251,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
           (insert "[" link-title "]")
           (insert "]")))))
 
-(msg-success (format "Emacs initialized in %s" (emacs-init-time)))
+(msg-success (format "Emacs initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
 
 (use-package evil
   :ensure t
