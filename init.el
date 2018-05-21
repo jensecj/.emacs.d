@@ -1243,6 +1243,7 @@ restores the message."
 (use-package smex
   :ensure t
   :defer 1
+  :commands smex-initialize
   :config
   (setq smex-save-file (concat my-emacs-data-dir "smex-items"))
   (smex-initialize))
