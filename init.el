@@ -1938,14 +1938,16 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :ensure t
   :defer t
   :functions enable-spellchecking
-  :commands flyspell-mode
+  :commands (flyspell-mode
+             flyspell-buffer)
   :config
   (ispell-change-dictionary "english")
 
   (defun enable-spellchecking ()
     (interactive)
     (ispell-change-dictionary "english")
-    (flyspell-mode)))
+    (flyspell-mode)
+    (flyspell-buffer)))
 
 (use-package zenburn-theme
   :ensure t
