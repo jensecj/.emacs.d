@@ -72,11 +72,15 @@
   (unless (f-exists? path)
     (f-touch path)))
 
-(defun today--find-file-by-date (date)
-  "Jump to the planning file for DATE, create it if it does not exist."
+(defun today--buffer-from-date (date)
+  "Get the buffer for DATEs planning file, creates one if it does not exist."
   (letrec ((file (today--file-from-date date)))
     (today--create-path file)
-    (find-file file)))
+    (find-file-noselect file)))
+
+(defun today--find-file-by-date (date)
+  "Jump to the planning file for DATE, create it if it does not exist."
+  (switch-to-buffer (today--buffer-from-date date)))
 
 (defun today ()
   "Open todays planning file, create it if it does not exist."
@@ -86,11 +90,14 @@
 
 (defun today-capture-link ()
   (interactive)
-  (letrec ((task (completing-read "task: " today-capture-tasks))
+  (letrec ((todays-date (format-time-string "%Y-%m-%d"))
+           (task (completing-read "task: " today-capture-tasks))
            (link (completing-read "link: " '()))
            (org-link (link-to-org-link link))
            (save-excursion
-             (insert "* TODO " task " " org-link)))))
+             (with-current-buffer (today--buffer-from-date todays-date)
+               (end-of-buffer)
+               (insert "* TODO " task " " org-link))))))
 
 (defun today-list ()
   "List all dates from `today-directory', jump to the one selected."
