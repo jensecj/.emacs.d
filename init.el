@@ -2238,21 +2238,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (defun link-to-markdown-link ()
   (interactive)
   (if (region-active-p)
-      (let ((link (buffer-substring (region-beginning) (region-end))))
-        (save-excursion
-          (goto-char (region-end))
-          (insert ")")
-          (goto-char (region-beginning))
-          (insert "(")
-
-          (beginning-of-line)
-          (insert "[")
-          (insert (get-title-from-link link))
-          (insert "]")))))
-
-(defun link-to-markdown-link ()
-  (interactive)
-  (if (region-active-p)
       (letrec ((link (buffer-substring (region-beginning) (region-end)))
                (link-title (get-title-from-link link)))
         (save-excursion
