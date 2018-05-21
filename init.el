@@ -47,7 +47,7 @@
   (make-directory my-emacs-lisp-dir))
 (unless (file-exists-p my-emacs-modes-dir)
   (make-directory my-emacs-modes-dir))
-(unless (file-exists-p my-emacs-temp-dxir)
+(unless (file-exists-p my-emacs-temp-dir)
   (make-directory my-emacs-temp-dir))
 (unless (file-exists-p my-emacs-data-dir)
   (make-directory my-emacs-data-dir))
