@@ -2241,17 +2241,18 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
           (insert "[" link-title "]")
           (insert "(" link ")")))))
 
-(defun link-to-org-link ()
+(defun link-to-org-link (link)
+  (let ((link-title (get-title-from-link link)))
+    (format "[[%s][%s]]" link link-title)))
+
+(defun link-to-org-link-region ()
   (interactive)
   (if (region-active-p)
       (letrec ((link (buffer-substring (region-beginning) (region-end)))
-               (link-title (get-title-from-link link)))
+               (org-link (link-to-org-link link)))
         (save-excursion
           (delete-region (region-beginning) (region-end))
-          (insert "[")
-          (insert "[" link "]")
-          (insert "[" link-title "]")
-          (insert "]")))))
+          (insert org-link)))))
 
 (msg-success (format "Emacs initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
 
