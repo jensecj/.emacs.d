@@ -49,6 +49,10 @@
   (concat user-emacs-directory "planning")
   "Directory used for planning files.")
 
+(defcustom today-capture-tasks
+  '("read" "watch")
+  "Tasks that can be captured by `today-capture' functions")
+
 (defun today--file-from-date (date)
   "Planning file corresponding to DATE."
   (f-join today-directory date (concat date ".org")))
@@ -79,6 +83,14 @@
   (interactive)
   (letrec ((todays-date (format-time-string "%Y-%m-%d")))
     (today--find-file-by-date todays-date)))
+
+(defun today-capture-link ()
+  (interactive)
+  (letrec ((task (completing-read "task: " today-capture-tasks))
+           (link (completing-read "link: " '()))
+           (org-link (link-to-org-link link))
+           (save-excursion
+             (insert "* TODO " task " " org-link)))))
 
 (defun today-list ()
   "List all dates from `today-directory', jump to the one selected."
