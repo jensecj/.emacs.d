@@ -1068,9 +1068,15 @@ restores the message."
 
                    (funcall seperator-> face-darkest face-darker)
 
-                   (powerline-raw " %4l (%p)" face-darker 'r)
-                   (powerline-raw ":" face-darker 'l)
-                   (powerline-raw "%3c " face-darker 'r)
+                   ;; when viewing pdf-files using pdf-tools (or docview),
+                   (if (pdf-util-pdf-buffer-p)
+                       (powerline-raw (format "%s / %s "
+                                              (pdf-view-current-page)
+                                              (pdf-info-number-of-pages)) face-darker 'l))
+
+                   (if (not (pdf-util-pdf-buffer-p)) (powerline-raw " (%p) %4l" face-darker 'r))
+                   (if (not (pdf-util-pdf-buffer-p)) (powerline-raw ":" face-darker 'l))
+                   (if (not (pdf-util-pdf-buffer-p)) (powerline-raw "%3c " face-darker 'r))
 
                    (funcall seperator-> face-darker face-dark)
 
