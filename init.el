@@ -2274,8 +2274,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
           (delete-region (region-beginning) (region-end))
           (insert org-link)))))
 
-(msg-success (format "Emacs initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
-
 (use-package evil
   :ensure t
   :disabled t)
@@ -2308,5 +2306,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;; set garbage collection to 20 mb
 (setq gc-cons-threshold 16777216 gc-cons-percentage 0.1)
 (setq file-name-handler-alist default-file-name-handler-alist)
+
+(msg-success (format "Emacs initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
 
 (provide 'init)
