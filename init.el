@@ -266,8 +266,12 @@
   :demand t
   :commands pinentry-start
   :config
-  (pinentry-start)
-  (setenv "GPG_AGENT_INFO" nil))
+  (setenv "GPG_AGENT_INFO" nil)
+
+  (defun jens/pinentry-reset ()
+    (pinentry-stop)
+    (pinentry-start))
+  (setq gpg-reset-timer (run-with-timer 0 (* 60 60) #'jens/pinentry-reset)))
 
 (setq auth-sources
       '("~/vault/authinfo.gpg" "~/.netrc"))
