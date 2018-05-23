@@ -2303,7 +2303,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (global-set-key (kbd "<escape>") 'modal-movement)
 
 ;; reset the things we disabled earlier
-;; set garbage collection to 20 mb
+;;set garbage collection limit a bit higher, this takes fiddling, because if we
+;;set it too low, we end up collection all the time, if its too high, each
+;;collection will take longer to complete.
 (setq gc-cons-threshold 16777216 gc-cons-percentage 0.1)
 (setq file-name-handler-alist default-file-name-handler-alist)
 
