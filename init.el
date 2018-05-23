@@ -1963,6 +1963,12 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (use-package today
   :demand t
+  :commands (today-capture-elfeed-at-point
+             today-capture-link)
+  :bind
+  (("C-x C-t" . today-capture-link)
+   :map elfeed-search-mode-map
+   ("t" . today-capture-elfeed-at-point))
   :config
   (setq today-directory "~/vault/org/planning/"))
 
@@ -2242,9 +2248,12 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
           (insert "[" link-title "]")
           (insert "(" link ")")))))
 
+(defun link-title-to-org-link (link title)
+  (format "[[%s][%s]]" link title))
+
 (defun link-to-org-link (link)
-  (let ((link-title (get-title-from-link link)))
-    (format "[[%s][%s]]" link link-title)))
+  (let ((title (get-title-from-link link)))
+    (link-title-to-org-link link title)))
 
 (defun link-to-org-link-region ()
   (interactive)

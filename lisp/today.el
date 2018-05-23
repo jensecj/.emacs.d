@@ -24,14 +24,14 @@
 ;;; Commentary:
 
 ;; a simple daily planner, using org-mode.
-;; `today' will create a new planning file for the current date.
-;; `today-move-to-tomorrow' will move the subtree-at-point to tomorrows file.
+;; `today' will visit the planning file for the current date, creates it if it does not exist.
+;; `today-move-to-tomorrow' will move the subtree-at-point to tomorrows planning file.
 ;; `today-move-to-date' will prompt for a date using the org-calendar, and
 ;; move the subtree-at-point to the planning file for that date.
 ;; `today-go-to' will prompt for a date using the org-calendar, then jump to the
-;; corresponding planning file for that date.
+;; planning file for that date.
 ;; `today-list' will list the dates for all planning files in `today-directory',
-;; selecting one will jump to the corresponding file.
+;; selecting one will jump to that file.
 
 ;; you can add all the planning files to `org-agenda-files' by adding the
 ;; `today-directory', and then changing `org-agenda-file-regex' to match the
@@ -52,6 +52,10 @@
 (defcustom today-capture-tasks
   '("read" "watch")
   "Tasks that can be captured by `today-capture' functions")
+
+(defun today--todays-date ()
+  "Today's date."
+  (format-time-string "%Y-%m-%d"))
 
 (defun today--file-from-date (date)
   "Planning file corresponding to DATE."
@@ -74,7 +78,7 @@
 
 (defun today--buffer-from-date (date)
   "Get the buffer for DATEs planning file, creates one if it does not exist."
-  (letrec ((file (today--file-from-date date)))
+  (let ((file (today--file-from-date date)))
     (today--create-path file)
     (find-file-noselect file)))
 
@@ -85,20 +89,36 @@
 (defun today ()
   "Open todays planning file, create it if it does not exist."
   (interactive)
-  (letrec ((todays-date (format-time-string "%Y-%m-%d")))
-    (today--find-file-by-date todays-date)))
+  (today--find-file-by-date (today--todays-date)))
+
+(defun today--capture-to-date (date task entry)
+  "Captures an ENTRY with TASK, into the planning file for DATE."
+  (save-excursion
+    (with-current-buffer (today--buffer-from-date date)
+      (print (current-buffer))
+      (end-of-buffer)
+      (newline)
+      (insert "* TODO " task " " entry))))
 
 (defun today-capture-link ()
   "Captures a LINK-TASK into todays planning file."
   (interactive)
-  (letrec ((todays-date (format-time-string "%Y-%m-%d"))
-           (task (completing-read "task: " today-capture-tasks))
+  (letrec ((task (completing-read "task: " today-capture-tasks))
            (link (completing-read "link: " '()))
-           (org-link (link-to-org-link link))
-           (save-excursion
-             (with-current-buffer (today--buffer-from-date todays-date)
-               (end-of-buffer)
-               (insert "* TODO " task " " org-link))))))
+           (org-link (link-to-org-link link)))
+    (today--capture-to-date (today--todays-date) task org-link)))
+
+(defun today-capture-elfeed-at-point ()
+  "Captures a TASK from selected elfeed entry."
+  (interactive)
+  (letrec ((todays-date (today--todays-date))
+           (entry (car (elfeed-search-selected)))
+           (link (elfeed-entry-link entry))
+           (title (elfeed-entry-title entry)))
+    (elfeed-untag entry 'unread)
+    (elfeed-search-update-entry entry)
+    (today--capture-to-date todays-date "elfeed" (link-title-to-org-link link title))
+    (next-line)))
 
 (defun today-list ()
   "List all dates from `today-directory', jump to the one selected."
