@@ -773,6 +773,9 @@ restores the message."
           (call-interactively 'goto-line))
       (display-line-numbers-mode -1))))
 
+(use-package eldoc
+  :diminish eldoc-mode)
+
 (use-package dired
   :defer t
   :commands dired
