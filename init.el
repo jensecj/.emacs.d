@@ -56,8 +56,6 @@
                          ("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")))
 
-(defconst melpa-archive (concat my-emacs-dir "elpa/archives/melpa"))
-
 ;; install use-package if we don't already have it
 (unless (package-installed-p 'use-package)
   (msg-warning "use-package is not installed. installing...")
@@ -80,7 +78,7 @@
   :commands (s-trim s-prefix?))
 (use-package f ;; handling the file-system
   :ensure t
-  :commands (f-exists? f-glob))
+  :commands (f-exists? f-glob f-no-ext))
 
 ;; Use =Source Code Pro= font if it is available. When launching emacs as a
 ;; daemon, fonts are not loaded until we actually produce a frame, so the
@@ -264,7 +262,7 @@
 (use-package pinentry
   :ensure t
   :demand t
-  :commands pinentry-start
+  :commands (pinentry-start pinentry-stop)
   :config
   (setenv "GPG_AGENT_INFO" nil)
 
@@ -791,7 +789,7 @@ restores the message."
 
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
   (setq dired-listing-switches "-agholXN")
-  (setq dired-create-destination-dirs 'always)
+  (setq-default dired-create-destination-dirs 'always)
   (toggle-diredp-find-file-reuse-dir 1)
 
   (setq ibuffer-formats
@@ -1573,6 +1571,8 @@ restores the message."
                                     (file-name-as-directory directory) "quicklisp/")))))
 
 (use-package elfeed
+  :ensure t
+  :commands elfeed
   :defer t
   :config
   (setq-default elfeed-search-filter "@1-month-ago +unread ")
