@@ -417,9 +417,11 @@ otherwise comment or uncomment the current line."
 ;; file defuns ;;
 ;;;;;;;;;;;;;;;;;
 
-(defun jens/byte-recompile-this-file ()
+(defun jens/byte-compile-this-file ()
   (interactive)
-  (byte-recompile-file (buffer-file-name)))
+  (if (f-exists? (concat (f-no-ext (buffer-file-name)) ".elc"))
+      (byte-recompile-file (buffer-file-name))
+    (byte-compile-file (buffer-file-name))))
 
 (defun jens/get-buffer-file-name+ext ()
   "Get the file name and extension of the file belonging to the current buffer."
