@@ -25,6 +25,8 @@
 
 ;; directories for things related to emacs
 (defconst my-emacs-dir user-emacs-directory)
+(defconst my-emacs-elpa-dir (concat my-emacs-dir "elpa"))
+
 (defconst my-emacs-lisp-dir (concat my-emacs-dir "lisp/"))
 (defconst my-emacs-modes-dir (concat my-emacs-dir "modes/"))
 
@@ -49,12 +51,16 @@
 ;; add the lispy directories to the load-path
 (add-to-list 'load-path my-emacs-lisp-dir)
 (add-to-list 'load-path my-emacs-modes-dir)
+(add-to-list 'load-path my-emacs-elpa-dir)
 
 ;; setup package archives
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")))
+
+(require 'package)
+(package-initialize)
 
 ;; install use-package if we don't already have it
 (unless (package-installed-p 'use-package)
@@ -784,9 +790,17 @@ restores the message."
    :map dired-mode-map
    ("C-." . dired-omit-mode)
    ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
+  :init
+  (unless (f-exists? (concat (concat my-emacs-elpa-dir "/dired+.el")))
+    (url-copy-file
+     "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/dired%2B.el"
+     (concat my-emacs-elpa-dir "/dired+.el")))
   :config
   ;; pull in extra functionality for dired
-  (require 'dired-x)
+  ;; (load-library "dired+")
+  (load-library "dired-x")
+  (load-library "dired-aux")
+
   (require 'dired+)
 
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
