@@ -1593,22 +1593,22 @@ restores the message."
   :config
   (setq-default elfeed-search-filter "@1-month-ago +unread ")
 
-  (defface youtube-elfeed '((t :foreground "#E0CF9F"))
+  (defface youtube-elfeed-face '((t :foreground "#E0CF9F"))
     "face for youtube.com entries"
     :group 'elfeed-faces)
-  (push '(youtube youtube-elfeed) elfeed-search-face-alist)
-  (defface reddit-elfeed '((t :foreground "#9FC59F"))
+  (push '(youtube youtube-elfeed-face) elfeed-search-face-alist)
+  (defface reddit-elfeed-face '((t :foreground "#9FC59F"))
     "face for reddit.com entries"
     :group 'elfeed-faces)
-  (push '(reddit reddit-elfeed) elfeed-search-face-alist)
-  (defface blog-elfeed '((t :foreground "#DCA3A3"))
+  (push '(reddit reddit-elfeed-face) elfeed-search-face-alist)
+  (defface blog-elfeed-face '((t :foreground "#DCA3A3"))
     "face for blog entries"
     :group 'elfeed-faces)
-  (push '(blog blog-elfeed) elfeed-search-face-alist)
-  (defface emacs-elfeed '((t :foreground "#94BFF3"))
+  (push '(blog blog-elfeed-face) elfeed-search-face-alist)
+  (defface emacs-elfeed-face '((t :foreground "#94BFF3"))
     "face for emacs entries"
     :group 'elfeed-faces)
-  (push '(emacs emacs-elfeed) elfeed-search-face-alist)
+  (push '(emacs emacs-elfeed-face) elfeed-search-face-alist)
 
   (setq elfeed-feeds (jens/load-from-file (concat my-emacs-dir "elfeeds.el"))))
 
