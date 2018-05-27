@@ -2292,12 +2292,12 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
           (insert "[" link-title "]")
           (insert "(" link ")")))))
 
-(defun link-title-to-org-link (link title)
+(defun to-org-link (link title)
   (format "[[%s][%s]]" link title))
 
 (defun link-to-org-link (link)
   (let ((title (get-title-from-link link)))
-    (link-title-to-org-link link title)))
+    (to-org-link link title)))
 
 (defun link-to-org-link-region ()
   (interactive)
