@@ -1991,11 +1991,26 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :bind ("M-f" . fullscreen-toggle))
 
 (use-package today
+  :requires elfeed
   :demand t
-  :commands (today-capture-elfeed-at-point
-             today-capture-link)
+  :commands (today
+             today-list
+             today-move-to-date
+             today-move-to-tomorrow
+             today-capture--with-task
+             today-capture-elfeed-at-point)
   :bind
-  (("C-x C-t" . today-capture-link)
+  (("C-x t" . (lambda () (interactive)
+                (set-transient-map
+                 (let ((map (make-sparse-keymap)))
+                   (define-key map (kbd "r") (lambda () (interactive) (today-capture-with-task "read")))
+                   (define-key map (kbd "w") (lambda () (interactive) (today-capture-with-task "watch")))
+                   (define-key map (kbd "l") (lambda () (interactive) (today-list)))
+                   (define-key map (kbd "g") (lambda () (interactive) (today-goto-date)))
+                   (define-key map (kbd "d") (lambda () (interactive) (today-move-to-date)))
+                   (define-key map (kbd "m") (lambda () (interactive) (today-move-to-tomorrow)))
+                   (define-key map (kbd "t") (lambda () (interactive) (today)))
+                   map))))
    :map elfeed-search-mode-map
    ("t" . today-capture-elfeed-at-point))
   :config
@@ -2170,7 +2185,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (windmove-default-keybindings 'shift)
 
 ;; Force save a file, mnemonic is C-x TOUCH
-(global-set-key (kbd "C-x t") 'jens/touch-buffer-file)
+(global-set-key (kbd "C-x C-t") 'jens/touch-buffer-file)
 
 ;; Copy current line / region
 (global-set-key (kbd "M-w") 'jens/save-region-or-current-line)

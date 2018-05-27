@@ -91,34 +91,31 @@
   (interactive)
   (today--find-file-by-date (today--todays-date)))
 
-(defun today--capture-to-date (date task entry)
+(defun today--capture (date task entry)
   "Captures an ENTRY with TASK, into the planning file for DATE."
   (save-excursion
     (with-current-buffer (today--buffer-from-date date)
-      (print (current-buffer))
       (end-of-buffer)
       (newline)
       (insert "* TODO " task " " entry))))
 
-(defun today-capture-link ()
-  "Captures a LINK-TASK into todays planning file."
+(defun today-capture (task entry)
+  "Capture ENTRY with TASK into todays planning file."
+  (today--capture (today--todays-date) task entry))
+
+(defun today-capture-with-task (task)
+  "Prompt for ENTRY, then capture with TASK into todays planning file."
+  (letrec ((link (completing-read "link: " '()))
+           (org-link (link-to-org-link link)))
+    (today-capture task org-link)))
+
+(defun today-capture-prompt ()
+  "Captures a LINK into todays planning file, with the selected TASK."
   (interactive)
   (letrec ((task (completing-read "task: " today-capture-tasks))
            (link (completing-read "link: " '()))
            (org-link (link-to-org-link link)))
-    (today--capture-to-date (today--todays-date) task org-link)))
-
-(defun today-capture-elfeed-at-point ()
-  "Captures a TASK from selected elfeed entry."
-  (interactive)
-  (letrec ((todays-date (today--todays-date))
-           (entry (car (elfeed-search-selected)))
-           (link (elfeed-entry-link entry))
-           (title (elfeed-entry-title entry)))
-    (elfeed-untag entry 'unread)
-    (elfeed-search-update-entry entry)
-    (today--capture-to-date todays-date "elfeed" (link-title-to-org-link link title))
-    (next-line)))
+    (today-capture task org-link)))
 
 (defun today-list ()
   "List all dates from `today-directory', jump to the one selected."
@@ -127,7 +124,7 @@
            (date (completing-read "Date: " dates)))
     (today--find-file-by-date date)))
 
-(defun today-go-to ()
+(defun today-goto-date ()
   "Prompt for date, and go to corresponding planning file."
   (interactive)
   (letrec ((date (org-read-date)))
