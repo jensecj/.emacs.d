@@ -275,7 +275,7 @@
   (defun jens/pinentry-reset ()
     (pinentry-stop)
     (pinentry-start))
-  (setq gpg-reset-timer (run-with-timer 0 (* 60 60) #'jens/pinentry-reset)))
+  (setq gpg-reset-timer (run-with-timer 0 (* 60 30) #'jens/pinentry-reset)))
 
 (setq auth-sources
       '("~/vault/authinfo.gpg" "~/.netrc"))
