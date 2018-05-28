@@ -57,6 +57,14 @@
   "Today's date."
   (format-time-string "%Y-%m-%d"))
 
+(defun today--date-add-days (date days)
+  (letrec ((date-in-seconds (float-time (date-to-time (concat date " 12:00:00 EST"))))
+           (seconds-in-a-day (* 60 60 24))
+           (total-seconds-in-days (* days seconds-in-a-day))
+           (next-date-in-seconds (+ date-in-seconds total-seconds-in-days))
+           (next-date (format-time-string "%Y-%m-%d" next-date-in-seconds)))
+    next-date))
+
 (defun today--file-from-date (date)
   "Planning file corresponding to DATE."
   (f-join today-directory date (concat date ".org")))
