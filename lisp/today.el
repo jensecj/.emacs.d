@@ -171,4 +171,35 @@
     (today--create-path new-file)
     (today--move-subtree-action new-file)))
 
+(defun today--find-unfinished ()
+  "Get a list of all regexp matches in a string"
+  (save-match-data
+    (let ((unfinished-subtree-regexp "^* TODO")
+          (content (buffer-string))
+          (pos 0)
+          matches)
+      (while (string-match unfinished-subtree-regexp content pos)
+        (push pos matches)
+        (setq pos (match-end 0)))
+      matches)))
+
+(defun today--move-unfinished-action (date)
+  (letrec ((date-file (today--file-from-date date)))
+
+    (while (string-match "^\\* TODO" (buffer-string))
+      (message (buffer-string))
+      (if (>= (match-beginning 0) 0)
+          (progn
+            (goto-char (+ 1 (match-beginning 0)))
+            (today--move-subtree-action date-file))))))
+
+(defun today-move-unfinished-to-tomorrow ()
+  (interactive)
+  (letrec ((current-files-date (f-base (f-no-ext (buffer-file-name))))
+           (current-files-time-in-seconds (float-time (date-to-time (concat current-files-date " 12:00:00 EST"))))
+           (tomorrows-date (today--date-add-days current-files-date 1))
+           (tomorrows-file (today--file-from-date tomorrows-date)))
+    (today--create-path tomorrows-file)
+    (today--move-unfinished-action tomorrows-date)))
+
 (provide 'today)
