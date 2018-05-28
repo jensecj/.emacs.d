@@ -349,7 +349,7 @@
   (forward-line -1)
   (indent-for-tab-command))
 
-(defun jens/smart-line-beginning ()
+(defun jens/smart-beginning-of-line ()
   "Move point to the beginning of line or beginning of text"
   (interactive)
   (let ((pt (point)))
@@ -2156,7 +2156,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Better C-a
-(global-set-key (kbd "C-a") 'jens/smart-line-beginning)
+(global-set-key (kbd "C-a") 'jens/smart-beginning-of-line)
 
 ;; Join lines (pull the below line up to this one)
 (global-set-key (kbd "M-j") 'jens/join-region-or-line)
@@ -2337,7 +2337,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
      ("w" . (lambda (arg) (interactive "P") (jens/kill-region-or-current-line arg)))
      ("e" . (lambda () (interactive) (end-of-line)))
-     ("a" . (lambda () (interactive) (beginning-of-line)))
+     ("a" . (lambda () (interactive) (jens/smart-beginning-of-line)))
      ("u" . (lambda () (interactive) (scroll-down-command)))
      ("o" . (lambda () (interactive) (scroll-up-command)))
      ))
