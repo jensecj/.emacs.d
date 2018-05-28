@@ -24,14 +24,6 @@
 ;;; Commentary:
 
 ;; a simple daily planner, using org-mode.
-;; `today' will visit the file for the current date, creates it if it does not exist.
-;; `today-move-to-tomorrow' will move the subtree-at-point to tomorrows file.
-;; `today-move-to-date' will prompt for a date using the org-calendar, and
-;; move the subtree-at-point to the file for that date.
-;; `today-go-to' will prompt for a date using the org-calendar, then jump to the
-;; file for that date.
-;; `today-list' will list the dates for all files in `today-directory',
-;; selecting one will jump to that file.
 
 ;; you can add all the planning files to `org-agenda-files' by adding the
 ;; `today-directory', and then changing `org-agenda-file-regex' to match the
