@@ -24,13 +24,13 @@
 ;;; Commentary:
 
 ;; a simple daily planner, using org-mode.
-;; `today' will visit the planning file for the current date, creates it if it does not exist.
-;; `today-move-to-tomorrow' will move the subtree-at-point to tomorrows planning file.
+;; `today' will visit the file for the current date, creates it if it does not exist.
+;; `today-move-to-tomorrow' will move the subtree-at-point to tomorrows file.
 ;; `today-move-to-date' will prompt for a date using the org-calendar, and
-;; move the subtree-at-point to the planning file for that date.
+;; move the subtree-at-point to the file for that date.
 ;; `today-go-to' will prompt for a date using the org-calendar, then jump to the
-;; planning file for that date.
-;; `today-list' will list the dates for all planning files in `today-directory',
+;; file for that date.
+;; `today-list' will list the dates for all files in `today-directory',
 ;; selecting one will jump to that file.
 
 ;; you can add all the planning files to `org-agenda-files' by adding the
@@ -54,7 +54,7 @@
   "Tasks that can be captured by `today-capture' functions")
 
 (defun today--todays-date ()
-  "Today's date."
+  "Todays date."
   (format-time-string "%Y-%m-%d"))
 
 (defun today--date-add-days (date days)
@@ -66,41 +66,41 @@
     next-date))
 
 (defun today--file-from-date (date)
-  "Planning file corresponding to DATE."
+  "Returns the path to the file corresponding to DATE."
   (f-join today-directory date (concat date ".org")))
 
 (defun today--create-planning-file (filepath)
-  "Creates a planning file with PATH."
+  "Creates a planning file with FILEPATH."
   ;; create the planning directory if it does not exist
   (unless (f-exists? today-directory)
     (f-mkdir today-directory))
 
   (let ((dir (f-dirname filepath)))
-    ;; create directory of PATH if it does not exist
+    ;; create directory of FILEPATH if it does not exist
     (unless (f-exists? dir)
       (f-mkdir dir)))
 
-  ;; finally, create the file of PATH
+  ;; finally, create the file of FILEPATH
   (unless (f-exists? filepath)
     (f-touch filepath)))
 
 (defun today--buffer-from-date (date)
-  "Get the buffer for DATEs planning file, creates one if it does not exist."
+  "Get the buffer for DATEs file, creates one if it does not exist."
   (let ((file (today--file-from-date date)))
     (today--create-planning-file file)
     (find-file-noselect file)))
 
 (defun today--visit-date-file (date)
-  "Jump to the planning file for DATE, create it if it does not exist."
+  "Jump to the file for DATE, create it if it does not exist."
   (switch-to-buffer (today--buffer-from-date date)))
 
 (defun today ()
-  "Open todays planning file, create it if it does not exist."
+  "Open todays file, create it if it does not exist."
   (interactive)
   (today--visit-date-file (today--todays-date)))
 
 (defun today--capture (date task entry)
-  "Captures an ENTRY with TASK, into the planning file for DATE."
+  "Captures an ENTRY with TASK, into the file for DATE."
   (save-excursion
     (with-current-buffer (today--buffer-from-date date)
       (end-of-buffer)
@@ -108,17 +108,17 @@
       (insert "* TODO " task " " entry))))
 
 (defun today-capture (task entry)
-  "Capture ENTRY with TASK into todays planning file."
+  "Capture ENTRY with TASK into todays file."
   (today--capture (today--todays-date) task entry))
 
 (defun today-capture-with-task (task)
-  "Prompt for ENTRY, then capture with TASK into todays planning file."
+  "Prompt for ENTRY, then capture with TASK into todays file."
   (letrec ((link (completing-read "link: " '()))
            (org-link (link-to-org-link link)))
     (today-capture task org-link)))
 
 (defun today-capture-prompt ()
-  "Captures a LINK into todays planning file, with the selected TASK."
+  "Captures a LINK into todays file, with the selected TASK."
   (interactive)
   (letrec ((task (completing-read "task: " today-capture-tasks))
            (link (completing-read "link: " '()))
@@ -126,14 +126,14 @@
     (today-capture task org-link)))
 
 (defun today-list ()
-  "List all dates from `today-directory', jump to the one selected."
+  "List all files from `today-directory', jump to the one selected."
   (interactive)
   (letrec ((dates (-map #'f-base (f-directories today-directory)))
            (date (completing-read "Date: " dates)))
     (today--visit-date-file date)))
 
 (defun today-goto-date ()
-  "Prompt for date, and go to corresponding planning file."
+  "Prompt for date using `org-calendar', then visit the corresponding file."
   (interactive)
   (letrec ((date (org-read-date)))
     (today--visit-date-file date)))
@@ -151,7 +151,7 @@
     (previous-buffer)))
 
 (defun today-move-to-tomorrow ()
-  "Move a subtree from a planning file to tomorrows planning file."
+  "Move the subtree-at-point to the next days file."
   (interactive)
   (letrec ((todays-date-in-seconds (float-time))
            (current-files-date (f-base (f-no-ext (buffer-file-name))))
@@ -161,7 +161,7 @@
     (today--move-subtree-action tomorrows-file)))
 
 (defun today-move-to-date ()
-  "Moves a subtree to the selected date."
+  "Move the subtree-at-point to a date selected with `org-calendar'."
   (interactive)
   (letrec ((date (org-read-date))
            (new-file (today--file-from-date date)))
@@ -169,7 +169,7 @@
     (today--move-subtree-action new-file)))
 
 (defun today--find-unfinished ()
-  "Get a list of all regexp matches in a string"
+  "Find all unfinished tasks in the current buffer."
   (save-match-data
     (let ((unfinished-subtree-regexp "^* TODO")
           (content (buffer-string))
@@ -181,8 +181,8 @@
       matches)))
 
 (defun today--move-unfinished-to-date-action (date)
+  "Move all unfinished tasks to DATEs file."
   (letrec ((date-file (today--file-from-date date)))
-
     (while (string-match "^\\* TODO" (buffer-string))
       (message (buffer-string))
       (if (>= (match-beginning 0) 0)
@@ -191,6 +191,7 @@
             (today--move-subtree-action date-file))))))
 
 (defun today-move-unfinished-to-tomorrow ()
+  "Move all unfinished tasks in the current buffer, to tomorrows file."
   (interactive)
   (letrec ((current-files-date (f-base (f-no-ext (buffer-file-name))))
            (current-files-time-in-seconds (float-time (date-to-time (concat current-files-date " 12:00:00 EST"))))
@@ -200,6 +201,9 @@
     (today--move-unfinished-to-date-action tomorrows-date)))
 
 (defun today-move-unfinished-to-date ()
+  "Prompt for a date using `org-calendar', then move all
+unfinished tasks in the current buffer to the file for that
+date."
   (interactive)
   (letrec ((date (org-read-date))
            (next-date (today--date-add-days date 1))
