@@ -50,6 +50,7 @@
   (format-time-string "%Y-%m-%d"))
 
 (defun today--date-add-days (date days)
+  "Return the date DAYS after DATE."
   (letrec ((date-in-seconds (float-time (date-to-time (concat date " 12:00:00 EST"))))
            (seconds-in-a-day (* 60 60 24))
            (total-seconds-in-days (* days seconds-in-a-day))
@@ -77,7 +78,8 @@
     (f-touch filepath)))
 
 (defun today--buffer-from-date (date)
-  "Get the buffer for DATEs file, creates one if it does not exist."
+  "Get the buffer for DATEs file, creates one if it does not
+exist."
   (let ((file (today--file-from-date date)))
     (today--create-planning-file file)
     (find-file-noselect file)))
@@ -107,7 +109,8 @@
   "User agent used when fetching the website title of a link.")
 
 (defun today--get-title-from-link (link)
-  "Try to retrieve the website title from a link, requires `curl', `grep', and `recode'."
+  "Try to retrieve the website title from a link, requires
+`curl', `grep', and `recode'."
   (letrec ((-silence-output " -so - ")
            (-follow-redirects "-L")
            (-use-user-agent "'-A User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36'")
@@ -121,7 +124,8 @@
   (format "[[%s][%s]]" link title))
 
 (defun today--link-to-org-link (link)
-  "Try to get the website title of LINK, then convert into `org-link' format."
+  "Try to get the website title of LINK, then convert into
+`org-link' format."
   (let ((title (get-title-from-link link)))
     (to-org-link link title)))
 
@@ -140,20 +144,23 @@
     (today-capture task org-link)))
 
 (defun today-list ()
-  "List all files from `today-directory', jump to the one selected."
+  "List all files from `today-directory', jump to the one
+selected."
   (interactive)
   (letrec ((dates (-map #'f-base (f-directories today-directory)))
            (date (completing-read "Date: " dates)))
     (today--visit-date-file date)))
 
 (defun today-goto-date ()
-  "Prompt for date using `org-calendar', then visit the corresponding file."
+  "Prompt for date using `org-calendar', then visit the
+corresponding file."
   (interactive)
   (letrec ((date (org-read-date)))
     (today--visit-date-file date)))
 
 (defun today--move-subtree-action (destination-file)
-  "Move the org subtree at point, to the bottom of DESTINATION-FILE."
+  "Move the org subtree at point, to the bottom of
+DESTINATION-FILE."
   (org-cut-subtree)
   (save-buffer)
 
@@ -175,7 +182,8 @@
     (today--move-subtree-action tomorrows-file)))
 
 (defun today-move-to-date ()
-  "Move the subtree-at-point to a date selected with `org-calendar'."
+  "Move the subtree-at-point to a date selected with
+`org-calendar'."
   (interactive)
   (letrec ((date (org-read-date))
            (new-file (today--file-from-date date)))
@@ -205,7 +213,8 @@
             (today--move-subtree-action date-file))))))
 
 (defun today-move-unfinished-to-tomorrow ()
-  "Move all unfinished tasks in the current buffer, to tomorrows file."
+  "Move all unfinished tasks in the current buffer, to tomorrows
+file."
   (interactive)
   (letrec ((current-files-date (f-base (f-no-ext (buffer-file-name))))
            (current-files-time-in-seconds (float-time (date-to-time (concat current-files-date " 12:00:00 EST"))))
