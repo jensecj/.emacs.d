@@ -46,7 +46,7 @@
 (require 'dash)
 
 (defcustom today-directory
-  (concat user-emacs-directory "planning")
+  (concat user-emacs-directory "today-planner")
   "Directory used for planning files.")
 
 (defcustom today-capture-tasks
@@ -69,35 +69,35 @@
   "Planning file corresponding to DATE."
   (f-join today-directory date (concat date ".org")))
 
-(defun today--create-path (path)
+(defun today--create-planning-file (filepath)
   "Creates a planning file with PATH."
   ;; create the planning directory if it does not exist
   (unless (f-exists? today-directory)
     (f-mkdir today-directory))
 
-  (let ((dir (f-dirname path)))
+  (let ((dir (f-dirname filepath)))
     ;; create directory of PATH if it does not exist
     (unless (f-exists? dir)
       (f-mkdir dir)))
 
   ;; finally, create the file of PATH
-  (unless (f-exists? path)
-    (f-touch path)))
+  (unless (f-exists? filepath)
+    (f-touch filepath)))
 
 (defun today--buffer-from-date (date)
   "Get the buffer for DATEs planning file, creates one if it does not exist."
   (let ((file (today--file-from-date date)))
-    (today--create-path file)
+    (today--create-planning-file file)
     (find-file-noselect file)))
 
-(defun today--find-file-by-date (date)
+(defun today--visit-date-file (date)
   "Jump to the planning file for DATE, create it if it does not exist."
   (switch-to-buffer (today--buffer-from-date date)))
 
 (defun today ()
   "Open todays planning file, create it if it does not exist."
   (interactive)
-  (today--find-file-by-date (today--todays-date)))
+  (today--visit-date-file (today--todays-date)))
 
 (defun today--capture (date task entry)
   "Captures an ENTRY with TASK, into the planning file for DATE."
@@ -130,13 +130,13 @@
   (interactive)
   (letrec ((dates (-map #'f-base (f-directories today-directory)))
            (date (completing-read "Date: " dates)))
-    (today--find-file-by-date date)))
+    (today--visit-date-file date)))
 
 (defun today-goto-date ()
   "Prompt for date, and go to corresponding planning file."
   (interactive)
   (letrec ((date (org-read-date)))
-    (today--find-file-by-date date)))
+    (today--visit-date-file date)))
 
 (defun today--move-subtree-action (destination-file)
   "Move the org subtree at point, to the bottom of DESTINATION-FILE."
@@ -157,7 +157,7 @@
            (current-files-date (f-base (f-no-ext (buffer-file-name))))
            (tomorrows-date (today--date-add-days current-files-date 1))
            (tomorrows-file (today--file-from-date tomorrows-date)))
-    (today--create-path tomorrows-file)
+    (today--create-planning-file tomorrows-file)
     (today--move-subtree-action tomorrows-file)))
 
 (defun today-move-to-date ()
@@ -165,7 +165,7 @@
   (interactive)
   (letrec ((date (org-read-date))
            (new-file (today--file-from-date date)))
-    (today--create-path new-file)
+    (today--create-planning-file new-file)
     (today--move-subtree-action new-file)))
 
 (defun today--find-unfinished ()
@@ -180,7 +180,7 @@
         (setq pos (match-end 0)))
       matches)))
 
-(defun today--move-unfinished-action (date)
+(defun today--move-unfinished-to-date-action (date)
   (letrec ((date-file (today--file-from-date date)))
 
     (while (string-match "^\\* TODO" (buffer-string))
@@ -196,15 +196,15 @@
            (current-files-time-in-seconds (float-time (date-to-time (concat current-files-date " 12:00:00 EST"))))
            (tomorrows-date (today--date-add-days current-files-date 1))
            (tomorrows-file (today--file-from-date tomorrows-date)))
-    (today--create-path tomorrows-file)
-    (today--move-unfinished-action tomorrows-date)))
+    (today--create-planning-file tomorrows-file)
+    (today--move-unfinished-to-date-action tomorrows-date)))
 
 (defun today-move-unfinished-to-date ()
   (interactive)
   (letrec ((date (org-read-date))
            (next-date (today--date-add-days date 1))
            (next-file (today--file-from-date next-date)))
-    (today--create-path next-file)
-    (today--move-unfinished-action next-date)))
+    (today--create-planning-file next-file)
+    (today--move-unfinished-to-date-action next-date)))
 
 (provide 'today)
