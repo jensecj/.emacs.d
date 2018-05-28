@@ -5,7 +5,7 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: fullscreen
-;; Package-Version: 20180515
+;; Package-Version: 20180528
 ;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
