@@ -111,10 +111,32 @@
   "Capture ENTRY with TASK into todays file."
   (today--capture (today--todays-date) task entry))
 
+(defvar today--user-agent-string "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36"
+  "Usea agent used when fetching the website title of a link.")
+
+(defun today--get-title-from-link (link)
+  "Try to retrieve the website title from a link, requires `curl', `grep', and `recode'."
+  (letrec ((-silence-output " -so - ")
+           (-follow-redirects "-L")
+           (-use-user-agent "'-A User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36'")
+           (grep-title "grep -iPo '(?<=<title>)(.*)(?=</title>)'")
+           (recode-to-utf8 "recode html..utf8")
+           (curl-command (concat "curl" " " -follow-redirects " " -use-user-agent " '" link "'" -silence-output " | " grep-title " | " recode-to-utf8)))
+    (s-trim (shell-command-to-string curl-command))))
+
+(defun today--to-org-link (link title)
+  "Convert a link and its title into an `org-link' format."
+  (format "[[%s][%s]]" link title))
+
+(defun today--link-to-org-link (link)
+  "Try to get the website title of LINK, then convert into `org-link' format."
+  (let ((title (get-title-from-link link)))
+    (to-org-link link title)))
+
 (defun today-capture-with-task (task)
   "Prompt for ENTRY, then capture with TASK into todays file."
   (letrec ((link (completing-read "link: " '()))
-           (org-link (link-to-org-link link)))
+           (org-link (today--link-to-org-link link)))
     (today-capture task org-link)))
 
 (defun today-capture-prompt ()
@@ -122,7 +144,7 @@
   (interactive)
   (letrec ((task (completing-read "task: " today-capture-tasks))
            (link (completing-read "link: " '()))
-           (org-link (link-to-org-link link)))
+           (org-link (today--link-to-org-link link)))
     (today-capture task org-link)))
 
 (defun today-list ()
