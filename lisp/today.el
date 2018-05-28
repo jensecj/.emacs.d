@@ -49,6 +49,10 @@
   "Todays date."
   (format-time-string "%Y-%m-%d"))
 
+(defun today--current-files-date ()
+  "Get the date of the current file."
+  (f-base (f-no-ext (buffer-file-name))))
+
 (defun today--date-add-days (date days)
   "Return the date DAYS after DATE."
   (letrec ((date-in-seconds (float-time (date-to-time (concat date " 12:00:00 EST"))))
@@ -158,37 +162,32 @@ corresponding file."
   (letrec ((date (org-read-date)))
     (today--visit-date-file date)))
 
-(defun today--move-subtree-action (destination-file)
+(defun today--move-subtree-action (date)
   "Move the org subtree at point, to the bottom of
-DESTINATION-FILE."
+the file corresponding to DATE."
   (org-cut-subtree)
   (save-buffer)
-
-  (with-current-buffer (find-file destination-file)
+  (message (format "move action got: %s" date))
+  (with-current-buffer (today--buffer-from-date date)
     (org-mode)
     (goto-char (point-max))
     (yank)
-    (save-buffer)
-    (previous-buffer)))
+    (save-buffer)))
 
 (defun today-move-to-tomorrow ()
   "Move the subtree-at-point to the next days file."
   (interactive)
-  (letrec ((todays-date-in-seconds (float-time))
-           (current-files-date (f-base (f-no-ext (buffer-file-name))))
-           (tomorrows-date (today--date-add-days current-files-date 1))
-           (tomorrows-file (today--file-from-date tomorrows-date)))
-    (today--create-planning-file tomorrows-file)
-    (today--move-subtree-action tomorrows-file)))
+  (letrec ((current-files-date (today--current-files-date))
+           (tomorrows-date (today--date-add-days current-files-date 1)))
+    (today--move-subtree-action tomorrows-date)))
 
 (defun today-move-to-date ()
   "Move the subtree-at-point to a date selected with
 `org-calendar'."
   (interactive)
-  (letrec ((date (org-read-date))
-           (new-file (today--file-from-date date)))
-    (today--create-planning-file new-file)
-    (today--move-subtree-action new-file)))
+  (letrec ((date (org-read-date)))
+    (today--move-subtree-action date)))
+
 
 (defun today--find-unfinished ()
   "Find all unfinished tasks in the current buffer."
@@ -204,20 +203,18 @@ DESTINATION-FILE."
 
 (defun today--move-unfinished-to-date-action (date)
   "Move all unfinished tasks to DATEs file."
-  (letrec ((date-file (today--file-from-date date)))
-    (while (string-match "^\\* TODO" (buffer-string))
-      (message (buffer-string))
-      (if (>= (match-beginning 0) 0)
-          (progn
-            (goto-char (+ 1 (match-beginning 0)))
-            (today--move-subtree-action date-file))))))
+  (while (string-match "^\\* TODO" (buffer-string))
+    (message (buffer-string))
+    (if (>= (match-beginning 0) 0)
+        (progn
+          (goto-char (+ 1 (match-beginning 0)))
+          (today--move-subtree-action date)))))
 
 (defun today-move-unfinished-to-tomorrow ()
   "Move all unfinished tasks in the current buffer, to tomorrows
 file."
   (interactive)
-  (letrec ((current-files-date (f-base (f-no-ext (buffer-file-name))))
-           (current-files-time-in-seconds (float-time (date-to-time (concat current-files-date " 12:00:00 EST"))))
+  (letrec ((current-files-date (today--current-files-date))
            (tomorrows-date (today--date-add-days current-files-date 1))
            (tomorrows-file (today--file-from-date tomorrows-date)))
     (today--create-planning-file tomorrows-file)
