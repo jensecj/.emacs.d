@@ -202,4 +202,12 @@
     (today--create-path tomorrows-file)
     (today--move-unfinished-action tomorrows-date)))
 
+(defun today-move-unfinished-to-date ()
+  (interactive)
+  (letrec ((date (org-read-date))
+           (next-date (today--date-add-days date 1))
+           (next-file (today--file-from-date next-date)))
+    (today--create-path next-file)
+    (today--move-unfinished-action next-date)))
+
 (provide 'today)
