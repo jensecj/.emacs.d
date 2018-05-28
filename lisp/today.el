@@ -112,7 +112,7 @@
   (today--capture (today--todays-date) task entry))
 
 (defvar today--user-agent-string "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36"
-  "Usea agent used when fetching the website title of a link.")
+  "User agent used when fetching the website title of a link.")
 
 (defun today--get-title-from-link (link)
   "Try to retrieve the website title from a link, requires `curl', `grep', and `recode'."
