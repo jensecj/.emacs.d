@@ -264,6 +264,8 @@ date."
     (today--move-unfinished-to-date-action next-date)))
 
 (require 'hydra)
+;; This hydra will exit on one-off commands, such as `today-list', or
+;; `today-goto-date', but will persist when using capture or movement commands.
 (defhydra today-hydra (:foreign-keys run)
   "
 ^Capture^                   ^Move^                     ^Actions^
