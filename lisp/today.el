@@ -4,9 +4,9 @@
 ;; Copyright (C) 2018 Jens Christian Jensen
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
-;; Keywords: fullscreen
-;; Package-Version: 20180528
-;; Version: 0.1
+;; Keywords: org, org-mode, planning, today
+;; Package-Version: 20180529
+;; Version: 0.2
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -23,14 +23,40 @@
 
 ;;; Commentary:
 
-;; a simple daily planner, using org-mode.
+;; A simple daily planner, using org-mode.
 
-;; you can add all the planning files to `org-agenda-files' by adding the
+;; A collection of commands that enable a certain workflow of creating,
+;; manipulating, and ordering files, to enable low-hassle daily planning.
+
+;; All the planning files can be added to `org-agenda-files' by appending
 ;; `today-directory', and then changing `org-agenda-file-regex' to match the
-;; subdirectories of `today-directory'.
-;; a less intrusive way is to hook `org-agenda', and find all the .org files
-;; recursively on each invocation. (note: this will be slow for big collections
-;; for files)
+;; sub-directories of `today-directory'.  A less intrusive way is to hook
+;; `org-agenda', and find all the .org files recursively on each invocation.
+
+;; (require 'f)
+;; (defun load-org-agenda-files ()
+;;   (setq org-agenda-files
+;;         (append '("")
+;;                 (f-glob "**/*.org" "~/org/today-planner"))))
+
+;; (advice-add 'org-agenda :before #'load-org-agenda-files)
+
+;; (note: this will be slow for big collections for files):
+
+;;; Notes on the structure:
+
+;; Each entry is a directory inside of `today-directory', whose name is the date
+;; for that entry. The org file for the entry resides in this directory, and is
+;; also named with the date, ending with the `.org' extension.  This is done so
+;; that each entry can have its own extra content, e.g. images, or other files,
+;; reside in its directory and not interfere with the other entries.  `today'
+;; tries to create the planning file which is the target of a command, e.g. when
+;; using `today-move-to-tomorrow' (or other similar commands), the file for
+;; tomorrows date will be created if it does not exist.  `today' also tries to
+;; figure out the proper date for a command, e.g. if you're visiting a planning
+;; file which is not for today's date, using `today-move-to-tomorrow' (or any
+;; other movement commands) will figure out the correct date in relation to the
+;; visited file.
 
 ;;; Code:
 
@@ -46,7 +72,7 @@
   "Tasks that can be captured by `today-capture' functions")
 
 (defun today--todays-date ()
-  "Todays date."
+  "Today's date."
   (format-time-string "%Y-%m-%d"))
 
 (defun today--current-files-date ()
