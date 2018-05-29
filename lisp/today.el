@@ -167,7 +167,6 @@ corresponding file."
 the file corresponding to DATE."
   (org-cut-subtree)
   (save-buffer)
-  (message (format "move action got: %s" date))
   (with-current-buffer (today--buffer-from-date date)
     (org-mode)
     (goto-char (point-max))
@@ -186,7 +185,6 @@ the file corresponding to DATE."
 `org-calendar', or, if using the prefix argument, move it n-days
 relative to the current file."
   (interactive "P")
-  (message (format "arg: %S" arg))
   (letrec ((date (if arg
                      (today--date-add-days (today--current-files-date) arg)
                    (org-read-date))))
@@ -207,7 +205,6 @@ relative to the current file."
 (defun today--move-unfinished-to-date-action (date)
   "Move all unfinished tasks to DATEs file."
   (while (string-match "^\\* TODO" (buffer-string))
-    (message (buffer-string))
     (if (>= (match-beginning 0) 0)
         (progn
           (goto-char (+ 1 (match-beginning 0)))
