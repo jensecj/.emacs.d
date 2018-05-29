@@ -242,6 +242,8 @@
 ;; if moving the poijt more than 10 lines away,
 ;; center point in the middle of the window, otherwise be conservative.
 (setq scroll-conservatively 10)
+;; only scroll the current line when moving outside window-bounds
+(setq auto-hscroll-mode 'current-line)
 
 (setq initial-scratch-message "")
 
