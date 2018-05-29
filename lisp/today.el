@@ -240,14 +240,14 @@ _r_: capture read task      _m_: move to tomorrow      _t_: go to todays file
 _w_: capture write task     _d_: move to date          _l_: list all date files
 _c_: capture with prompt    ^ ^                        _g_: go to date from `org-calendar'
 "
-  ("r" (lambda () (interactive) (today-capture-with-task "read")))
-  ("w" (lambda () (interactive) (today-capture-with-task "watch")))
+  ("t" #'today :exit t)
   ("l" #'today-list :exit t)
   ("g" #'today-goto-date :exit t)
   ("d" #'today-move-to-date)
   ("m" #'today-move-to-tomorrow)
-  ("t" #'today :exit t)
-  ("c" #'today-capture-prompt :exit t)
+  ("c" #'today-capture-prompt)
+  ("r" (lambda () (interactive) (today-capture-with-task "read")))
+  ("w" (lambda () (interactive) (today-capture-with-task "watch")))
   ("q" nil "quit"))
 
 (provide 'today)
