@@ -1998,19 +1998,22 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
              today-move-to-date
              today-move-to-tomorrow
              today-capture--with-task
-             today-capture-elfeed-at-point)
+             today-capture-elfeed-at-point
+             today-hydra/body)
   :bind
-  (("C-x t" . (lambda () (interactive)
-                (set-transient-map
-                 (let ((map (make-sparse-keymap)))
-                   (define-key map (kbd "r") (lambda () (interactive) (today-capture-with-task "read")))
-                   (define-key map (kbd "w") (lambda () (interactive) (today-capture-with-task "watch")))
-                   (define-key map (kbd "l") (lambda () (interactive) (today-list)))
-                   (define-key map (kbd "g") (lambda () (interactive) (today-goto-date)))
-                   (define-key map (kbd "d") (lambda () (interactive) (today-move-to-date)))
-                   (define-key map (kbd "m") (lambda () (interactive) (today-move-to-tomorrow)))
-                   (define-key map (kbd "t") (lambda () (interactive) (today)))
-                   map))))
+  (("C-x t" . today-hydra/body
+    ;; (lambda (arg) (interactive "P")
+    ;;   (set-transient-map
+    ;;    (let ((map (make-sparse-keymap)))
+    ;;      (define-key map (kbd "r") (lambda () (interactive) (today-capture-with-task "read")))
+    ;;      (define-key map (kbd "w") (lambda () (interactive) (today-capture-with-task "watch")))
+    ;;      (define-key map (kbd "l") #'today-list)
+    ;;      (define-key map (kbd "g") #'today-goto-date)
+    ;;      (define-key map (kbd "d") #'today-move-to-date)
+    ;;      (define-key map (kbd "m") #'today-move-to-tomorrow)
+    ;;      (define-key map (kbd "t") #'today)
+    ;;      map)))
+    )
    :map elfeed-search-mode-map
    ("t" . today-capture-elfeed-at-point))
   :config
