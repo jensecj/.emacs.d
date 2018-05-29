@@ -232,7 +232,7 @@ date."
     (today--move-unfinished-to-date-action next-date)))
 
 (require 'hydra)
-(defhydra today-hydra (:exit t)
+(defhydra today-hydra (:foreign-keys run)
   "
 ^Capture^                   ^Move^                     ^Actions^
 ^^^^^^^^-----------------------------------------------------------------
@@ -242,11 +242,12 @@ _c_: capture with prompt    ^ ^                        _g_: go to date from `org
 "
   ("r" (lambda () (interactive) (today-capture-with-task "read")))
   ("w" (lambda () (interactive) (today-capture-with-task "watch")))
-  ("l" #'today-list)
-  ("g" #'today-goto-date)
+  ("l" #'today-list :exit t)
+  ("g" #'today-goto-date :exit t)
   ("d" #'today-move-to-date)
   ("m" #'today-move-to-tomorrow)
-  ("t" #'today)
-  ("c" #'today-capture-prompt))
+  ("t" #'today :exit t)
+  ("c" #'today-capture-prompt :exit t)
+  ("q" nil "quit"))
 
 (provide 'today)
