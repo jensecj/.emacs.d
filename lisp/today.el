@@ -181,13 +181,16 @@ the file corresponding to DATE."
            (tomorrows-date (today--date-add-days current-files-date 1)))
     (today--move-subtree-action tomorrows-date)))
 
-(defun today-move-to-date ()
+(defun today-move-to-date (arg)
   "Move the subtree-at-point to a date selected with
-`org-calendar'."
-  (interactive)
-  (letrec ((date (org-read-date)))
+`org-calendar', or, if using the prefix argument, move it n-days
+relative to the current file."
+  (interactive "P")
+  (message (format "arg: %S" arg))
+  (letrec ((date (if arg
+                     (today--date-add-days (today--current-files-date) arg)
+                   (org-read-date))))
     (today--move-subtree-action date)))
-
 
 (defun today--find-unfinished ()
   "Find all unfinished tasks in the current buffer."
