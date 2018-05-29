@@ -43,7 +43,7 @@
 
 ;; (note: this will be slow for big collections for files):
 
-;;; Notes on the structure:
+;;; Notes on structure:
 
 ;; Each entry is a directory inside of `today-directory', whose name is the date
 ;; for that entry. The org file for the entry resides in this directory, and is
@@ -76,7 +76,8 @@
   (format-time-string "%Y-%m-%d"))
 
 (defun today--current-files-date ()
-  "Get the date of the current file."
+  "Get the date of the current file. See `Notes on structure' for
+explanation."
   (f-base (f-no-ext (buffer-file-name))))
 
 (defun today--date-add-days (date days)
@@ -108,19 +109,20 @@
     (f-touch filepath)))
 
 (defun today--buffer-from-date (date)
-  "Get the buffer for DATEs file, creates one if it does not
-exist."
+  "Get the buffer for DATEs file, if the buffer does not exist,
+then visit the corresponding file, if the file does not exist,
+then create it."
   (let ((file (today--file-from-date date)))
     (today--create-planning-file file)
     (find-file-noselect file)))
 
 (defun today--visit-date-file (date)
-  "Jump to the file for DATE, create it if it does not exist."
+  "Visit the file for DATE, create it if it does not exist."
   (switch-to-buffer (today--buffer-from-date date)))
 
 ;;;###autoload
 (defun today ()
-  "Open today's file, create it if it does not exist."
+  "Visit today's file, create it if it does not exist."
   (interactive)
   (today--visit-date-file (today--todays-date)))
 
@@ -152,7 +154,7 @@ exist."
     (s-trim (shell-command-to-string curl-command))))
 
 (defun today--to-org-link (link title)
-  "Convert a link and its title into an `org-link' format."
+  "Convert a link and its title into `org-link' format."
   (format "[[%s][%s]]" link title))
 
 (defun today--link-to-org-link (link)
@@ -163,14 +165,14 @@ exist."
 
 ;;;###autoload
 (defun today-capture-with-task (task)
-  "Prompt for ENTRY, then capture with TASK into todays file."
+  "Prompt for ENTRY, then capture with TASK into today's file."
   (letrec ((link (completing-read "link: " '()))
            (org-link (today--link-to-org-link link)))
     (today-capture task org-link)))
 
 ;;;###autoload
 (defun today-capture-prompt ()
-  "Captures a LINK into todays file, with the selected TASK."
+  "Captures a LINK into today's file, with the selected TASK."
   (interactive)
   (letrec ((task (completing-read "task: " today-capture-tasks))
            (link (completing-read "link: " '()))
@@ -179,7 +181,7 @@ exist."
 
 ;;;###autoload
 (defun today-list ()
-  "List all files from `today-directory', jump to the one
+  "List all files from `today-directory', visit the one
 selected."
   (interactive)
   (letrec ((dates (-map #'f-base (f-directories today-directory)))
@@ -195,8 +197,8 @@ corresponding file."
     (today--visit-date-file date)))
 
 (defun today--move-subtree-action (date)
-  "Move the org subtree at point, to the bottom of
-the file corresponding to DATE."
+  "Move the subtree-at-point, to the bottom of the file
+corresponding to DATE."
   (org-cut-subtree)
   (save-buffer)
   (with-current-buffer (today--buffer-from-date date)
@@ -207,7 +209,7 @@ the file corresponding to DATE."
 
 ;;;###autoload
 (defun today-move-to-tomorrow ()
-  "Move the subtree-at-point to the next days file."
+  "Move the subtree-at-point to tomorrows file."
   (interactive)
   (letrec ((current-files-date (today--current-files-date))
            (tomorrows-date (today--date-add-days current-files-date 1)))
@@ -216,31 +218,29 @@ the file corresponding to DATE."
 ;;;###autoload
 (defun today-move-to-date (arg)
   "Move the subtree-at-point to a date selected with
-`org-calendar', or, if using the prefix argument, move it n-days
-relative to the current file."
+`org-calendar', or, if using a prefix argument, move it n-days
+relative to the current file. (also works with negative
+prefixes)"
   (interactive "P")
   (letrec ((date (if arg
                      (today--date-add-days (today--current-files-date) arg)
                    (org-read-date))))
     (today--move-subtree-action date)))
 
-(defun today--find-unfinished ()
-  "Find all unfinished tasks in the current buffer."
-  (save-match-data
-    (let ((unfinished-subtree-regexp "^* TODO")
-          (content (buffer-string))
-          (pos 0)
-          matches)
-      (while (string-match unfinished-subtree-regexp content pos)
-        (push pos matches)
-        (setq pos (match-end 0)))
-      matches)))
+(defcustom today--unfinished-task-regexp "^\\* TODO "
+  "The regexp used to search for a incomplete tasks.")
 
 (defun today--move-unfinished-to-date-action (date)
   "Move all unfinished tasks to DATEs file."
-  (while (string-match "^\\* TODO" (buffer-string))
+  ;; `today--move-subtree-action' is a destructive action, so each iteration
+  ;; should have fewer found matches occurring than the previous, there's no
+  ;; reason to move the search position along, since it would be changing
+  ;; anyway, because of cutting the subtree-at-point.
+  (while (string-match today--unfinished-task-regexp (buffer-strixng))
     (if (>= (match-beginning 0) 0)
         (progn
+          ;; move 1 character into the found line, to make sure we're on the
+          ;; correct line, and not on the last character of the previous line.
           (goto-char (+ 1 (match-beginning 0)))
           (today--move-subtree-action date)))))
 
@@ -250,9 +250,7 @@ relative to the current file."
 file."
   (interactive)
   (letrec ((current-files-date (today--current-files-date))
-           (tomorrows-date (today--date-add-days current-files-date 1))
-           (tomorrows-file (today--file-from-date tomorrows-date)))
-    (today--create-planning-file tomorrows-file)
+           (tomorrows-date (today--date-add-days current-files-date 1)))
     (today--move-unfinished-to-date-action tomorrows-date)))
 
 ;;;###autoload
@@ -262,9 +260,7 @@ unfinished tasks in the current buffer to the file for that
 date."
   (interactive)
   (letrec ((date (org-read-date))
-           (next-date (today--date-add-days date 1))
-           (next-file (today--file-from-date next-date)))
-    (today--create-planning-file next-file)
+           (next-date (today--date-add-days date 1)))
     (today--move-unfinished-to-date-action next-date)))
 
 (require 'hydra)
