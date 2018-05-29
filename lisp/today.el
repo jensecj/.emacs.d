@@ -118,8 +118,9 @@ exist."
   "Jump to the file for DATE, create it if it does not exist."
   (switch-to-buffer (today--buffer-from-date date)))
 
+;;;###autoload
 (defun today ()
-  "Open todays file, create it if it does not exist."
+  "Open today's file, create it if it does not exist."
   (interactive)
   (today--visit-date-file (today--todays-date)))
 
@@ -131,6 +132,7 @@ exist."
       (newline)
       (insert "* TODO " task " " entry))))
 
+;;;###autoload
 (defun today-capture (task entry)
   "Capture ENTRY with TASK into todays file."
   (today--capture (today--todays-date) task entry))
@@ -159,12 +161,14 @@ exist."
   (let ((title (get-title-from-link link)))
     (to-org-link link title)))
 
+;;;###autoload
 (defun today-capture-with-task (task)
   "Prompt for ENTRY, then capture with TASK into todays file."
   (letrec ((link (completing-read "link: " '()))
            (org-link (today--link-to-org-link link)))
     (today-capture task org-link)))
 
+;;;###autoload
 (defun today-capture-prompt ()
   "Captures a LINK into todays file, with the selected TASK."
   (interactive)
@@ -173,6 +177,7 @@ exist."
            (org-link (today--link-to-org-link link)))
     (today-capture task org-link)))
 
+;;;###autoload
 (defun today-list ()
   "List all files from `today-directory', jump to the one
 selected."
@@ -181,6 +186,7 @@ selected."
            (date (completing-read "Date: " dates)))
     (today--visit-date-file date)))
 
+;;;###autoload
 (defun today-goto-date ()
   "Prompt for date using `org-calendar', then visit the
 corresponding file."
@@ -199,6 +205,7 @@ the file corresponding to DATE."
     (yank)
     (save-buffer)))
 
+;;;###autoload
 (defun today-move-to-tomorrow ()
   "Move the subtree-at-point to the next days file."
   (interactive)
@@ -206,6 +213,7 @@ the file corresponding to DATE."
            (tomorrows-date (today--date-add-days current-files-date 1)))
     (today--move-subtree-action tomorrows-date)))
 
+;;;###autoload
 (defun today-move-to-date (arg)
   "Move the subtree-at-point to a date selected with
 `org-calendar', or, if using the prefix argument, move it n-days
@@ -236,6 +244,7 @@ relative to the current file."
           (goto-char (+ 1 (match-beginning 0)))
           (today--move-subtree-action date)))))
 
+;;;###autoload
 (defun today-move-unfinished-to-tomorrow ()
   "Move all unfinished tasks in the current buffer, to tomorrows
 file."
@@ -246,6 +255,7 @@ file."
     (today--create-planning-file tomorrows-file)
     (today--move-unfinished-to-date-action tomorrows-date)))
 
+;;;###autoload
 (defun today-move-unfinished-to-date ()
   "Prompt for a date using `org-calendar', then move all
 unfinished tasks in the current buffer to the file for that
