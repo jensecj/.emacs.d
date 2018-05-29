@@ -1990,6 +1990,8 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (use-package fullscreen
   :bind ("M-f" . fullscreen-toggle))
 
+(use-package hydra :ensure t)
+
 (use-package today
   :requires elfeed
   :demand t
