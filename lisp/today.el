@@ -254,12 +254,15 @@ file."
     (today--move-unfinished-to-date-action tomorrows-date)))
 
 ;;;###autoload
-(defun today-move-unfinished-to-date ()
-  "Prompt for a date using `org-calendar', then move all
-unfinished tasks in the current buffer to the file for that
-date."
-  (interactive)
-  (letrec ((date (org-read-date))
+(defun today-move-unfinished-to-date (arg)
+  "Move unfinished tasks from the current file to a new date. If
+called with a prefix argument, move to the file n-days relative
+to the current file, otherwise prompt for a date using
+`org-calendar'."
+  (interactive "P")
+  (letrec ((date (if arg
+                     (today--date-add-days (today--current-files-date) arg)
+                   (org-read-date)))
            (next-date (today--date-add-days date 1)))
     (today--move-unfinished-to-date-action next-date)))
 
