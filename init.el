@@ -33,7 +33,7 @@
 (defconst my-emacs-temp-dir (concat my-emacs-dir ".temp/"))
 ;; config and cache files
 (defconst my-emacs-data-dir (concat my-emacs-dir "data/"))
-;; backups and auto saves
+;; backups, auto saves, etc.
 (defconst my-emacs-backup-dir (concat my-emacs-data-dir "backups/"))
 
 ;; create them if they don't exist
@@ -58,9 +58,6 @@
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")))
-
-(require 'package)
-(package-initialize)
 
 ;; install use-package if we don't already have it
 (unless (package-installed-p 'use-package)
@@ -1058,6 +1055,8 @@ restores the message."
   (defface face-darker '((t (:background "grey25" :inherit mode-line))) "" :group 'powerline)
   (defface face-darkest '((t (:background "grey20" :inherit mode-line))) "" :group 'powerline)
 
+  (require 'pdf-tools)
+
   ;; Setup the powerline theme
   (setq-default
    mode-line-format
@@ -1124,9 +1123,7 @@ restores the message."
 ;; COMPANY-MODE
 (use-package company
   :ensure t
-  :defer t
-  :config
-  (company-quickhelp-mode nil))
+  :defer t)
 
 ;; AUTO-COMPLETE-MODE
 (use-package ac-rtags :ensure t :defer t)
@@ -1591,8 +1588,8 @@ restores the message."
 
 (use-package elfeed
   :ensure t
-  :commands elfeed
   :defer t
+  :commands elfeed
   :config
   (setq-default elfeed-search-filter "@1-month-ago +unread ")
 
@@ -1658,7 +1655,7 @@ restores the message."
   :commands erc-hl-nicks-enable)
 (use-package erc
   :defer t
-  :after (auth-source-pass erc-hl-nicks)
+  :after (auth-source-pass)
   :functions ercgo
   :commands erc-tls
   :config
@@ -1972,7 +1969,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :functions enable-spellchecking
   :commands (flyspell-mode
              flyspell-buffer)
-  :defines enable-spellchecking
   :config
   (ispell-change-dictionary "english")
 
@@ -2002,7 +1998,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (use-package hydra :ensure t)
 
 (use-package today
-  :requires elfeed
   :demand t
   :commands (today
              today-list
