@@ -277,7 +277,9 @@
   (defun jens/pinentry-reset ()
     (pinentry-stop)
     (pinentry-start))
-  (setq gpg-reset-timer (run-with-timer 0 (* 60 30) #'jens/pinentry-reset)))
+  (setq gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset))
+  ;; (cancel-timer gpg-reset-timer)
+  )
 
 (setq auth-sources
       '("~/vault/authinfo.gpg" "~/.netrc"))
@@ -872,7 +874,6 @@ restores the message."
     (message "indented"))
 
   (defun jens/load-org-agenda-files ()
-    (interactive)
     (setq org-agenda-files
           (append '("")
                   (f-glob "**/*.org" "~/vault/org/planning"))))
@@ -1624,8 +1625,13 @@ restores the message."
 
 (use-package rainbow-mode :ensure t :defer t)
 
+(use-package simple
+  :defines auto-fill-mode
+  :hook (org-mode . auto-fill-mode))
+
 (use-package abbrev
   :demand t
+  :hook (org-mode . abbrev-mode)
   :commands read-abbrev-file
   :config
   (setq abbrev-file-name (concat my-emacs-data-dir "abbreviations"))
