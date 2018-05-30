@@ -1966,13 +1966,14 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :functions enable-spellchecking
   :commands (flyspell-mode
              flyspell-buffer)
+  :defines enable-spellchecking
   :config
   (ispell-change-dictionary "english")
 
   (defun enable-spellchecking ()
     (interactive)
     (ispell-change-dictionary "english")
-    (flyspell-mode)
+    (flyspell-prog-mode)
     (flyspell-buffer)))
 
 (use-package zenburn-theme
