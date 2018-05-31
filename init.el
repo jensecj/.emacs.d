@@ -1335,16 +1335,24 @@ restores the message."
   (("C-d" . mc/mark-next-like-this)
    ("C-S-d" . mc/mark-previous-like-this)
    ("C-M-a" . mc/mark-all-like-this)
-   ("C-M-m" . (lambda ()
-                (interactive)
-                (message "n -> mark next \nN -> skip to next \np -> mark previous \nP -> skip to previous")
-                (jens/one-shot-keymap
-                 '(("n" . mc/mark-next-like-this)
-                   ("N" . mc/skip-to-next-like-this)
-                   ("p" . mc/mark-previous-like-this)
-                   ("P" . mc/skip-to-previous-like-this))))))
+   ("C-M-m" . mc-hydra/body))
   :init
-  (setq mc/list-file (concat my-emacs-data-dir "mc-lists")))
+  (setq mc/list-file (concat my-emacs-data-dir "mc-lists"))
+  :config
+  (defhydra mc-hydra ()
+    "
+^Next^                ^Previous^
+^^^^^^^^----------------------------------------------------
+_n_: Mark next        _p_: Mark previous
+_N_: Skip to next     _P_: Skip to previous
+_M-n_: Unmark next    _M-p_: Unmark previous
+"
+    ("n" #'mc/mark-next-like-this)
+    ("N" #'mc/skip-to-next-like-this)
+    ("M-n" #'mc/unmark-next-like-this)
+    ("p" #'mc/mark-previous-like-this)
+    ("P" #'mc/skip-to-previous-like-this)
+    ("M-p" #'mc/unmark-previous-like-this)))
 
 (use-package browse-kill-ring
   :ensure t
