@@ -230,19 +230,20 @@ prefixes)"
 (defcustom today--unfinished-task-regexp "^\\* TODO "
   "The regexp used to search for a incomplete tasks.")
 
-(defun today--move-unfinished-to-date-action (date)
+(defun today--move-unfinished-to-date-action (source-date destination-date)
   "Move all unfinished tasks to DATEs file."
   ;; `today--move-subtree-action' is a destructive action, so each iteration
   ;; should have fewer found matches occurring than the previous, there's no
   ;; reason to move the search position along, since it would be changing
   ;; anyway, because of cutting the subtree-at-point.
-  (while (string-match today--unfinished-task-regexp (buffer-strixng))
-    (if (>= (match-beginning 0) 0)
-        (progn
-          ;; move 1 character into the found line, to make sure we're on the
-          ;; correct line, and not on the last character of the previous line.
-          (goto-char (+ 1 (match-beginning 0)))
-          (today--move-subtree-action date)))))
+  (with-current-buffer (today--buffer-from-date source-date)
+    (while (string-match today--unfinished-task-regexp (buffer-string))
+      (if (>= (match-beginning 0) 0)
+          (progn
+            ;; move 1 character into the found line, to make sure we're on the
+            ;; correct line, and not on the last character of the previous line.
+            (goto-char (+ 1 (match-beginning 0)))
+            (today--move-subtree-action destination-date))))))
 
 ;;;###autoload
 (defun today-move-unfinished-to-tomorrow ()
@@ -251,7 +252,8 @@ file."
   (interactive)
   (letrec ((current-files-date (today--current-files-date))
            (tomorrows-date (today--date-add-days current-files-date 1)))
-    (today--move-unfinished-to-date-action tomorrows-date)))
+    (today--move-unfinished-to-date-action current-files-date tomorrows-date)))
+
 
 ;;;###autoload
 (defun today-move-unfinished-to-date (arg)
@@ -264,27 +266,31 @@ to the current file, otherwise prompt for a date using
                      (today--date-add-days (today--current-files-date) arg)
                    (org-read-date)))
            (next-date (today--date-add-days date 1)))
-    (today--move-unfinished-to-date-action next-date)))
+    (today--move-unfinished-to-date-action date next-date)))
 
 (require 'hydra)
 ;; This hydra will exit on one-off commands, such as `today-list', or
 ;; `today-goto-date', but will persist when using capture or movement commands.
 (defhydra today-hydra (:foreign-keys run)
   "
-^Capture^                   ^Move^                     ^Actions^
-^^^^^^^^-----------------------------------------------------------------
-_r_: capture read task      _m_: move to tomorrow      _t_: go to todays file
-_w_: capture write task     _d_: move to date          _l_: list all date files
-_c_: capture with prompt    ^ ^                        _g_: go to date from `org-calendar'
+^Capture^                   ^Move^                          ^Actions^
+^^^^^^^^--------------------------------------------------------------------------------------
+_r_: capture read task      _m_: move to tomorrow          _t_: go to todays file
+_w_: capture write task     _d_: move to date              _l_: list all date files
+_c_: capture with prompt    _u_: move TODOs to tomorrow    _g_: go to date from `org-calendar'
 "
+  ("r" (lambda () (interactive) (today-capture-with-task "read")))
+  ("w" (lambda () (interactive) (today-capture-with-task "watch")))
+  ("c" #'today-capture-prompt)
+
+  ("m" #'today-move-to-tomorrow)
+  ("d" #'today-move-to-date)
+  ("u" #'today-move-unfinished-to-tomorrow)
+
   ("t" #'today :exit t)
   ("l" #'today-list :exit t)
   ("g" #'today-goto-date :exit t)
-  ("d" #'today-move-to-date)
-  ("m" #'today-move-to-tomorrow)
-  ("c" #'today-capture-prompt)
-  ("r" (lambda () (interactive) (today-capture-with-task "read")))
-  ("w" (lambda () (interactive) (today-capture-with-task "watch")))
+
   ("q" nil "quit"))
 
 (provide 'today)
