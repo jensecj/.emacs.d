@@ -871,6 +871,7 @@ restores the message."
     (message "indented"))
 
   (defun jens/load-org-agenda-files ()
+    (interactive)
     (setq org-agenda-files
           (append '("")
                   (f-glob "**/*.org" "~/vault/org/planning"))))
