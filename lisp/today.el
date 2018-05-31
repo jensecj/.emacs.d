@@ -258,6 +258,24 @@ file."
            (tomorrows-date (today--date-add-days current-files-date 1)))
     (today--move-unfinished-to-date-action current-files-date tomorrows-date)))
 
+(defun today--dates-earlier-than (date)
+  "Get all available dates, of files earlier than DATE."
+  (letrec ((file-dates (today--list-of-files))
+           (sorting-fn (lambda (s) (string< s date)))
+           (earlier-dates (-filter sorting-fn file-dates)))
+    earlier-dates))
+
+;;;###autoload
+(defun today-move-unfinished-from-previous ()
+  "Move all unfinished tasks from the previous file, to the
+current file."
+  (interactive)
+  (letrec ((current-files-date (today--current-files-date))
+           (earlier-dates (today--dates-earlier-than current-files-date))
+           (previous-files-date (car earlier-dates)))
+    (if previous-files-date
+        (today--move-unfinished-to-date-action previous-files-date current-files-date)
+      (message "No previous file found!"))))
 
 ;;;###autoload
 (defun today-move-unfinished-to-date (arg)
@@ -279,9 +297,10 @@ to the current file, otherwise prompt for a date using
   "
 ^Capture^                   ^Move^                          ^Actions^
 ^^^^^^^^--------------------------------------------------------------------------------------
-_r_: capture read task      _m_: move to tomorrow          _t_: go to todays file
-_w_: capture write task     _d_: move to date              _l_: list all date files
-_c_: capture with prompt    _u_: move TODOs to tomorrow    _g_: go to date from `org-calendar'
+_r_: capture read task      _m_: move to tomorrow             _t_: go to todays file
+_w_: capture write task     _d_: move to date                 _l_: list all date files
+_c_: capture with prompt    _u_: move TODOs to tomorrow       _g_: go to date from `org-calendar'
+^ ^                         _U_: move old TODOs to this file  ^ ^
 "
   ("r" (lambda () (interactive) (today-capture-with-task "read")))
   ("w" (lambda () (interactive) (today-capture-with-task "watch")))
@@ -290,6 +309,7 @@ _c_: capture with prompt    _u_: move TODOs to tomorrow    _g_: go to date from 
   ("m" #'today-move-to-tomorrow)
   ("d" #'today-move-to-date)
   ("u" #'today-move-unfinished-to-tomorrow)
+  ("U" #'today-move-unfinished-from-previous)
 
   ("t" #'today :exit t)
   ("l" #'today-list :exit t)
