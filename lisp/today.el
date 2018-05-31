@@ -142,7 +142,7 @@ then create it."
 (defvar today--user-agent-string "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36"
   "User agent used when fetching the website title of a link.")
 
-(defun today--get-title-from-link (link)
+(defun today--get-website-title-from-link (link)
   "Try to retrieve the website title from a link, requires
 `curl', `grep', and `recode'."
   (letrec ((-silence-output " -so - ")
@@ -153,6 +153,10 @@ then create it."
            (curl-command (concat "curl" " " -follow-redirects " " -use-user-agent " '" link "'" -silence-output " | " grep-title " | " recode-to-utf8)))
     (s-trim (shell-command-to-string curl-command))))
 
+(defun today--get-website-lines-from-link (link)
+  "Try to retrieve the number of lines on the website of LINK. requires `lynx'."
+  (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" link))))
+
 (defun today--to-org-link (link title)
   "Convert a link and its title into `org-link' format."
   (format "[[%s][%s]]" link title))
@@ -160,15 +164,19 @@ then create it."
 (defun today--link-to-org-link (link)
   "Try to get the website title of LINK, then convert into
 `org-link' format."
-  (let ((title (get-title-from-link link)))
+  (let ((title (today--get-website-title-from-link link)))
     (to-org-link link title)))
 
 ;;;###autoload
 (defun today-capture-with-task (task)
   "Prompt for ENTRY, then capture with TASK into today's file."
   (letrec ((link (completing-read "link: " '()))
-           (org-link (today--link-to-org-link link)))
-    (today-capture task org-link)))
+           (org-link (today--link-to-org-link link))
+           (lines (if (string= task "read")
+                      (today--get-website-lines-from-link link)
+                    ""))
+           (entry (concat "(" lines " lines) " org-link)))
+    (today-capture task entry)))
 
 ;;;###autoload
 (defun today-capture-prompt ()
