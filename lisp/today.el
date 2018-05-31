@@ -179,12 +179,16 @@ then create it."
            (org-link (today--link-to-org-link link)))
     (today-capture task org-link)))
 
+(defun today--list-of-files ()
+  "Get the list of all planning files, from newest to oldest."
+  (reverse (-map #'f-base (f-directories today-directory))))
+
 ;;;###autoload
 (defun today-list ()
   "List all files from `today-directory', visit the one
 selected."
   (interactive)
-  (letrec ((dates (-map #'f-base (f-directories today-directory)))
+  (letrec ((dates (today--list-of-files))
            (date (completing-read "Date: " dates)))
     (today--visit-date-file date)))
 
