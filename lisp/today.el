@@ -5,7 +5,7 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: org, org-mode, planning, today
-;; Package-Version: 20180529
+;; Package-Version: 20180601
 ;; Version: 0.2
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@
 
 ;; (require 'f)
 ;; (defun load-org-agenda-files ()
+;;   (interactive)
 ;;   (setq org-agenda-files
 ;;         (append '("")
 ;;                 (f-glob "**/*.org" "~/org/today-planner"))))
@@ -186,6 +187,19 @@ then create it."
            (link (completing-read "link: " '()))
            (org-link (today--link-to-org-link link)))
     (today-capture task org-link)))
+
+(defun today-capture-elfeed-at-point ()
+  "Captures a TASK from selected elfeed entry."
+  (interactive)
+  (letrec ((todays-date (today--todays-date))
+           (entry (car (elfeed-search-selected)))
+           (link (elfeed-entry-link entry))
+           (title (elfeed-entry-title entry))
+           (org-link (today--to-org-link link title)))
+    (elfeed-untag entry 'unread)
+    (elfeed-search-update-entry entry)
+    (today--capture todays-date "elfeed" org-link)
+    (next-line)))
 
 (defun today--list-of-files ()
   "Get the list of all planning files, from newest to oldest."
