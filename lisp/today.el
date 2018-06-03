@@ -7,6 +7,7 @@
 ;; Keywords: org, org-mode, planning, today
 ;; Package-Version: 20180601
 ;; Version: 0.2
+;; Package-Requires: ((emacs "25.1") (org "9.0") (dash "2.14.1") (f "0.20.0") (hydra "0.14.0") (org-web-tools "0.1.0-pre"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -63,6 +64,7 @@
 
 (require 'f)
 (require 'dash)
+(require 'org-web-tools)
 
 (defcustom today-directory
   (concat user-emacs-directory "today-planner")
@@ -140,19 +142,10 @@ then create it."
   "Capture ENTRY with TASK into todays file."
   (today--capture (today--todays-date) task entry))
 
-(defvar today--user-agent-string "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36"
-  "User agent used when fetching the website title of a link.")
-
 (defun today--get-website-title-from-link (link)
-  "Try to retrieve the website title from a link, requires
-`curl', `grep', and `recode'."
-  (letrec ((-silence-output " -so - ")
-           (-follow-redirects "-L")
-           (-use-user-agent "'-A User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36'")
-           (grep-title "grep -iPo '(?<=<title>)(.*)(?=</title>)'")
-           (recode-to-utf8 "recode html..utf8")
-           (curl-command (concat "curl" " " -follow-redirects " " -use-user-agent " '" link "'" -silence-output " | " grep-title " | " recode-to-utf8)))
-    (s-trim (shell-command-to-string curl-command))))
+  "Try to retrieve the website title from a link, requires `org-web-tools'."
+  (with-current-buffer (url-retrieve-synchronously link)
+    (org-web-tools--html-title (buffer-string))))
 
 (defun today--get-website-lines-from-link (link)
   "Try to retrieve the number of lines on the website of LINK. requires `lynx'."
