@@ -676,6 +676,12 @@ restores the message."
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
 
+(defun jens/processor-count ()
+  (when (file-exists-p "/proc/cpuinfo")
+    (with-temp-buffer
+      (insert-file-contents "/proc/cpuinfo")
+      (how-many "^processor[[:space:]]+:"))))
+
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
