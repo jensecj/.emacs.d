@@ -156,7 +156,8 @@ then create it."
 
 (defun today--get-website-lines-from-link (link)
   "Try to retrieve the number of lines on the website of LINK. requires `lynx'."
-  (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" link))))
+  (let ((lines (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" link)))))
+    (if (< (length lines) 5) lines "?")))
 
 (defun today--to-org-link (link title)
   "Convert a link and its title into `org-link' format."
@@ -174,9 +175,9 @@ then create it."
   (letrec ((link (completing-read "link: " '()))
            (org-link (today--link-to-org-link link))
            (lines (if (string= task "read")
-                      (today--get-website-lines-from-link link)
+                      (concat "(" (today--get-website-lines-from-link link) " lines) ")
                     ""))
-           (entry (concat "(" lines " lines) " org-link)))
+           (entry (concat lines org-link)))
     (today-capture task entry)))
 
 ;;;###autoload
