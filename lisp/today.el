@@ -125,11 +125,19 @@ explanation."
   "Tasks that can be captured by `today-capture' functions")
 
 (defun today--capture-read-handler (content)
+  "Handler for READ task. Expects CONTENT to be a link to some
+website. Will try to extract the number of lines on the website,
+and add to the front of the entry. Will also try to extract the
+title of the website, and convert the link into an `org-mode'
+link, using the title."
   (let ((lines (today--get-website-lines-from-link content))
         (org-link (today--link-to-org-link content)))
     (format "read (%s lines) %s" lines org-link)))
 
 (defun today--capture-watch-handler (link)
+  "Handler for the WATCH task. Expects CONTENT to be a link to a
+website, will try to extract the title of the website, and create
+an `org-mode' link using that title."
   (letrec ((title (today--get-website-title-from-link link))
            (entry (today--to-org-link link title)))
     (format "watch %s" entry)))
@@ -185,12 +193,11 @@ then create it."
 
 (defun today--capture (date task entry)
   "Captures an ENTRY with TASK, into the file for DATE."
-  (letrec ((content (today--apply-handler task entry)))
-    (save-excursion
-      (with-current-buffer (today--buffer-from-date date)
-        (end-of-buffer)
-        (newline)
-        (insert "* TODO " content)))))
+  (let ((content (today--apply-handler task entry)))
+    (with-current-buffer (today--buffer-from-date date)
+      (end-of-buffer)
+      (newline)
+      (insert "* TODO " content))))
 
 ;;;###autoload
 (defun today-capture (task entry)
