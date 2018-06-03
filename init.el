@@ -488,6 +488,9 @@ otherwise comment or uncomment the current line."
 ;; lisp defuns ;;
 ;;;;;;;;;;;;;;;;;
 
+;; easy 'commenting out' of sexps
+(defmacro comment (&rest args))
+
 ;; easy interactive lambda forms
 (defmacro xi (lam)
   `(lambda ()
