@@ -353,25 +353,35 @@ does not exist, as will the containing task."
              (completed-checkbox-regex "^\\- \\[X\\]"))
       (while (string-match empty-checkbox-regex (buffer-string) pos)
         (when (>= (match-beginning 0) 0)
+          (message "found checkbox task")
+          ;; go to the heading containing the found checkboxes
           (goto-char (match-beginning 0))
           (outline-previous-heading)
-          (org-copy-subtree)
 
+          ;; copy the entire subtree to the new file, then remove checked
+          ;; checkboxes
+          (org-copy-subtree)
           (with-current-buffer (today--buffer-from-date date)
+            ;; insert at the end of the file
             (end-of-buffer)
             (yank)
-            (beginning-of-buffer)
+            ;; then jump back up, remove the checked checkboxes, and update the
+            ;; checkbox status
+            (outline-previous-heading)
             (delete-matching-lines completed-checkbox-regex)
-            (org-update-checkbox-count 't)
+            (org-update-checkbox-count)
             (save-buffer))
 
+          ;; remove the unchecked checkboxes from the source entry, and update
+          ;; its TODO-state, and the checkbox count
+          (org-mark-subtree)
+          (delete-matching-lines empty-checkbox-regex (region-beginning) (region-end) 't)
+          (org-todo)
+          (org-update-checkbox-count)
+
+          ;; go to the next entry and continue searching
           (outline-next-heading)
-          (setq pos (- (point) 1))
-          )
-        )
-      (beginning-of-buffer)
-      (delete-matching-lines empty-checkbox-regex)
-      (org-update-checkbox-count 't)
+          (setq pos (- (point) 1))))
       (save-buffer))))
 
 (defun today-move-unfinished-checkboxes-to-tomorrow ()
