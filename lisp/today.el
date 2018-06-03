@@ -342,6 +342,46 @@ to the current file, otherwise prompt for a date using
            (next-date (today--date-add-days date 1)))
     (today--move-unfinished-to-date-action date next-date)))
 
+(defun today--move-unfinished-checkboxes-to-date (date)
+  "Move all unfinished checkboxes to DATEs file. removing them
+from the current file. The destination file will be created if it
+does not exist, as will the containing task."
+  (interactive)
+  (save-excursion
+    (letrec ((pos 0)
+             (empty-checkbox-regex "^\\- \\[ \\]")
+             (completed-checkbox-regex "^\\- \\[X\\]"))
+      (while (string-match empty-checkbox-regex (buffer-string) pos)
+        (when (>= (match-beginning 0) 0)
+          (goto-char (match-beginning 0))
+          (outline-previous-heading)
+          (org-copy-subtree)
+
+          (with-current-buffer (today--buffer-from-date date)
+            (end-of-buffer)
+            (yank)
+            (beginning-of-buffer)
+            (delete-matching-lines completed-checkbox-regex)
+            (org-update-checkbox-count 't)
+            (save-buffer))
+
+          (outline-next-heading)
+          (setq pos (- (point) 1))
+          )
+        )
+      (beginning-of-buffer)
+      (delete-matching-lines empty-checkbox-regex)
+      (org-update-checkbox-count 't)
+      (save-buffer))))
+
+(defun today-move-unfinished-checkboxes-to-tomorrow ()
+  "Move unfinished checkboxes to tomorrows file, creating the
+containing task if it does not exist."
+  (interactive)
+  (today--move-unfinished-checkboxes-to-date
+   (today--date-add-days (today--current-files-date) 1)))
+
+
 (require 'hydra)
 ;; This hydra will exit on one-off commands, such as `today-list', or
 ;; `today-goto-date', but will persist when using capture or movement commands.
