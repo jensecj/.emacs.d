@@ -66,13 +66,33 @@
 (require 'dash)
 (require 'org-web-tools)
 
-(defcustom today-directory
-  (concat user-emacs-directory "today-planner")
-  "Directory used for planning files.")
+;;;;;;;;;;;;;;;
+;; Web Utils ;;
+;;;;;;;;;;;;;;;
 
-(defcustom today-capture-tasks
-  '("read" "watch")
-  "Tasks that can be captured by `today-capture' functions")
+(defun today--get-website-title-from-link (link)
+  "Try to retrieve the website title from a link, requires `org-web-tools'."
+  (with-current-buffer (url-retrieve-synchronously link)
+    (org-web-tools--html-title (buffer-string))))
+
+(defun today--get-website-lines-from-link (link)
+  "Try to retrieve the number of lines on the website of LINK. requires `lynx'."
+  (let ((lines (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" link)))))
+    (if (< (length lines) 5) lines "?")))
+
+(defun today--to-org-link (link title)
+  "Convert a link and its title into `org-link' format."
+  (format "[[%s][%s]]" link title))
+
+(defun today--link-to-org-link (link)
+  "Try to get the website title of LINK, then convert into
+`org-link' format."
+  (let ((title (today--get-website-title-from-link link)))
+    (to-org-link link title)))
+
+;;;;;;;;;;;;;;;;
+;; Date Utils ;;
+;;;;;;;;;;;;;;;;
 
 (defun today--todays-date ()
   "Today's date."
@@ -91,6 +111,34 @@ explanation."
            (next-date-in-seconds (+ date-in-seconds total-seconds-in-days))
            (next-date (format-time-string "%Y-%m-%d" next-date-in-seconds)))
     next-date))
+
+;;;;;;;;;;
+;; Main ;;
+;;;;;;;;;;
+
+(defcustom today-directory
+  (concat user-emacs-directory "today-planner")
+  "Directory used for planning files.")
+
+(defcustom today-capture-tasks
+  '(read watch)
+  "Tasks that can be captured by `today-capture' functions")
+
+(defun today--capture-read-handler (content)
+  (let ((lines (today--get-website-lines-from-link content))
+        (org-link (today--link-to-org-link content)))
+    (format "read (%s lines) %s" lines org-link)))
+
+(defun today--capture-watch-handler (link)
+  (letrec ((title (today--get-website-title-from-link link))
+           (entry (today--to-org-link link title)))
+    (format "watch %s" entry)))
+
+(defvar today-capture-handlers-alist
+  '((read . today--capture-read-handler)
+    (watch . today--capture-watch-handler))
+  "List of capture tasks and their associated handlers. A handler
+  recieves the capture content as a parameter.")
 
 (defun today--file-from-date (date)
   "Returns the path to the file corresponding to DATE."
@@ -129,58 +177,39 @@ then create it."
   (interactive)
   (today--visit-date-file (today--todays-date)))
 
+(defun today--apply-handler (task entry)
+  (let ((handler (assoc task today-capture-handlers-alist)))
+    (if handler
+        (funcall (cdr handler) entry)
+      entry)))
+
 (defun today--capture (date task entry)
   "Captures an ENTRY with TASK, into the file for DATE."
-  (save-excursion
-    (with-current-buffer (today--buffer-from-date date)
-      (end-of-buffer)
-      (newline)
-      (insert "* TODO " task " " entry))))
+  (letrec ((content (today--apply-handler task entry)))
+    (save-excursion
+      (with-current-buffer (today--buffer-from-date date)
+        (end-of-buffer)
+        (newline)
+        (insert "* TODO " content)))))
 
 ;;;###autoload
 (defun today-capture (task entry)
   "Capture ENTRY with TASK into todays file."
   (today--capture (today--todays-date) task entry))
 
-(defun today--get-website-title-from-link (link)
-  "Try to retrieve the website title from a link, requires `org-web-tools'."
-  (with-current-buffer (url-retrieve-synchronously link)
-    (org-web-tools--html-title (buffer-string))))
-
-(defun today--get-website-lines-from-link (link)
-  "Try to retrieve the number of lines on the website of LINK. requires `lynx'."
-  (let ((lines (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" link)))))
-    (if (< (length lines) 5) lines "?")))
-
-(defun today--to-org-link (link title)
-  "Convert a link and its title into `org-link' format."
-  (format "[[%s][%s]]" link title))
-
-(defun today--link-to-org-link (link)
-  "Try to get the website title of LINK, then convert into
-`org-link' format."
-  (let ((title (today--get-website-title-from-link link)))
-    (to-org-link link title)))
-
 ;;;###autoload
 (defun today-capture-with-task (task)
   "Prompt for ENTRY, then capture with TASK into today's file."
-  (letrec ((link (completing-read "link: " '()))
-           (org-link (today--link-to-org-link link))
-           (lines (if (string= task "read")
-                      (concat "(" (today--get-website-lines-from-link link) " lines) ")
-                    ""))
-           (entry (concat lines org-link)))
-    (today-capture task entry)))
+  (letrec ((link (completing-read "link: " '())))
+    (today-capture task link)))
 
 ;;;###autoload
 (defun today-capture-prompt ()
   "Captures a LINK into today's file, with the selected TASK."
   (interactive)
   (letrec ((task (completing-read "task: " today-capture-tasks))
-           (link (completing-read "link: " '()))
-           (org-link (today--link-to-org-link link)))
-    (today-capture task org-link)))
+           (link (completing-read "link: " '())))
+    (today-capture task xlink)))
 
 (defun today-capture-elfeed-at-point ()
   "Captures a TASK from selected elfeed entry."
@@ -192,7 +221,7 @@ then create it."
            (org-link (today--to-org-link link title)))
     (elfeed-untag entry 'unread)
     (elfeed-search-update-entry entry)
-    (today--capture todays-date "elfeed" org-link)
+    (today--capture todays-date 'elfeed org-link)
     (next-line)))
 
 (defun today--list-of-files ()
@@ -318,8 +347,8 @@ _w_: capture write task     _d_: move to date                 _l_: list all date
 _c_: capture with prompt    _u_: move TODOs to tomorrow       _g_: go to date from `org-calendar'
 ^ ^                         _U_: move old TODOs to this file  ^ ^
 "
-  ("r" (lambda () (interactive) (today-capture-with-task "read")))
-  ("w" (lambda () (interactive) (today-capture-with-task "watch")))
+  ("r" (lambda () (interactive) (today-capture-with-task 'read)))
+  ("w" (lambda () (interactive) (today-capture-with-task 'watch)))
   ("c" #'today-capture-prompt)
 
   ("m" #'today-move-to-tomorrow)
