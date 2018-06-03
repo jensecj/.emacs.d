@@ -292,6 +292,7 @@ prefixes)"
   ;; should have fewer found matches occurring than the previous, there's no
   ;; reason to move the search position along, since it would be changing
   ;; anyway, because of cutting the subtree-at-point.
+  (today--move-unfinished-checkboxes-to-date destination-date)
   (with-current-buffer (today--buffer-from-date source-date)
     (while (string-match today--unfinished-task-regexp (buffer-string))
       (if (>= (match-beginning 0) 0)
@@ -384,6 +385,7 @@ does not exist, as will the containing task."
           (setq pos (- (point) 1))))
       (save-buffer))))
 
+;;;###autoload
 (defun today-move-unfinished-checkboxes-to-tomorrow ()
   "Move unfinished checkboxes to tomorrows file, creating the
 containing task if it does not exist."
