@@ -44,7 +44,7 @@ applying handler on ENTRY, otherwise return ENTRY."
   "Captures an ENTRY with TASK, into the file for DATE."
   (let ((content (today-capture--apply-handler task entry)))
     (with-current-buffer (today-fs-buffer-from-date date)
-      (end-of-buffer)
+      (goto-char (point-max))
       (newline)
       (insert "* TODO " content))))
 

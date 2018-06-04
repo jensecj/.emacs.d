@@ -107,7 +107,7 @@ does not exist, as will the containing task."
           (org-copy-subtree)
           (with-current-buffer (today-fs-buffer-from-date date)
             ;; insert at the end of the file
-            (end-of-buffer)
+            (goto-char (point-max))
             (yank)
             ;; then jump back up, remove the checked checkboxes, and update the
             ;; checkbox status

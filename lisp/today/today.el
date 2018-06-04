@@ -94,7 +94,6 @@ corresponding file."
   (letrec ((date (org-read-date)))
     (today-fs-visit-date-file date)))
 
-
 ;; This hydra will exit on one-off commands, such as `today-list', or
 ;; `today-goto-date', but will persist when using capture or movement commands.
 (require 'hydra)
