@@ -6,7 +6,7 @@
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: org, org-mode, planning, today, todo
 ;; Package-Version: 20180604
-;; Version: 0.3
+;; Version: 0.4
 ;; Package-Requires: ((emacs "25.1") (org "9.0") (dash "2.14.1") (f "0.20.0") (hydra "0.14.0") (org-web-tools "0.1.0-pre"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -62,189 +62,29 @@
 
 ;;; Code:
 
-(require 'f)
-(require 'dash)
-(require 'org-web-tools)
-
-;;;;;;;;;;;;;;;
-;; Web Utils ;;
-;;;;;;;;;;;;;;;
-
-(defun today--get-website-title-from-link (link)
-  "Try to retrieve the website title from a link, requires `org-web-tools'."
-  (with-current-buffer (url-retrieve-synchronously link)
-    (org-web-tools--html-title (buffer-string))))
-
-(defun today--get-website-lines-from-link (link)
-  "Try to retrieve the number of lines on the website of LINK. requires `lynx'."
-  (let ((lines (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" link)))))
-    (if (< (length lines) 5) lines "?")))
-
-(defun today--to-org-link (link title)
-  "Convert a link and its title into `org-link' format."
-  (format "[[%s][%s]]" link title))
-
-(defun today--link-to-org-link (link)
-  "Try to get the website title of LINK, then convert into
-`org-link' format."
-  (let ((title (today--get-website-title-from-link link)))
-    (to-org-link link title)))
-
-;;;;;;;;;;;;;;;;
-;; Date Utils ;;
-;;;;;;;;;;;;;;;;
-
-(defun today--todays-date ()
-  "Today's date."
-  (format-time-string "%Y-%m-%d"))
-
-(defun today--current-files-date ()
-  "Get the date of the current file. See `Notes on structure' for
-explanation."
-  (f-base (f-no-ext (buffer-file-name))))
-
-(defun today--date-add-days (date days)
-  "Return the date DAYS after DATE."
-  (letrec ((date-in-seconds (float-time (date-to-time (concat date " 12:00:00 EST"))))
-           (seconds-in-a-day (* 60 60 24))
-           (total-seconds-in-days (* days seconds-in-a-day))
-           (next-date-in-seconds (+ date-in-seconds total-seconds-in-days))
-           (next-date (format-time-string "%Y-%m-%d" next-date-in-seconds)))
-    next-date))
-
-;;;;;;;;;;
-;; Main ;;
-;;;;;;;;;;
-
 (defcustom today-directory
   (concat user-emacs-directory "today-planner")
   "Directory used for planning files.")
 
-(defcustom today-capture-tasks
-  '(read watch)
-  "Tasks that can be captured by `today-capture' functions")
-
-(defun today--capture-read-link-handler (content)
-  "Handler for READ task. Expects CONTENT to be a link to some
-website. Will try to extract the number of lines on the website,
-and add to the front of the entry. Will also try to extract the
-title of the website, and convert the link into an `org-mode'
-link, using the title."
-  (let ((lines (today--get-website-lines-from-link content))
-        (org-link (today--link-to-org-link content)))
-    (format "read (%s lines) %s" lines org-link)))
-
-(defun today--capture-watch-link-handler (link)
-  "Handler for the WATCH task. Expects CONTENT to be a link to a
-website, will try to extract the title of the website, and create
-an `org-mode' link using that title."
-  (letrec ((title (today--get-website-title-from-link link))
-           (entry (today--to-org-link link title)))
-    (format "watch %s" entry)))
-
-(defvar today-capture-handlers-alist
-  '((read . today--capture-read-link-handler)
-    (watch . today--capture-watch-link-handler))
-  "List of capture tasks and their associated handlers. A handler
-  recieves the capture content as a parameter.")
-
-(defun today--file-from-date (date)
-  "Returns the path to the file corresponding to DATE."
-  (f-join today-directory date (concat date ".org")))
-
-(defun today--create-planning-file (filepath)
-  "Creates a planning file with FILEPATH."
-  ;; create the planning directory if it does not exist
-  (unless (f-exists? today-directory)
-    (f-mkdir today-directory))
-
-  (let ((dir (f-dirname filepath)))
-    ;; create directory of FILEPATH if it does not exist
-    (unless (f-exists? dir)
-      (f-mkdir dir)))
-
-  ;; finally, create the file of FILEPATH
-  (unless (f-exists? filepath)
-    (f-touch filepath)))
-
-(defun today--buffer-from-date (date)
-  "Get the buffer for DATEs file, if the buffer does not exist,
-then visit the corresponding file, if the file does not exist,
-then create it."
-  (let ((file (today--file-from-date date)))
-    (today--create-planning-file file)
-    (find-file-noselect file)))
-
-(defun today--visit-date-file (date)
-  "Visit the file for DATE, create it if it does not exist."
-  (switch-to-buffer (today--buffer-from-date date)))
+(require 'today-fs)
+(require 'today-util)
+(require 'today-capture)
+(require 'today-move)
 
 ;;;###autoload
 (defun today ()
   "Visit today's file, create it if it does not exist."
   (interactive)
-  (today--visit-date-file (today--todays-date)))
-
-(defun today--apply-handler (task entry)
-  "If a handler exists for TASK, then return the result of
-applying handler on ENTRY, otherwise return ENTRY."
-  (let ((handler (assoc task today-capture-handlers-alist)))
-    (if handler
-        (funcall (cdr handler) entry)
-      entry)))
-
-;;;###autoload
-(defun today-capture-to-date (date task entry)
-  "Captures an ENTRY with TASK, into the file for DATE."
-  (let ((content (today--apply-capture-handler task entry)))
-    (with-current-buffer (today--buffer-from-date date)
-      (end-of-buffer)
-      (newline)
-      (insert "* TODO " content))))
-
-;;;###autoload
-(defun today-capture (task entry)
-  "Capture ENTRY with TASK into todays file."
-  (today-capture-to-date (today--todays-date) task entry))
-
-;;;###autoload
-(defun today-capture-link-with-task (task)
-  "Prompt for ENTRY, then capture with TASK into today's file."
-  (letrec ((link (completing-read "link: " '())))
-    (today-capture task link)))
-
-;;;###autoload
-(defun today-capture-prompt ()
-  "Captures a LINK into today's file, with the selected TASK."
-  (interactive)
-  (letrec ((task (completing-read "task: " today-capture-tasks))
-           (entry (completing-read "entry: " '())))
-    (today-capture task entry)))
-
-(defun today-capture-elfeed-at-point ()
-  "Captures a TASK from selected elfeed entry."
-  (interactive)
-  (letrec ((entry (car (elfeed-search-selected)))
-           (link (elfeed-entry-link entry))
-           (title (elfeed-entry-title entry))
-           (org-link (today--to-org-link link title)))
-    (elfeed-untag entry 'unread)
-    (elfeed-search-update-entry entry)
-    (today-capture 'elfeed org-link)
-    (next-line)))
-
-(defun today--list-of-files ()
-  "Get the list of all planning files, from newest to oldest."
-  (reverse (-map #'f-base (f-directories today-directory))))
+  (today-fs-visit-date-file (today-util-todays-date)))
 
 ;;;###autoload
 (defun today-list ()
   "List all files from `today-directory', visit the one
 selected."
   (interactive)
-  (letrec ((dates (today--list-of-files))
+  (letrec ((dates (today-util-list-files))
            (date (completing-read "Date: " dates)))
-    (today--visit-date-file date)))
+    (today-fs-visit-date-file date)))
 
 ;;;###autoload
 (defun today-goto-date ()
@@ -252,161 +92,12 @@ selected."
 corresponding file."
   (interactive)
   (letrec ((date (org-read-date)))
-    (today--visit-date-file date)))
+    (today-fs-visit-date-file date)))
 
-(defun today--move-subtree-action (date)
-  "Move the subtree-at-point, to the bottom of the file
-corresponding to DATE."
-  (org-cut-subtree)
-  (save-buffer)
-  (with-current-buffer (today--buffer-from-date date)
-    (org-mode)
-    (goto-char (point-max))
-    (yank)
-    (save-buffer)))
 
-;;;###autoload
-(defun today-move-to-tomorrow ()
-  "Move the subtree-at-point to tomorrows file."
-  (interactive)
-  (letrec ((current-files-date (today--current-files-date))
-           (tomorrows-date (today--date-add-days current-files-date 1)))
-    (today--move-subtree-action tomorrows-date)))
-
-;;;###autoload
-(defun today-move-to-date (arg)
-  "Move the subtree-at-point to a date selected with
-`org-calendar', or, if using a prefix argument, move it n-days
-relative to the current file. (also works with negative
-prefixes)"
-  (interactive "P")
-  (letrec ((date (if arg
-                     (today--date-add-days (today--current-files-date) arg)
-                   (org-read-date))))
-    (today--move-subtree-action date)))
-
-(defcustom today--unfinished-task-regexp "^\\* TODO "
-  "The regexp used to search for a incomplete tasks.")
-
-(defun today--move-unfinished-to-date-action (source-date destination-date)
-  "Move all unfinished tasks to DATEs file."
-  ;; `today--move-subtree-action' is a destructive action, so each iteration
-  ;; should have fewer found matches occurring than the previous, there's no
-  ;; reason to move the search position along, since it would be changing
-  ;; anyway, because of cutting the subtree-at-point.
-  (today--move-unfinished-checkboxes-to-date destination-date)
-  (with-current-buffer (today--buffer-from-date source-date)
-    (while (string-match today--unfinished-task-regexp (buffer-string))
-      (if (>= (match-beginning 0) 0)
-          (progn
-            ;; move 1 character into the found line, to make sure we're on the
-            ;; correct line, and not on the last character of the previous line.
-            (goto-char (+ 1 (match-beginning 0)))
-            (today--move-subtree-action destination-date))))))
-
-;;;###autoload
-(defun today-move-unfinished-to-tomorrow ()
-  "Move all unfinished tasks in the current buffer, to tomorrows
-file."
-  (interactive)
-  (letrec ((current-files-date (today--current-files-date))
-           (tomorrows-date (today--date-add-days current-files-date 1)))
-    (today--move-unfinished-to-date-action current-files-date tomorrows-date)))
-
-(defun today--dates-earlier-than (date)
-  "Get all available dates, of files earlier than DATE."
-  (letrec ((file-dates (today--list-of-files))
-           (sorting-fn (lambda (s) (string< s date)))
-           (earlier-dates (-filter sorting-fn file-dates)))
-    earlier-dates))
-
-;;;###autoload
-(defun today-move-unfinished-from-previous ()
-  "Move all unfinished tasks from the previous file, to the
-current file."
-  (interactive)
-  (letrec ((current-files-date (today--current-files-date))
-           (earlier-dates (today--dates-earlier-than current-files-date))
-           (previous-files-date (car earlier-dates)))
-    (if previous-files-date
-        (today--move-unfinished-to-date-action previous-files-date current-files-date)
-      (message "No previous file found!"))))
-
-;;;###autoload
-(defun today-move-unfinished-to-date (arg)
-  "Move unfinished tasks from the current file to a new date. If
-called with a prefix argument, move to the file n-days relative
-to the current file, otherwise prompt for a date using
-`org-calendar'."
-  (interactive "P")
-  (letrec ((date (if arg
-                     (today--date-add-days (today--current-files-date) arg)
-                   (org-read-date)))
-           (next-date (today--date-add-days date 1)))
-    (today--move-unfinished-to-date-action date next-date)))
-
-(defun today--move-unfinished-checkboxes-to-date (date)
-  "Move all unfinished checkboxes to DATEs file. removing them
-from the current file. The destination file will be created if it
-does not exist, as will the containing task."
-  (interactive)
-  (save-excursion
-    (letrec ((pos 0)
-             (empty-checkbox-regex "^\\- \\[ \\]")
-             (completed-checkbox-regex "^\\- \\[X\\]"))
-      (while (string-match empty-checkbox-regex (buffer-string) pos)
-        (when (>= (match-beginning 0) 0)
-          (message "found checkbox task")
-          ;; go to the heading containing the found checkboxes
-          (goto-char (match-beginning 0))
-          (outline-previous-heading)
-
-          ;; copy the entire subtree to the new file, then remove checked
-          ;; checkboxes
-          (org-copy-subtree)
-          (with-current-buffer (today--buffer-from-date date)
-            ;; insert at the end of the file
-            (end-of-buffer)
-            (yank)
-            ;; then jump back up, remove the checked checkboxes, and update the
-            ;; checkbox status
-            (outline-previous-heading)
-            (delete-matching-lines completed-checkbox-regex)
-            (org-update-checkbox-count)
-            (save-buffer))
-
-          ;; remove the unchecked checkboxes from the source entry, and update
-          ;; its TODO-state, and the checkbox count
-          (org-mark-subtree)
-          (delete-matching-lines empty-checkbox-regex (region-beginning) (region-end) 't)
-          (org-todo)
-          (org-update-checkbox-count)
-
-          ;; go to the next entry and continue searching
-          (outline-next-heading)
-          (setq pos (- (point) 1))))
-      (save-buffer))))
-
-;;;###autoload
-(defun today-move-unfinished-checkboxes-to-tomorrow ()
-  "Move unfinished checkboxes to tomorrows file, creating the
-containing task/file if it does not exist."
-  (interactive)
-  (today--move-unfinished-checkboxes-to-date
-   (today--date-add-days (today--current-files-date) 1)))
-
-;;;###autoload
-(defun today-move-unfinished-checkboxes-to-date ()
-  "Move unfinished checkboxes to DATEs file, creating the
-containing task/file if it does not exist."
-  (interactive)
-  (let ((date (org-read-date)))
-    (today--move-unfinished-checkboxes-to-date
-     (today--date-add-days date 1))))
-
-(require 'hydra)
 ;; This hydra will exit on one-off commands, such as `today-list', or
 ;; `today-goto-date', but will persist when using capture or movement commands.
+(require 'hydra)
 (defhydra today-hydra (:foreign-keys run)
   "
 ^Capture^                   ^Move^                          ^Actions^
