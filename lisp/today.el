@@ -388,11 +388,19 @@ does not exist, as will the containing task."
 ;;;###autoload
 (defun today-move-unfinished-checkboxes-to-tomorrow ()
   "Move unfinished checkboxes to tomorrows file, creating the
-containing task if it does not exist."
+containing task/file if it does not exist."
   (interactive)
   (today--move-unfinished-checkboxes-to-date
    (today--date-add-days (today--current-files-date) 1)))
 
+;;;###autoload
+(defun today-move-unfinished-checkboxes-to-date ()
+  "Move unfinished checkboxes to DATEs file, creating the
+containing task/file if it does not exist."
+  (interactive)
+  (let ((date (org-read-date)))
+    (today--move-unfinished-checkboxes-to-date
+     (today--date-add-days date 1))))
 
 (require 'hydra)
 ;; This hydra will exit on one-off commands, such as `today-list', or
