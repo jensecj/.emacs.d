@@ -4,8 +4,8 @@
 ;; Copyright (C) 2018 Jens Christian Jensen
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
-;; Keywords: org, org-mode, planning, today
-;; Package-Version: 20180603
+;; Keywords: org, org-mode, planning, today, todo
+;; Package-Version: 20180604
 ;; Version: 0.3
 ;; Package-Requires: ((emacs "25.1") (org "9.0") (dash "2.14.1") (f "0.20.0") (hydra "0.14.0") (org-web-tools "0.1.0-pre"))
 
@@ -124,7 +124,7 @@ explanation."
   '(read watch)
   "Tasks that can be captured by `today-capture' functions")
 
-(defun today--capture-read-handler (content)
+(defun today--capture-read-link-handler (content)
   "Handler for READ task. Expects CONTENT to be a link to some
 website. Will try to extract the number of lines on the website,
 and add to the front of the entry. Will also try to extract the
@@ -134,7 +134,7 @@ link, using the title."
         (org-link (today--link-to-org-link content)))
     (format "read (%s lines) %s" lines org-link)))
 
-(defun today--capture-watch-handler (link)
+(defun today--capture-watch-link-handler (link)
   "Handler for the WATCH task. Expects CONTENT to be a link to a
 website, will try to extract the title of the website, and create
 an `org-mode' link using that title."
@@ -143,8 +143,8 @@ an `org-mode' link using that title."
     (format "watch %s" entry)))
 
 (defvar today-capture-handlers-alist
-  '((read . today--capture-read-handler)
-    (watch . today--capture-watch-handler))
+  '((read . today--capture-read-link-handler)
+    (watch . today--capture-watch-link-handler))
   "List of capture tasks and their associated handlers. A handler
   recieves the capture content as a parameter.")
 
@@ -186,14 +186,17 @@ then create it."
   (today--visit-date-file (today--todays-date)))
 
 (defun today--apply-handler (task entry)
+  "If a handler exists for TASK, then return the result of
+applying handler on ENTRY, otherwise return ENTRY."
   (let ((handler (assoc task today-capture-handlers-alist)))
     (if handler
         (funcall (cdr handler) entry)
       entry)))
 
-(defun today--capture (date task entry)
+;;;###autoload
+(defun today-capture-to-date (date task entry)
   "Captures an ENTRY with TASK, into the file for DATE."
-  (let ((content (today--apply-handler task entry)))
+  (let ((content (today--apply-capture-handler task entry)))
     (with-current-buffer (today--buffer-from-date date)
       (end-of-buffer)
       (newline)
@@ -202,10 +205,10 @@ then create it."
 ;;;###autoload
 (defun today-capture (task entry)
   "Capture ENTRY with TASK into todays file."
-  (today--capture (today--todays-date) task entry))
+  (today-capture-to-date (today--todays-date) task entry))
 
 ;;;###autoload
-(defun today-capture-with-task (task)
+(defun today-capture-link-with-task (task)
   "Prompt for ENTRY, then capture with TASK into today's file."
   (letrec ((link (completing-read "link: " '())))
     (today-capture task link)))
@@ -215,20 +218,19 @@ then create it."
   "Captures a LINK into today's file, with the selected TASK."
   (interactive)
   (letrec ((task (completing-read "task: " today-capture-tasks))
-           (link (completing-read "link: " '())))
-    (today-capture task xlink)))
+           (entry (completing-read "entry: " '())))
+    (today-capture task entry)))
 
 (defun today-capture-elfeed-at-point ()
   "Captures a TASK from selected elfeed entry."
   (interactive)
-  (letrec ((todays-date (today--todays-date))
-           (entry (car (elfeed-search-selected)))
+  (letrec ((entry (car (elfeed-search-selected)))
            (link (elfeed-entry-link entry))
            (title (elfeed-entry-title entry))
            (org-link (today--to-org-link link title)))
     (elfeed-untag entry 'unread)
     (elfeed-search-update-entry entry)
-    (today--capture todays-date 'elfeed org-link)
+    (today-capture 'elfeed org-link)
     (next-line)))
 
 (defun today--list-of-files ()
@@ -414,8 +416,8 @@ _w_: capture write task     _d_: move to date                 _l_: list all date
 _c_: capture with prompt    _u_: move TODOs to tomorrow       _g_: go to date from `org-calendar'
 ^ ^                         _U_: move old TODOs to this file  ^ ^
 "
-  ("r" (lambda () (interactive) (today-capture-with-task 'read)))
-  ("w" (lambda () (interactive) (today-capture-with-task 'watch)))
+  ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
+  ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
   ("c" #'today-capture-prompt)
 
   ("m" #'today-move-to-tomorrow)
