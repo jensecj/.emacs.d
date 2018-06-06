@@ -256,6 +256,10 @@
 (add-hook 'text-mode-hook 'jens/show-trailing-whitespace)
 (add-hook 'prog-mode-hook 'jens/show-trailing-whitespace)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; authentication and security ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; gpg and auth
 (use-package epa-file
   :demand t
@@ -313,7 +317,7 @@
         bufname)
     (while (progn
              (setq bufname (concat "*scratch"
-                                   (if (= n 0) "" (int-to-string n))
+                                   (if (= n 0) "" (format "-%s" (int-to-string n)))
                                    "*"))
              (setq n (1+ n))
              (get-buffer bufname)))
@@ -2031,7 +2035,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
    :map elfeed-search-mode-map
    ("t" . today-capture-elfeed-at-point))
   :config
-  (setq today-directory "~/vault/org/planning/"))
+  (setq today-directory "~/vault/org/planner/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; advices and hooks ;;
