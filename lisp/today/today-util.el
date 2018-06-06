@@ -20,7 +20,7 @@
   (let ((title (today-util-get-website-title-from-link link)))
     (today-util-to-org-link link title)))
 
-(defmacro today-async-lambda (args symbols &rest body)
+(defmacro today-util-async-lambda (args symbols &rest body)
   "Returns a lambda expression with ARGS, where each symbol in SYMBOLS is
 available for use and is bound to it's value at creation.
 Symbols needs to be a list of variables or functions available globally."

@@ -57,9 +57,9 @@ applying handler on ENTRY, otherwise return ENTRY."
 (defun today-capture-to-date-async (date task entry)
   "Captures an ENTRY with TASK, into the file for DATE, asynchronously."
   (async-start
-   (today-async-lambda () (task entry)
+   (today-util-async-lambda () (task entry)
      (today-capture--apply-handler task entry))
-   (today-async-lambda (content) (date)
+   (today-util-async-lambda (content) (date)
      (with-current-buffer (today-fs-buffer-from-date date)
        (goto-char (point-max))
        (newline)
