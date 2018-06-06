@@ -9,20 +9,6 @@
   "Get the list of all planning files, from newest to oldest."
   (reverse (-map #'f-base (f-directories today-directory))))
 
-;;;;;;;;;;;;;;;
-;; Web Utils ;;
-;;;;;;;;;;;;;;;
-
-(defun today-util-get-website-title-from-link (link)
-  "Try to retrieve the website title from a link, requires `org-web-tools'."
-  (with-current-buffer (url-retrieve-synchronously link)
-    (org-web-tools--html-title (buffer-string))))
-
-(defun today-util-get-website-lines-from-link (link)
-  "Try to retrieve the number of lines on the website of LINK. requires `lynx'."
-  (let ((lines (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" link)))))
-    (if (< (length lines) 5) lines "?")))
-
 (defun today-util-to-org-link (link title)
   "Convert a link and its title into `org-link' format."
   (format "[[%s][%s]]" link title))
@@ -32,6 +18,31 @@
 `org-link' format."
   (let ((title (today-util-get-website-title-from-link link)))
     (to-org-link link title)))
+
+;;;;;;;;;;;;;;;
+;; Web Utils ;;
+;;;;;;;;;;;;;;;
+
+(defun today-util-get-website-title-from-link (link)
+  "Get the website title from a link, requires `org-web-tools'."
+  (with-current-buffer (url-retrieve-synchronously link)
+    (org-web-tools--html-title (buffer-string))))
+
+(defun today-util-get-website-lines-from-link (link)
+  "Get the number of lines on the website of LINK. requires system tool `lynx'."
+  (let ((lines (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" link)))))
+    (if (< (length lines) 5) lines "?")))
+
+(defun today-util-get-youtube-duration-from-link (link)
+  "Get the duration of a youtube video, requires system tool `youtube-dl'."
+  (letrec ((raw-duration (shell-command-to-string
+                          (format "%s '%s'"
+                                  "youtube-dl --get-duration"
+                                  link)))
+           (duration (s-trim duration)))
+    (if (<= (length duration) 10)
+        duration
+      "?")))
 
 ;;;;;;;;;;;;;;;;
 ;; Date Utils ;;

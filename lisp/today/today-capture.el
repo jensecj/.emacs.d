@@ -7,22 +7,26 @@
   '(read watch)
   "Tasks that can be captured by `today-capture' functions")
 
-(defun today-capture--read-link-handler (content)
+(defun today-capture--read-link-handler (link)
   "Handler for READ task. Expects CONTENT to be a link to some
 website. Will try to extract the number of lines on the website,
 and add to the front of the entry. Will also try to extract the
 title of the website, and convert the link into an `org-mode'
 link, using the title."
-  (let ((lines (today-util-get-website-lines-from-link content))
-        (org-link (today-util-link-to-org-link content)))
+  (letrec ((lines (today-util-get-website-lines-from-link link))
+           (org-link (today-util-link-to-org-link link)))
     (format "read (%s lines) %s" lines org-link)))
 
 (defun today-capture--watch-link-handler (link)
-  "Handler for the WATCH task. Expects CONTENT to be a link to a
-website, will try to extract the title of the website, and create
-an `org-mode' link using that title."
+  "Handler for the WATCH task. Expects the LINK to be a source
+compatible with `youtube-dl'.will try to extract the title of the
+link, and create an `org-mode' link using that title, will also
+extract the duration of the video."
   (letrec ((title (today-util-get-website-title-from-link link))
-           (entry (today-util-to-org-link link title)))
+           (title (replace-regexp-in-string " - YouTube$" "" title))
+           (duration (today-util-get-youtube-duration-from-link link))
+           (org-link (today-util-to-org-link link title))
+           (entry (format "(%s) %s" duration org-link)))
     (format "watch %s" entry)))
 
 (defvar today-capture-handlers-alist
