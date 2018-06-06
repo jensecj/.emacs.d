@@ -4,6 +4,7 @@
 (require 's)
 (require 'dash)
 (require 'org-web-tools)
+(require 'cl-lib)
 
 (defun today-util-list-files ()
   "Get the list of all planning files, from newest to oldest."
@@ -17,7 +18,31 @@
   "Try to get the website title of LINK, then convert into
 `org-link' format."
   (let ((title (today-util-get-website-title-from-link link)))
-    (to-org-link link title)))
+    (today-util-to-org-link link title)))
+
+(defmacro today-async-lambda (args symbols &rest body)
+  "Returns a lambda expression with ARGS, where each symbol in SYMBOLS is
+available for use and is bound to it's value at creation.
+Symbols needs to be a list of variables or functions available globally."
+  (declare (indent defun))
+  (let ((vars (cl-remove-if-not 'boundp symbols))
+        (funcs (cl-remove-if-not 'functionp symbols)))
+    `(lambda ,args
+       ;; because async starts in a new emacs process, we have to load all the
+       ;; functionality we need,
+       (add-to-list 'load-path "/home/jens/.emacs.d/elpa/")
+       (add-to-list 'load-path "/home/jens/.emacs.d/lisp/today/")
+
+       (package-initialize)
+
+       (require 'f)
+       (require 's)
+       (require 'dash)
+       (require 'today)
+
+       (let ,(mapcar (lambda (sym) (list sym (symbol-value sym))) vars)
+         ,@(mapcar (lambda (sym) `(fset ',sym ,(symbol-function sym))) funcs)
+         ,@body))))
 
 ;;;;;;;;;;;;;;;
 ;; Web Utils ;;
@@ -38,10 +63,9 @@
   (letrec ((raw-duration (shell-command-to-string
                           (format "%s '%s'"
                                   "youtube-dl --get-duration"
-                                  link)))
-           (duration (s-trim duration)))
-    (if (<= (length duration) 10)
-        duration
+                                  link))))
+    (if (<= (length raw-duration) 10)
+        (s-trim raw-duration)
       "?")))
 
 ;;;;;;;;;;;;;;;;

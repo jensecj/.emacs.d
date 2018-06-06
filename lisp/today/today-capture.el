@@ -50,12 +50,26 @@ applying handler on ENTRY, otherwise return ENTRY."
     (with-current-buffer (today-fs-buffer-from-date date)
       (goto-char (point-max))
       (newline)
-      (insert "* TODO " content))))
+      (insert "* TODO " content)
+      (save-buffer))))
+
+;;;###autoload
+(defun today-capture-to-date-async (date task entry)
+  "Captures an ENTRY with TASK, into the file for DATE, asynchronously."
+  (async-start
+   (today-async-lambda () (task entry)
+     (today-capture--apply-handler task entry))
+   (today-async-lambda (content) (date)
+     (with-current-buffer (today-fs-buffer-from-date date)
+       (goto-char (point-max))
+       (newline)
+       (insert "* TODO " content)
+       (save-buffer)))))
 
 ;;;###autoload
 (defun today-capture (task entry)
   "Capture ENTRY with TASK into todays file."
-  (today-capture-to-date (today-util-todays-date) task entry))
+  (today-capture-to-date-async (today-util-todays-date) task entry))
 
 ;;;###autoload
 (defun today-capture-link-with-task (task)
