@@ -7,7 +7,6 @@
   "Move the subtree-at-point, to the bottom of the file
 corresponding to DATE."
   (let ((subtree (today-util-cut-subtree-at-point)))
-    (save-buffer)
     (today-util-insert-entry subtree date)))
 
 ;;;###autoload
@@ -90,38 +89,26 @@ does not exist, as will the containing task."
   (interactive)
   (save-excursion
     (letrec ((pos 0)
-             (empty-checkbox-regex "^\\- \\[ \\]")
-             (completed-checkbox-regex "^\\- \\[X\\]"))
-      (while (string-match empty-checkbox-regex (buffer-string) pos)
+             (checkbox-regex "\\[[0-9]+\\/[0-9]+\\]$")
+             (empty-checkbox-entry "\\[0\\/0\\]$"))
+      (while (string-match checkbox-regex (buffer-string) pos)
         (when (>= (match-beginning 0) 0)
           ;; go to the heading containing the found checkboxes
           (goto-char (match-beginning 0))
-          (outline-previous-heading)
 
-          ;; copy the entire subtree to the new file, then remove checked
-          ;; checkboxes
-          (org-copy-subtree)
-          (with-current-buffer (today-fs-buffer-from-date date)
-            ;; insert at the end of the file
-            (goto-char (point-max))
-            (yank)
-            ;; then jump back up, remove the checked checkboxes, and update the
-            ;; checkbox status
-            (outline-previous-heading)
-            (delete-matching-lines completed-checkbox-regex)
-            (org-update-checkbox-count)
-            (save-buffer))
-
-          ;; remove the unchecked checkboxes from the source entry, and update
-          ;; its TODO-state, and the checkbox count
-          (org-mark-subtree)
-          (delete-matching-lines empty-checkbox-regex (region-beginning) (region-end) 't)
-          (org-todo)
-          (org-update-checkbox-count)
+          (letrec ((subtree (today-util-subtree-at-point))
+                   (subtree-without-empties (today-util-remove-checkboxes-from-subtree subtree 'empty))
+                   (subtree-without-checked (today-util-remove-checkboxes-from-subtree subtree 'checked)))
+            (today-util-insert-entry subtree-without-checked date)
+            (org-cut-subtree)
+            (insert subtree-without-empties))
 
           ;; go to the next entry and continue searching
           (outline-next-heading)
           (setq pos (- (point) 1))))
+      ;; remove heading of checkbox entries where all items have been moved.
+      (goto-char (point-min))
+      (delete-matching-lines empty-checkbox-entry)
       (save-buffer))))
 
 ;;;###autoload

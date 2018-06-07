@@ -124,4 +124,29 @@ explanation."
     (goto-char (point-max))
     (insert entry)))
 
+(defun today-util-remove-checkboxes-from-subtree (subtree &optional checkbox-state)
+  "Returns SUBTREE with all checkboxes that are in CHECKBOX-STATE removed."
+  (letrec ((checked-checkbox-regex "^\\- \\[X\\]")
+           (empty-checkbox-regex "^\\- \\[ \\]")
+           (checkbox-regex (if (eq checkbox-state 'checked)
+                               checked-checkbox-regex
+                             empty-checkbox-regex)))
+    (with-temp-buffer
+      (insert subtree)
+      (org-mode)
+      ;; walk through all the org-items, and remove the ones matching the
+      ;; supplied checkbox regex
+      (save-excursion
+        (while (string-match checkbox-regex (buffer-string))
+          (goto-char (match-end 0))
+
+          (let ((beginning-of-item (save-excursion (org-beginning-of-item) (point)))
+                (end-of-item (save-excursion (org-end-of-item) (point))))
+            (delete-region beginning-of-item end-of-item))))
+
+      ;; finally update the checkbox-count for the heading
+      (org-update-checkbox-count 't)
+
+      (buffer-string))))
+
 (provide 'today-util)
