@@ -6,6 +6,23 @@
 (require 'org-web-tools)
 (require 'cl-lib)
 
+(require 'today-fs)
+
+(defun today-util-copy-subtree-at-point ()
+  "Returns a copy of the current subtree-at-point."
+  (org-copy-subtree)
+  (with-temp-buffer
+    (yank)
+    (buffer-string)))
+
+(defun today-util-cut-subtree-at-point ()
+  "Returns the current subtree-at-point, cutting from the
+document."
+  (org-cut-subtree)
+  (with-temp-buffer
+    (yank)
+    (buffer-string)))
+
 (defun today-util-list-files ()
   "Get the list of all planning files, from newest to oldest."
   (reverse (-map #'f-base (f-directories today-directory))))
@@ -45,7 +62,7 @@ Symbols needs to be a list of variables or functions available globally."
          ,@body))))
 
 ;;;;;;;;;;;;;;;
-;; Web Utils ;;
+;; web utils ;;
 ;;;;;;;;;;;;;;;
 
 (defun today-util-get-website-title-from-link (link)
@@ -69,7 +86,7 @@ Symbols needs to be a list of variables or functions available globally."
       "?")))
 
 ;;;;;;;;;;;;;;;;
-;; Date Utils ;;
+;; date utils ;;
 ;;;;;;;;;;;;;;;;
 
 (defun today-util-todays-date ()
@@ -96,5 +113,15 @@ explanation."
            (sorting-fn (lambda (s) (string< s date)))
            (earlier-dates (-filter sorting-fn file-dates)))
     earlier-dates))
+
+;;;;;;;;;;;;;;;
+;; usability ;;
+;;;;;;;;;;;;;;;
+
+(defun today-util-insert-entry (entry date)
+  "Inserts ENTRY at the bottom of the file for DATE."
+  (with-current-buffer (today-fs-buffer-from-date date)
+    (goto-char (point-max))
+    (insert entry)))
 
 (provide 'today-util)

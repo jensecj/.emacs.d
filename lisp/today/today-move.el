@@ -6,13 +6,9 @@
 (defun today-move--subtree-action (date)
   "Move the subtree-at-point, to the bottom of the file
 corresponding to DATE."
-  (org-cut-subtree)
-  (save-buffer)
-  (with-current-buffer (today-fs-buffer-from-date date)
-    (org-mode)
-    (goto-char (point-max))
-    (yank)
-    (save-buffer)))
+  (let ((subtree (today-util-cut-subtree-at-point)))
+    (save-buffer)
+    (today-util-insert-entry subtree date)))
 
 ;;;###autoload
 (defun today-move-to-tomorrow ()
