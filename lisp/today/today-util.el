@@ -133,19 +133,26 @@ explanation."
                              empty-checkbox-regex)))
     (with-temp-buffer
       (insert subtree)
+      (goto-char (point-min))
       (org-mode)
+
       ;; walk through all the org-items, and remove the ones matching the
       ;; supplied checkbox regex
       (save-excursion
-        (while (string-match checkbox-regex (buffer-string))
-          (goto-char (match-end 0))
+        (save-match-data
+          (while (string-match checkbox-regex (buffer-string))
+            (goto-char (match-end 0))
 
-          (let ((beginning-of-item (save-excursion (org-beginning-of-item) (point)))
-                (end-of-item (save-excursion (org-end-of-item) (point))))
-            (delete-region beginning-of-item end-of-item))))
+            (let ((beginning-of-item (save-excursion (org-beginning-of-item) (point)))
+                  (end-of-item (save-excursion (org-end-of-item) (point))))
+              (delete-region beginning-of-item end-of-item)))))
 
-      ;; finally update the checkbox-count for the heading
+      ;; update the checkbox-count for the heading
       (org-update-checkbox-count 't)
+
+      ;; if we remove all the incomplete checkboxes, this task becomes DONE.
+      (when (not (eq checkbox-state 'checked))
+        (org-todo))
 
       (buffer-string))))
 

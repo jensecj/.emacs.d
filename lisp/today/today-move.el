@@ -41,12 +41,11 @@ prefixes)"
   (today-move--unfinished-checkboxes-to-date destination-date)
   (with-current-buffer (today-fs-buffer-from-date source-date)
     (while (string-match today-move--unfinished-task-regexp (buffer-string))
-      (if (>= (match-beginning 0) 0)
-          (progn
-            ;; move 1 character into the found line, to make sure we're on the
-            ;; correct line, and not on the last character of the previous line.
-            (goto-char (+ 1 (match-beginning 0)))
-            (today-move--subtree-action destination-date))))))
+      (when (>= (match-beginning 0) 0)
+        ;; move 1 character into the found line, to make sure we're on the
+        ;; correct line, and not on the last character of the previous line.
+        (goto-char (+ 1 (match-beginning 0)))
+        (today-move--subtree-action destination-date)))))
 
 ;;;###autoload
 (defun today-move-unfinished-to-tomorrow ()
@@ -104,7 +103,6 @@ does not exist, as will the containing task."
             (insert subtree-without-empties))
 
           ;; go to the next entry and continue searching
-          (outline-next-heading)
           (setq pos (- (point) 1))))
       ;; remove heading of checkbox entries where all items have been moved.
       (goto-char (point-min))
