@@ -108,11 +108,20 @@ explanation."
     next-date))
 
 (defun today-util-dates-earlier-than (date)
-  "Get all available dates, of files earlier than DATE."
+  "Get all available dates, of files earlier than DATE, from
+latest to earliest."
   (letrec ((file-dates (today-util-list-files))
            (sorting-fn (lambda (s) (string< s date)))
            (earlier-dates (-filter sorting-fn file-dates)))
     earlier-dates))
+
+(defun today-util-dates-later-than (date)
+  "Get all available dates, of files later than DATE, from
+earliest to latest."
+  (letrec ((file-dates (today-util-list-files))
+           (sorting-fn (lambda (s) (string> s date)))
+           (later-dates (-filter sorting-fn file-dates)))
+    (reverse later-dates)))
 
 ;;;;;;;;;;;;;;;
 ;; usability ;;

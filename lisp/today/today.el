@@ -94,6 +94,22 @@ corresponding file."
   (letrec ((date (org-read-date)))
     (today-fs-visit-date-file date)))
 
+(defun today-visit-previous ()
+  (interactive)
+  (letrec ((current-date (today-util-current-files-date))
+           (previous-date (car (today-util-dates-earlier-than current-date))))
+    (if (null previous-date)
+        (today-fs-visit-date-file (today-util-date-add-days current-date -1))
+      (today-fs-visit-date-file previous-date))))
+
+(defun today-visit-next ()
+  (interactive)
+  (letrec ((current-date (today-util-current-files-date))
+           (next-date (car (today-util-dates-later-than current-date))))
+    (if (null next-date)
+        (today-fs-visit-date-file (today-util-date-add-days current-date 1))
+      (today-fs-visit-date-file next-date))))
+
 ;; This hydra will exit on one-off commands, such as `today-list', or
 ;; `today-goto-date', but will persist when using capture or movement commands.
 (require 'hydra)
@@ -101,10 +117,11 @@ corresponding file."
   "
 ^Capture^                   ^Move^                          ^Actions^
 ^^^^^^^^--------------------------------------------------------------------------------------
-_r_: capture read task      _m_: move to tomorrow             _t_: go to todays file
-_w_: capture write task     _d_: move to date                 _l_: list all date files
+_r_: capture read task      _m_: move subtree to tomorrow     _t_: go to todays file
+_w_: capture write task     _d_: move subtree to date         _l_: list all date files
 _c_: capture with prompt    _u_: move TODOs to tomorrow       _g_: go to date from `org-calendar'
-^ ^                         _U_: move old TODOs to this file  ^ ^
+^ ^                         _U_: move old TODOs to this file  _n_: go to next file
+^ ^                         ^ ^                               _p_: go to previous file
 "
   ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
   ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
@@ -118,6 +135,9 @@ _c_: capture with prompt    _u_: move TODOs to tomorrow       _g_: go to date fr
   ("t" #'today :exit t)
   ("l" #'today-list :exit t)
   ("g" #'today-goto-date :exit t)
+
+  ("p" #'today-visit-previous)
+  ("n" #'today-visit-next)
 
   ("q" nil "quit"))
 
