@@ -1138,7 +1138,8 @@ restores the message."
 ;; COMPANY-MODE
 (use-package company
   :ensure t
-  :defer t)
+  :defer t
+  :diminish company-mode)
 
 ;; AUTO-COMPLETE-MODE
 (use-package ac-rtags :ensure t :defer t)
@@ -1649,8 +1650,12 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :defines auto-fill-mode
   :hook (org-mode . auto-fill-mode))
 
+(use-package simple
+  :diminish auto-fill-mode)
+
 (use-package abbrev
   :demand t
+  :diminish abbrev-mode
   :hook (org-mode . abbrev-mode)
   :commands read-abbrev-file
   :config
