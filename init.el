@@ -1545,10 +1545,9 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (setq which-key-max-description-length 40)
   (which-key-mode))
 
-(use-package jist
+(use-package gist
   :ensure t
-  :defer t
-  :config (setq jist-enable-default-authorized 't))
+  :defer t)
 
 (use-package wgrep
   :ensure t
