@@ -1337,6 +1337,12 @@ restores the message."
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
+(use-package hl-todo
+  :ensure t
+  :commands global-hl-todo-mode
+  :config
+  (global-hl-todo-mode +1))
+
 (use-package pdf-tools
   :commands pdf-tools-install
   :config
