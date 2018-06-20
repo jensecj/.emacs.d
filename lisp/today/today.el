@@ -95,20 +95,22 @@ corresponding file."
     (today-fs-visit-date-file date)))
 
 (defun today-visit-previous ()
-  "Visit the file for yesterdats date, based on the current files
-date."
+  "Visit the previous file, based on the current files date."
   (interactive)
   (letrec ((current-date (today-util-current-files-date))
-           (yesterdays-date (today-util-date-add-days current-date -1)))
-    (today-fs-visit-date-file yesterdays-date)))
+           (previous-date (car (today-util-dates-earlier-than current-date))))
+    (if (null previous-date)
+        (today-fs-visit-date-file (today-util-date-add-days current-date -1))
+      (today-fs-visit-date-file previous-date))))
 
 (defun today-visit-next ()
-  "Visit the file for tomorrows date, based on the current files
-date."
+  "Visit the next file, based on the current files date."
   (interactive)
   (letrec ((current-date (today-util-current-files-date))
-           (tomorrows-date (car (today-util-dates-later-than current-date))))
-    (today-fs-visit-date-file tomorrows-date)))
+           (next-date (car (today-util-dates-later-than current-date))))
+    (if (null next-date)
+        (today-fs-visit-date-file (today-util-date-add-days current-date +1))
+      (today-fs-visit-date-file next-date))))
 
 ;; This hydra will exit on one-off commands, such as `today-list', or
 ;; `today-goto-date', but will persist when using capture or movement commands.
