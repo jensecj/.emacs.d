@@ -95,7 +95,7 @@ does not exist, as will the containing task."
           ;; go to the heading containing the found checkboxes
           (goto-char (match-beginning 0))
 
-          (letrec ((subtree (today-util-subtree-at-point))
+          (letrec ((subtree (today-util-copy-subtree-at-point))
                    (subtree-without-empties (today-util-remove-checkboxes-from-subtree subtree 'empty))
                    (subtree-without-checked (today-util-remove-checkboxes-from-subtree subtree 'checked)))
             (today-util-insert-entry subtree-without-checked date)
