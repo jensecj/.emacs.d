@@ -678,14 +678,21 @@ restores the message."
     t))
 
 (defun jens/insert-todays-date ()
+  "Inserts the current date at point."
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
 
 (defun jens/processor-count ()
+  "Returns the number of logical processors of the system."
   (when (file-exists-p "/proc/cpuinfo")
     (with-temp-buffer
       (insert-file-contents "/proc/cpuinfo")
       (how-many "^processor[[:space:]]+:"))))
+
+(defun jens/goto-msg-buffer ()
+  "View the *Messages* buffer, return to previous buffer when done."
+  (interactive)
+  (view-buffer "*Messages*"))
 
 ;;;;;;;;;;;;;;
 ;; packages ;;
