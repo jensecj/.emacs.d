@@ -31,6 +31,7 @@ then create it."
 
 (defun today-fs-visit-date-file (date)
   "Visit the file for DATE, create it if it does not exist."
-  (switch-to-buffer (today-fs-buffer-from-date date)))
+  (let ((date-file (today-fs-file-from-date date)))
+    (find-file date-file)))
 
 (provide 'today-fs)
