@@ -1640,7 +1640,10 @@ _M-n_: Unmark next    _M-p_: Unmark previous
 (use-package elfeed
   :ensure t
   :defer t
+  :after today
   :commands elfeed
+  :bind (:map elfeed-search-mode-map
+              ("t" . today-capture-elfeed-at-point))
   :config
   (setq-default elfeed-search-filter "@1-month-ago +unread ")
 
@@ -2063,9 +2066,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
              today-capture-elfeed-at-point
              today-hydra/body)
   :bind
-  (("C-x t" . today-hydra/body)
-   :map elfeed-search-mode-map
-   ("t" . today-capture-elfeed-at-point))
+  (("C-x t" . today-hydra/body))
   :config
   (setq today-directory "~/vault/org/planner/"))
 
