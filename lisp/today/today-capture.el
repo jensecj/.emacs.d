@@ -61,10 +61,11 @@ applying handler on ENTRY, otherwise return ENTRY."
      (today-capture--apply-handler task entry))
    (today-util-async-lambda (content) (date)
      (with-current-buffer (today-fs-buffer-from-date date)
-       (goto-char (point-max))
-       (newline)
-       (insert "* TODO " content)
-       (save-buffer)))))
+       (save-excursion
+         (goto-char (point-max))
+         (newline)
+         (insert "* TODO " content)
+         (save-buffer))))))
 
 ;;;###autoload
 (defun today-capture (task entry)
