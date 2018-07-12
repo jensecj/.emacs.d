@@ -1350,6 +1350,14 @@ restores the message."
   :config
   (global-hl-todo-mode +1))
 
+(use-package helpful
+  :ensure t
+  :config
+  (defalias #'describe-key #'helpful-key)
+  (defalias #'describe-function #'helpful-callable)
+  (defalias #'describe-variable #'helpful-variable)
+  (defalias #'describe-symbol #'helpful-symbol))
+
 (use-package pdf-tools
   :commands pdf-tools-install
   :config
@@ -1381,6 +1389,10 @@ _M-n_: Unmark next    _M-p_: Unmark previous
     ("p" #'mc/mark-previous-like-this)
     ("P" #'mc/skip-to-previous-like-this)
     ("M-p" #'mc/unmark-previous-like-this)))
+
+(use-package centered-cursor-mode
+  :ensure t
+  :defer t)
 
 (use-package browse-kill-ring
   :ensure t
@@ -1485,6 +1497,9 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :after magit
   :config
   (magithub-feature-autoinject t))
+
+(use-package magit-todos
+  :ensure t)
 
 (use-package undo-tree
   :ensure t
