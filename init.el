@@ -1499,7 +1499,9 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (magithub-feature-autoinject t))
 
 (use-package magit-todos
-  :ensure t)
+  :ensure t
+  :config
+  (magit-todos-mode))
 
 (use-package undo-tree
   :ensure t
