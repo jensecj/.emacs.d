@@ -32,6 +32,9 @@ prefixes)"
 (defcustom today-move--unfinished-task-regexp "^\\* TODO "
   "The regexp used to search for a incomplete tasks.")
 
+(defcustom today-move--completed-task-regexp "^\\* DONE "
+  "The regexp used to search for a completed tasks.")
+
 (defun today-move--unfinished-to-date-action (source-date destination-date)
   "Move all unfinished tasks to DATEs file."
   ;; `today-move--subtree-action' is a destructive action, so each iteration
@@ -125,5 +128,24 @@ containing task/file if it does not exist."
   (let ((date (org-read-date)))
     (today-move--unfinished-checkboxes-to-date
      (today-util-date-add-days date 1))))
+
+;;;###autoload
+(defun today-move-completed-to-date (date)
+  "Move completed tasks to DATEs file."
+  (save-excursion
+    (while (string-match today-move--completed-task-regexp (buffer-string))
+      (when (>= (match-beginning 0) 0)
+        ;; move 1 character into the found line, to make sure we're on the
+        ;; correct line, and not on the last character of the previous line.
+        (goto-char (+ 1 (match-beginning 0)))
+        (today-move--subtree-action date)))))
+
+;;;###autoload
+(defun today-move-archive-completed ()
+  "Move all complated tasks in the current buffer to todays
+file."
+  (interactive)
+  (letrec ((todays-date (today-util-todays-date)))
+    (today-move-completed-to-date todays-date)))
 
 (provide 'today-move)

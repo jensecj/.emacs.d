@@ -66,6 +66,10 @@
   (concat user-emacs-directory "today-planner")
   "Directory used for planning files.")
 
+(defcustom today-file
+  "today.org"
+  "Accumulating file for today entries.")
+
 (require 'today-fs)
 (require 'today-util)
 (require 'today-capture)
@@ -73,6 +77,12 @@
 
 ;;;###autoload
 (defun today ()
+  "Visit the today file, containing entries."
+  (interactive)
+  (find-file (concat today-directory today-file)))
+
+;;;###autoload
+(defun today-visit-todays-file ()
   "Visit today's file, create it if it does not exist."
   (interactive)
   (today-fs-visit-date-file (today-util-todays-date)))
@@ -135,6 +145,9 @@ _c_: capture with prompt    _u_: move TODOs to tomorrow       _g_: go to date fr
   ("U" #'today-move-unfinished-from-previous)
 
   ("t" #'today :exit t)
+  ("T" #'today-visit-todays-file :exit t)
+
+  ("a" #'today-move-archive-completed :exit t)
   ("l" #'today-list :exit t)
   ("g" #'today-goto-date :exit t)
 
