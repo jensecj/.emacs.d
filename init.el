@@ -1429,6 +1429,9 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (("M-e" . er/expand-region)
    ("C-M-e" . er/contract-region)))
 
+(use-package fold-this
+  :ensure t)
+
 (use-package change-inner
   :ensure t
   :defer t
