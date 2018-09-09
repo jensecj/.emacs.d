@@ -67,10 +67,23 @@ applying handler on ENTRY, otherwise return ENTRY."
          (insert "* TODO " content)
          (save-buffer))))))
 
+(defun today-capture-to-file-async (date task entry)
+  "Captures an ENTRY with TASK, into the file for DATE, asynchronously."
+  (async-start
+   (today-util-async-lambda () (task entry)
+     (today-capture--apply-handler task entry))
+   (today-util-async-lambda (content) (date)
+     (with-current-buffer (find-file-noselect (concat today-directory today-file))
+       (save-excursion
+         (goto-char (point-max))
+         ;; (newline)
+         (insert "* TODO " content)
+         (save-buffer))))))
+
 ;;;###autoload
 (defun today-capture (task entry)
   "Capture ENTRY with TASK into todays file."
-  (today-capture-to-date-async (today-util-todays-date) task entry))
+  (today-capture-to-file-async (today-util-todays-date) task entry))
 
 ;;;###autoload
 (defun today-capture-link-with-task (task)
