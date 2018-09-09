@@ -266,6 +266,7 @@
   :commands epa-file-enable
   :config
   (epa-file-enable)
+  ;; becomes epg-pinentry-mode in 27.1?, and is moved to package epg-config
   (setq epa-pinentry-mode 'loopback))
 
 ;; enable gpg pinentry through the minibuffer
@@ -2319,54 +2320,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; experimantal things ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defvar user-agent-string "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36")
-(defun get-title-from-link (link)
-  (letrec ((-silence-output " -so - ")
-           (-follow-redirects "-L")
-           (-use-user-agent "'-A User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36'")
-           (grep-title "grep -iPo '(?<=<title>)(.*)(?=</title>)'")
-           (recode-to-utf8 "recode html..utf8")
-           (curl-command (concat "curl" " " -follow-redirects " " -use-user-agent " '" link "'" -silence-output " | " grep-title " | " recode-to-utf8)))
-    (s-trim (shell-command-to-string curl-command))))
-
-;;(get-title-from-link "https://www.youtube.com/watch?v=mO3Q4bRQZ3k")
-
-(defun paste-website-title-above ()
-  (interactive)
-  (if (region-active-p)
-      (let ((link (buffer-substring (region-beginning) (region-end))))
-        (save-excursion
-          (beginning-of-line)
-          (newline-and-indent)
-          (forward-line -1)
-          (insert (get-title-from-link link))))))
-
-(defun link-to-markdown-link ()
-  (interactive)
-  (if (region-active-p)
-      (letrec ((link (buffer-substring (region-beginning) (region-end)))
-               (link-title (get-title-from-link link)))
-        (save-excursion
-          (delete-region (region-beginning) (region-end))
-          (insert "[" link-title "]")
-          (insert "(" link ")")))))
-
-(defun to-org-link (link title)
-  (format "[[%s][%s]]" link title))
-
-(defun link-to-org-link (link)
-  (let ((title (get-title-from-link link)))
-    (to-org-link link title)))
-
-(defun link-to-org-link-region ()
-  (interactive)
-  (if (region-active-p)
-      (letrec ((link (buffer-substring (region-beginning) (region-end)))
-               (org-link (link-to-org-link link)))
-        (save-excursion
-          (delete-region (region-beginning) (region-end))
-          (insert org-link)))))
 
 (defun download-to-current-buffer-directory (link)
   "Download LINK into the working directory for the current buffer."
