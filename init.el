@@ -1062,10 +1062,14 @@ restores the message."
   (minimap-font-face  ((t (:family "Source Code Pro" :height 15))))
   (minimap-active-region-background ((t (:background "gray20")))))
 
+(use-package pdf-tools
+  :ensure t)
+
 ;; fancy modeline replacement
 (use-package powerline
   :ensure t
   :demand t
+  :after pdf-tools
   :config
   ;; Make the mode-line flat
   (set-face-attribute 'mode-line nil :box nil)
