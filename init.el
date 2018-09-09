@@ -892,17 +892,17 @@ restores the message."
     (org-indent-line)
     (message "indented"))
 
-  (defun jens/load-org-agenda-files ()
-    (interactive)
-    (setq org-agenda-files
-          (append '("")
-                  (f-glob "**/*.org" "~/vault/org/planning"))))
+  ;; (defun jens/load-org-agenda-files ()
+  ;;   (interactive)
+  ;;   (setq org-agenda-files
+  ;;         (append '("")
+  ;;                 (f-glob "**/*.org" "~/vault/org/planning"))))
 
-  (advice-add 'org-agenda :before #'jens/load-org-agenda-files)
+  ;; (advice-add 'org-agenda :before #'jens/load-org-agenda-files)
 
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               '((emacs-lisp . t)
-                                 (gnuplot . t)))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages
+  ;;                              '((emacs-lisp . t)
+  ;;                                (gnuplot . t)))
 
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
@@ -911,18 +911,18 @@ restores the message."
   ;; dont indent things
   (setq org-adapt-indentation nil)
   ;; syntax highlight org-mode code blocks when exporting as pdf
-  (setq-default org-latex-listings 'minted
-                org-latex-packages-alist '(("" "minted"))
-                org-latex-pdf-process
-                '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-                  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  ;; (setq-default org-latex-listings 'minted
+  ;;               org-latex-packages-alist '(("" "minted"))
+  ;;               org-latex-pdf-process
+  ;;               '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   ;; try to get non-fuzzy latex fragments
   (plist-put org-format-latex-options :scale 1.6)
   ;; (setq org-latex-create-formula-image-program 'dvisvgm) ;; obsolete as of org 9.0
   (setq-default org-preview-latex-default-process 'dvisvgm)
-
   ;; use some noise in scheduling org-drills
-  (setq-default org-drill-add-random-noise-to-intervals-p t))
+  ;; (setq-default org-drill-add-random-noise-to-intervals-p t)
+  )
 
 (use-package ob-async
   :ensure t
@@ -2116,12 +2116,12 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
              (local-set-key (kbd "C-c C-c") 'compile)
              (local-set-key (kbd "C-c n") 'clang-format-buffer)))
 
-(add-hook 'java-mode-hook
-          '(lambda ()
-             (use-local-map nil)
-             (set (make-local-variable 'compile-command)
-                  (format "javac %s" (jens/get-buffer-file-name+ext)))
-             (local-set-key (kbd "C-c C-c") 'compile)))
+;; (add-hook 'java-mode-hook
+;;           '(lambda ()
+;;              (use-local-map nil)
+;;              (set (make-local-variable 'compile-command)
+;;                   (format "javac %s" (jens/get-buffer-file-name+ext)))
+;;              (local-set-key (kbd "C-c C-c") 'compile)))
 
 (add-hook 'csharp-mode-hook
           '(lambda ()
