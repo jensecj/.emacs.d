@@ -133,7 +133,7 @@ _r_: capture read task      _m_: move subtree to tomorrow     _t_: go to todays 
 _w_: capture write task     _d_: move subtree to date         _l_: list all date files
 _c_: capture with prompt    _u_: move TODOs to tomorrow       _g_: go to date from `org-calendar'
 ^ ^                         _U_: move old TODOs to this file  _n_: go to next file
-^ ^                         ^ ^                               _p_: go to previous file
+^ ^                         _a_: archive completed tasks      _p_: go to previous file
 "
   ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
   ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
@@ -143,11 +143,12 @@ _c_: capture with prompt    _u_: move TODOs to tomorrow       _g_: go to date fr
   ("d" #'today-move-to-date)
   ("u" #'today-move-unfinished-to-tomorrow)
   ("U" #'today-move-unfinished-from-previous)
+  ("a" #'today-move-archive-completed :exit t)
 
   ("t" #'today :exit t)
   ("T" #'today-visit-todays-file :exit t)
 
-  ("a" #'today-move-archive-completed :exit t)
+
   ("l" #'today-list :exit t)
   ("g" #'today-goto-date :exit t)
 
