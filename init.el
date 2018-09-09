@@ -1257,7 +1257,7 @@ restores the message."
   ;;  (add-to-list 'ac-sources 'ac-complete-octave))
   ;; (add-hook 'octave-mode-hook 'my-ac-octave-mode-setup)
 
-  (global-auto-complete-mode t))
+  (global-auto-complete-mode -1))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; misc packages ;;
@@ -1685,10 +1685,8 @@ _M-n_: Unmark next    _M-p_: Unmark previous
 
 (use-package simple
   :defines auto-fill-mode
+  :diminish auto-fill-mode
   :hook (org-mode . auto-fill-mode))
-
-(use-package simple
-  :diminish auto-fill-mode)
 
 (use-package abbrev
   :demand t
