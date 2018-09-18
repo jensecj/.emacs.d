@@ -2029,6 +2029,11 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (use-package dumb-jump :ensure t :defer t)
 
+(use-package keyfreq
+  :config
+  (keyfreq-mode +1)
+  (keyfreq-autosave-mode +1))
+
 (use-package flyspell
   :ensure t
   :defer t
