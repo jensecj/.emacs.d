@@ -9,26 +9,6 @@ corresponding to DATE."
   (let ((subtree (today-util-cut-subtree-at-point)))
     (today-util-insert-entry subtree date)))
 
-;;;###autoload
-(defun today-move-to-tomorrow ()
-  "Move the subtree-at-point to tomorrows file."
-  (interactive)
-  (letrec ((current-files-date (today-util-current-files-date))
-           (tomorrows-date (today-util-date-add-days current-files-date 1)))
-    (today-move--subtree-action tomorrows-date)))
-
-;;;###autoload
-(defun today-move-to-date (arg)
-  "Move the subtree-at-point to a date selected with
-`org-calendar', or, if using a prefix argument, move it n-days
-relative to the current file. (also works with negative
-prefixes)"
-  (interactive "P")
-  (letrec ((date (if arg
-                     (today-util-date-add-days (today-util-current-files-date) arg)
-                   (org-read-date))))
-    (today-move--subtree-action date)))
-
 (defcustom today-move--unfinished-task-regexp "^\\* TODO "
   "The regexp used to search for a incomplete tasks.")
 
@@ -49,40 +29,6 @@ prefixes)"
         ;; correct line, and not on the last character of the previous line.
         (goto-char (+ 1 (match-beginning 0)))
         (today-move--subtree-action destination-date)))))
-
-;;;###autoload
-(defun today-move-unfinished-to-tomorrow ()
-  "Move all unfinished tasks in the current buffer, to tomorrows
-file."
-  (interactive)
-  (letrec ((current-files-date (today-util-current-files-date))
-           (tomorrows-date (today-util-date-add-days current-files-date 1)))
-    (today-move--unfinished-to-date-action current-files-date tomorrows-date)))
-
-;;;###autoload
-(defun today-move-unfinished-from-previous ()
-  "Move all unfinished tasks from the previous file, to the
-current file."
-  (interactive)
-  (letrec ((current-files-date (today-util-current-files-date))
-           (earlier-dates (today-util-dates-earlier-than current-files-date))
-           (previous-files-date (car earlier-dates)))
-    (if previous-files-date
-        (today-move--unfinished-to-date-action previous-files-date current-files-date)
-      (message "No previous file found!"))))
-
-;;;###autoload
-(defun today-move-unfinished-to-date (arg)
-  "Move unfinished tasks from the current file to a new date. If
-called with a prefix argument, move to the file n-days relative
-to the current file, otherwise prompt for a date using
-`org-calendar'."
-  (interactive "P")
-  (letrec ((date (if arg
-                     (today-util-date-add-days (today-util-current-files-date) arg)
-                   (org-read-date)))
-           (next-date (today-util-date-add-days date 1)))
-    (today-move--unfinished-to-date-action date next-date)))
 
 (defun today-move--unfinished-checkboxes-to-date (date)
   "Move all unfinished checkboxes to DATEs file. removing them
