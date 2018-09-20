@@ -3,17 +3,17 @@
 (require 'today-fs)
 (require 'today-util)
 
-(defun today-move--subtree-action (date)
-  "Move the subtree-at-point, to the bottom of the file
-corresponding to DATE."
-  (let ((subtree (today-util-cut-subtree-at-point)))
-    (today-util-insert-entry subtree date)))
-
 (defcustom today-move--unfinished-task-regexp "^\\* TODO "
   "The regexp used to search for a incomplete tasks.")
 
 (defcustom today-move--completed-task-regexp "^\\* DONE "
   "The regexp used to search for a completed tasks.")
+
+(defun today-move--subtree-action (date)
+  "Move the subtree-at-point, to the bottom of the file
+corresponding to DATE."
+  (let ((subtree (today-util-cut-subtree-at-point)))
+    (today-util-insert-entry subtree date)))
 
 (defun today-move--unfinished-to-date-action (source-date destination-date)
   "Move all unfinished tasks to DATEs file."
