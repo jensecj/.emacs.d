@@ -59,21 +59,20 @@ does not exist, as will the containing task."
       (save-buffer))))
 
 ;;;###autoload
+(defun today-move-unfinished-checkboxes-to-date ()
+  "Move unfinished checkboxes to DATEs file, creating the
+containing task/file if it does not exist."
+  (interactive)
+  (let ((date (org-read-date)))
+    (today-move--unfinished-checkboxes-to-date date)))
+
+;;;###autoload
 (defun today-move-unfinished-checkboxes-to-tomorrow ()
   "Move unfinished checkboxes to tomorrows file, creating the
 containing task/file if it does not exist."
   (interactive)
   (today-move--unfinished-checkboxes-to-date
    (today-util-date-add-days (today-util-current-files-date) 1)))
-
-;;;###autoload
-(defun today-move-unfinished-checkboxes-to-date ()
-  "Move unfinished checkboxes to DATEs file, creating the
-containing task/file if it does not exist."
-  (interactive)
-  (let ((date (org-read-date)))
-    (today-move--unfinished-checkboxes-to-date
-     (today-util-date-add-days date 1))))
 
 ;;;###autoload
 (defun today-move-completed-to-date (date)
