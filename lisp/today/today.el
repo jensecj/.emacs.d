@@ -5,8 +5,8 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: org, org-mode, planning, today, todo
-;; Package-Version: 20180607
-;; Version: 0.5
+;; Package-Version: 20180920
+;; Version: 0.6
 ;; Package-Requires: ((emacs "25.1") (org "9.0") (dash "2.14.1") (f "0.20.0") (hydra "0.14.0") (org-web-tools "0.1.0-pre"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -47,18 +47,13 @@
 
 ;;; Notes on structure:
 
-;; Each entry is a directory inside of `today-directory', whose name is the date
-;; for that entry. The org file for the entry resides in this directory, and is
-;; also named with the date, ending with the `.org' extension.  This is done so
-;; that each entry can have its own extra content, e.g. images, or other files,
-;; reside in its directory and not interfere with the other entries.  `today'
-;; tries to create the planning file which is the target of a command, e.g. when
-;; using `today-move-to-tomorrow' (or other similar commands), the file for
-;; tomorrows date will be created if it does not exist.  `today' also tries to
-;; figure out the proper date for a command, e.g. if you're visiting a planning
-;; file which is not for today's date, using `today-move-to-tomorrow' (or any
-;; other movement commands) will figure out the correct date in relation to the
-;; visited file.
+;; Entries are collected in a central file, `today-file', and when completed
+;; each entry is archived as a file in a directory inside of `today-directory',
+;; whose name is the date for that entry. The org file for the entry resides in
+;; this directory, and is also named with the date, ending with the `.org'
+;; extension.  This is done so that each entry can have its own extra content
+;; (e.g. images, pdfs), reside in its directory and not interfere with the other
+;; entries.
 
 ;;; Code:
 
