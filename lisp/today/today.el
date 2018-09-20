@@ -127,33 +127,23 @@ corresponding file."
 (require 'hydra)
 (defhydra today-hydra (:foreign-keys run)
   "
-^Capture^                   ^Move^                          ^Actions^
+^Capture^                   ^Actions^                          ^Find^
 ^^^^^^^^--------------------------------------------------------------------------------------
-_r_: capture read task      _m_: move subtree to tomorrow     _t_: go to todays file
-_w_: capture write task     _d_: move subtree to date         _l_: list all date files
-_c_: capture with prompt    _u_: move TODOs to tomorrow       _g_: go to date from `org-calendar'
-^ ^                         _U_: move old TODOs to this file  _n_: go to next file
-^ ^                         _a_: archive completed tasks      _p_: go to previous file
+_r_: capture read task      _a_: archive completed tasks      _t_: go to todays file
+_w_: capture write task     ^ ^                               _l_: list all date files
+_c_: capture with prompt    ^ ^                               _g_: go to date from `org-calendar'
 "
   ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
   ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
   ("c" #'today-capture-prompt)
 
-  ("m" #'today-move-to-tomorrow)
-  ("d" #'today-move-to-date)
-  ("u" #'today-move-unfinished-to-tomorrow)
-  ("U" #'today-move-unfinished-from-previous)
   ("a" #'today-move-archive-completed :exit t)
 
   ("t" #'today :exit t)
   ("T" #'today-visit-todays-file :exit t)
 
-
   ("l" #'today-list :exit t)
   ("g" #'today-goto-date :exit t)
-
-  ("p" #'today-visit-previous)
-  ("n" #'today-visit-next)
 
   ("q" nil "quit"))
 
