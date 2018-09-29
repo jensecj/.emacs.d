@@ -2068,6 +2068,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (use-package hydra :ensure t)
 
+(use-package org-web-tools
+  :ensure t)
+
 (use-package today
   :load-path "lisp/today/"
   :demand t
