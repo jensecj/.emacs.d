@@ -122,14 +122,18 @@ corresponding file."
 (require 'hydra)
 (defhydra today-hydra (:foreign-keys run)
   "
-^Capture^                   ^Actions^                          ^Find^
-^^^^^^^^--------------------------------------------------------------------------------------
-_r_: capture read task      _a_: archive completed tasks      _t_: go to todays file
-_w_: capture write task     ^ ^                               _l_: list all date files
-_c_: capture with prompt    ^ ^                               _g_: go to date from `org-calendar'
+^Capture^                                 ^Actions^                          ^Find^
+^^^^^^^^----------------------------------------------------------------------------------------------
+_r_: capture read task                    _a_: archive completed tasks      _t_: go to todays file
+_R_: capture read task from clipboard     ^ ^                               _l_: list all date files
+_w_: capture watch task                   ^ ^                               _g_: go to date from `org-calendar'
+_W_: capture watch task from clipboard    ^ ^                               ^ ^
+_c_: capture with prompt                  ^ ^                               ^ ^
 "
   ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
+  ("R" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'read)))
   ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
+  ("W" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'watch)))
   ("c" #'today-capture-prompt)
 
   ("a" #'today-move-archive-completed :exit t)

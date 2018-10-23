@@ -85,6 +85,12 @@ applying handler on ENTRY, otherwise return ENTRY."
   "Capture ENTRY with TASK into todays file."
   (today-capture-to-file-async (today-util-todays-date) task entry))
 
+(defun today-capture-link-with-task-from-clipboard (task)
+  "Capture ENTRY with TASK into todays file."
+  (let* ((entry (gui-get-selection 'CLIPBOARD 'UTF8_STRING))
+         (_ (set-text-properties 0 (length entry) nil entry)))
+    (today-capture-to-file-async (today-util-todays-date) task entry)))
+
 ;;;###autoload
 (defun today-capture-link-with-task (task)
   "Prompt for ENTRY, then capture with TASK into today's file."
