@@ -2051,6 +2051,10 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (keyfreq-mode +1)
   (keyfreq-autosave-mode +1))
 
+(use-package loccur
+  :ensure t
+  :straight t)
+
 (use-package flyspell
   :ensure t
   :defer t
@@ -2084,6 +2088,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :bind ("M-f" . fullscreen-toggle))
 
 (use-package hydra :ensure t)
+
+(use-package org-ql
+  :straight (org-ql :type git :host github :repo "alphapapa/org-ql"))
 
 (use-package org-web-tools
   :ensure t)
