@@ -1082,7 +1082,13 @@ restores the message."
   (minimap-active-region-background ((t (:background "gray20")))))
 
 (use-package pdf-tools
-  :ensure t)
+  :commands pdf-tools-install
+  :straight t
+  :ensure t
+  :config
+  (pdf-tools-install)
+  ;; need to use plain isearch, pdf-tools hooks into it to handle searching
+  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
 ;; fancy modeline replacement
 (use-package powerline
@@ -1380,13 +1386,6 @@ restores the message."
   (defalias #'describe-function #'helpful-callable)
   (defalias #'describe-variable #'helpful-variable)
   (defalias #'describe-symbol #'helpful-symbol))
-
-(use-package pdf-tools
-  :commands pdf-tools-install
-  :config
-  (pdf-tools-install)
-  ;; need to use plain isearch, pdf-tools hooks into it to handle searching
-  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
 (use-package multiple-cursors
   :ensure t
