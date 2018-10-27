@@ -278,6 +278,7 @@
   (setenv "GPG_AGENT_INFO" nil)
 
   (defun jens/pinentry-reset ()
+    (interactive)
     (pinentry-stop)
     (pinentry-start))
   (setq gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset))
