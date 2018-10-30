@@ -89,6 +89,7 @@ applying handler on ENTRY, otherwise return ENTRY."
   "Capture ENTRY with TASK into todays file."
   (let* ((entry (gui-get-selection 'CLIPBOARD 'UTF8_STRING))
          (_ (set-text-properties 0 (length entry) nil entry)))
+    (message "capturing from clipboard: %s" entry)
     (today-capture-to-file-async (today-util-todays-date) task entry)))
 
 ;;;###autoload
