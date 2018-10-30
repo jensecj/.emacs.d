@@ -2201,6 +2201,11 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (global-set-key (kbd "C-c C-k") 'eval-buffer)
 (global-set-key (kbd "C-c k") 'eval-region)
 
+;; Casing words/regions
+(global-set-key (kbd "M-u") #'upcase-dwim)
+(global-set-key (kbd "M-l") #'downcase-dwim)
+(global-set-key (kbd "M-c") #'capitalize-dwim)
+
 ;; Scroll the buffer without moving the point (unless we over-move)
 (global-set-key
  (kbd "C-<up>")
