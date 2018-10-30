@@ -326,6 +326,13 @@
     (switch-to-buffer (get-buffer-create bufname))
     (funcall initial-major-mode)))
 
+(defun jens/sudo-reopen ()
+  "Re-open current buffers file with superuser permissions"
+  (interactive)
+  (let ((file-name (buffer-file-name)))
+    (when file-name
+      (find-alternate-file (concat "/sudo::" file-name)))))
+
 (defun jens/clean-view ()
   "Creates a scratch buffer, and makes it the only buffer visible."
   (interactive)
