@@ -1,9 +1,8 @@
+;;; TODO: use straight.el - https://github.com/raxod502/straight.el
+
 ;;; -*- lexical-binding: t -*-
 ;; use lexical binding for initialization code
 (setq-default lexical-binding t)
-
-;; setup some things that other packages may depend on
-(setq user-full-name "Jens Christian Jensen")
 
 (defun text-red (txt) (format "\e[1m\e[31m%s\e[0m" txt))
 (defun text-green (txt) (format "\e[1m\e[32m%s\e[0m" txt))
@@ -1302,9 +1301,10 @@ restores the message."
 (use-package yasnippet :ensure t :defer t)
 
 (use-package direnv
+  :disabled t
   :ensure t
   :config
-  (advice-add 'cider-jack-in :before 'direnv-update-environment))
+  (advice-remove 'cider-jack-in 'direnv-update-environment))
 
 (use-package fill-column-indicator
   :disabled
