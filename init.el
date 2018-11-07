@@ -2034,6 +2034,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
   (counsel-mode))
 
+(use-package counsel-tramp
+  :ensure t)
+
 (use-package projectile
   :ensure t
   :defer t
