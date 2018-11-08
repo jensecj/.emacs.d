@@ -311,9 +311,7 @@
 ;; editing defuns ;;
 ;;;;;;;;;;;;;;;;;;;;
 
-(defun jens/create-scratch-buffer nil
-  "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
-  (interactive)
+(defun jens/new-scratch-buffer ()
   (let ((n 0)
         bufname)
     (while (progn
@@ -322,21 +320,30 @@
                                    "*"))
              (setq n (1+ n))
              (get-buffer bufname)))
-    (switch-to-buffer (get-buffer-create bufname))
-    (funcall initial-major-mode)))
+    (get-buffer-create bufname)))
 
-(defun jens/sudo-reopen ()
-  "Re-open current buffers file with superuser permissions"
+(defun jens/create-scratch-buffer nil
+  "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
   (interactive)
-  (let ((file-name (buffer-file-name)))
-    (when file-name
-      (find-alternate-file (concat "/sudo::" file-name)))))
+  (switch-to-buffer (jens/new-scratch-buffer))
+  (funcall initial-major-mode))
 
 (defun jens/clean-view ()
   "Creates a scratch buffer, and makes it the only buffer visible."
   (interactive)
   (jens/create-scratch-buffer)
   (delete-other-windows))
+
+(defun jens/clone-buffer ()
+  "Open a clone of the current buffer."
+  (interactive)
+  (let ((newbuf (jens/new-scratch-buffer))
+        (content (buffer-string))
+        (oldpoint (point)))
+    (with-current-buffer newbuf
+      (insert content))
+    (switch-to-buffer newbuf)
+    (goto-char oldpoint)))
 
 (defun jens/cleanup-buffer ()
   "Perform a bunch of operations on the white space content of a buffer.
@@ -345,6 +352,13 @@
   (indent-region (point-min) (point-max))
   (whitespace-cleanup)
   (message "cleaned up"))
+
+(defun jens/sudo-reopen ()
+  "Re-open current buffers file with superuser permissions"
+  (interactive)
+  (let ((file-name (buffer-file-name)))
+    (when file-name
+      (find-alternate-file (concat "/sudo::" file-name)))))
 
 (defun jens/open-line-below ()
   "Inserts a line below the current line, indents it, and moves the the
