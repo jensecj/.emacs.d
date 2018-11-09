@@ -131,7 +131,8 @@ earliest to latest."
   "Inserts ENTRY at the bottom of the file for DATE."
   (with-current-buffer (today-fs-buffer-from-date date)
     (goto-char (point-max))
-    (insert entry)))
+    (insert entry)
+    (save-buffer)))
 
 (defun today-util-remove-checkboxes-from-subtree (subtree &optional checkbox-state)
   "Returns SUBTREE with all checkboxes that are in CHECKBOX-STATE removed."
