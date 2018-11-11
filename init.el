@@ -2094,6 +2094,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
     (flyspell-prog-mode)
     (flyspell-buffer)))
 
+(use-package paradox
+  :ensure t)
+
 (use-package zenburn-theme
   :ensure t
   :demand t
