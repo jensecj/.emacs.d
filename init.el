@@ -2122,6 +2122,12 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (use-package org-web-tools
   :ensure t)
 
+(use-package so-long
+  :load-path "elpa/so-long/"
+  :demand t
+  :config
+  (so-long-enable))
+
 (use-package today
   :load-path "lisp/today/"
   :demand t
