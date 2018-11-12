@@ -117,15 +117,40 @@ corresponding file."
         (today-fs-visit-date-file (today-util-date-add-days current-date +1))
       (today-fs-visit-date-file next-date))))
 
+(require 'hydra)
+
+(defun today-move-to-section (title)
+  "Move the entry at point to the section described by `title'."
+  (interactive)
+  (kill-whole-line)
+  (save-excursion
+    (search-backward title)
+    (next-line)
+    (yank)))
+
+(defhydra today-move-to-section-hydra (:foreign-keys run)
+  ("a" (lambda () (interactive) (today-move-to-section "# AI")))
+  ("r" (lambda () (interactive) (today-move-to-section "# Rust")))
+  ("p" (lambda () (interactive) (today-move-to-section "# Python")))
+  ("C" (lambda () (interactive) (today-move-to-section "# Clojure")))
+  ("c" (lambda () (interactive) (today-move-to-section "# C++")))
+  ("j" (lambda () (interactive) (today-move-to-section "# Java")))
+  ("l" (lambda () (interactive) (today-move-to-section "# Linux")))
+  ("g" (lambda () (interactive) (today-move-to-section "# Git")))
+  ("e" (lambda () (interactive) (today-move-to-section "# Emacs")))
+  ("w" (lambda () (interactive) (today-move-to-section "# Web")))
+  ("t" (lambda () (interactive) (today-move-to-section "# Ted Talks")))
+
+  ("q" nil "quit"))
+
 ;; This hydra will exit on one-off commands, such as `today-list', or
 ;; `today-goto-date', but will persist when using capture or movement commands.
-(require 'hydra)
 (defhydra today-hydra (:foreign-keys run)
   "
 ^Capture^                                 ^Actions^                          ^Find^
 ^^^^^^^^----------------------------------------------------------------------------------------------
 _r_: capture read task                    _a_: archive completed tasks      _t_: go to todays file
-_R_: capture read task from clipboard     ^ ^                               _l_: list all date files
+_R_: capture read task from clipboard     _s_: the move-to-section hydra    _l_: list all date files
 _w_: capture watch task                   ^ ^                               _g_: go to date from `org-calendar'
 _W_: capture watch task from clipboard    ^ ^                               ^ ^
 _c_: capture with prompt                  ^ ^                               ^ ^
@@ -137,6 +162,7 @@ _c_: capture with prompt                  ^ ^                               ^ ^
   ("c" #'today-capture-prompt)
 
   ("a" #'today-move-archive-completed :exit t)
+  ("s" #'today-move-to-section-hydra/body :exit t)
 
   ("t" #'today :exit t)
   ("T" #'today-visit-todays-file :exit t)
