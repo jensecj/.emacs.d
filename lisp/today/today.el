@@ -128,6 +128,7 @@ corresponding file."
     (next-line)
     (yank)))
 
+;; TODO: extract sections, and make then configurable from use-package definition.
 (defhydra today-move-to-section-hydra (:foreign-keys run)
   ("a" (lambda () (interactive) (today-move-to-section "# AI")))
   ("r" (lambda () (interactive) (today-move-to-section "# Rust")))
