@@ -70,9 +70,8 @@ Symbols needs to be a list of variables or functions available globally."
   (let* ((html (org-web-tools--get-url url))
          (title (org-web-tools--html-title html))
          (title (s-replace "[" "(" title))
-         (title (s-replace "]" ")" title))
-         (link (org-make-link-string url title)))
-    link))
+         (title (s-replace "]" ")" title)))
+    title))
 
 (defun today-util-get-website-lines-from-link (link)
   "Get the number of lines on the website of LINK. requires system tool `lynx'."
