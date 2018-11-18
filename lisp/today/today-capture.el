@@ -14,7 +14,7 @@ and add to the front of the entry. Will also try to extract the
 title of the website, and convert the link into an `org-mode'
 link, using the title."
   (letrec ((lines (today-util-get-website-lines-from-link link))
-           (org-link (org-web-tools--org-link-for-url link)))
+           (org-link (today-util-link-to-org-link link)))
     (format "read (%s lines) %s" lines org-link)))
 
 (defun today-capture--watch-link-handler (link)

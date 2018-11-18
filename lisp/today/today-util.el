@@ -29,7 +29,7 @@ document."
 
 (defun today-util-to-org-link (link title)
   "Convert a link and its title into `org-link' format."
-  (format "[[%s][%s]]" link title))
+  (org-make-link-string link title))
 
 (defun today-util-link-to-org-link (link)
   "Try to get the website title of LINK, then convert into
@@ -65,10 +65,14 @@ Symbols needs to be a list of variables or functions available globally."
 ;; web utils ;;
 ;;;;;;;;;;;;;;;
 
-(defun today-util-get-website-title-from-link (link)
+(defun today-util-get-website-title-from-link (url)
   "Get the website title from a link, requires `org-web-tools'."
-  (with-current-buffer (url-retrieve-synchronously link)
-    (org-web-tools--html-title (buffer-string))))
+  (let* ((html (org-web-tools--get-url url))
+         (title (org-web-tools--html-title html))
+         (title (s-replace "[" "(" title))
+         (title (s-replace "]" ")" title))
+         (link (org-make-link-string url title)))
+    link))
 
 (defun today-util-get-website-lines-from-link (link)
   "Get the number of lines on the website of LINK. requires system tool `lynx'."
