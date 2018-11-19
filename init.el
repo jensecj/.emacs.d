@@ -1718,9 +1718,14 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :ensure t
   :defer t
   :diminish elpy-mode
+  :bind
+  (:map elpy-mode-map
+        ("<C-up>" . nil)
+        ("<C-down>" . nil))
   :config
-  (define-key elpy-mode-map (kbd "<C-up>") nil)
-  (define-key elpy-mode-map (kbd "<C-down>") nil))
+  ;; (define-key elpy-mode-map (kbd "<C-up>") nil)
+  ;; (define-key elpy-mode-map (kbd "<C-down>") nil)
+  )
 
 (use-package rainbow-mode :ensure t :defer t)
 
