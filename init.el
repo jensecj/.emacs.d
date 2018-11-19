@@ -1990,9 +1990,12 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (ivy-mode)
   (jens/ivy-load-views))
 
+(use-package fzf
+  :ensure t)
+
 (use-package counsel
   :ensure t
-  :after ivy
+  :after (ivy fzf)
   :defer 1
   :diminish counsel-mode
   :functions jens/counsel-read-file-name
@@ -2002,6 +2005,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
    ("C-S-s" . counsel-rg)
    ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
+   ("C-x C-S-f" . counsel-fzf)
    ("C-x C-i" . counsel-imenu)
    ("M-æ" . counsel-mark-ring)
    ("M-x" . counsel-M-x)
