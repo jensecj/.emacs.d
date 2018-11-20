@@ -1690,8 +1690,10 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :defer t
   :after today
   :commands elfeed
+  :functions jens/elfeed-copy-link-at-point
   :bind (:map elfeed-search-mode-map
-              ("t" . today-capture-elfeed-at-point))
+              ("t" . today-capture-elfeed-at-point)
+              ("c" . jens/elfeed-copy-link-at-point))
   :config
   (setq-default elfeed-search-filter "@1-month-ago +unread ")
 
@@ -1712,7 +1714,18 @@ _M-n_: Unmark next    _M-p_: Unmark previous
     :group 'elfeed-faces)
   (push '(emacs emacs-elfeed-face) elfeed-search-face-alist)
 
-  (setq elfeed-feeds (jens/load-from-file (concat my-emacs-dir "elfeeds.el"))))
+  (setq elfeed-feeds (jens/load-from-file (concat my-emacs-dir "elfeeds.el")))
+
+  (defun jens/elfeed-copy-link-at-point ()
+    "Copy the link of the elfeed entry at point to the clipboard."
+    (interactive)
+    (letrec ((entry (car (elfeed-search-selected)))
+             (link (elfeed-entry-link entry)))
+      (with-temp-buffer
+        (insert link)
+        (clipboard-kill-ring-save (point-min) (point-max))
+        (message (format "copied %s to clipboard" link))))))
+
 
 (use-package elpy
   :ensure t
