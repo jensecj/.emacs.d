@@ -930,6 +930,19 @@ restores the message."
     (org-indent-line)
     (message "indented"))
 
+  (defun jens/copy-url-at-point ()
+    "Grab URL from org-link at point."
+    (interactive)
+    (let* ((link-info (assoc :link (org-context)))
+           (text (when link-info
+                   (buffer-substring-no-properties (cadr link-info) (caddr link-info)))))
+      (if (not text)
+          (error "Not in org link")
+        (with-temp-buffer
+          (string-match "\\[\\[.*\\]\\[" text)
+          (insert (substring-no-properties text (+ (match-beginning 0) 2) (- (match-end 0) 2)))
+          (clipboard-kill-ring-save (point-min) (point-max))))))
+
   ;; (defun jens/load-org-agenda-files ()
   ;;   (interactive)
   ;;   (setq org-agenda-files
