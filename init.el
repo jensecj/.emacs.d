@@ -808,11 +808,6 @@ restores the message."
   ;; Auto refresh buffers
   (global-auto-revert-mode 1))
 
-(use-package hideshow
-  :defer t
-  :bind (("C-c @ h" . hs-hide-block)
-         ("C-c @ s" . hs-show-block)))
-
 ;; Semantic analysis in supported modes (cpp, java, etc.)
 (use-package semantic
   :disabled
@@ -1494,9 +1489,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :bind
   (("M-e" . er/expand-region)
    ("C-M-e" . er/contract-region)))
-
-(use-package fold-this
-  :ensure t)
 
 (use-package change-inner
   :ensure t
