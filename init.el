@@ -1100,92 +1100,6 @@ restores the message."
   ;; dont warn on refactor evals
   (setq cljr-warn-on-eval nil))
 
-(use-package pdf-tools
-  :commands pdf-tools-install
-  :straight t
-  :ensure t
-  :config
-  (pdf-tools-install)
-  ;; need to use plain isearch, pdf-tools hooks into it to handle searching
-  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
-
-;; fancy modeline replacement
-(use-package powerline
-  :ensure t
-  :demand t
-  :after pdf-tools
-  :config
-  ;; Make the mode-line flat
-  (set-face-attribute 'mode-line nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil :box nil)
-
-  ;; Group colors
-  (defface face-light '((t (:background "grey35" :inherit mode-line))) "" :group 'powerline)
-  (defface face-dark '((t (:background "grey30" :inherit mode-line))) "" :group 'powerline)
-  (defface face-darker '((t (:background "grey25" :inherit mode-line))) "" :group 'powerline)
-  (defface face-darkest '((t (:background "grey20" :inherit mode-line))) "" :group 'powerline)
-
-  (require 'pdf-tools)
-
-  ;; Setup the powerline theme
-  (setq-default
-   mode-line-format
-   '("%e"
-     (:eval
-      (let* (
-             (active (powerline-selected-window-active))
-             (mode-line (if active 'mode-line 'mode-line-inactive))
-
-             (face-light 'face-light)
-             (face-dark 'face-dark)
-             (face-darker 'face-darker)
-             (face-darkest 'face-darkest)
-
-             (powerline-default-separator 'bar)
-
-             (seperator-> (intern (format "powerline-%s-%s"
-                                          powerline-default-separator
-                                          (car powerline-default-separator-dir))))
-
-             (separator-< (intern (format "powerline-%s-%s"
-                                          powerline-default-separator
-                                          (cdr powerline-default-separator-dir))))
-
-             (lhs (list
-                   (powerline-buffer-id face-darkest 'l)
-                   (powerline-raw " " face-darkest)
-
-                   (funcall seperator-> face-darkest face-darker)
-
-                   ;; when viewing pdf-files using pdf-tools (or docview),
-                   (if (pdf-util-pdf-buffer-p)
-                       (powerline-raw (format "%s / %s "
-                                              (pdf-view-current-page)
-                                              (pdf-info-number-of-pages)) face-darker 'l))
-
-                   (if (not (pdf-util-pdf-buffer-p)) (powerline-raw " (%p) %4l" face-darker 'r))
-                   (if (not (pdf-util-pdf-buffer-p)) (powerline-raw ":" face-darker 'l))
-                   (if (not (pdf-util-pdf-buffer-p)) (powerline-raw "%3c " face-darker 'r))
-
-                   (funcall seperator-> face-darker face-dark)
-
-                   (powerline-major-mode face-dark 'l)
-                   (powerline-process face-dark)
-                   (powerline-minor-modes face-dark 'l)
-                   (powerline-narrow face-dark 'l)
-
-                   (powerline-raw " " face-dark)
-
-                   (funcall seperator-> face-dark face-light)))
-
-             (rhs (list
-                   (funcall separator-< face-light face-darkest)
-                   (powerline-vc face-darkest))))
-        (concat
-         (powerline-render lhs)
-         (powerline-fill face-light (powerline-width rhs))
-         (powerline-render rhs)))))))
-
 ;;;;;;;;;;;;;;;;;;;;;
 ;; auto completion ;;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -1308,10 +1222,34 @@ restores the message."
 
 (use-package chicken-scheme :ensure t :defer t)
 (use-package htmlize :ensure t :defer t)
-(use-package flx :ensure t)
+(use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
+(use-package fzf :ensure t) ;; fuzzy file finder
 (use-package flycheck :disabled :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
+(use-package loccur :ensure t :straight t)
+(use-package paradox :ensure t) ;; improvements on package.el
+(use-package hydra :ensure t)
+(use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql"))
+(use-package org-web-tools :ensure t)
+(use-package ggtags :ensure t :defer t)
+(use-package dumb-jump :ensure t :defer t)
+(use-package counsel-tramp :ensure t)
+(use-package centered-cursor-mode :ensure t :defer t)
+(use-package clang-format :ensure t :defer t)
+(use-package with-editor :ensure t) ;; run commands in `emacsclient'
+(use-package gist :ensure t :defer t) ;; work with github gists
+(use-package rainbow-mode :ensure t :defer t) ;; highlight color-strings (hex, etc.)
+(use-package anaconda-mode :ensure t) ;; code-navigation for python
+
+(use-package pdf-tools
+  :commands pdf-tools-install
+  :straight t
+  :ensure t
+  :config
+  (pdf-tools-install)
+  ;; need to use plain isearch, pdf-tools hooks into it to handle searching
+  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
 (use-package hl-fill-column
   :ensure t
@@ -1452,10 +1390,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
     ("P" #'mc/skip-to-previous-like-this)
     ("M-p" #'mc/unmark-previous-like-this)))
 
-(use-package centered-cursor-mode
-  :ensure t
-  :defer t)
-
 (use-package browse-kill-ring
   :ensure t
   :defer t
@@ -1513,8 +1447,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (("C-c r" . vr/replace)
    ("C-c q" . vr/query-replace)))
 
-(use-package clang-format :ensure t :defer t)
-
 (use-package rtags
   :ensure t
   :defer t
@@ -1524,7 +1456,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
         ("M-." . rtags-find-symbol-at-point)
         ("M-," . rtags-location-stack-back)))
 
-(use-package with-editor :ensure t)
 (use-package magit
   :ensure t
   :defer t
@@ -1628,10 +1559,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (which-key-setup-side-window-right)
   (setq which-key-max-description-length 40)
   (which-key-mode))
-
-(use-package gist
-  :ensure t
-  :defer t)
 
 (use-package wgrep
   :ensure t
@@ -1740,7 +1667,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
         (clipboard-kill-ring-save (point-min) (point-max))
         (message (format "copied %s to clipboard" link))))))
 
-(use-package anaconda-mode :ensure t)
 (use-package elpy
   :ensure t
   :defer t
@@ -1753,8 +1679,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   ;; (define-key elpy-mode-map (kbd "<C-up>") nil)
   ;; (define-key elpy-mode-map (kbd "<C-down>") nil)
   )
-
-(use-package rainbow-mode :ensure t :defer t)
 
 (use-package simple
   :defines auto-fill-mode
@@ -1789,6 +1713,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :ensure t
   :defer t
   :commands erc-hl-nicks-enable)
+
 (use-package erc
   :defer t
   :after (auth-source-pass)
@@ -2022,9 +1947,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (ivy-mode)
   (jens/ivy-load-views))
 
-(use-package fzf
-  :ensure t)
-
 (use-package counsel
   :ensure t
   :after (ivy fzf)
@@ -2084,9 +2006,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
   (counsel-mode))
 
-(use-package counsel-tramp
-  :ensure t)
-
 (use-package projectile
   :ensure t
   :defer t
@@ -2102,18 +2021,10 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :commands counsel-projectile-mode
   :config (counsel-projectile-mode))
 
-(use-package ggtags :ensure t :defer t)
-
-(use-package dumb-jump :ensure t :defer t)
-
 (use-package keyfreq
   :config
   (keyfreq-mode +1)
   (keyfreq-autosave-mode +1))
-
-(use-package loccur
-  :ensure t
-  :straight t)
 
 (use-package flyspell
   :ensure t
@@ -2130,8 +2041,88 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
     (flyspell-prog-mode)
     (flyspell-buffer)))
 
-(use-package paradox
-  :ensure t)
+(use-package so-long
+  :load-path "elpa/so-long/"
+  :demand t
+  :config
+  (so-long-enable))
+
+;; fancy modeline replacement
+(use-package powerline
+  :ensure t
+  :demand t
+  :after pdf-tools
+  :config
+  ;; Make the mode-line flat
+  (set-face-attribute 'mode-line nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :box nil)
+
+  ;; Group colors
+  (defface face-light '((t (:background "grey35" :inherit mode-line))) "" :group 'powerline)
+  (defface face-dark '((t (:background "grey30" :inherit mode-line))) "" :group 'powerline)
+  (defface face-darker '((t (:background "grey25" :inherit mode-line))) "" :group 'powerline)
+  (defface face-darkest '((t (:background "grey20" :inherit mode-line))) "" :group 'powerline)
+
+  (require 'pdf-tools)
+
+  ;; Setup the powerline theme
+  (setq-default
+   mode-line-format
+   '("%e"
+     (:eval
+      (let* (
+             (active (powerline-selected-window-active))
+             (mode-line (if active 'mode-line 'mode-line-inactive))
+
+             (face-light 'face-light)
+             (face-dark 'face-dark)
+             (face-darker 'face-darker)
+             (face-darkest 'face-darkest)
+
+             (powerline-default-separator 'bar)
+
+             (seperator-> (intern (format "powerline-%s-%s"
+                                          powerline-default-separator
+                                          (car powerline-default-separator-dir))))
+
+             (separator-< (intern (format "powerline-%s-%s"
+                                          powerline-default-separator
+                                          (cdr powerline-default-separator-dir))))
+
+             (lhs (list
+                   (powerline-buffer-id face-darkest 'l)
+                   (powerline-raw " " face-darkest)
+
+                   (funcall seperator-> face-darkest face-darker)
+
+                   ;; when viewing pdf-files using pdf-tools (or docview),
+                   (if (pdf-util-pdf-buffer-p)
+                       (powerline-raw (format "%s / %s "
+                                              (pdf-view-current-page)
+                                              (pdf-info-number-of-pages)) face-darker 'l))
+
+                   (if (not (pdf-util-pdf-buffer-p)) (powerline-raw " (%p) %4l" face-darker 'r))
+                   (if (not (pdf-util-pdf-buffer-p)) (powerline-raw ":" face-darker 'l))
+                   (if (not (pdf-util-pdf-buffer-p)) (powerline-raw "%3c " face-darker 'r))
+
+                   (funcall seperator-> face-darker face-dark)
+
+                   (powerline-major-mode face-dark 'l)
+                   (powerline-process face-dark)
+                   (powerline-minor-modes face-dark 'l)
+                   (powerline-narrow face-dark 'l)
+
+                   (powerline-raw " " face-dark)
+
+                   (funcall seperator-> face-dark face-light)))
+
+             (rhs (list
+                   (funcall separator-< face-light face-darkest)
+                   (powerline-vc face-darkest))))
+        (concat
+         (powerline-render lhs)
+         (powerline-fill face-light (powerline-width rhs))
+         (powerline-render rhs)))))))
 
 (use-package zenburn-theme
   :ensure t
@@ -2146,20 +2137,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (persp-face-lighter-buffer-not-in-persp ((t (:foreground "#CC9393"))))
   (ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
   (ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E")))))
-
-(use-package hydra :ensure t)
-
-(use-package org-ql
-  :straight (org-ql :type git :host github :repo "alphapapa/org-ql"))
-
-(use-package org-web-tools
-  :ensure t)
-
-(use-package so-long
-  :load-path "elpa/so-long/"
-  :demand t
-  :config
-  (so-long-enable))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; home made things ;;
