@@ -1102,20 +1102,6 @@ restores the message."
   ;; dont warn on refactor evals
   (setq cljr-warn-on-eval nil))
 
-(use-package minimap
-  :disabled t
-  :ensure t
-  :config
-  (setq minimap-update-delay 0)
-  (setq minimap-width-fraction 0.1)
-  (setq minimap-minimum-width 30)
-  (setq minimap-window-location 'right)
-  (setq minimap-hide-fringes t)
-  (setq minimap-recreate-window nil)
-  :custom-face
-  (minimap-font-face  ((t (:family "Source Code Pro" :height 15))))
-  (minimap-active-region-background ((t (:background "gray20")))))
-
 (use-package pdf-tools
   :commands pdf-tools-install
   :straight t
@@ -1328,12 +1314,6 @@ restores the message."
 (use-package flycheck :disabled :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
-
-(use-package direnv
-  :disabled t
-  :ensure t
-  :config
-  (advice-remove 'cider-jack-in 'direnv-update-environment))
 
 (use-package hl-fill-column
   :ensure t
@@ -1623,13 +1603,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (advice-add 'undo-tree-undo :around #'jens/undo-tree-undo)
 
   (global-undo-tree-mode))
-
-(use-package smooth-scrolling
-  :disabled
-  :ensure t
-  :config
-  (setq smooth-scroll-margin 5)
-  (smooth-scrolling-mode))
 
 (use-package goto-chg
   :ensure t
