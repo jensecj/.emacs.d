@@ -1371,6 +1371,20 @@ restores the message."
   (smartparens-global-mode t)
   (show-smartparens-global-mode t))
 
+(use-package smart-jump
+  :ensure t
+  :bind
+  (("M-." . smart-jump-go)
+   ("M-," . smart-jump-back)
+   ("M--" . smart-jump-references))
+  :config
+  (smart-jump-register :modes '(emacs-lisp-mode lisp-interaction-mode)
+                       :jump-fn 'xref-find-definitions
+                       :pop-fn 'xref-pop-marker-stack
+                       :should-jump t
+                       :heuristic 'error
+                       :async nil))
+
 (use-package paxedit
   :ensure t
   :defer t
