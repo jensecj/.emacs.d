@@ -1551,7 +1551,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :commands (which-key-mode
              which-key-setup-side-window-right)
   :config
-  ;; (which-key-setup-minibuffer)
   (which-key-setup-side-window-right)
   (setq which-key-max-description-length 40)
   (which-key-mode))
@@ -1564,7 +1563,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (("C-S-g" . rgrep)
    :map grep-mode-map
    ("C-x C-q" . wgrep-change-to-wgrep-mode)
-   ("C-x Ck" . wgrep-abort-changes)
+   ("C-x C-k" . wgrep-abort-changes)
    ("C-c C-c" . wgrep-finish-edit))
   :config
   (setq wgrep-auto-save-buffer t))
