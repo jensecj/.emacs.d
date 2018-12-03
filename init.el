@@ -1373,11 +1373,13 @@ restores the message."
 
 (use-package smart-jump
   :ensure t
+  :defer t
   :bind
   (("M-." . smart-jump-go)
    ("M-," . smart-jump-back)
    ("M--" . smart-jump-references))
   :config
+  (smart-jump-register :modes '(python-mode c++-mode clojure-mode))
   (smart-jump-register :modes '(emacs-lisp-mode lisp-interaction-mode)
                        :jump-fn 'xref-find-definitions
                        :pop-fn 'xref-pop-marker-stack
@@ -1757,6 +1759,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
         (message (format "copied %s to clipboard" link))))))
 
 
+(use-package anaconda-mode :ensure t)
 (use-package elpy
   :ensure t
   :defer t
