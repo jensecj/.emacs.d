@@ -1333,15 +1333,12 @@ restores the message."
   :config
   (advice-remove 'cider-jack-in 'direnv-update-environment))
 
-(use-package fill-column-indicator
-  :disabled
+(use-package hl-fill-column
   :ensure t
-  :demand t
-  :diminish fci-mode
   :config
-  (setq fci-rule-width 1)
-  (setq fci-rule-color "grey")
-  (setq fci-rule-column 80))
+  (global-hl-fill-column-mode)
+  :custom-face
+  (hl-fill-column-face ((t (:background "#4d0000")))))
 
 (use-package smex
   :ensure t
@@ -1472,6 +1469,10 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :ensure t
   :defer t
   :bind ("C-å" . ace-jump-zap-to-char))
+
+(use-package ace-mc
+  :ensure t
+  :bind ("C-M-d" . ace-mc-add-multiple-cursors))
 
 (use-package expand-region
   :ensure t
