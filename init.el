@@ -748,6 +748,20 @@ restores the message."
 
 ;; some built-in packages
 
+(use-package simple
+  :defines auto-fill-mode
+  :diminish auto-fill-mode
+  :hook (org-mode . auto-fill-mode))
+
+(use-package abbrev
+  :demand t
+  :diminish abbrev-mode
+  :hook (org-mode . abbrev-mode)
+  :commands read-abbrev-file
+  :config
+  (setq abbrev-file-name (concat my-emacs-data-dir "abbreviations"))
+  (read-abbrev-file))
+
 ;; Easily navigate silly cased words
 (use-package subword
   :diminish subword-mode
@@ -1664,20 +1678,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   ;; (define-key elpy-mode-map (kbd "<C-up>") nil)
   ;; (define-key elpy-mode-map (kbd "<C-down>") nil)
   )
-
-(use-package simple
-  :defines auto-fill-mode
-  :diminish auto-fill-mode
-  :hook (org-mode . auto-fill-mode))
-
-(use-package abbrev
-  :demand t
-  :diminish abbrev-mode
-  :hook (org-mode . abbrev-mode)
-  :commands read-abbrev-file
-  :config
-  (setq abbrev-file-name (concat my-emacs-data-dir "abbreviations"))
-  (read-abbrev-file))
 
 (use-package auth-source-pass
   :ensure t
