@@ -1337,7 +1337,18 @@ restores the message."
 (use-package hl-fill-column
   :ensure t
   :config
-  (global-hl-fill-column-mode)
+  (define-globalized-minor-mode
+    jens/global-hl-fill-column-mode
+    hl-fill-column-mode
+    (lambda ()
+      (unless (member major-mode '(magit-status-mode
+                                   magit-popup-mode
+                                   magit-diff-mode
+                                   magit-revision-mode
+                                   magit-log-mode))
+        (hl-fill-column-mode t)))
+    :group 'hl-fill-column)
+  (jens/global-hl-fill-column-mode)
   :custom-face
   (hl-fill-column-face ((t (:background "#4d0000")))))
 
