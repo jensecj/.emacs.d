@@ -1523,25 +1523,9 @@ _M-n_: Unmark next    _M-p_: Unmark previous
    ("C-_" . undo-tree-undo)
    ("M-_" . undo-tree-redo))
   :config
-  ;; (setq undo-tree-visualizer-timestamps nil)
   (setq undo-tree-visualizer-diff t)
   (setq undo-tree-auto-save-history t)
   (setq undo-tree-history-directory-alist `(("." . ,my-emacs-temp-dir)))
-
-  ;; TODO: fix undo-tree-undo in region, in some cases it freezes.
-  (defun jens/undo-tree-undo (orig-fun &rest args)
-    "Keep the region when undoing inside region"
-    (if (use-region-p)
-        (let ((m (set-marker (make-marker) (mark)))
-              (p (set-marker (make-marker) (point))))
-          (apply orig-fun args)
-          (goto-char p)
-          (set-mark m)
-          (set-marker p nil)
-          (set-marker m nil))
-      (apply orig-fun args)))
-  (advice-add 'undo-tree-undo :around #'jens/undo-tree-undo)
-
   (global-undo-tree-mode))
 
 (use-package goto-chg
