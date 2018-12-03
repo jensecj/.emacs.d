@@ -1251,26 +1251,6 @@ restores the message."
   ;; need to use plain isearch, pdf-tools hooks into it to handle searching
   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
-(use-package hl-fill-column
-  :ensure t
-  :config
-  (define-globalized-minor-mode
-    jens/global-hl-fill-column-mode
-    hl-fill-column-mode
-    (lambda ()
-      (unless (member major-mode '(magit-status-mode
-                                   magit-popup-mode
-                                   magit-diff-mode
-                                   magit-revision-mode
-                                   magit-log-mode
-                                   xref--xref-buffer-mode
-                                   xref-etags-mode))
-        (hl-fill-column-mode t)))
-    :group 'hl-fill-column)
-  ;; (jens/global-hl-fill-column-mode)
-  :custom-face
-  (hl-fill-column-face ((t (:background "#4d0000")))))
-
 (use-package smex
   :ensure t
   :defer 1
@@ -1356,6 +1336,11 @@ restores the message."
   :commands global-hl-todo-mode
   :config
   (global-hl-todo-mode +1))
+
+(use-package hl-fill-column
+  :ensure t
+  :custom-face
+  (hl-fill-column-face ((t (:background "#4d0000")))))
 
 (use-package helpful
   :ensure t
