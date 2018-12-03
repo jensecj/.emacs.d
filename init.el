@@ -1,6 +1,7 @@
+;;; -*- lexical-binding: t -*-
+
 ;;; TODO: use straight.el - https://github.com/raxod502/straight.el
 
-;;; -*- lexical-binding: t -*-
 ;; use lexical binding for initialization code
 (setq-default lexical-binding t)
 
