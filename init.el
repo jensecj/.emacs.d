@@ -762,6 +762,19 @@ restores the message."
   (setq abbrev-file-name (concat my-emacs-data-dir "abbreviations"))
   (read-abbrev-file))
 
+(use-package outline
+  :bind
+  (("M-h" . (lambda () (interactive)
+              (progn
+                (outline-toggle-children)
+                ;; need to re-enable the minor mode to fix a weird bug where
+                ;; outline.el does not fontify.
+                (outline-minor-mode 1))))
+   ("C-x h" . (lambda () (interactive)
+                (progn
+                  (outline-show-all)
+                  (message "unfolded all entries"))))))
+
 ;; Easily navigate silly cased words
 (use-package subword
   :diminish subword-mode
