@@ -313,6 +313,7 @@
 ;;;;;;;;;;;;;;;;;;;;
 
 (defun jens/new-scratch-buffer ()
+  "Return a newly created scratch buffer."
   (let ((n 0)
         bufname)
     (while (progn
@@ -325,7 +326,7 @@
     (get-buffer-create bufname)))
 
 (defun jens/create-scratch-buffer nil
-  "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
+  "Create a new scratch buffer to work in. (named *scratch* - *scratch<n>*)"
   (interactive)
   (switch-to-buffer (jens/new-scratch-buffer))
   (funcall initial-major-mode))
@@ -646,8 +647,8 @@ restores the message."
                (set-window-start w2 s1)
                (setq i (1+ i))))))))
 
-;; intuitive window resizing
 (defun xor (b1 b2)
+  "Exclusive OR."
   (or (and b1 b2)
       (and (not b1) (not b2))))
 
@@ -721,6 +722,7 @@ restores the message."
 ;;;;;;;;;;;;;;;;;;;
 ;; package setup ;;
 ;;;;;;;;;;;;;;;;;;;
+
 ;;; download and setup straight.el, should be run first-thing after a clean install.
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -739,8 +741,8 @@ restores the message."
 ;; packages ;;
 ;;;;;;;;;;;;;;
 
-;; We are going to use the bind-key (=:bind=) and diminish (=:diminish=)
-;; functionalities, so we need to have those packages.
+;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
+;; extentions of `use-package', so we need to have those packages.
 (use-package bind-key :ensure t)
 (use-package diminish :ensure t :commands diminish)
 
