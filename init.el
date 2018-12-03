@@ -1331,7 +1331,7 @@ restores the message."
                                    xref-etags-mode))
         (hl-fill-column-mode t)))
     :group 'hl-fill-column)
-  (jens/global-hl-fill-column-mode)
+  ;; (jens/global-hl-fill-column-mode)
   :custom-face
   (hl-fill-column-face ((t (:background "#4d0000")))))
 
@@ -1745,7 +1745,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
         (clipboard-kill-ring-save (point-min) (point-max))
         (message (format "copied %s to clipboard" link))))))
 
-
 (use-package anaconda-mode :ensure t)
 (use-package elpy
   :ensure t
@@ -2153,9 +2152,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
   (ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E")))))
 
-(use-package fullscreen
-  :bind ("M-f" . fullscreen-toggle))
-
 (use-package hydra :ensure t)
 
 (use-package org-ql
@@ -2169,6 +2165,15 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :demand t
   :config
   (so-long-enable))
+
+;;;;;;;;;;;;;;;;;;;;;;
+;; home made things ;;
+;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package fullscreen
+  :bind ("M-f" . fullscreen-toggle))
+
+(use-package etmux)
 
 (use-package today
   :load-path "lisp/today/"
@@ -2186,7 +2191,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (setq today-directory "~/vault/org/planner/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
-;; advices and hooks ;;
+;; advice and hooks ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; When popping the mark, continue popping until the cursor actually
