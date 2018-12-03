@@ -315,9 +315,10 @@
   (let ((n 0)
         bufname)
     (while (progn
-             (setq bufname (concat "*scratch"
-                                   (if (= n 0) "" (format "-%s" (int-to-string n)))
-                                   "*"))
+             (setq bufname
+                   (concat "*scratch"
+                           (if (= n 0) "" (format "-%s" (int-to-string n)))
+                           "*"))
              (setq n (1+ n))
              (get-buffer bufname)))
     (get-buffer-create bufname)))
@@ -354,7 +355,7 @@
   (message "cleaned up"))
 
 (defun jens/sudo-reopen ()
-  "Re-open current buffers file with superuser permissions"
+  "Re-open current buffer file with superuser permissions"
   (interactive)
   (let ((file-name (buffer-file-name)))
     (when file-name
@@ -1518,6 +1519,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
         ("M-." . rtags-find-symbol-at-point)
         ("M-," . rtags-location-stack-back)))
 
+(use-package with-editor :ensure t)
 (use-package magit
   :ensure t
   :defer t
