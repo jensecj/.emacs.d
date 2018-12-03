@@ -1326,7 +1326,9 @@ restores the message."
                                    magit-popup-mode
                                    magit-diff-mode
                                    magit-revision-mode
-                                   magit-log-mode))
+                                   magit-log-mode
+                                   xref--xref-buffer-mode
+                                   xref-etags-mode))
         (hl-fill-column-mode t)))
     :group 'hl-fill-column)
   (jens/global-hl-fill-column-mode)
