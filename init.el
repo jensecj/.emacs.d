@@ -1035,6 +1035,7 @@ restores the message."
   :mode ("\\.md\\'" "\\.card\\'"))
 (use-package rust-mode
   :ensure t
+  :bind (:map rust-mode-map ("C-c n" . rust-format-buffer))
   :mode "\\.rs\\'")
 (use-package scss-mode
   :ensure t
