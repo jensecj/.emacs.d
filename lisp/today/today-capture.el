@@ -76,7 +76,6 @@ applying handler on ENTRY, otherwise return ENTRY."
      (with-current-buffer (find-file-noselect (concat today-directory today-file))
        (save-excursion
          (goto-char (point-max))
-         ;; (newline)
          (insert "* TODO " content)
          (save-buffer))))))
 
