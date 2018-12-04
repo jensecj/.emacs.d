@@ -1129,6 +1129,14 @@ restores the message."
   ;; dont warn on refactor evals
   (setq cljr-warn-on-eval nil))
 
+(use-package racer
+  :ensure t
+  :defer t
+  :after rust-mode
+  :config
+  (add-hook 'rust-mode-hook #'racer-mode)
+  (add-hook 'racer-mode-hook #'eldoc-mode))
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; auto completion ;;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -1194,9 +1202,8 @@ restores the message."
       (popup-tip (ac-symbol-documentation (intern string-under-cursor)))))
 
   (defun jens/ac-rust-mode-setup ()
-    (add-hook 'rust-mode-hook #'racer-mode)
-    (add-hook 'racer-mode-hook #'eldoc-mode)
     (define-key rust-mode-map (kbd "<C-tab>") #'company-indent-or-complete-common)
+
     (setq company-tooltip-align-annotations t))
 
   (defun jens/ac-c++-mode-setup ()
