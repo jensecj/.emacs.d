@@ -1325,7 +1325,7 @@ restores the message."
    ("M-," . smart-jump-back)
    ("M--" . smart-jump-references))
   :config
-  (smart-jump-register :modes '(python-mode c++-mode clojure-mode))
+  (smart-jump-register :modes '(python-mode c++-mode clojure-mode rust-mode))
   (smart-jump-register :modes '(emacs-lisp-mode lisp-interaction-mode)
                        :jump-fn 'xref-find-definitions
                        :pop-fn 'xref-pop-marker-stack
