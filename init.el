@@ -1111,6 +1111,7 @@ restores the message."
 (use-package cider
   :ensure t
   :defer t
+  :after clojure-mode
   :config
   (setq cider-repl-use-pretty-printing t
         cider-prompt-for-symbol nil
@@ -1123,6 +1124,7 @@ restores the message."
 (use-package clj-refactor
   :ensure t
   :defer t
+  :after clojure-mode
   :config
   ;; dont warn on refactor evals
   (setq cljr-warn-on-eval nil))
