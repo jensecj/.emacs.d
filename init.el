@@ -1421,6 +1421,14 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :bind ("C-x C-y" . browse-kill-ring)
   :config (setq browse-kill-ring-quit-action 'save-and-restore))
 
+(use-package bookmark+
+  :straight (bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus")
+  :config
+  (add-hook 'find-file-hook #'bmkp-light-this-buffer)
+  (advice-add 'bookmark-set :after #'bmkp-light-bookmark)
+  :custom-face
+  (bmkp-light-non-autonamed ((t (:background "#2b2b2b" :foreground nil)))))
+
 (use-package ace-jump-mode
   :ensure t
   :defer t
