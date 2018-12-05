@@ -1206,7 +1206,8 @@ restore the message."
              (progn (skip-syntax-backward "w_") (point))
              (progn (skip-syntax-forward "w_") (point)))))
       (goto-char position)
-      (popup-tip (ac-symbol-documentation (intern string-under-cursor)))))
+      (popup-tip (ac-symbol-documentation (intern string-under-cursor))
+                 :margin-left 1 :margin-right 1)))
 
   (defun jens/ac-rust-mode-setup ()
     (define-key rust-mode-map (kbd "<C-tab>") #'company-indent-or-complete-common)
