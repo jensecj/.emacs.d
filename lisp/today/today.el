@@ -5,9 +5,9 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: org, org-mode, planning, today, todo
-;; Package-Version: 20180920
-;; Version: 0.6
-;; Package-Requires: ((emacs "25.1") (org "9.0") (dash "2.14.1") (f "0.20.0") (hydra "0.14.0") (org-web-tools "0.1.0-pre"))
+;; Package-Version: 20181125
+;; Version: 0.7
+;; Package-Requires: ((emacs "25.1") (org "9.0") (dash "2.14.1") (f "0.20.0") (with-editor "20181113.1845") (hydra "0.14.0") (org-web-tools "0.1.0-pre"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -126,10 +126,20 @@ corresponding file."
   (save-excursion
     (search-backward title)
     (next-line)
-    (yank)))
+    (yank))
+  (message (format "moved to %s" title)))
 
 ;; TODO: extract sections, and make then configurable from use-package definition.
 (defhydra today-move-to-section-hydra (:foreign-keys run)
+  "
+^Bindings^        ^ ^            ^ ^
+^^^^^^^^-------------------------------------------
+_a_: AI           _j_: Java      _t_: Tech Talks
+_r_: Rust         _l_: Linux     _T_: Ted Talks
+_p_: Python       _L_: Lisp      _k_: Climate
+_c_: C++          _e_: Emacs     _g_: Git
+_C_: Clojure      _w_: Web       _u_: Urgent
+"
   ("a" (lambda () (interactive) (today-move-to-section "# AI")))
   ("r" (lambda () (interactive) (today-move-to-section "# Rust")))
   ("p" (lambda () (interactive) (today-move-to-section "# Python")))
@@ -137,10 +147,14 @@ corresponding file."
   ("c" (lambda () (interactive) (today-move-to-section "# C++")))
   ("j" (lambda () (interactive) (today-move-to-section "# Java")))
   ("l" (lambda () (interactive) (today-move-to-section "# Linux")))
+  ("L" (lambda () (interactive) (today-move-to-section "# Lisp")))
   ("g" (lambda () (interactive) (today-move-to-section "# Git")))
   ("e" (lambda () (interactive) (today-move-to-section "# Emacs")))
   ("w" (lambda () (interactive) (today-move-to-section "# Web")))
-  ("t" (lambda () (interactive) (today-move-to-section "# Ted Talks")))
+  ("t" (lambda () (interactive) (today-move-to-section "# Tech Talks")))
+  ("T" (lambda () (interactive) (today-move-to-section "# Ted Talks")))
+  ("u" (lambda () (interactive) (today-move-to-section "# Urgent")))
+  ("k" (lambda () (interactive) (today-move-to-section "# Climate")))
 
   ("q" nil "quit"))
 
@@ -174,3 +188,24 @@ _c_: capture with prompt                  ^ ^                               ^ ^
   ("q" nil "quit"))
 
 (provide 'today)
+
+
+;; (comment
+
+
+;;  (--map (list (org-element-property :raw-value it))
+;;         (org-ql "~/test/test.org" (done)
+;;           :action (org-toggle-tag "kagemand")
+;;           ))
+
+;;  (defun testsb ()
+;;    (interactive)
+;;    (let* ((subtree (today-util-copy-subtree-at-point))
+;;           (fixed (today-util-remove-checkboxes-from-subtree subtree 'unchecked)))
+;;      (beginning-of-line)
+;;      (newline)
+;;      (insert fixed)
+;;      ))
+
+
+;;  )

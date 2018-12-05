@@ -251,6 +251,7 @@
 ;; show trailing whitespace by default
 (setq-default show-trailing-whitespace nil)
 (defun jens/show-trailing-whitespace ()
+  "Enable showing trailing whitespace in buffer."
   (interactive)
   (setq show-trailing-whitespace t))
 (add-hook 'text-mode-hook 'jens/show-trailing-whitespace)
@@ -326,13 +327,13 @@
     (get-buffer-create bufname)))
 
 (defun jens/create-scratch-buffer nil
-  "Create a new scratch buffer to work in. (named *scratch* - *scratch<n>*)"
+  "Create a new scratch buffer to work in.  (named *scratch* - *scratch<n>*)."
   (interactive)
   (switch-to-buffer (jens/new-scratch-buffer))
   (funcall initial-major-mode))
 
 (defun jens/clean-view ()
-  "Creates a scratch buffer, and makes it the only buffer visible."
+  "Create a scratch buffer, and makes it the only buffer visible."
   (interactive)
   (jens/create-scratch-buffer)
   (delete-other-windows))
@@ -357,23 +358,23 @@
   (message "cleaned up"))
 
 (defun jens/sudo-reopen ()
-  "Re-open current buffer file with superuser permissions"
+  "Re-open current buffer file with superuser permissions."
   (interactive)
   (let ((file-name (buffer-file-name)))
     (when file-name
       (find-alternate-file (concat "/sudo::" file-name)))))
 
 (defun jens/open-line-below ()
-  "Inserts a line below the current line, indents it, and moves the the
-  beginning of that line."
+  "Inserts a line below the current line, indents it, and moves
+   the the beginning of that line."
   (interactive)
   (end-of-line)
   (newline)
   (indent-for-tab-command))
 
 (defun jens/open-line-above ()
-  "Inserts a line above the current line, indents it, and moves the the
-  beginning of that line."
+  "Inserts a line above the current line, indents it, and moves
+  the the beginning of that line."
   (interactive)
   (beginning-of-line)
   (newline)
@@ -381,7 +382,7 @@
   (indent-for-tab-command))
 
 (defun jens/smart-beginning-of-line ()
-  "Move point to the beginning of line or beginning of text"
+  "Move point to the beginning of line or beginning of text."
   (interactive)
   (let ((pt (point)))
     (beginning-of-line-text)
@@ -389,14 +390,14 @@
       (beginning-of-line))))
 
 (defun jens/kill-to-beginning-of-line ()
-  "Kills from <point> to the beginning of the current line."
+  "Kill from <point> to the beginning of the current line."
   (interactive)
   (kill-region (save-excursion (beginning-of-line) (point))
                (point)))
 
 (defun jens/save-region-or-current-line (arg)
-  "If a region is active then it is saved to the kill-ring, otherwise the current
-line is saved."
+  "If a region is active then it is saved to the `kill-ring',
+otherwise the current line is saved."
   (interactive "P")
   (if (region-active-p)
       (kill-ring-save (region-beginning) (region-end))
@@ -423,8 +424,9 @@ line is saved."
           (end-of-line))))))
 
 (defun jens/join-region-or-line ()
-  "If region is active, join all lines in region to a single line. Otherwise join
-the line below the current line, with the current line, placing it after."
+  "If region is active, join all lines in region to a single
+   line. Otherwise join the line below the current line, with the
+   current line, placing it after."
   (interactive)
   (if (region-active-p)
       (jens/join-region)
@@ -455,6 +457,7 @@ otherwise comment or uncomment the current line."
 ;;;;;;;;;;;;;;;;;
 
 (defun jens/byte-compile-this-file ()
+  "Byte compile the current buffer."
   (interactive)
   (if (f-exists? (concat (f-no-ext (buffer-file-name)) ".elc"))
       (byte-recompile-file (buffer-file-name))
@@ -469,11 +472,11 @@ otherwise comment or uncomment the current line."
   (file-name-sans-extension (jens/get-buffer-file-name+ext)))
 
 (defun jens/get-buffer-file-directory ()
-  "Get the directory of the file belonging to the current buffer"
+  "Get the directory of the file belonging to the current buffer."
   (file-name-directory (buffer-file-name)))
 
 (defun jens/file-age (file)
-  "Returns the number of seconds since the file was last modified."
+  "Returns the number of seconds since FILE was last modified."
   (float-time
    (time-subtract (current-time)
                   (nth 5 (file-attributes (file-truename file))))))
@@ -496,7 +499,7 @@ otherwise comment or uncomment the current line."
                    name (file-name-nondirectory new-name)))))))
 
 (defun jens/delete-current-buffer-file ()
-  "Removes file connected to current buffer and kills buffer."
+  "Remove the file of the current buffer and kill the buffer."
   (interactive)
   (let ((filename (buffer-file-name))
         (buffer (current-buffer)))
@@ -556,7 +559,7 @@ the overlay-map"
 ;;    ("d" . (xi (message "d")))))
 
 (defun jens/try-require (feature)
-  "Tries to require FEATURE, if an exception is thrown, log it."
+  "Try to require FEATURE, if an exception is thrown, log it."
   (condition-case ex
       (progn
         (msg-info (format "@ Loading \"%s\" " (symbol-name feature)))
@@ -574,20 +577,20 @@ the overlay-map"
            (insert (current-kill 0)))))
 
 (defmacro jens/with-supressed-message (&rest body)
-  "Saves the current message in the minibuffer, executes body, then
-restores the message."
+  "Save the current message in the minibuffer, execute body, then
+restore the message."
   (let ((saved-message-symbol (make-symbol "saved-message")))
     `(let ((,saved-message-symbol (current-message)))
        (progn ,@body)
        (message ,saved-message-symbol))))
 
 (defun jens/save-to-file (data filename)
-  "Save lisp object to a file"
+  "Save lisp object to a file."
   (with-temp-file filename
     (prin1 data (current-buffer))))
 
 (defun jens/load-from-file (filename)
-  "Load lisp object from file"
+  "Load lisp object from file."
   (with-temp-buffer
     (insert-file-contents filename)
     (cl-assert (eq (point) (point-min)))
@@ -598,7 +601,7 @@ restores the message."
 ;;;;;;;;;;;;;;;;;;;
 
 (defun jens/toggle-window-split ()
-  "Toggle window splitting between horizontal and vertical"
+  "Toggle window splitting between horizontal and vertical."
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
@@ -625,7 +628,7 @@ restores the message."
     (message "You can only toggle split of two windows!")))
 
 (defun jens/rotate-windows ()
-  "Rotate your windows"
+  "Rotate windows in current window configuration."
   (interactive)
   (cond ((not (> (count-windows)1))
          (message "You can't rotate a single window!"))
@@ -693,7 +696,7 @@ restores the message."
 ;;;;;;;;;;;;;;;;;
 
 (defun jens/is-online-p ()
-  "Returns a non-nil value if we have a network connection."
+  "Return a non-nil value if we have a network connection."
   (if (and (functionp 'network-interface-list)
            (network-interface-list))
       (-some (lambda (iface) (unless (equal "lo" (car iface))
@@ -703,12 +706,12 @@ restores the message."
     t))
 
 (defun jens/insert-todays-date ()
-  "Inserts the current date at point."
+  "Insert the current date at point."
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
 
 (defun jens/processor-count ()
-  "Returns the number of logical processors of the system."
+  "Return the number of logical processors of the system."
   (when (file-exists-p "/proc/cpuinfo")
     (with-temp-buffer
       (insert-file-contents "/proc/cpuinfo")
@@ -1820,7 +1823,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
     "Pick an open terminal and save it"
     (interactive)
     (if (null multi-term-buffer-list)
-        (error "Error: No open terminals."))
+        (error "Error: No open terminals"))
     (let ((buf (get-buffer (completing-read "Select term:" (mapcar 'buffer-name multi-term-buffer-list)))))
       (with-current-buffer buf
         (if (member default-directory multi-term-saved-terms)
@@ -2172,7 +2175,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;; moves. also, if the last command was a copy - skip past all the
 ;; expand-region cruft.
 (defun jens/pop-to-mark-command (orig-fun &rest args)
-  "Call ORIG-FUN until the cursor moves. Try the repeated popping up to 10
+  "Call ORIG-FUN until the cursor moves. Try popping up to 10
   times."
   (let ((p (point)))
     (dotimes (i 10)
@@ -2425,3 +2428,4 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (msg-success (format "Emacs initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
 
 (provide 'init)
+;;; init.el ends here
