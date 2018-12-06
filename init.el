@@ -54,10 +54,10 @@
 (add-to-list 'load-path my-emacs-elpa-dir)
 
 ;; setup package archives
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")))
+(setq-default package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                                 ("melpa-stable" . "https://stable.melpa.org/packages/")
+                                 ("melpa" . "https://melpa.org/packages/")
+                                 ("org" . "https://orgmode.org/elpa/")))
 
 ;; install use-package if we don't already have it
 (unless (package-installed-p 'use-package)
