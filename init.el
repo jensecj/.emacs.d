@@ -1373,6 +1373,11 @@ restore the message."
   :ensure t
   :defer t
   :delight " paxedit"
+  :hook ((lisp-mode . paxedit-mode)
+         (lisp-interaction-mode . paxedit-mode)
+         (emacs-lisp-mode . paxedit-mode)
+         (clojure-mode . paxedit-mode)
+         (scheme-mode . paxedit-mode))
   :bind (("M-t t" .
           (lambda ()
             (interactive)
@@ -1382,10 +1387,7 @@ restore the message."
          ("M-k" . paxedit-kill)
          ("M-K" . paxedit-copy)
          ("M-<prior>" . paxedit-backward-up)
-         ("M-<next>" . paxedit-backward-end))
-  :init
-  (add-hook 'emacs-lisp-mode-hook 'paxedit-mode)
-  (add-hook 'clojure-mode-hook 'paxedit-mode))
+         ("M-<next>" . paxedit-backward-end)))
 
 (use-package diff-hl
   :ensure t
