@@ -1144,8 +1144,8 @@ restore the message."
   :ensure t
   :defer t
   :after rust-mode
+  :hook (rust-mode . racer-mode)
   :config
-  (add-hook 'rust-mode-hook #'racer-mode)
   (add-hook 'racer-mode-hook #'eldoc-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -1296,7 +1296,6 @@ restore the message."
 (use-package with-editor :ensure t) ;; run commands in `emacsclient'
 (use-package gist :ensure t :defer t) ;; work with github gists
 (use-package rainbow-mode :ensure t :defer t) ;; highlight color-strings (hex, etc.)
-(use-package anaconda-mode :ensure t) ;; code-navigation for python
 
 (use-package pdf-tools
   :ensure t
@@ -1347,12 +1346,21 @@ restore the message."
    ("M-," . smart-jump-back)
    ("M--" . smart-jump-references))
   :config
-  (smart-jump-register :modes '(python-mode c++-mode clojure-mode rust-mode))
+  (smart-jump-register :modes '(c++-mode clojure-mode rust-mode))
+
   (smart-jump-register :modes '(emacs-lisp-mode lisp-interaction-mode)
                        :jump-fn 'xref-find-definitions
                        :pop-fn 'xref-pop-marker-stack
                        :should-jump t
                        :heuristic 'error
+                       :async nil)
+
+  (smart-jump-register :modes 'python-mode
+                       :jump-fn 'elpy-goto-definition
+                       :pop-fn 'xref-pop-marker-stack
+                       :refs-fn 'smart-jump-simple-find-references
+                       :should-jump (lambda () (bound-and-true-p elpy-mode))
+                       :heuristic 'point
                        :async nil))
 
 (use-package paxedit
@@ -1717,14 +1725,11 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :ensure t
   :defer t
   :diminish elpy-mode
+  :hook (python-mode . elpy-mode)
   :bind
   (:map elpy-mode-map
         ("<C-up>" . nil)
-        ("<C-down>" . nil))
-  :config
-  ;; (define-key elpy-mode-map (kbd "<C-up>") nil)
-  ;; (define-key elpy-mode-map (kbd "<C-down>") nil)
-  )
+        ("<C-down>" . nil)))
 
 (use-package auth-source-pass
   :ensure t
