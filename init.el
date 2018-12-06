@@ -249,11 +249,12 @@
 (global-unset-key (kbd "M-t"))
 
 ;; show trailing whitespace by default
-(setq-default show-trailing-whitespace nil)
+(setq-default show-trailing-whitespace 't)
 (defun jens/show-trailing-whitespace ()
-  "Enable showing trailing whitespace in buffer."
+  "Show trailing whitespace in buffer."
   (interactive)
   (setq show-trailing-whitespace t))
+
 (add-hook 'text-mode-hook 'jens/show-trailing-whitespace)
 (add-hook 'prog-mode-hook 'jens/show-trailing-whitespace)
 
