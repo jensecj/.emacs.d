@@ -1358,16 +1358,14 @@ restore the message."
                        :jump-fn 'xref-find-definitions
                        :pop-fn 'xref-pop-marker-stack
                        :should-jump t
-                       :heuristic 'error
-                       :async nil)
+                       :heuristic 'error)
 
   (smart-jump-register :modes 'python-mode
                        :jump-fn 'elpy-goto-definition
                        :pop-fn 'xref-pop-marker-stack
                        :refs-fn 'smart-jump-simple-find-references
                        :should-jump (lambda () (bound-and-true-p elpy-mode))
-                       :heuristic 'error
-                       :async nil))
+                       :heuristic 'error))
 
 (use-package paxedit
   :ensure t
