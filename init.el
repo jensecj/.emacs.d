@@ -1770,6 +1770,10 @@ _M-n_: Unmark next    _M-p_: Unmark previous
              :nick "jensecj"
              :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
 
+(use-package fontify-face
+  :ensure t
+  :hook (emacs-lisp-mode . fontify-face-mode))
+
 (use-package unicode-fonts
   :disabled
   :ensure t
