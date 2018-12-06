@@ -266,10 +266,11 @@
 (use-package epa-file
   :demand t
   :commands epa-file-enable
-  :config
-  (epa-file-enable)
+  :custom
   ;; becomes epg-pinentry-mode in 27.1?, and is moved to package epg-config
-  (setq epa-pinentry-mode 'loopback))
+  (epa-pinentry-mode 'loopback)
+  :config
+  (epa-file-enable))
 
 ;; enable gpg pinentry through the minibuffer
 (use-package pinentry
@@ -280,9 +281,11 @@
   (setenv "GPG_AGENT_INFO" nil)
 
   (defun jens/pinentry-reset ()
+    "Reset the `pinentry' service."
     (interactive)
     (pinentry-stop)
     (pinentry-start))
+
   (setq gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset))
   ;; (cancel-timer gpg-reset-timer)
   )
@@ -563,9 +566,9 @@ the overlay-map"
   "Try to require FEATURE, if an exception is thrown, log it."
   (condition-case ex
       (progn
-        (msg-info (format "@ Loading \"%s\" " (symbol-name feature)))
+        (msg-info (format "@ Requiring \"%s\" " (symbol-name feature)))
         (require feature))
-    ('error (msg-warning (format "@ Error loading \"%s\": %s" (symbol-name feature) ex)))))
+    ('error (msg-warning (format "@ Error requiring \"%s\": %s" (symbol-name feature) ex)))))
 
 (defun jens/eval-and-replace ()
   "Replace the preceding sexp with its value."
@@ -892,7 +895,7 @@ restore the message."
   (load-library "dired-x")
   (load-library "dired-aux")
 
-  (require 'dired+)
+  (jens/try-require 'dired+)
 
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
   (setq dired-listing-switches "-agholXN")
@@ -1188,7 +1191,7 @@ restore the message."
   (("C-+" . jens/ac-quick-help-at-point)
    ("C-<tab>" . auto-complete))
   :config
-  (require 'auto-complete-config)
+  (jens/try-require 'auto-complete-config)
   (setq ac-auto-start t) ;; auto start completing
   (setq ac-show-menu t) ;; show the menu instantly
   (setq ac-show-menu-immediately-on-auto-complete t) ;; show the autocompletion menu instantly
@@ -1228,7 +1231,7 @@ restore the message."
   (defun jens/ac-c++-mode-setup ()
     ;; (require 'ac-clang)
     ;; (require 'ac-c-headers)
-    (require 'ac-rtags)
+    (jens/try-require 'ac-rtags)
 
     (defvar c++-include-files
       '("/usr/include"
@@ -1301,13 +1304,15 @@ restore the message."
 (use-package anaconda-mode :ensure t) ;; code-navigation for python
 
 (use-package pdf-tools
+  :ensure t
+  :demand t
   :commands pdf-tools-install
   :straight t
-  :ensure t
-  :config
-  (pdf-tools-install)
+  :bind
   ;; need to use plain isearch, pdf-tools hooks into it to handle searching
-  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+  (:map pdf-view-mode-map ("C-s" . isearch-forward))
+  :config
+  (pdf-tools-install))
 
 (use-package smex
   :ensure t
@@ -1334,7 +1339,7 @@ restore the message."
          ([(shift next)] . sp-split-sexp)
          ([(shift prior)] . sp-join-sexp))
   :config
-  (require 'smartparens-config)
+  (jens/try-require 'smartparens-config)
   (setq sp-autoescape-string-quote nil)
   (smartparens-global-mode t)
   (show-smartparens-global-mode t))
@@ -1985,7 +1990,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (use-package ivy-rich
   :ensure t
   :config
-
   (defun ivy-rich-bookmark-context-string (candidate)
     (let ((front (cdr (assoc 'front-context-string (cdr (assoc candidate bookmark-alist)))))
           (rear (cdr (assoc 'rear-context-string (cdr (assoc candidate bookmark-alist))))))
@@ -1998,6 +2002,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
                   (ivy-rich-bookmark-filename (:face font-lock-doc-face)))))
   (add-to-list 'ivy-rich--display-transformers-list 'counsel-bookmark)
 
+  (ivy-rich-mode -1)
   (ivy-rich-mode 1))
 
 (use-package counsel
@@ -2116,7 +2121,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (defface face-darker '((t (:background "grey25" :inherit mode-line))) "" :group 'powerline)
   (defface face-darkest '((t (:background "grey20" :inherit mode-line))) "" :group 'powerline)
 
-  (require 'pdf-tools)
+  (jens/try-require 'pdf-tools)
 
   ;; Setup the powerline theme
   (setq-default
@@ -2458,7 +2463,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;; experimantal things ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'experimental)
+(load (concat my-emacs-dir "experimental.el"))
 
 ;; reset the things we disabled earlier
 ;;set garbage collection limit a bit higher, this takes fiddling, because if we
