@@ -248,8 +248,8 @@
 ;; used to be transpose-words, used for new keybindings
 (global-unset-key (kbd "M-t"))
 
-;; show trailing whitespace by default
-(setq-default show-trailing-whitespace 't)
+;; don't show trailing whitespace by default
+(setq-default show-trailing-whitespace nil)
 (defun jens/show-trailing-whitespace ()
   "Show trailing whitespace in buffer."
   (interactive)
@@ -266,10 +266,9 @@
 (use-package epa-file
   :demand t
   :commands epa-file-enable
-  :custom
-  ;; becomes epg-pinentry-mode in 27.1?, and is moved to package epg-config
-  (epa-pinentry-mode 'loopback)
   :config
+  ;; becomes epg-pinentry-mode in 27.1?, and is moved to package epg-config
+  (setq epa-pinentry-mode 'loopback)
   (epa-file-enable))
 
 ;; enable gpg pinentry through the minibuffer
@@ -874,7 +873,8 @@ restore the message."
       (display-line-numbers-mode -1))))
 
 (use-package eldoc
-  :diminish eldoc-mode)
+  :diminish eldoc-mode
+  :hook (emacs-lisp-mode . eldoc-mode))
 
 (use-package dired
   :defer t
@@ -972,7 +972,7 @@ restore the message."
     (org-indent-line)
     (message "indented"))
 
-  (defun jens/copy-url-at-point ()
+  (defun jens/copy-org-url-at-point ()
     "Grab URL from org-link at point."
     (interactive)
     (let* ((link-info (assoc :link (org-context)))
@@ -1090,38 +1090,33 @@ restore the message."
 (use-package clojure-mode
   :ensure t
   :defer t
-  :after (company-mode cider cljr-refactor)
-  :functions (jens/clojure-mode-setup
-              jens/company-clojure-quickhelp-at-point)
+  :after (company-mode cider clj-refactor)
+  :functions jens/company-clojure-quickhelp-at-point
   :commands (cider-create-doc-buffer
              cider-try-symbol-at-point)
+  :bind
+  (:map clojure-mode-map
+        ("<tab>" . company-indent-or-complete-common)
+        ("C-+" . jens/company-clojure-quickhelp-at-point))
   :config
-  (defun jens/clojure-mode-setup ()
+  (auto-complete-mode -1)
+  (company-mode +1)
+  (add-to-list 'company-backends 'company-capf)
+
+  ;; clojure emacs power settings
+  (cider-mode +1)
+  (clj-refactor-mode +1)
+
+  ;; (setq cider-cljs-lein-repl
+  ;;       "(do (require 'figwheel-sidecar.repl-api)
+  ;;        (figwheel-sidecar.repl-api/start-figwheel!)
+  ;;        (figwheel-sidecar.repl-api/cljs-repl))")
+
+  (defun jens/company-clojure-quickhelp-at-point ()
     (interactive)
-    ;; use company for clojure
-    (auto-complete-mode -1)
-    (company-mode +1)
-    (add-to-list 'company-backends 'company-capf)
-    (define-key clojure-mode-map (kbd "<tab>") #'company-indent-or-complete-common)
-    (define-key clojure-mode-map (kbd "C-+") #'jens/company-clojure-quickhelp-at-point)
-
-    ;; clojure emacs power settings
-    (cider-mode +1)
-    (clj-refactor-mode +1)
-
-    ;; (setq cider-cljs-lein-repl
-    ;;       "(do (require 'figwheel-sidecar.repl-api)
-    ;;        (figwheel-sidecar.repl-api/start-figwheel!)
-    ;;        (figwheel-sidecar.repl-api/cljs-repl))")
-
-    (defun jens/company-clojure-quickhelp-at-point ()
-      (interactive)
-      (let* ((position (point)))
-        (goto-char position)
-        (cider-try-symbol-at-point "symbol to show doc for" #'cider-create-doc-buffer)
-        (popup-tip (with-current-buffer "*cider-doc*"
-                     (buffer-substring-no-properties (point-min) (point-max)))))))
-  (add-hook 'clojure-mode-hook 'jens/clojure-mode-setup))
+    (cider-try-symbol-at-point "symbol to show doc for" #'cider-create-doc-buffer)
+    (popup-tip (with-current-buffer "*cider-doc*"
+                 (buffer-substring-no-properties (point-min) (point-max))))))
 
 ;; extensions to major modes:
 (use-package cider
