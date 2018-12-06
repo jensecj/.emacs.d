@@ -1971,6 +1971,24 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (ivy-mode)
   (jens/ivy-load-views))
 
+(use-package ivy-rich
+  :ensure t
+  :config
+
+  (defun ivy-rich-bookmark-context-string (candidate)
+    (let ((front (cdr (assoc 'front-context-string (cdr (assoc candidate bookmark-alist)))))
+          (rear (cdr (assoc 'rear-context-string (cdr (assoc candidate bookmark-alist))))))
+      (s-replace "\n" ""  (concat  "" front))))
+
+  (add-to-list 'ivy-rich--display-transformers-list
+               '(:columns
+                 ((ivy-rich-candidate (:width 30 :face font-lock-builtin-face))
+                  (ivy-rich-bookmark-context-string (:width 20 :face font-lock-string-face))
+                  (ivy-rich-bookmark-filename (:face font-lock-doc-face)))))
+  (add-to-list 'ivy-rich--display-transformers-list 'counsel-bookmark)
+
+  (ivy-rich-mode 1))
+
 (use-package counsel
   :ensure t
   :after (ivy fzf)
