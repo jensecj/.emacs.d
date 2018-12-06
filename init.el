@@ -1150,9 +1150,24 @@ restore the message."
   :ensure t
   :defer t
   :after rust-mode
-  :hook (rust-mode . racer-mode)
-  :config
-  (add-hook 'racer-mode-hook #'eldoc-mode))
+  :hook ((rust-mode . racer-mode)
+         (racer-mode . eldoc-mode)))
+
+(use-package elpy
+  :ensure t
+  :defer t
+  :delight " elpy"
+  :hook (python-mode . elpy-mode)
+  :bind
+  (:map elpy-mode-map
+        ("<C-up>" . nil)
+        ("<C-down>" . nil))
+  :custom
+  (elpy-modules
+   '(elpy-module-sane-defaults
+     elpy-module-company
+     elpy-module-eldoc
+     elpy-module-pyvenv)))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; auto completion ;;
@@ -1727,16 +1742,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
         (insert link)
         (clipboard-kill-ring-save (point-min) (point-max))
         (message (format "copied %s to clipboard" link))))))
-
-(use-package elpy
-  :ensure t
-  :defer t
-  :diminish elpy-mode
-  :hook (python-mode . elpy-mode)
-  :bind
-  (:map elpy-mode-map
-        ("<C-up>" . nil)
-        ("<C-down>" . nil)))
 
 (use-package auth-source-pass
   :ensure t
