@@ -1433,6 +1433,13 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :custom-face
   (bmkp-light-non-autonamed ((t (:background "#2b2b2b" :foreground nil)))))
 
+(use-package highlight-defined
+  :ensure t
+  :hook (emacs-lisp-mode . highlight-defined-mode)
+  :custom-face
+  (highlight-defined-function-name-face ((t (:foreground "#BDE0F3"))))
+  (highlight-defined-builtin-function-name-face ((t (:foreground "#BFBFBF")))))
+
 (use-package ace-jump-mode
   :ensure t
   :defer t
