@@ -1198,6 +1198,7 @@ restore the message."
                   ac-source-words-in-same-mode-buffers))
   ;; '(ac-source-words-in-buffer ac-source-imenu ac-source-yasnippet)
 
+  (setq -quickhelp-at-point-cache ())
   (defun jens/ac-quick-help-at-point ()
     (interactive)
     (let* ((position (point))
@@ -1206,7 +1207,11 @@ restore the message."
              (progn (skip-syntax-backward "w_") (point))
              (progn (skip-syntax-forward "w_") (point)))))
       (goto-char position)
-      (popup-tip (ac-symbol-documentation (intern string-under-cursor))
+
+      (if (not (string= "" string-under-cursor))
+          (setq -quickhelp-at-point-cache string-under-cursor))
+
+      (popup-tip (ac-symbol-documentation (intern -quickhelp-at-point-cache))
                  :margin-left 1 :margin-right 1)))
 
   (defun jens/ac-rust-mode-setup ()
