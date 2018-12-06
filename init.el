@@ -1379,15 +1379,19 @@ restore the message."
   :diminish diff-hl-mode
   :commands (global-diff-hl-mode diff-hl-mode)
   :defines jens/diff-hl-refresh
-  :config (global-diff-hl-mode +1)
+  :hook
+  ((magit-post-refresh . diff-hl-magit-post-refresh)
+   (prog-mode . diff-hl-mode)
+   (org-mode . diff-hl-mode)
+   (dired-mode . diff-hl-dired-mode))
+  :config
   (defun jens/diff-hl-refresh ()
-    "refresh diff-hl"
+    "Refresh diff-hl-mode."
     (interactive)
     (diff-hl-mode nil)
     (diff-hl-mode +1))
 
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+  (global-diff-hl-mode +1))
 
 (use-package hl-todo
   :ensure t
