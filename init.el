@@ -914,6 +914,11 @@ restore the message."
 
   (advice-add 'dired-readin :after #'jens/dired-sort))
 
+(use-package dired+
+  :custom-face
+  (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
+  (diredp-file-name ((t (:foreground "#DCDCCC")))))
+
 ;; use firefox as the default browser
 (use-package browse-url
   :defer t
@@ -1263,7 +1268,10 @@ restore the message."
   ;;  (add-to-list 'ac-sources 'ac-complete-octave))
   ;; (add-hook 'octave-mode-hook 'my-ac-octave-mode-setup)
 
-  (global-auto-complete-mode -1))
+  (global-auto-complete-mode -1)
+  :custom-face
+  (ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
+  (ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E")))))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; misc packages ;;
@@ -1969,7 +1977,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (advice-add 'ivy-pop-view :after #'jens/ivy-save-views)
 
   (ivy-mode)
-  (jens/ivy-load-views))
+  (jens/ivy-load-views)
+  :custom-face
+  (ivy-current-match ((t (:foreground nil :background "#4f4f4f" :box t)))))
 
 (use-package ivy-rich
   :ensure t
@@ -2172,13 +2182,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :config
   (load-theme 'zenburn t)
   :custom-face
-  (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b"))))
-  (ivy-current-match ((t (:background "#4f4f4f" :weight bold :box t))))
-  (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
-  (diredp-file-name ((t (:foreground "#DCDCCC"))))
-  (persp-face-lighter-buffer-not-in-persp ((t (:foreground "#CC9393"))))
-  (ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
-  (ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E")))))
+  (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; home made things ;;
