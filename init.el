@@ -1467,15 +1467,10 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (avy-lead-face-1 ((t (:background "#2B2B2B"))))
   (avy-lead-face-2 ((t (:background "#2B2B2B")))))
 
-(use-package ace-jump-buffer
+(use-package avy-zap
   :ensure t
   :defer t
-  :bind ("C-x C-b" . ace-jump-buffer))
-
-(use-package ace-jump-zap
-  :ensure t
-  :defer t
-  :bind ("C-å" . ace-jump-zap-to-char))
+  :bind ("C-å" . avy-zap-to-char))
 
 (use-package ace-mc
   :ensure t
