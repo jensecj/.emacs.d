@@ -751,6 +751,8 @@ restore the message."
 ;; extentions of `use-package', so we need to have those packages.
 (use-package bind-key :ensure t)
 (use-package diminish :ensure t :commands diminish)
+(use-package delight :ensure t)
+
 
 ;; some built-in packages
 
@@ -872,8 +874,12 @@ restore the message."
           (call-interactively 'goto-line))
       (display-line-numbers-mode -1))))
 
+(use-package elisp-mode
+  :delight
+  (emacs-lisp-mode "Elisp" :major))
+
 (use-package eldoc
-  :diminish eldoc-mode
+  :delight " eldoc"
   :hook (emacs-lisp-mode . eldoc-mode))
 
 (use-package dired
@@ -1366,7 +1372,7 @@ restore the message."
 (use-package paxedit
   :ensure t
   :defer t
-  :diminish paxedit-mode
+  :delight " paxedit"
   :bind (("M-t t" .
           (lambda ()
             (interactive)
