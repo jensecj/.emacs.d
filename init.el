@@ -1360,7 +1360,7 @@ restore the message."
                        :pop-fn 'xref-pop-marker-stack
                        :refs-fn 'smart-jump-simple-find-references
                        :should-jump (lambda () (bound-and-true-p elpy-mode))
-                       :heuristic 'point
+                       :heuristic 'error
                        :async nil))
 
 (use-package paxedit
