@@ -1455,6 +1455,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :straight (bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus")
   :config
   (add-hook 'find-file-hook #'bmkp-light-this-buffer)
+  (add-hook 'after-save-hook #'bmkp-light-this-buffer)
   (advice-add 'bookmark-set :after #'bmkp-light-bookmark)
   :custom-face
   (bmkp-light-non-autonamed ((t (:background "#2b2b2b" :foreground nil)))))
@@ -1777,6 +1778,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
 
 (use-package fontify-face
   :ensure t
+  :defer t
   :hook (emacs-lisp-mode . fontify-face-mode))
 
 (use-package unicode-fonts
