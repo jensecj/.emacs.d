@@ -1440,12 +1440,18 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (highlight-defined-function-name-face ((t (:foreground "#BDE0F3"))))
   (highlight-defined-builtin-function-name-face ((t (:foreground "#BFBFBF")))))
 
-(use-package ace-jump-mode
+(use-package avy
   :ensure t
   :defer t
   :bind
-  (("C-ø" . ace-jump-char-mode)
-   ("C-'" . ace-jump-line-mode)))
+  (("C-ø" . avy-goto-char)
+   ("C-'" . avy-goto-line))
+  :custom-face
+  (avy-background-face ((t (:background "#2B2B2B"))))
+  (avy-lead-face ((t (:background "#2B2B2B"))))
+  (avy-lead-face-0 ((t (:background "#2B2B2B"))))
+  (avy-lead-face-1 ((t (:background "#2B2B2B"))))
+  (avy-lead-face-2 ((t (:background "#2B2B2B")))))
 
 (use-package ace-jump-buffer
   :ensure t
