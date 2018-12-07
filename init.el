@@ -1388,6 +1388,9 @@ restore the message."
                                              (symbol-name (symbol-at-point)))))))
       (message "Install `rg' to use `smart-jump-simple-find-references-with-rg'.")))
 
+  (defun jens/select-rg-window nil
+    (select-window (get-buffer-window (get-buffer "*rg*"))))
+
   (setq smart-jump-find-references-fallback-function #'jens/smart-jump-find-references-with-rg)
 
   (smart-jump-register :modes '(c++-mode clojure-mode rust-mode))
@@ -1407,9 +1410,7 @@ restore the message."
    :pop-fn 'xref-pop-marker-stack
    :refs-fn 'smart-jump-simple-find-references
    :should-jump (lambda () (bound-and-true-p elpy-mode))
-   :async 500
-   :heuristic '(lambda () (select-window (get-buffer-window (get-buffer "*rg*")))))
-  )
+   :heuristic #'jens/select-rg-window))
 
 (use-package paxedit
   :ensure t
