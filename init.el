@@ -1301,6 +1301,7 @@ restore the message."
 (use-package htmlize :ensure t :defer t)
 (use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
 (use-package fzf :ensure t) ;; fuzzy file finder
+(use-package rg :ensure t) ;; ripgrep in emacs
 (use-package flycheck :disabled :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
@@ -1367,20 +1368,48 @@ restore the message."
    ("M-," . smart-jump-back)
    ("M--" . smart-jump-references))
   :config
+  (defun jens/smart-jump-find-references-with-rg ()
+    "Use `rg' to find references."
+    (interactive)
+    (if (fboundp 'rg)
+        (progn
+          (if (not (fboundp 'smart-jump-refs-search-rg))
+              (rg-define-search smart-jump-refs-search-rg
+                "Search for references for QUERY in all files in
+                the current project."
+                :dir project
+                :files current))
+
+          (smart-jump-refs-search-rg (cond ((use-region-p)
+                                            (buffer-substring-no-properties (region-beginning)
+                                                                            (region-end)))
+                                           ((symbol-at-point)
+                                            (substring-no-properties
+                                             (symbol-name (symbol-at-point)))))))
+      (message "Install `rg' to use `smart-jump-simple-find-references-with-rg'.")))
+
+  (setq smart-jump-find-references-fallback-function #'jens/smart-jump-find-references-with-rg)
+
   (smart-jump-register :modes '(c++-mode clojure-mode rust-mode))
 
-  (smart-jump-register :modes '(emacs-lisp-mode lisp-interaction-mode)
-                       :jump-fn 'xref-find-definitions
-                       :pop-fn 'xref-pop-marker-stack
-                       :should-jump t
-                       :heuristic 'error)
+  (smart-jump-register
+   :modes '(emacs-lisp-mode lisp-interaction-mode)
+   :jump-fn 'xref-find-definitions
+   :pop-fn 'xref-pop-marker-stack
+   :refs-fn 'xref-find-references
+   :should-jump t
+   :async 500
+   :heuristic 'error)
 
-  (smart-jump-register :modes 'python-mode
-                       :jump-fn 'elpy-goto-definition
-                       :pop-fn 'xref-pop-marker-stack
-                       :refs-fn 'smart-jump-simple-find-references
-                       :should-jump (lambda () (bound-and-true-p elpy-mode))
-                       :heuristic 'error))
+  (smart-jump-register
+   :modes 'python-mode
+   :jump-fn 'elpy-goto-definition
+   :pop-fn 'xref-pop-marker-stack
+   :refs-fn 'smart-jump-simple-find-references
+   :should-jump (lambda () (bound-and-true-p elpy-mode))
+   :async 500
+   :heuristic '(lambda () (select-window (get-buffer-window (get-buffer "*rg*")))))
+  )
 
 (use-package paxedit
   :ensure t
