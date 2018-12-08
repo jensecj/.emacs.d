@@ -1569,39 +1569,24 @@ _M-n_: Unmark next    _M-p_: Unmark previous
         ("M-." . rtags-find-symbol-at-point)
         ("M-," . rtags-location-stack-back)))
 
+(use-package fullframe
+  :ensure t
+  :config
+  (fullframe magit-status magit-mode-quit-window))
+
 (use-package magit
   :ensure t
   :defer t
-  :functions jens/magit-quit-session
   :bind
   (("C-x m" . magit-status)
    :map magit-file-mode-map
    ("C-x g" . nil)
    :map magit-mode-map
-   ("C-c C-a" . magit-commit-amend)
-   ("q" . jens/magit-quit-session))
+   ("C-c C-a" . magit-commit-amend))
   :config
   (setq magit-auto-revert-mode nil)
   (setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
-  (setq magit-merge-arguments '("--no-ff"))
-
-  ;; When using =magit-status=, just fill the entire screen, and jump back the the
-  ;; previous window configuration when quitting magit.
-  (defun jens/magit-status-fullscreen (orig-fun &rest args)
-    "Saves window configuration, then opens magit in fullscreen"
-    (window-configuration-to-register :magit-fullscreen)
-    (apply orig-fun args)
-    (delete-other-windows))
-  (advice-add 'magit-status :around #'jens/magit-status-fullscreen)
-
-  (defun jens/magit-quit-session ()
-    "Restores the previous window configuration and kills the magit buffer"
-    (interactive)
-    ;; only kill the buffer if it's the actual buffer, this way we can
-    ;; still get back to our previous configuration if we quit magit weirdly
-    (if (s-prefix? "*magit:" (buffer-name (current-buffer)))
-        (kill-buffer))
-    (jump-to-register :magit-fullscreen)))
+  (setq magit-merge-arguments '("--no-ff")))
 
 (use-package magithub
   :ensure t
