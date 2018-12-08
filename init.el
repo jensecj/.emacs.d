@@ -1419,13 +1419,13 @@ restore the message."
          (emacs-lisp-mode . paxedit-mode)
          (clojure-mode . paxedit-mode)
          (scheme-mode . paxedit-mode))
-  :bind (("M-t" . transpose-hydra/body)
+  :bind (("M-t" . paxedit-transpose-hydra/body)
          ("M-k" . paxedit-kill)
          ("M-K" . paxedit-copy)
          ("M-<prior>" . paxedit-backward-up)
          ("M-<next>" . paxedit-backward-end))
   :config
-  (defhydra transpose-hydra ()
+  (defhydra paxedit-transpose-hydra ()
     ("n" #'paxedit-transpose-forward)
     ("p" #'paxedit-transpose-backward)))
 
@@ -2406,11 +2406,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;; Toggle window split
 (global-set-key (kbd "M-C-<tab>") 'jens/toggle-window-split)
 (global-set-key (kbd "M-S-<iso-lefttab>") 'jens/rotate-windows)
-
-;; Transpose stuff with M-t
-(global-set-key (kbd "M-t w") 'transpose-words)
-(global-set-key (kbd "M-t s") 'transpose-sexps)
-;; (global-set-key (kbd "M-t p") 'transpose-params) ;; TODO: make this better
 
 (global-set-key (kbd "C-x b") 'ibuffer)
 
