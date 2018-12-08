@@ -1499,15 +1499,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :bind ("C-x C-y" . browse-kill-ring)
   :config (setq browse-kill-ring-quit-action 'save-and-restore))
 
-(use-package bookmark+
-  :straight (bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus")
-  :config
-  (add-hook 'find-file-hook #'bmkp-light-this-buffer)
-  (add-hook 'after-save-hook #'bmkp-light-this-buffer)
-  (advice-add 'bookmark-set :after #'bmkp-light-bookmark)
-  :custom-face
-  (bmkp-light-non-autonamed ((t (:background "#2b2b2b" :foreground nil)))))
-
 (use-package highlight-defined
   :ensure t
   :hook (emacs-lisp-mode . highlight-defined-mode)
@@ -2246,6 +2237,12 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :bind ("M-f" . fullscreen-toggle))
 
 (use-package etmux)
+
+(use-package highlight-bookmarks
+  :config
+  (add-hook 'find-file-hook #'highlight-bookmarks-in-this-buffer)
+  (add-hook 'after-save-hook #'highlight-bookmarks-in-this-buffer)
+  (advice-add 'bookmark-set :after #'highlight-bookmarks-in-this-buffer))
 
 (use-package today
   :load-path "lisp/today/"
