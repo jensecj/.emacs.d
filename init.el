@@ -1419,16 +1419,15 @@ restore the message."
          (emacs-lisp-mode . paxedit-mode)
          (clojure-mode . paxedit-mode)
          (scheme-mode . paxedit-mode))
-  :bind (("M-t t" .
-          (lambda ()
-            (interactive)
-            (message "f -> transpose forward\nb -> transpose backward")
-            (jens/one-shot-keymap '(("f" . paxedit-transpose-forward)
-                                    ("b" . paxedit-transpose-backward)))))
+  :bind (("M-t" . transpose-hydra/body)
          ("M-k" . paxedit-kill)
          ("M-K" . paxedit-copy)
          ("M-<prior>" . paxedit-backward-up)
-         ("M-<next>" . paxedit-backward-end)))
+         ("M-<next>" . paxedit-backward-end))
+  :config
+  (defhydra transpose-hydra ()
+    ("n" #'paxedit-transpose-forward)
+    ("p" #'paxedit-transpose-backward)))
 
 (use-package diff-hl
   :ensure t
