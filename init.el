@@ -2430,60 +2430,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (global-set-key (kbd "M-S-<up>") 'jens/move-border-up)
 (global-set-key (kbd "M-S-<down>") 'jens/move-border-down)
 
-;;;;;;;;;;;;;;;;
-;; tty things ;;
-;;;;;;;;;;;;;;;;
-
-;; Setup for when emacs is running in the terminal (i.e. =emacs -nw=).
-;; It tries to fix some of the keys that terminals normally scramble or forget to
-;; send over the wire, someday we can hopefully get a terminal that does the right
-;; thing.
-(if (not (window-system))
-    (progn
-      (define-key function-key-map "\e[25~" [(control return)])
-      (define-key input-decode-map "\e[26~" [(control shift return)])
-      (define-key input-decode-map "\e[28~" [(meta shift return)])
-      (define-key input-decode-map "\e[29~" [(meta shift left)])
-      (define-key input-decode-map "\e[31~" [(meta shift right)])
-      (define-key input-decode-map "\e[32~" [(meta shift up)])
-      (define-key input-decode-map "\e[33~" [(meta shift down)])
-      (define-key input-decode-map "\e[34~" [(meta left)])
-      (define-key input-decode-map "\e[35~" [(meta right)])
-      (define-key input-decode-map "\e[36~" [(meta up)])
-      (define-key input-decode-map "\e[37~" [(meta down)])
-      (define-key input-decode-map "\e[38~" [(control left)])
-      (define-key input-decode-map "\e[39~" [(control right)])
-      (define-key input-decode-map "\e[40~" [(control up)])
-      (define-key input-decode-map "\e[41~" [(control down)])
-      (define-key input-decode-map "\e[42~" [(shift left)])
-      (define-key input-decode-map "\e[43~" [(shift right)])
-      (define-key input-decode-map "\e[44~" [(shift up)])
-      (define-key input-decode-map "\e[45~" [(shift down)])
-      (define-key input-decode-map "\e[46~" [(control shift left)])
-      (define-key input-decode-map "\e[47~" [(control shift right)])
-      (define-key input-decode-map "\e[48~" [(control shift up)])
-      (define-key input-decode-map "\e[49~" [(control shift down)])
-      (define-key input-decode-map "\e[50~" [(shift tab)])
-      (define-key input-decode-map "\e[51~" [(shift return)])
-      (define-key input-decode-map "\e[52~" [(control meta left)])
-      (define-key input-decode-map "\e[53~" [(control meta right)])
-      (define-key input-decode-map "\e[54~" [(control meta up)])
-      (define-key input-decode-map "\e[55~" [(control meta down)])
-
-      (define-key function-key-map "\eOA" [up])
-      (define-key function-key-map "\e[A" [up])
-      (define-key function-key-map "\eOB" [down])
-      (define-key function-key-map "\e[B" [down])
-      (define-key function-key-map "\eOC" [right])
-      (define-key function-key-map "\e[C" [right])
-      (define-key function-key-map "\eOD" [left])
-      (define-key function-key-map "\e[D" [left])
-
-      (define-key input-decode-map "^[[A" [up])
-      (define-key input-decode-map "^[[B" [down])
-      (define-key input-decode-map "^[[C" [right])
-      (define-key input-decode-map "^[[D" [left])))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; experimantal things ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
