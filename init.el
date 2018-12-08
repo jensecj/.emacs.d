@@ -1,7 +1,5 @@
 ;;; -*- lexical-binding: t -*-
 
-;;; TODO: use straight.el - https://github.com/raxod502/straight.el
-
 ;; use lexical binding for initialization code
 (setq-default lexical-binding t)
 
@@ -879,7 +877,7 @@ restore the message."
   (emacs-lisp-mode "Elisp" :major))
 
 (use-package eldoc
-  :delight " eldoc"
+  :delight "eldoc"
   :hook (emacs-lisp-mode . eldoc-mode))
 
 (use-package dired
@@ -1161,7 +1159,8 @@ restore the message."
   :bind
   (:map elpy-mode-map
         ("<C-up>" . nil)
-        ("<C-down>" . nil))
+        ("<C-down>" . nil)
+        ("C-c C-c" . nil))
   :custom
   (elpy-modules
    '(elpy-module-sane-defaults
@@ -1318,6 +1317,7 @@ restore the message."
 (use-package with-editor :ensure t) ;; run commands in `emacsclient'
 (use-package gist :ensure t :defer t) ;; work with github gists
 (use-package rainbow-mode :ensure t :defer t) ;; highlight color-strings (hex, etc.)
+(use-package ov :ensure t) ;; easy overlays
 
 (use-package pdf-tools
   :ensure t
@@ -2067,7 +2067,10 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
    ("C-x C-i" . counsel-imenu)
    ("M-æ" . counsel-mark-ring)
    ("M-x" . counsel-M-x)
-   ("M-b" . counsel-bookmark))
+   ("M-b" . counsel-bookmark)
+   ("<f1> b" . describe-bindings)
+   ("<f1> l" . counsel-find-library)
+   ("<f1> M-f" . find-function))
   :config
   (setq
    counsel-grep-base-command
