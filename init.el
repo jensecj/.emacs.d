@@ -220,7 +220,7 @@
 (setq eval-expression-print-level nil)
 
 ;; End files in newlines
-(setq require-final-newline 't)
+(setq require-final-newline nil)
 
 ;; Save before compiling, dont ask
 (setq compilation-ask-about-save nil)
@@ -1194,7 +1194,6 @@ restore the message."
 
 (use-package auto-complete
   :ensure t
-  :demand t
   :diminish auto-complete-mode
   :commands (global-auto-complete-mode
              ac-symbol-documentation
@@ -1356,7 +1355,6 @@ restore the message."
          ([(shift prior)] . sp-join-sexp))
   :config
   (jens/try-require 'smartparens-config)
-  (setq sp-autoescape-string-quote nil)
   (smartparens-global-mode t)
   (show-smartparens-global-mode t))
 
@@ -1524,6 +1522,8 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :bind
   (("C-ø" . avy-goto-char)
    ("C-'" . avy-goto-line))
+  :config
+  (setq avy-background 't)
   :custom-face
   (avy-background-face ((t (:background "#2B2B2B"))))
   (avy-lead-face ((t (:background "#2B2B2B"))))
