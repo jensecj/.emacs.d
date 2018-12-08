@@ -1395,18 +1395,18 @@ restore the message."
 
   (smart-jump-register
    :modes '(emacs-lisp-mode lisp-interaction-mode)
-   :jump-fn 'xref-find-definitions
-   :pop-fn 'xref-pop-marker-stack
-   :refs-fn 'xref-find-references
+   :jump-fn #'xref-find-definitions
+   :pop-fn #'xref-pop-marker-stack
+   :refs-fn #'xref-find-references
    :should-jump t
    :async 500
    :heuristic 'error)
 
   (smart-jump-register
    :modes 'python-mode
-   :jump-fn 'elpy-goto-definition
-   :pop-fn 'xref-pop-marker-stack
-   :refs-fn 'smart-jump-simple-find-references
+   :jump-fn #'elpy-goto-definition
+   :pop-fn #'xref-pop-marker-stack
+   :refs-fn #'smart-jump-simple-find-references
    :should-jump (lambda () (bound-and-true-p elpy-mode))
    :heuristic #'jens/select-rg-window))
 
