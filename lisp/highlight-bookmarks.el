@@ -34,10 +34,27 @@
 
 (defun highlight-bookmarks-in-this-buffer ()
   (interactive)
-  (let* ((bm-list (-map #'(lambda (e) (cons (map-elt e 'filename) (map-elt e 'position))) bookmark-alist))
-         (buffer-bms (-filter #'(lambda (e) (f-same? (car e) (buffer-file-name (current-buffer)))) bm-list)))
+
+  ;; clear previous bookmark highlights, to avoid double-drawing
+  (ov-clear 'highlight-bookmarks-highlight)
+
+  ;; grab bookmarks from `bookmark-alist', and create an overlay for all
+  ;; bookmarks that belong to the current buffer
+  (let* ((bm-list (-map #'(lambda (e)
+                            (cons (map-elt e 'filename)
+                                  (map-elt e 'position)))
+                        bookmark-alist))
+         (buffer-bms (-filter #'(lambda (e)
+                                  (f-same?
+                                   (car e)
+                                   (buffer-file-name (current-buffer))))
+                              bm-list)))
     (if buffer-bms
-        (-map #'(lambda (b) (ov-set (ov-line (cdr b)) 'face highlight-bookmarks-bookmark-face)) buffer-bms))))
+        (-map #'(lambda (b)
+                  (ov-set (ov-line (cdr b))
+                          'face highlight-bookmarks-bookmark-face
+                          'highlight-bookmarks-highlight t))
+              buffer-bms))))
 
 (provide 'highlight-bookmarks)
 ;;; highlight-bookmarks.el ends here
