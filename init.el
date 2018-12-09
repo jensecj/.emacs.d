@@ -82,12 +82,18 @@
 
 ;; some libraries that are frequently used
 (use-package dash ;; functional things, -map, -fold, etc
+  :straight t
   :ensure t
   :commands (-some -remove))
+(use-package dash-functional :straight t :ensure t)
+
 (use-package s ;; string manipulations
+  :straight t
   :ensure t
   :commands (s-trim s-prefix?))
+
 (use-package f ;; handling the file-system
+  :straight t
   :ensure t
   :commands (f-exists? f-glob f-no-ext))
 
@@ -1350,6 +1356,7 @@ restore the message."
   (show-smartparens-global-mode t))
 
 (use-package smart-jump
+  :straight t
   :ensure t
   :defer t
   :bind
