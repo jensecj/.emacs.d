@@ -100,7 +100,7 @@
       (set-frame-font my-font))))
 
 (add-hook 'server-after-make-frame-hook 'jens/init-font-setup)
-(add-hook 'focus-in-hook 'jens/init-font-setup)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; temp files, etc. ;;
@@ -270,8 +270,7 @@
   :demand t
   :commands epa-file-enable
   :config
-  ;; becomes epg-pinentry-mode in 27.1?, and is moved to package epg-config
-  (setq epa-pinentry-mode 'loopback)
+  (setq epg-pinentry-mode 'loopback)
   (epa-file-enable))
 
 ;; enable gpg pinentry through the minibuffer
@@ -401,13 +400,14 @@
   (kill-region (save-excursion (beginning-of-line) (point))
                (point)))
 
-(defun jens/save-region-or-current-line (arg)
+(defun jens/save-region-or-current-line (_arg)
   "If a region is active then it is saved to the `kill-ring',
 otherwise the current line is saved."
   (interactive "P")
-  (if (region-active-p)
-      (kill-ring-save (region-beginning) (region-end))
-    (kill-ring-save (line-beginning-position) (+ 1 (line-end-position)))))
+  (save-mark-and-excursion
+    (if (region-active-p)
+        (kill-ring-save (region-beginning) (region-end))
+      (kill-ring-save (line-beginning-position) (+ 1 (line-end-position))))))
 
 (defun jens/kill-region-or-current-line (arg)
   "If a region is active then it is killed, otherwise the current line is killed."
@@ -528,7 +528,7 @@ otherwise comment or uncomment the current line."
 ;;;;;;;;;;;;;;;;;
 
 ;; easy 'commenting out' of sexps
-(defmacro comment (&rest args))
+(defmacro comment (&rest _args))
 
 ;; easy interactive lambda forms
 (defmacro xi (lam)
@@ -568,7 +568,7 @@ the overlay-map"
   "Try to require FEATURE, if an exception is thrown, log it."
   (condition-case ex
       (progn
-        (msg-info (format "@ Requiring \"%s\" " (symbol-name feature)))
+        (msg-info (format "= Requiring \"%s\" " (symbol-name feature)))
         (require feature))
     ('error (msg-warning (format "@ Error requiring \"%s\": %s" (symbol-name feature) ex)))))
 
@@ -1021,10 +1021,12 @@ restore the message."
   )
 
 (use-package ob-async
+  :disabled
   :ensure t
   :defer t)
 
 (use-package ob-clojure
+  :disabled
   :requires cider
   :config
   (setq org-babel-clojure-backend 'cider))
@@ -1042,11 +1044,11 @@ restore the message."
 ;;;;;;;;;;;;;;;;;
 
 ;; built-ins
-(use-package shell-script-mode
+(use-package sh-script
   :mode ("\\.sh\\'" "\\.zsh\\'" "\\zshrc\\'" "\\PKGBUILD\\'"))
-(use-package octave-mode
+(use-package octave
   :mode "\\.m\\'")
-(use-package scheme-mode
+(use-package scheme
   :defer t
   :mode "\\.scm\\'"
   :config (setq-default scheme-program-name "csi -:c"))
@@ -1699,6 +1701,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
    '(output-pdf "Zathura")))
 
 (use-package slime
+  :disabled
   :defer t
   :functions qlot-slime
   :commands slime-start
@@ -2084,7 +2087,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
   ;; If a region is active, use that as the initial input for searching in the
   ;; buffer.
-  (defun jens/counsel-grep-or-swiper (orig-fun &rest args)
+  (defun jens/counsel-grep-or-swiper (orig-fun &rest _args)
     "Start searching with the region as initial input"
     (if (region-active-p)
         (let ((start (region-beginning))
@@ -2268,7 +2271,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   "Call ORIG-FUN until the cursor moves. Try popping up to 10
   times."
   (let ((p (point)))
-    (dotimes (i 10)
+    (dotimes (_ 10)
       (when (= p (point))
         (apply orig-fun args)))))
 (advice-add 'pop-to-mark-command :around #'jens/pop-to-mark-command)
