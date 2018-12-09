@@ -75,18 +75,15 @@
 ;; some libraries that are frequently used
 (use-package dash ;; functional things, -map, -fold, etc
   :straight t
-  :ensure t
   :commands (-some -remove))
-(use-package dash-functional :straight t :ensure t)
+(use-package dash-functional :straight t)
 
 (use-package s ;; string manipulations
   :straight t
-  :ensure t
   :commands (s-trim s-prefix?))
 
 (use-package f ;; handling the file-system
   :straight t
-  :ensure t
   :commands (f-exists? f-glob f-no-ext))
 
 ;; Use =Source Code Pro= font if it is available. When launching emacs as a
@@ -1292,7 +1289,7 @@ restore the message."
 (use-package flycheck :disabled :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
-(use-package loccur :ensure t :straight t)
+(use-package loccur :straight t)
 (use-package paradox :ensure t) ;; improvements on package.el
 (use-package hydra :ensure t)
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql"))
@@ -1308,10 +1305,9 @@ restore the message."
 (use-package ov :ensure t) ;; easy overlays
 
 (use-package pdf-tools
-  :ensure t
+  :straight t
   :demand t
   :commands pdf-tools-install
-  :straight t
   :bind
   ;; need to use plain isearch, pdf-tools hooks into it to handle searching
   (:map pdf-view-mode-map ("C-s" . isearch-forward))
