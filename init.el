@@ -1605,7 +1605,8 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :config
   (setq magit-auto-revert-mode nil)
   (setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
-  (setq magit-merge-arguments '("--no-ff")))
+  (setq magit-merge-arguments '("--no-ff"))
+  (setq magit-section-visibility-indicator '("…", t)))
 
 (use-package magithub
   :ensure t
