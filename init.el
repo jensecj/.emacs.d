@@ -738,8 +738,9 @@ restore the message."
 (use-package diminish :ensure t :commands diminish)
 (use-package delight :ensure t)
 
-
-;; some built-in packages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; some built-in packages ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package simple
   :defines auto-fill-mode
@@ -2250,9 +2251,11 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :bind ("M-f" . fullscreen-toggle))
 
 (use-package etmux
+  :demand t
   :commands (etmux-send-command))
 
 (use-package highlight-bookmarks
+  :demand t
   :commands highlight-bookmarks-in-this-buffer
   :config
   (add-hook 'find-file-hook #'highlight-bookmarks-in-this-buffer)
