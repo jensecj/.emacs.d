@@ -80,7 +80,7 @@
 
 (use-package s ;; string manipulations
   :straight t
-  :commands (s-trim s-prefix?))
+  :commands (s-trim s-prefix? s-replace))
 
 (use-package f ;; handling the file-system
   :straight t
@@ -744,6 +744,13 @@ restore the message."
 (use-package simple
   :defines auto-fill-mode
   :diminish auto-fill-mode
+  :commands (region-active-p
+             use-region-p
+             upcase-dwim
+             downcase-dwim
+             capitalize-dwim
+             deactivate-mark
+             current-kill)
   :hook (org-mode . auto-fill-mode))
 
 (use-package abbrev
@@ -756,6 +763,9 @@ restore the message."
   (read-abbrev-file))
 
 (use-package outline
+  :commands (outline-toggle-children
+             outline-minor-mode
+             outline-show-all)
   :bind
   (("M-h" . (lambda () (interactive)
               (progn
@@ -920,6 +930,7 @@ restore the message."
   :config (setq browse-url-firefox-program "firefox"))
 
 (use-package fringe
+  :commands fringe-mode
   :config
   (fringe-mode '(5 . 0)))
 
@@ -936,7 +947,8 @@ restore the message."
   :defer t
   :commands (org-indent-region
              org-indent-line
-             org-babel-do-load-languages)
+             org-babel-do-load-languages
+             org-context)
   :defines jens/load-org-agenda-files
   :bind
   (("C-x g " . org-agenda)
@@ -1142,6 +1154,7 @@ restore the message."
   :ensure t
   :defer t
   :delight " elpy"
+  :commands (elpy-goto-definition)
   :hook (python-mode . elpy-mode)
   :bind
   (:map elpy-mode-map
@@ -1405,6 +1418,8 @@ restore the message."
          (emacs-lisp-mode . paxedit-mode)
          (clojure-mode . paxedit-mode)
          (scheme-mode . paxedit-mode))
+  :commands (paxedit-transpose-forward
+             paxedit-transpose-backward)
   :bind (("M-t" . paxedit-transpose-hydra/body)
          ("M-k" . paxedit-kill)
          ("M-K" . paxedit-copy)
@@ -1448,6 +1463,10 @@ restore the message."
 
 (use-package helpful
   :ensure t
+  :commands (helpful-key
+             helpful-callable
+             helpful-variable
+             helpful-symbol)
   :config
   (defalias #'describe-key #'helpful-key)
   (defalias #'describe-function #'helpful-callable)
@@ -1557,6 +1576,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
 
 (use-package fullframe
   :ensure t
+  :commands fullframe/maybe-restore-configuration
   :config
   (fullframe magit-status magit-mode-quit-window))
 
@@ -1582,6 +1602,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
 
 (use-package magit-todos
   :ensure t
+  :commands magit-todos-mode
   :config
   (magit-todos-mode))
 
@@ -1697,7 +1718,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :ensure t
   :defer t
   :after today
-  :commands elfeed
+  :commands (elfeed elfeed-search-selected)
   :functions jens/elfeed-copy-link-at-point
   :bind (:map elfeed-search-mode-map
               ("t" . today-capture-elfeed-at-point)
@@ -1996,6 +2017,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (use-package ivy-rich
   :ensure t
+  :commands ivy-rich-mode
   :config
   (defun ivy-rich-bookmark-context-string (candidate)
     (let ((front (cdr (assoc 'front-context-string (cdr (assoc candidate bookmark-alist)))))
@@ -2090,6 +2112,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :config (counsel-projectile-mode))
 
 (use-package keyfreq
+  :commands (keyfreq-mode keyfreq-autosave-mode)
   :config
   (keyfreq-mode +1)
   (keyfreq-autosave-mode +1))
@@ -2099,6 +2122,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :defer t
   :functions enable-spellchecking
   :commands (flyspell-mode
+             flyspell-prog-mode
              flyspell-buffer)
   :config
   (ispell-change-dictionary "english")
@@ -2112,6 +2136,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (use-package so-long
   :load-path "elpa/so-long/"
   :demand t
+  :commands so-long-enable
   :config
   (so-long-enable))
 
@@ -2207,9 +2232,11 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 (use-package fullscreen
   :bind ("M-f" . fullscreen-toggle))
 
-(use-package etmux)
+(use-package etmux
+  :commands (etmux-send-command))
 
 (use-package highlight-bookmarks
+  :commands highlight-bookmarks-in-this-buffer
   :config
   (add-hook 'find-file-hook #'highlight-bookmarks-in-this-buffer)
   (add-hook 'after-save-hook #'highlight-bookmarks-in-this-buffer)
