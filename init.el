@@ -1,8 +1,8 @@
 ;;; -*- lexical-binding: t -*-
-
 ;; use lexical binding for initialization code
 (setq-default lexical-binding t)
 
+;; some logging functions
 (defun text-red (txt) (format "\e[1m\e[31m%s\e[0m" txt))
 (defun text-green (txt) (format "\e[1m\e[32m%s\e[0m" txt))
 (defun text-yellow (txt) (format "\e[1m\e[33m%s\e[0m" txt))
@@ -24,15 +24,11 @@
 ;; directories for things related to emacs
 (defconst my-emacs-dir user-emacs-directory)
 (defconst my-emacs-elpa-dir (concat my-emacs-dir "elpa"))
-
 (defconst my-emacs-lisp-dir (concat my-emacs-dir "lisp/"))
 (defconst my-emacs-modes-dir (concat my-emacs-dir "modes/"))
-
 (defconst my-emacs-temp-dir (concat my-emacs-dir ".temp/"))
-;; config and cache files
-(defconst my-emacs-data-dir (concat my-emacs-dir "data/"))
-;; backups, auto saves, etc.
-(defconst my-emacs-backup-dir (concat my-emacs-data-dir "backups/"))
+(defconst my-emacs-data-dir (concat my-emacs-dir "data/")) ;; config and cache files
+(defconst my-emacs-backup-dir (concat my-emacs-data-dir "backups/")) ;; backups, auto saves, etc.
 
 ;; create them if they don't exist
 (unless (file-exists-p my-emacs-lisp-dir)
@@ -69,6 +65,20 @@
 ;; make use-package tell us what its doing
 (setq use-package-verbose nil
       use-package-enable-imenu-support t)
+
+;;; download, setup, and load straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
 ;; some libraries that are frequently used
 (use-package dash ;; functional things, -map, -fold, etc
@@ -723,24 +733,6 @@ restore the message."
   (interactive)
   (view-buffer "*Messages*"))
 
-;;;;;;;;;;;;;;;;;;;
-;; package setup ;;
-;;;;;;;;;;;;;;;;;;;
-
-;;; download and setup straight.el, should be run first-thing after a clean install.
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
@@ -1296,7 +1288,6 @@ restore the message."
 ;;;;;;;;;;;;;;;;;;;
 
 (use-package chicken-scheme :ensure t :defer t)
-(use-package htmlize :ensure t :defer t)
 (use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
 (use-package fzf :ensure t) ;; fuzzy file finder
 (use-package rg :ensure t) ;; ripgrep in emacs
