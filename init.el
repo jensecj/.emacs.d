@@ -877,31 +877,37 @@ restore the message."
   :delight "eldoc"
   :hook (emacs-lisp-mode . eldoc-mode))
 
+(use-package dired+
+  :straight (dired+ :type git :host github :repo "emacsmirror/dired-plus")
+  :after dired
+  :demand t
+  :commands (toggle-diredp-find-file-reuse-dir
+             diredp-up-directory-reuse-dir-buffer)
+  :bind
+  (:map dired-mode-map
+        ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
+  :config
+  (toggle-diredp-find-file-reuse-dir 1)
+  :custom-face
+  (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
+  (diredp-file-name ((t (:foreground "#DCDCCC")))))
+
 (use-package dired
   :defer t
   :commands dired
   :bind
   (("C-x C-d" . (lambda () (interactive) (dired default-directory)))
    :map dired-mode-map
-   ("C-." . dired-omit-mode)
-   ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
+   ("C-." . dired-omit-mode))
   :init
-  (unless (f-exists? (concat (concat my-emacs-elpa-dir "/dired+.el")))
-    (url-copy-file
-     "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/dired%2B.el"
-     (concat my-emacs-elpa-dir "/dired+.el")))
   :config
   ;; pull in extra functionality for dired
-  ;; (load-library "dired+")
   (load-library "dired-x")
   (load-library "dired-aux")
-
-  (jens/try-require 'dired+)
 
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
   (setq dired-listing-switches "-agholXN")
   (setq-default dired-create-destination-dirs 'always)
-  (toggle-diredp-find-file-reuse-dir 1)
 
   (setq ibuffer-formats
         '((mark modified read-only " "
@@ -918,11 +924,6 @@ restore the message."
       (set-buffer-modified-p nil)))
 
   (advice-add 'dired-readin :after #'jens/dired-sort))
-
-(use-package dired+
-  :custom-face
-  (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
-  (diredp-file-name ((t (:foreground "#DCDCCC")))))
 
 ;; use firefox as the default browser
 (use-package browse-url
