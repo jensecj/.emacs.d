@@ -1301,13 +1301,12 @@ restore the message."
 (use-package chicken-scheme :ensure t :defer t)
 (use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
 (use-package fzf :ensure t) ;; fuzzy file finder
-(use-package rg :ensure t) ;; ripgrep in emacs
+(use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
 (use-package flycheck :disabled :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
 (use-package loccur :straight t)
 (use-package paradox :ensure t) ;; improvements on package.el
-(use-package hydra :ensure t)
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql"))
 (use-package org-web-tools :ensure t)
 (use-package ggtags :ensure t :defer t)
@@ -1319,6 +1318,13 @@ restore the message."
 (use-package gist :ensure t :defer t) ;; work with github gists
 (use-package rainbow-mode :ensure t :defer t) ;; highlight color-strings (hex, etc.)
 (use-package ov :ensure t) ;; easy overlays
+(use-package hydra
+  :ensure t
+  :commands (hydra-default-pre
+             hydra-keyboard-quit
+             hydra-show-hint
+             hydra--call-interactively-remap-maybe
+             hydra-set-transient-map))
 
 (use-package pdf-tools
   :straight t
@@ -1361,8 +1367,12 @@ restore the message."
 
 (use-package smart-jump
   :straight t
-  :ensure t
   :defer t
+  :commands (smart-jump-register
+             smart-jump-simple-find-references)
+  :functions (jens/smart-jump-find-references-with-rg
+              smart-jump-refs-search-rg
+              jens/select-rg-window)
   :bind
   (("M-." . smart-jump-go)
    ("M-," . smart-jump-back)
@@ -2024,8 +2034,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :commands ivy-rich-mode
   :config
   (defun ivy-rich-bookmark-context-string (candidate)
-    (let ((front (cdr (assoc 'front-context-string (cdr (assoc candidate bookmark-alist)))))
-          (rear (cdr (assoc 'rear-context-string (cdr (assoc candidate bookmark-alist))))))
+    (let ((front (cdr (assoc 'front-context-string (cdr (assoc candidate bookmark-alist))))))
       (s-replace "\n" ""  (concat  "" front))))
 
   (add-to-list 'ivy-rich--display-transformers-list
@@ -2305,12 +2314,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;;              (set (make-local-variable 'compile-command)
 ;;                   (format "javac %s" (jens/get-buffer-file-name+ext)))
 ;;              (local-set-key (kbd "C-c C-c") 'compile)))
-
-(add-hook 'csharp-mode-hook
-          '(lambda ()
-             (set (make-local-variable 'compile-command)
-                  (format "xbuild %s" (file-name-directory (buffer-file-name))))
-             (local-set-key (kbd "C-c C-c") 'compile)))
 
 (add-hook 'tuareg-mode-hook
           '(lambda ()
