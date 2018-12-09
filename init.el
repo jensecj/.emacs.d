@@ -2110,6 +2110,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
   (counsel-mode))
 
+(use-package bookmark+
+  :straight (bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus"))
+
 (use-package projectile
   :ensure t
   :defer t
@@ -2254,7 +2257,8 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :config
   (add-hook 'find-file-hook #'highlight-bookmarks-in-this-buffer)
   (add-hook 'after-save-hook #'highlight-bookmarks-in-this-buffer)
-  (advice-add 'bookmark-set :after #'highlight-bookmarks-in-this-buffer))
+  (advice-add #'bookmark-set :after #'highlight-bookmarks-in-this-buffer)
+  (advice-add #'bookmark-delete :after #'highlight-bookmarks-in-this-buffer))
 
 (use-package today
   :load-path "lisp/today/"

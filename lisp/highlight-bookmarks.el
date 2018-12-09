@@ -32,7 +32,7 @@
   '(:background "#2B2B2B")
   "Face used to highlight the line of a bookmark.")
 
-(defun highlight-bookmarks-in-this-buffer ()
+(defun highlight-bookmarks-in-this-buffer (&rest _args)
   (interactive)
 
   ;; clear previous bookmark highlights, to avoid double-drawing
