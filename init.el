@@ -2,17 +2,9 @@
 ;; use lexical binding for initialization code
 (setq-default lexical-binding t)
 
-;; some logging functions
-(defun text-red (txt) (format "\e[1m\e[31m%s\e[0m" txt))
-(defun text-green (txt) (format "\e[1m\e[32m%s\e[0m" txt))
-(defun text-yellow (txt) (format "\e[1m\e[33m%s\e[0m" txt))
-(defun text-blue (txt) (format "\e[1m\e[34m%s\e[0m" txt))
-(defun text-magenta (txt) (format "\e[1m\e[35m%s\e[0m" txt))
-(defun text-cyan (txt) (format "\e[1m\e[36m%s\e[0m" txt))
-
-(defun msg-info (txt) (message (text-yellow txt)))
-(defun msg-warning (txt) (message (text-red txt)))
-(defun msg-success (txt) (message (text-green txt)))
+(defun msg-info (txt) (message "# %s" txt))
+(defun msg-warning (txt) (message "! %s" txt))
+(defun msg-success (txt) (message "@ %s" txt))
 
 (msg-info "Started initializing emacs!")
 
