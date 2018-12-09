@@ -4,8 +4,8 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: highlight-bookmarks
-;; Package-Version: 20181208
-;; Version: 0.1
+;; Package-Version: 20181209
+;; Version: 0.2
 ;; Package-Requires: ((emacs "25.1") (ov "1.0.6") (dash "2.14.1") (f "0.20.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 
 ;;; Commentary:
 
+;; Highlight bookmarks in the current buffer using overlays.
 
 ;;; Code:
 
@@ -30,7 +31,8 @@
 
 (defcustom highlight-bookmarks-bookmark-face
   '(:background "#2B2B2B")
-  "Face used to highlight the line of a bookmark.")
+  "Face used to highlight the line of a bookmark."
+  :group 'highlight-bookmarks)
 
 (defun highlight-bookmarks-in-this-buffer (&rest _args)
   (interactive)
