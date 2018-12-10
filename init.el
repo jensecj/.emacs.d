@@ -101,7 +101,6 @@
 
 (add-hook 'server-after-make-frame-hook 'jens/init-font-setup)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; temp files, etc. ;;
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -1441,15 +1440,17 @@ restore the message."
          ("M-<next>" . paxedit-backward-end))
   :config
   (defhydra paxedit-transpose-hydra ()
-    ("n" #'paxedit-transpose-forward)
-    ("p" #'paxedit-transpose-backward)))
+    "Transpose things"
+    ("f" #'paxedit-transpose-forward "forward")
+    ("b" #'paxedit-transpose-backward "backward")))
 
 (use-package diff-hl
   :ensure t
   :demand t
   :diminish diff-hl-mode
   :commands (global-diff-hl-mode diff-hl-mode)
-  :defines jens/diff-hl-refresh
+  :functions (jens/diff-hl-hydra/body jens/diff-hl-refresh)
+  :bind ("C-c C-v" . jens/diff-hl-hydra/body)
   :hook
   ((magit-post-refresh . diff-hl-magit-post-refresh)
    (prog-mode . diff-hl-mode)
@@ -1461,6 +1462,11 @@ restore the message."
     (interactive)
     (diff-hl-mode nil)
     (diff-hl-mode +1))
+
+  (defhydra jens/diff-hl-hydra ()
+    "Move to changed VC hunks."
+    ("n" #'diff-hl-next-hunk "next")
+    ("p" #'diff-hl-previous-hunk "previous"))
 
   (global-diff-hl-mode +1))
 
