@@ -889,10 +889,11 @@ restore the message."
         ("C-<down>" . nil)
         ("C-<up>" . nil))
   :config
-  (toggle-diredp-find-file-reuse-dir 1)
+  (toggle-diredp-find-file-reuse-dir +1)
   :custom-face
   (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
-  (diredp-file-name ((t (:foreground "#DCDCCC")))))
+  (diredp-file-name ((t (:foreground "#DCDCCC"))))
+  (diredp-dir-name ((t (:foreground "#8CD0D3")))))
 
 (use-package dired
   :defer t
