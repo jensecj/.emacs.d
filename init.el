@@ -55,8 +55,8 @@
   (require 'use-package))
 
 ;; make use-package tell us what its doing
-(setq use-package-verbose nil
-      use-package-enable-imenu-support t)
+(setq use-package-verbose 't
+      use-package-enable-imenu-support 't)
 
 ;;; download, setup, and load straight.el
 (defvar bootstrap-version)
@@ -1051,17 +1051,21 @@ restore the message."
 ;;;;;;;;;;;;;;;;;
 
 ;; built-ins
-(use-package octave :mode "\\.m\\'")
+(use-package octave :mode ("\\.m\\'" . octave-mode))
+
 (use-package sh-script
   :mode (("\\.sh\\'" . shell-script-mode)
          ("\\.zsh\\'" . shell-script-mode)
          ("\\zshrc\\'" . shell-script-mode)
          ("\\PKGBUILD\\'" . shell-script-mode)))
+
 (use-package scheme
   :defer t
   :mode ("\\.scm\\'" . scheme-mode)
   :config (setq-default scheme-program-name "csi -:c"))
+
 (use-package python
+  :defer t
   :bind
   (:map python-mode-map
         ("C-c C-c" . nil)
@@ -1082,8 +1086,6 @@ restore the message."
 (use-package lua-mode :ensure t :mode "\\.lua\\'")
 (use-package markdown-mode :ensure t :mode ("\\.md\\'" "\\.card\\'"))
 (use-package scss-mode :ensure t :mode "\\.scss\\'")
-(use-package tuareg :ensure t :mode "\\.ocaml\\'")
-(use-package yaml-mode :ensure t :mode "\\.yml\\'")
 
 (use-package c++-mode
   :bind
@@ -1211,9 +1213,8 @@ restore the message."
   :custom-face
   (ggtags-highlight ((t ()))))
 
-(use-package rtags
-  :ensure t
-  :defer t)
+(use-package rtags :ensure t :defer t)
+(use-package clang-format :ensure t :defer t)
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; auto completion ;;
@@ -1363,7 +1364,6 @@ restore the message."
 ;; misc packages ;;
 ;;;;;;;;;;;;;;;;;;;
 
-(use-package chicken-scheme :ensure t :defer t)
 (use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
 (use-package fzf :ensure t) ;; fuzzy file finder
 (use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
@@ -1371,13 +1371,12 @@ restore the message."
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
 (use-package loccur :straight t)
-(use-package paradox :ensure t) ;; improvements on package.el
-(use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql"))
-(use-package org-web-tools :ensure t)
+(use-package paradox :ensure t :defer t :commands paradox-list-packages) ;; improvements on package.el
+(use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
+(use-package org-web-tools :ensure t :defer t)
 (use-package dumb-jump :ensure t :defer t)
 (use-package counsel-tramp :ensure t)
 (use-package centered-cursor-mode :ensure t :defer t)
-(use-package clang-format :ensure t :defer t)
 (use-package with-editor :ensure t) ;; run commands in `emacsclient'
 (use-package gist :ensure t :defer t) ;; work with github gists
 (use-package rainbow-mode :ensure t :defer t) ;; highlight color-strings (hex, etc.)
@@ -1523,7 +1522,7 @@ restore the message."
 (use-package paxedit
   :ensure t
   :defer t
-  :delight " paxexdit "
+  :delight " paxedit "
   :hook ((lisp-mode . paxedit-mode)
          (lisp-interaction-mode . paxedit-mode)
          (emacs-lisp-mode . paxedit-mode)
