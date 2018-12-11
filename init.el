@@ -1142,20 +1142,19 @@ restore the message."
 (use-package cider
   :ensure t
   :defer t
-  :after clojure-mode
+  :hook (clojure-mode . cider-mode)
   :config
   (setq cider-repl-use-pretty-printing t
         cider-prompt-for-symbol nil
         cider-pprint-fn 'pprint
         cider-repl-pop-to-buffer-on-connect nil
         cider-default-cljs-repl nil
-        cider-check-cljs-repl-requirements nil)
-  (advice-add 'cider-jack-in :before #'direnv-update-environment))
+        cider-check-cljs-repl-requirements nil))
 
 (use-package clj-refactor
   :ensure t
   :defer t
-  :after clojure-mode
+  :hook (clojure-mode . clj-refactor-mode)
   :config
   ;; dont warn on refactor evals
   (setq cljr-warn-on-eval nil))
