@@ -1081,6 +1081,16 @@ restore the message."
 (use-package tuareg :ensure t :mode "\\.ocaml\\'")
 (use-package yaml-mode :ensure t :mode "\\.yml\\'")
 
+(use-package c++-mode
+  :bind
+  (:map c++-mode-map
+        ("C-c n" . clang-format-buffer)
+        ("C-c C-c" . compile))
+  :config
+  (set (make-local-variable 'compile-command)
+       (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s"
+               (jens/get-buffer-file-name+ext) (jens/get-buffer-file-name))))
+
 (use-package rust-mode
   :ensure t
   :bind (:map rust-mode-map ("C-c n" . rust-format-buffer))
@@ -2347,30 +2357,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
               (let ((dir (file-name-directory buffer-file-name)))
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
-
-;; for major modes, replace with use-package
-;; use 'C-c C-c' to compile across languages, and use a proper compile command
-(add-hook 'c++-mode-hook
-          '(lambda ()
-             (set (make-local-variable 'compile-command)
-                  (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s" (jens/get-buffer-file-name+ext) (jens/get-buffer-file-name)))
-             (local-set-key (kbd "C-d") nil)
-             (local-set-key (kbd "C-c C-c") 'compile)
-             (local-set-key (kbd "C-c n") 'clang-format-buffer)))
-
-;; (add-hook 'java-mode-hook
-;;           '(lambda ()
-;;              (use-local-map nil)
-;;              (set (make-local-variable 'compile-command)
-;;                   (format "javac %s" (jens/get-buffer-file-name+ext)))
-;;              (local-set-key (kbd "C-c C-c") 'compile)))
-
-(add-hook 'tuareg-mode-hook
-          '(lambda ()
-             (use-local-map nil)
-             (set (make-local-variable 'compile-command)
-                  (format "ocamlopt -o %s %s" (jens/get-buffer-file-name) (jens/get-buffer-file-name+ext)))
-             (local-set-key (kbd "C-c C-c") 'compile)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybindings for built-in things ;;
