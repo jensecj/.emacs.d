@@ -1418,7 +1418,7 @@ restore the message."
 
   (setq smart-jump-find-references-fallback-function #'jens/smart-jump-find-references-with-rg)
 
-  (smart-jump-register :modes '(c++-mode clojure-mode rust-mode))
+  (smart-jump-register :modes '(clojure-mode rust-mode))
 
   (smart-jump-register
    :modes '(emacs-lisp-mode lisp-interaction-mode)
@@ -1435,7 +1435,41 @@ restore the message."
    :pop-fn #'xref-pop-marker-stack
    :refs-fn #'smart-jump-simple-find-references
    :should-jump (lambda () (bound-and-true-p elpy-mode))
-   :heuristic #'jens/select-rg-window))
+   :heuristic #'jens/select-rg-window)
+
+  (smart-jump-register
+   :modes 'c++-mode
+   :jump-fn 'dumb-jump-go
+   :pop-fn 'pop-tag-mark
+   :refs-fn #'smart-jump-simple-find-references
+   :should-jump t
+   :heuristic #'jens/select-rg-window
+   :order 3)
+
+  (smart-jump-register
+   :modes 'c++-mode
+   :jump-fn 'ggtags-find-tag-dwim
+   :pop-fn 'ggtags-prev-mark
+   :refs-fn 'ggtags-find-reference
+   :should-jump  (lambda () (bound-and-true-p ggtags-mode))
+   :heuristic 'point
+   :async 500
+   :order 2)
+
+  (smart-jump-register
+   :modes 'c++-mode
+   :jump-fn #'rtags-find-symbol-at-point
+   :pop-fn #'rtags-location-stack-back
+   :refs-fn #'rtags-find-all-references-at-point
+   :should-jump (lambda ()
+                  (and
+                   (fboundp 'rtags-executable-find)
+                   (fboundp 'rtags-is-indexed)
+                   (rtags-executable-find "rc")
+                   (rtags-is-indexed)))
+   :heuristic 'point
+   :async 500
+   :order 1))
 
 (use-package paxedit
   :ensure t
