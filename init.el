@@ -1692,7 +1692,8 @@ _M-n_: Unmark next    _M-p_: Unmark previous
    :map magit-file-mode-map
    ("C-x g" . nil)
    :map magit-mode-map
-   ("C-c C-a" . magit-commit-amend))
+   ("C-c C-a" . magit-commit-amend)
+   ("<tab>" . magit-section-cycle))
   :config
   (setq magit-auto-revert-mode nil)
   (setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
