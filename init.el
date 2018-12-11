@@ -1300,16 +1300,6 @@ restore the message."
     (add-to-list 'ac-sources 'ac-source-variables)) ;; elisp variables
   (add-hook 'emacs-lisp-mode-hook 'jens/ac-elisp-mode-setup)
 
-  ;; (defun my-ac-latex-mode-setup ()
-  ;;   (require 'auto-complete-auctex)
-  ;;   (require 'ac-auctex-setup))
-  ;; (add-hook 'latex-mode-hook 'my-ac-latex-mode-setup)
-
-  ;;(defun my-ac-octave-mode-setup ()
-  ;;  (require 'ac-octave)
-  ;;  (add-to-list 'ac-sources 'ac-complete-octave))
-  ;; (add-hook 'octave-mode-hook 'my-ac-octave-mode-setup)
-
   (global-auto-complete-mode -1)
   :custom-face
   (ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
