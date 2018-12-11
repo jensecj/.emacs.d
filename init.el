@@ -2185,7 +2185,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
     (flyspell-buffer)))
 
 (use-package so-long
-  :load-path "elpa/so-long/"
+  :straight (so-long :type git :repo "https://git.savannah.gnu.org/git/so-long.git/")
   :demand t
   :commands so-long-enable
   :config
