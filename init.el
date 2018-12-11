@@ -1047,13 +1047,12 @@ restore the message."
 ;;;;;;;;;;;;;;;;;
 
 ;; built-ins
+(use-package octave :mode "\\.m\\'")
 (use-package sh-script
   :mode (("\\.sh\\'" . shell-script-mode)
          ("\\.zsh\\'" . shell-script-mode)
          ("\\zshrc\\'" . shell-script-mode)
          ("\\PKGBUILD\\'" . shell-script-mode)))
-(use-package octave
-  :mode "\\.m\\'")
 (use-package scheme
   :defer t
   :mode "\\.scm\\'"
@@ -1071,40 +1070,22 @@ restore the message."
   :mode "\\.bot\\'")
 
 ;; from repos
-(use-package cmake-mode
-  :ensure t
-  :mode "\\CmakeLists.txt\\'")
-(use-package dockerfile-mode
-  :ensure t
-  :mode "\\Dockerfile\\'")
-(use-package gitconfig-mode
-  :ensure t
-  :mode "\\.gitconfig\\'")
-(use-package gitignore-mode
-  :ensure t
-  :mode "\\.gitignore\\'")
-(use-package haskell-mode
-  :ensure t
-  :mode "\\.hs\\'")
-(use-package lua-mode
-  :ensure t
-  :mode "\\.lua\\'")
-(use-package markdown-mode
-  :ensure t
-  :mode ("\\.md\\'" "\\.card\\'"))
+(use-package cmake-mode :ensure t :mode "\\CmakeLists.txt\\'")
+(use-package dockerfile-mode :ensure t :mode "\\Dockerfile\\'")
+(use-package gitconfig-mode :ensure t :mode "\\.gitconfig\\'")
+(use-package gitignore-mode :ensure t :mode "\\.gitignore\\'")
+(use-package haskell-mode :ensure t :mode "\\.hs\\'")
+(use-package lua-mode :ensure t :mode "\\.lua\\'")
+(use-package markdown-mode :ensure t :mode ("\\.md\\'" "\\.card\\'"))
+(use-package scss-mode :ensure t :mode "\\.scss\\'")
+(use-package tuareg :ensure t :mode "\\.ocaml\\'")
+(use-package yaml-mode :ensure t :mode "\\.yml\\'")
+
 (use-package rust-mode
   :ensure t
   :bind (:map rust-mode-map ("C-c n" . rust-format-buffer))
   :mode "\\.rs\\'")
-(use-package scss-mode
-  :ensure t
-  :mode "\\.scss\\'")
-(use-package tuareg
-  :ensure t
-  :mode "\\.ocaml\\'")
-(use-package yaml-mode
-  :ensure t
-  :mode "\\.yml\\'")
+
 (use-package clojure-mode
   :ensure t
   :defer t
@@ -1136,7 +1117,10 @@ restore the message."
     (popup-tip (with-current-buffer "*cider-doc*"
                  (buffer-substring-no-properties (point-min) (point-max))))))
 
-;; extensions to major modes:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; extensions to major modes ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (use-package cider
   :ensure t
   :defer t
