@@ -874,7 +874,7 @@ restore the message."
   (emacs-lisp-mode "Elisp" :major))
 
 (use-package eldoc
-  :delight "eldoc"
+  :delight " eldoc "
   :hook (emacs-lisp-mode . eldoc-mode))
 
 (use-package dired+
@@ -1056,6 +1056,13 @@ restore the message."
   :defer t
   :mode "\\.scm\\'"
   :config (setq-default scheme-program-name "csi -:c"))
+(use-package python
+  :bind
+  (:map python-mode-map
+        ("C-c C-c" . nil)
+        ("M-," . nil)
+        ("M-." . nil)
+        ("M--" . nil)))
 
 ;; homemade
 (use-package botcode-mode
@@ -1159,14 +1166,17 @@ restore the message."
 (use-package elpy
   :ensure t
   :defer t
-  :delight " elpy"
+  :delight " elpy "
   :commands (elpy-goto-definition)
   :hook (python-mode . elpy-mode)
   :bind
   (:map elpy-mode-map
         ("<C-up>" . nil)
         ("<C-down>" . nil)
-        ("C-c C-c" . nil))
+        ("C-c C-c" . nil)
+        ("M-," . nil)
+        ("M-." . nil)
+        ("M--" . nil))
   :custom
   (elpy-modules
    '(elpy-module-sane-defaults
