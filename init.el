@@ -1171,6 +1171,19 @@ restore the message."
      elpy-module-eldoc
      elpy-module-pyvenv)))
 
+(use-package ggtags
+  :ensure t
+  :defer t
+  :delight " ggtags "
+  :hook (c++-mode . ggtags-mode)
+  :bind (:map ggtags-mode-map ("M-," . nil) ("M-." . nil) ("M--" . nil))
+  :custom-face
+  (ggtags-highlight ((t ()))))
+
+(use-package rtags
+  :ensure t
+  :defer t)
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; auto completion ;;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -1309,7 +1322,6 @@ restore the message."
 (use-package paradox :ensure t) ;; improvements on package.el
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql"))
 (use-package org-web-tools :ensure t)
-(use-package ggtags :ensure t :defer t)
 (use-package dumb-jump :ensure t :defer t)
 (use-package counsel-tramp :ensure t)
 (use-package centered-cursor-mode :ensure t :defer t)
@@ -1584,15 +1596,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :bind
   (("C-c r" . vr/replace)
    ("C-c q" . vr/query-replace)))
-
-(use-package rtags
-  :ensure t
-  :defer t
-  :diminish rtags-mode
-  :bind
-  (:map c++-mode-map
-        ("M-." . rtags-find-symbol-at-point)
-        ("M-," . rtags-location-stack-back)))
 
 (use-package fullframe
   :ensure t
