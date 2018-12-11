@@ -1089,7 +1089,15 @@ restore the message."
   :config
   (set (make-local-variable 'compile-command)
        (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s"
-               (jens/get-buffer-file-name+ext) (jens/get-buffer-file-name))))
+               (jens/get-buffer-file-name+ext) (jens/get-buffer-file-name)))
+  (setq c++-include-files
+        '("/usr/include"
+          "/usr/include/c++/7.3.0"
+          "/usr/include/c++/7.3.0/backward"
+          "/usr/include/c++/7.3.0/x86_64-unknown-linux-gnu"
+          "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include"
+          "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include-fixed"
+          "/usr/lib/clang/5.0.1/include")))
 
 (use-package rust-mode
   :ensure t
@@ -1268,31 +1276,22 @@ restore the message."
     (setq company-tooltip-align-annotations t))
 
   (defun jens/ac-c++-mode-setup ()
-    ;; (require 'ac-clang)
-    ;; (require 'ac-c-headers)
-    (jens/try-require 'ac-rtags)
-
-    (defvar c++-include-files
-      '("/usr/include"
-        "/usr/include/c++/7.3.0"
-        "/usr/include/c++/7.3.0/backward"
-        "/usr/include/c++/7.3.0/x86_64-unknown-linux-gnu"
-        "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include"
-        "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include-fixed"
-        "/usr/lib/clang/5.0.1/include"))
-
     (setq-default achead:include-directories c++-include-files)
 
-    ;; (add-to-list 'ac-sources 'ac-source-semantic)
+    (jens/try-require 'ac-rtags)
     (add-to-list 'ac-sources 'ac-source-rtags)
-    ;; (add-to-list 'ac-sources 'ac-source-c-headers)
-    ;; (add-to-list 'ac-sources 'ac-source-c-header-symbols t)
 
+    ;; (jens/try-require 'ac-clang)
     ;; (add-to-list 'ac-sources 'ac-source-clang)
     ;; (setq ac-clang-flags (mapcar (lambda (item)(concat "-I" item)) c++-include-files))
     ;; (ac-clang-activate-after-modify)
+
+    ;; (jens/try-require 'ac-c-headers)
+    ;; (add-to-list 'ac-sources 'ac-source-c-headers)
+    ;; (add-to-list 'ac-sources 'ac-source-c-header-symbols t)
+
+    ;; (add-to-list 'ac-sources 'ac-source-semantic)
     )
-  (add-hook 'c++-mode-hook 'jens/ac-c++-mode-setup)
 
   (defun jens/ac-elisp-mode-setup ()
     (add-to-list 'ac-sources 'ac-source-functions) ;; elisp functions
