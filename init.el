@@ -1251,7 +1251,6 @@ restore the message."
   (setq-default ac-sources
                 '(ac-source-imenu
                   ac-source-words-in-same-mode-buffers))
-  ;; '(ac-source-words-in-buffer ac-source-imenu ac-source-yasnippet)
 
   (setq -quickhelp-at-point-cache ())
   (defun jens/ac-quick-help-at-point ()
@@ -1268,11 +1267,6 @@ restore the message."
 
       (popup-tip (ac-symbol-documentation (intern -quickhelp-at-point-cache))
                  :margin-left 1 :margin-right 1)))
-
-  (defun jens/ac-rust-mode-setup ()
-    (define-key rust-mode-map (kbd "<C-tab>") #'company-indent-or-complete-common)
-
-    (setq company-tooltip-align-annotations t))
 
   (defun jens/ac-c++-mode-setup ()
     (setq-default achead:include-directories c++-include-files)
@@ -1366,13 +1360,12 @@ restore the message."
          ("M-k" . sp-kill-sexp)
          ("M-K" . sp-copy-sexp)
          ([(control shift e)] . sp-end-of-sexp)
-         ([(control e)] . end-of-line)
          ([(shift next)] . sp-split-sexp)
          ([(shift prior)] . sp-join-sexp))
   :config
   (jens/try-require 'smartparens-config)
-  (smartparens-global-mode t)
-  (show-smartparens-global-mode t))
+  (smartparens-global-mode +1)
+  (show-smartparens-global-mode +1))
 
 (use-package smart-jump
   :straight t
