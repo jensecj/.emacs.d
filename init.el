@@ -84,6 +84,7 @@
 
 (use-package f ;; handling the file-system
   :straight t
+  :ensure t
   :commands (f-exists? f-glob f-no-ext))
 
 ;; Use =Source Code Pro= font if it is available. When launching emacs as a
@@ -285,6 +286,8 @@
     (interactive)
     (pinentry-stop)
     (pinentry-start))
+
+  (jens/pinentry-reset)
 
   (setq gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset))
   ;; (cancel-timer gpg-reset-timer)
@@ -1198,7 +1201,9 @@ restore the message."
   :defer t
   :delight " ggtags "
   :hook (c++-mode . ggtags-mode)
-  :bind (:map ggtags-mode-map ("M-," . nil) ("M-." . nil) ("M--" . nil))
+  :bind
+  (:map ggtags-mode-map
+        ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :custom-face
   (ggtags-highlight ((t ()))))
 
@@ -1241,7 +1246,8 @@ restore the message."
               jens/ac-elisp-mode-setup)
   :bind
   (("C-+" . jens/ac-quick-help-at-point)
-   ("C-<tab>" . auto-complete))
+   ("C-<tab>" . auto-complete)
+   ("M-<tab>" . auto-complete))
   :config
   (jens/try-require 'auto-complete-config)
   (setq ac-auto-start t) ;; auto start completing
@@ -1327,6 +1333,7 @@ restore the message."
 (use-package gist :ensure t :defer t) ;; work with github gists
 (use-package rainbow-mode :ensure t :defer t) ;; highlight color-strings (hex, etc.)
 (use-package ov :ensure t) ;; easy overlays
+(use-package popup :ensure t)
 (use-package hydra
   :ensure t
   :commands (hydra-default-pre
@@ -1375,7 +1382,7 @@ restore the message."
 
 (use-package smart-jump
   :straight t
-  :defer t
+  :demand t
   :commands (smart-jump-register
              smart-jump-simple-find-references)
   :functions (jens/smart-jump-find-references-with-rg
@@ -1467,7 +1474,7 @@ restore the message."
 (use-package paxedit
   :ensure t
   :defer t
-  :delight " paxedit"
+  :delight " paxexdit "
   :hook ((lisp-mode . paxedit-mode)
          (lisp-interaction-mode . paxedit-mode)
          (emacs-lisp-mode . paxedit-mode)
@@ -2197,7 +2204,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :config
   (so-long-enable))
 
-;; fancy modeline replacement
 (use-package powerline
   :ensure t
   :demand t
