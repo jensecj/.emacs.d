@@ -1586,6 +1586,10 @@ restore the message."
   (defalias #'describe-variable #'helpful-variable)
   (defalias #'describe-symbol #'helpful-symbol))
 
+(use-package iedit
+  :straight t
+  :bind ("C-;" . iedit-mode))
+
 (use-package multiple-cursors
   :ensure t
   :bind
