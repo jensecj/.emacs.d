@@ -2,8 +2,8 @@
 ![Screenshot of my emacs in action](emacs-screen.png?raw=true "Screenshot of my emacs in action")
 
 # My emacs
-I would recommend starting out with a blank emacs and then dig through
-this repo for useful nuggets, instead of forking it directly.
+I recommend starting out with a blank emacs and then digging through this repo
+for useful nuggets, instead of forking it directly.
 
 It should however be possible to simply clone the entire repo, drop it
 into a clean install of emacs, and it should set everything up
@@ -14,7 +14,7 @@ The keybindings are optimized for a
 [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
 
 All configuration takes place in
-[init.el](https://github.com/jensecj/.emacs.d/blob/monolithic-init/init.el), it
+[init.el](https://github.com/jensecj/.emacs.d/blob/master/init.el), it
 tries to be concise, but have enough comments to make it easy to grok.
 
 You quit emacs with `C-x r q`, mnemonic for *Really Quit*.
