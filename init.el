@@ -1046,7 +1046,10 @@ restore the message."
 
 ;; built-ins
 (use-package sh-script
-  :mode ("\\.sh\\'" "\\.zsh\\'" "\\zshrc\\'" "\\PKGBUILD\\'"))
+  :mode (("\\.sh\\'" . shell-script-mode)
+         ("\\.zsh\\'" . shell-script-mode)
+         ("\\zshrc\\'" . shell-script-mode)
+         ("\\PKGBUILD\\'" . shell-script-mode)))
 (use-package octave
   :mode "\\.m\\'")
 (use-package scheme
