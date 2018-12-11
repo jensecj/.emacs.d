@@ -1219,7 +1219,51 @@ restore the message."
 (use-package company
   :ensure t
   :defer t
-  :diminish company-mode)
+  :diminish company-mode
+  :bind
+  (("M-<tab>" . company-complete)
+   ("C-+" . jens/quick-help-at-point)
+   :map company-active-map
+   ("C-+" . jens/company-menu-at-selection-quickhelp))
+  :config
+  (setq company-search-regexp-function 'company-search-flex-regexp)
+  (setq company-require-match nil)
+  (setq company-show-numbers 't)
+  (add-to-list 'company-backends 'company-capf)
+
+  (defun jens/company-menu-at-selection-quickhelp ()
+    (interactive)
+    (let ((candidate (nth company-selection company-candidates)))
+      (popup-tip (ac-symbol-documentation (intern candidate))
+                 :margin-left 1 :margin-right 1)))
+
+  (setq -quickhelp-at-point-cache ())
+  (defun jens/quick-help-at-point ()
+    (interactive)
+    (let* ((position (point))
+           (string-under-cursor
+            (buffer-substring-no-properties
+             (progn (skip-syntax-backward "w_") (point))
+             (progn (skip-syntax-forward "w_") (point)))))
+      (goto-char position)
+
+      (if (not (string= "" string-under-cursor))
+          (setq -quickhelp-at-point-cache string-under-cursor))
+
+      (popup-tip (ac-symbol-documentation (intern -quickhelp-at-point-cache))
+                 :margin-left 1 :margin-right 1))))
+
+(use-package company-flx
+  :ensure t
+  :hook (company-mode . company-flx-mode))
+
+(use-package company-quickhelp
+  :ensure t
+  :hook (company-mode . company-quickhelp-mode)
+  :config
+  (setq company-quickhelp-use-propertized-text 't)
+  (setq company-quickhelp-delay 0.2))
+
 
 ;; AUTO-COMPLETE-MODE
 (use-package ac-rtags :ensure t :defer t)
@@ -1236,6 +1280,7 @@ restore the message."
 (use-package scheme-complete :ensure t :defer t)
 
 (use-package auto-complete
+  :disabled
   :ensure t
   :diminish auto-complete-mode
   :commands (global-auto-complete-mode
@@ -1250,11 +1295,12 @@ restore the message."
    ("M-<tab>" . auto-complete))
   :config
   (jens/try-require 'auto-complete-config)
-  (setq ac-auto-start t) ;; auto start completing
-  (setq ac-show-menu t) ;; show the menu instantly
+  (setq ac-auto-start 't) ;; auto start completing
+  ;; (setq ac-show-menu 't) ;; show the menu instantly
+  (setq ac-use-menu-map 't)
   (setq ac-show-menu-immediately-on-auto-complete t) ;; show the autocompletion menu instantly
   (setq ac-delay 0.1) ;; show completion menu quickly
-  (setq ac-use-quick-help t) ;; use the help
+  (setq ac-use-quick-help 't) ;; use the help
   (setq ac-quick-help-delay 0.1) ;; show help quickly
   (setq ac-quick-help-prefer-pos-tip nil) ;; use popup-tips
   (setq ac-use-comphist t)
