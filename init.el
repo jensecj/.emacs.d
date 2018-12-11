@@ -1086,7 +1086,8 @@ restore the message."
   :bind
   (:map c++-mode-map
         ("C-c n" . clang-format-buffer)
-        ("C-c C-c" . compile))
+        ("C-c C-c" . compile)
+        ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :config
   (set (make-local-variable 'compile-command)
        (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s"
@@ -1102,7 +1103,9 @@ restore the message."
 
 (use-package rust-mode
   :ensure t
-  :bind (:map rust-mode-map ("C-c n" . rust-format-buffer))
+  :bind (:map rust-mode-map
+              ("C-c n" . rust-format-buffer)
+              ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :mode "\\.rs\\'")
 
 (use-package clojure-mode
@@ -1115,7 +1118,8 @@ restore the message."
   :bind
   (:map clojure-mode-map
         ("<tab>" . company-indent-or-complete-common)
-        ("C-+" . jens/company-clojure-quickhelp-at-point))
+        ("C-+" . jens/company-clojure-quickhelp-at-point)
+        ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :config
   (auto-complete-mode -1)
   (company-mode +1)
@@ -1164,6 +1168,9 @@ restore the message."
   :ensure t
   :defer t
   :after rust-mode
+  :bind
+  (:map racer-mode-map
+        ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :hook ((rust-mode . racer-mode)
          (racer-mode . eldoc-mode)))
 
@@ -1178,9 +1185,7 @@ restore the message."
         ("<C-up>" . nil)
         ("<C-down>" . nil)
         ("C-c C-c" . nil)
-        ("M-," . nil)
-        ("M-." . nil)
-        ("M--" . nil))
+        ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :custom
   (elpy-modules
    '(elpy-module-sane-defaults
@@ -2417,11 +2422,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;; Make Home and End to to the top and bottom of the buffer, we have C-a/e
 (global-set-key (kbd "<home>") 'beginning-of-buffer)
 (global-set-key (kbd "<end>") 'end-of-buffer)
-
-;; find things at point
-(global-set-key (kbd "M-.") 'xref-find-definitions)
-(global-set-key (kbd "M-,") 'xref-pop-marker-stack)
-(global-set-key (kbd "M--") 'xref-find-references)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybindings for defuns ;;
