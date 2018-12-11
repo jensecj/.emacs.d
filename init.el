@@ -960,7 +960,7 @@ restore the message."
   :bind
   (("C-x g " . org-agenda)
    :map org-mode-map
-   ([(tab)] . company-indent-or-complete-common)
+   ([(tab)] . nil)
    ;; unbind things that are used for other things
    ("C-a" . nil)
    ("<S-up>" . nil)
@@ -1120,7 +1120,6 @@ restore the message."
              cider-try-symbol-at-point)
   :bind
   (:map clojure-mode-map
-        ("<tab>" . company-indent-or-complete-common)
         ("C-+" . jens/company-clojure-quickhelp-at-point)
         ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :config
@@ -1291,7 +1290,6 @@ restore the message."
               jens/ac-elisp-mode-setup)
   :bind
   (("C-+" . jens/ac-quick-help-at-point)
-   ("C-<tab>" . auto-complete)
    ("M-<tab>" . auto-complete))
   :config
   (jens/try-require 'auto-complete-config)
@@ -2474,6 +2472,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 ;; Make Home and End to to the top and bottom of the buffer, we have C-a/e
 (global-set-key (kbd "<home>") 'beginning-of-buffer)
 (global-set-key (kbd "<end>") 'end-of-buffer)
+
+;; indent with tab
+(global-set-key (kbd "<tab>") 'indent-for-tab-command)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybindings for defuns ;;
