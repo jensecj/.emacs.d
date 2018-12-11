@@ -1059,7 +1059,7 @@ restore the message."
          ("\\PKGBUILD\\'" . shell-script-mode)))
 (use-package scheme
   :defer t
-  :mode "\\.scm\\'"
+  :mode ("\\.scm\\'" . scheme-mode)
   :config (setq-default scheme-program-name "csi -:c"))
 (use-package python
   :bind
@@ -1165,6 +1165,11 @@ restore the message."
   :config
   ;; dont warn on refactor evals
   (setq cljr-warn-on-eval nil))
+
+(use-package geiser
+  :ensure t
+  :config
+  (setq geiser-active-implementations '(chicken)))
 
 (use-package racer
   :ensure t
