@@ -885,7 +885,9 @@ restore the message."
              diredp-up-directory-reuse-dir-buffer)
   :bind
   (:map dired-mode-map
-        ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
+        ("<backspace>" . diredp-up-directory-reuse-dir-buffer)
+        ("C-<down>" . nil)
+        ("C-<up>" . nil))
   :config
   (toggle-diredp-find-file-reuse-dir 1)
   :custom-face
