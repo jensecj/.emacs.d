@@ -1371,11 +1371,11 @@ restore the message."
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
 (use-package loccur :straight t)
-(use-package paradox :ensure t :defer t :commands paradox-list-packages) ;; improvements on package.el
+(use-package paradox :ensure t :defer t) ;; improvements on package.el
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
 (use-package org-web-tools :ensure t :defer t)
 (use-package dumb-jump :ensure t :defer t)
-(use-package counsel-tramp :ensure t)
+(use-package counsel-tramp :ensure t :defer t)
 (use-package centered-cursor-mode :ensure t :defer t)
 (use-package with-editor :ensure t) ;; run commands in `emacsclient'
 (use-package gist :ensure t :defer t) ;; work with github gists
@@ -2363,7 +2363,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
 
 (use-package today
   :load-path "lisp/today/"
-  :demand t
+  :defer t
   :commands (today
              today-list
              today-move-to-date
