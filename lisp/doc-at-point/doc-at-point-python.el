@@ -1,5 +1,6 @@
 (require 'doc-at-point-core)
 
+;;;###autoload
 (defun doc-at-point-python (symbol)
   "Return documentation for python symbol."
   (ignore-errors

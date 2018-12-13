@@ -4,6 +4,7 @@
   "Return best guess of the rust symbol at point."
   (thing-at-point 'symbol))
 
+;;;###autoload
 (defun doc-at-point-rust (symbol)
   "Return documentation for rust symbol."
   (let ((doc-buf (racer--describe symbol)))

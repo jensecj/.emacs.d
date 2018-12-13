@@ -68,6 +68,7 @@ and others, and return as string."
        (princ " is a group.\n\n")
        (princ doc)))))
 
+;;;###autoload
 (defun doc-at-point-elisp (symbol)
   "Return documentation for elisp symbol."
   (if (stringp symbol)
@@ -79,17 +80,6 @@ and others, and return as string."
      ((boundp symbol) (doc-at-point-elisp--describe-variable symbol))
      ((facep symbol) (doc-at-point-elisp--describe-face symbol))
      (t (doc-at-point-elisp--describe-group symbol)))))
-
-(defun doc-at-point-elisp-cached (symbol)
-  "Return documentation for elisp symbol. if `symbol' is nil,
-return documentation for last symbol that was looked up."
-
-  (if (not (boundp 'doc-at-point-elisp-symbol-cache))
-      (make-local-variable 'doc-at-point-elisp-symbol-cache))
-
-  (if symbol
-      (doc-at-point-elisp symbol)
-    (doc-at-point-elisp doc-at-point-elisp-symbol-cache)))
 
 ;; register the default elisp handler for doc-at-point
 (doc-at-point-register

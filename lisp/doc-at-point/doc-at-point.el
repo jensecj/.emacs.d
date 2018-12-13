@@ -33,10 +33,12 @@
 
 (require 'doc-at-point-core)
 
+;;;###autoload
 (defun doc-at-point-setup-defaults ()
   "Setup default handlers for doc-at-point."
   (interactive)
   (require 'doc-at-point-elisp)
-  (require 'doc-at-point-python))
+  (require 'doc-at-point-python)
+  (require 'doc-at-point-rust))
 
 (provide 'doc-at-point)

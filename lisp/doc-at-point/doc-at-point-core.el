@@ -2,7 +2,8 @@
 
 (defcustom doc-at-point-alist '()
   "Alist of plists, containing metadata for documentation."
-  :group 'doc-at-point)
+  :group 'doc-at-point
+  :type 'alist)
 
 (defcustom doc-at-point-display-fn (if (fboundp 'popup-tip)
                                        #'doc-at-point--display-fn-popup-tip
@@ -32,14 +33,17 @@ should or not."
         (funcall doc-at-point-display-fn doc)
       (message "No documentation found for %s" (symbol-name sym)))))
 
-(cl-defun doc-at-point-register (&key mode symbol-fn doc-fn (should-run t))
+;;;###autoload
+(cl-defun doc-at-point-register (&key mode symbol-fn doc-fn (should-run t) (order 1))
   "Register a new documentation backend."
   (map-put doc-at-point-alist mode
            (list `(
                    :symbol-fn ,symbol-fn
                    :doc-fn ,doc-fn
-                   :should-run ,should-run))))
+                   :should-run ,should-run
+                   :order ,order))))
 
+;;;###autoload
 (defun doc-at-point ()
   "Show documentation for the symbol at point, based on relevant
 backend."
