@@ -6,7 +6,7 @@
     (setq doc (elpy-rpc-get-docstring))
 
     (when (not doc)
-      (setq doc (elpy-rpc-get-pydoc-documentation (symbol))))
+      (setq doc (elpy-rpc-get-pydoc-documentation symbol)))
 
     doc)
 

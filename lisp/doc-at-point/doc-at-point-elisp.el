@@ -43,7 +43,7 @@ and others, and return as string."
      (princ (or (documentation-property symbol 'variable-documentation t)
                 "no documentation.")))))
 
-(defun doc-at-point-elisp--describe-face (sym)
+(defun doc-at-point-elisp--describe-face (symbol)
   "Return documentation for elisp face."
   (doc-at-point-elisp--capture-to-string
    (let ((file-name  (find-lisp-object-file-name symbol 'defface)))
