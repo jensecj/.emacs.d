@@ -23,6 +23,7 @@ should or not."
     should-run-sym-or-fn))
 
 (defun doc-at-point--with-entry (entry)
+  "Lookup documentation using `entry'."
   (let* ((symbol-fn (plist-get entry :symbol-fn))
          (doc-fn (plist-get entry :doc-fn))
          (sym (funcall symbol-fn))
