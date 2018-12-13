@@ -63,7 +63,7 @@
       (propertize str 'face face)
     (propertize str)))
 
-(defun lowkey-mode-line--mode-line-fill (reserve &optional face)
+(defun lml--mode-line-fill (reserve &optional face)
   "Fill an area of `reserve' in the mode-line."
   (propertize " " 'display `((space :align-to (- (+ right right-fringe right-margin) ,reserve))) 'face face))
 
@@ -72,7 +72,7 @@
   (when (s-blank-str? str) (setq str ""))
 
   (string-join
-   (list (lowkey-mode-line--mode-line-fill (length str) face)
+   (list (lml--mode-line-fill (length str) face)
          str)))
 
 (defun lml--mode-line-position-string ()
