@@ -1382,8 +1382,9 @@ restore the message."
 
 (use-package pdf-tools
   :straight t
-  :demand t
+  :defer t
   :commands pdf-tools-install
+  :hook (doc-view-mode . pdf-tools-install)
   :bind
   ;; need to use plain isearch, pdf-tools hooks into it to handle searching
   (:map pdf-view-mode-map ("C-s" . isearch-forward))
