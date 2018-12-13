@@ -773,6 +773,7 @@ restore the message."
   (read-abbrev-file))
 
 (use-package outline
+  :diminish (outline-mode outline-minor-mode)
   :commands (outline-toggle-children
              outline-minor-mode
              outline-show-all)
