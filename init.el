@@ -1546,7 +1546,10 @@ restore the message."
   :ensure t
   :demand t
   :diminish diff-hl-mode
-  :commands (global-diff-hl-mode diff-hl-mode)
+  :commands (global-diff-hl-mode
+             diff-hl-mode
+             diff-hl-next-hunk
+             diff-hl-previous-hunk)
   :functions (jens/diff-hl-hydra/body jens/diff-hl-refresh)
   :bind ("C-c C-v" . jens/diff-hl-hydra/body)
   :hook
@@ -2306,12 +2309,14 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :defer t
   :bind
   (("C-+" . doc-at-point))
+  :commmands (doc-at-point doc-at-point-setup-defaults)
   :config
   (require 'help-fns+)
   (doc-at-point-setup-defaults))
 
 (use-package lowkey-mode-line
   :demand t
+  :commands lowkey-mode-line-enable
   :config
   (lowkey-mode-line-enable))
 
