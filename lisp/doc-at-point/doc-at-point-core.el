@@ -15,6 +15,13 @@
   "Shows `doc-string' in a popup tooltip."
   (popup-tip doc-string :margin-left 1 :margin-right 1))
 
+(defun doc-at-point--should-run-p (should-run-sym-or-fn)
+  "Return whether or not SHOULD-RUN-FUNCTION indicates if
+should or not."
+  (if (functionp should-run-sym-or-fn)
+      (funcall should-run-sym-or-fn)
+    should-run-sym-or-fn))
+
 (defun doc-at-point--with-entry (entry)
   (let* ((symbol-fn (plist-get entry :symbol-fn))
          (doc-fn (plist-get entry :doc-fn))
@@ -24,18 +31,22 @@
         (funcall doc-at-point-display-fn doc)
       (message "No documentation found for %s" (symbol-name sym)))))
 
-(cl-defun doc-at-point-register (&key mode symbol-fn doc-fn)
+(cl-defun doc-at-point-register (&key mode symbol-fn doc-fn (should-run t))
   "Register a new documentation backend."
   (map-put doc-at-point-alist mode
-           (list `(:symbol-fn ,symbol-fn :doc-fn ,doc-fn))))
+           (list `(
+                   :symbol-fn ,symbol-fn
+                   :doc-fn ,doc-fn
+                   :should-run ,should-run))))
 
 (defun doc-at-point ()
   "Show documentation for the symbol at point, based on relevant
 backend."
   (interactive)
   (let* ((current-mode major-mode)
-         (entry (car (map-elt doc-at-point-alist current-mode))))
-    (if entry
+         (entry (car (map-elt doc-at-point-alist current-mode)))
+         (should-run (plist-get entry :should-run)))
+    (if (and entry (doc-at-point--should-run-p should-run))
         (doc-at-point--with-entry entry)
       (message "No doc-at-point backend for %s" current-mode))))
 
