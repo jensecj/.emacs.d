@@ -1234,7 +1234,6 @@ restore the message."
   :diminish company-mode
   :bind
   (("M-<tab>" . company-complete)
-   ("C-+" . jens/quick-help-at-point)
    :map company-active-map
    ("C-+" . jens/company-menu-at-selection-quickhelp))
   :config
@@ -1247,22 +1246,6 @@ restore the message."
     (interactive)
     (let ((candidate (nth company-selection company-candidates)))
       (popup-tip (ac-symbol-documentation (intern candidate))
-                 :margin-left 1 :margin-right 1)))
-
-  (setq -quickhelp-at-point-cache ())
-  (defun jens/quick-help-at-point ()
-    (interactive)
-    (let* ((position (point))
-           (string-under-cursor
-            (buffer-substring-no-properties
-             (progn (skip-syntax-backward "w_") (point))
-             (progn (skip-syntax-forward "w_") (point)))))
-      (goto-char position)
-
-      (if (not (string= "" string-under-cursor))
-          (setq -quickhelp-at-point-cache string-under-cursor))
-
-      (popup-tip (ac-symbol-documentation (intern -quickhelp-at-point-cache))
                  :margin-left 1 :margin-right 1))))
 
 (use-package company-flx
