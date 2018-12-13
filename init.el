@@ -202,6 +202,10 @@
 (setq line-number-mode t)
 (setq column-number-mode t)
 
+;; make the mode-line not look weird
+(set-face-attribute 'mode-line nil :box nil)
+(set-face-attribute 'mode-line-inactive nil :box nil)
+
 ;; Lines should be 80 characters wide, not 72
 (setq-default fill-column 80)
 
