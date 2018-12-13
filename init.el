@@ -1247,7 +1247,7 @@ restore the message."
   (defun jens/company-menu-at-selection-quickhelp ()
     (interactive)
     (let ((candidate (nth company-selection company-candidates)))
-      (popup-tip (ac-symbol-documentation (intern candidate))
+      (popup-tip (doc-at-point-elisp (intern candidate))
                  :margin-left 1 :margin-right 1))))
 
 (use-package company-flx
