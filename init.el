@@ -128,6 +128,9 @@
 ;; settings ;;
 ;;;;;;;;;;;;;;
 
+;; location of emacs source files
+(setq source-directory "/home/jens/.aur/emacs-git-src/")
+
 ;; Hide the splash screen
 (setq inhibit-startup-message t)
 
