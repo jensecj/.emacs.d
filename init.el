@@ -2309,7 +2309,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :defer t
   :bind
   (("C-+" . doc-at-point))
-  :commmands (doc-at-point doc-at-point-setup-defaults)
+  :commands (doc-at-point doc-at-point-setup-defaults)
   :config
   (require 'help-fns+)
   (doc-at-point-setup-defaults))
