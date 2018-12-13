@@ -36,6 +36,7 @@
 (defun doc-at-point-setup-defaults ()
   "Setup default handlers for doc-at-point."
   (interactive)
-  (require 'doc-at-point-elisp))
+  (require 'doc-at-point-elisp)
+  (require 'doc-at-point-python))
 
 (provide 'doc-at-point)
