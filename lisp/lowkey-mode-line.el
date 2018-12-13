@@ -104,7 +104,9 @@ buffer, and having `pdf-tools', use pdf pages and position."
            (state (vc-state this-file)))
       (format "%s %s (%s)" backend branch state))))
 
+;;;###autoload
 (defun lowkey-mode-line-enable ()
+  (interactive)
   "Enable the lowkey-mode-line."
   (setq-default
    mode-line-format

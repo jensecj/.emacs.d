@@ -34,6 +34,7 @@
   "Face used to highlight the line of a bookmark."
   :group 'highlight-bookmarks)
 
+;;;###autoload
 (defun highlight-bookmarks-in-this-buffer (&rest _args)
   (interactive)
 

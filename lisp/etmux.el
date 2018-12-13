@@ -18,10 +18,12 @@
   "Clears the screen of the tmux target."
   (etmux-tmux-run-command "send-keys" "-t" target "C-l"))
 
+;;;###autoload
 (defun etmux-send-keys (target input)
   "Send a key combination to the tmux target."
   (etmux-tmux-run-command "send-keys" "-t" target input "C-m"))
 
+;;;###autoload
 (defun etmux-send-command (target command)
   "Send a command to the tmux target."
   (interactive)
