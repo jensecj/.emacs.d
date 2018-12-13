@@ -1232,6 +1232,7 @@ restore the message."
   :ensure t
   :defer t
   :diminish company-mode
+  :hook (emacs-lisp-mode . company-mode)
   :bind
   (("M-<tab>" . company-complete)
    :map company-active-map
