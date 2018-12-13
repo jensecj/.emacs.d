@@ -1373,6 +1373,14 @@ restore the message."
 (use-package rainbow-mode :ensure t :defer t) ;; highlight color-strings (hex, etc.)
 (use-package ov :ensure t) ;; easy overlays
 (use-package popup :ensure t)
+
+(use-package help-fns+
+  :init
+  (let ((help-fns-plus-file (concat my-emacs-elpa-dir "/help-fns+.el"))
+        (url "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"))
+    (unless (file-exists-p help-fns-plus-file)
+      (url-copy-file url help-fns-plus-file))))
+
 (use-package hydra
   :ensure t
   :commands (hydra-default-pre
