@@ -95,6 +95,7 @@ return documentation for last symbol that was looked up."
 (doc-at-point-register
  :mode 'emacs-lisp-mode
  :symbol-fn #'symbol-at-point
- :doc-fn #'doc-at-point-elisp)
+ :doc-fn #'doc-at-point-elisp
+ :should-run t)
 
 (provide 'doc-at-point-elisp)
