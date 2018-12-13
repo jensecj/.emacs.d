@@ -2383,6 +2383,20 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :config
   (setq today-directory "~/vault/org/planner/"))
 
+(use-package doc-at-point
+  :load-path "lisp/doc-at-point/"
+  :defer t
+  :bind
+  (("C-+" . doc-at-point))
+  :config
+  (require 'help-fns+)
+  (doc-at-point-setup-defaults))
+
+(use-package lowkey-mode-line
+  :demand t
+  :config
+  (lowkey-mode-line-enable))
+
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; advice and hooks ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
