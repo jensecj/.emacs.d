@@ -1875,7 +1875,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
         (message (format "copied %s to clipboard" link))))))
 
 (use-package auth-source-pass
-  :ensure t
   :commands (auth-source-pass-enable auth-source-pass-get)
   :config
   (auth-source-pass-enable)
@@ -1896,7 +1895,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
 
 (use-package erc
   :defer t
-  :after (auth-source-pass)
+  :after auth-source-pass
   :functions ercgo
   :commands erc-tls
   :config
