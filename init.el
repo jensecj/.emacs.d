@@ -2159,8 +2159,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :functions jens/counsel-read-file-name
   :commands (counsel-mode counsel--find-file-matcher)
   :bind
-  (("C-s" . counsel-grep-or-swiper)
-   ("C-S-s" . counsel-rg)
+  (("C-S-s" . counsel-rg)
    ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
    ("C-x C-S-f" . counsel-fzf)
@@ -2199,19 +2198,20 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
               :keymap counsel-find-file-map
               :caller 'counsel-read-find-name))
 
-  ;; If a region is active, use that as the initial input for searching in the
-  ;; buffer.
-  (defun jens/counsel-grep-or-swiper (orig-fun &rest _args)
-    "Start searching with the region as initial input"
-    (if (region-active-p)
-        (let ((start (region-beginning))
-              (end (region-end)))
-          (deactivate-mark)
-          (apply orig-fun (list (buffer-substring-no-properties start end))))
-      (funcall orig-fun)))
-  (advice-add 'counsel-grep-or-swiper :around #'jens/counsel-grep-or-swiper)
-
   (counsel-mode))
+
+(use-package swiper
+  :bind ("C-s" . jens/swiper)
+  :config
+  (defun jens/swiper ()
+    "If region is active, use the contents of the region as the
+initial search query."
+    (interactive)
+    (if (region-active-p)
+        (let ((query (buffer-substring-no-properties (region-beginning) (region-end))))
+          (deactivate-mark)
+          (swiper query))
+      (call-interactively #'swiper))))
 
 (use-package bookmark+
   :straight (bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus"))
