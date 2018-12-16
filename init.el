@@ -2315,6 +2315,9 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   (doc-at-point-setup-defaults))
 
 (use-package lowkey-mode-line
+  :straight
+  (lowkey-mode-line
+   :repo "git@github.com:jensecj/lowkey-mode-line.git")
   :demand t
   :commands lowkey-mode-line-enable
   :config
