@@ -6,10 +6,10 @@
 
 ;; try to minimize garbage-collection during initialization. And disable file
 ;; visiting modes autoloading when visiting init-files.
-(let ((normal-gc-cons-threshold (* 20 1024 1024))
+(let ((normal-gc-cons-threshold (* 30 1024 1024))
       (init-gc-cons-threshold (* 128 1024 1024))
       (normal-gc-cons-percentage 0.1)
-      (init-gc-cons-percentage 0.8)
+      (init-gc-cons-percentage 0.7)
       (normal-file-name-handler-alist file-name-handler-alist))
   (setq gc-cons-threshold init-gc-cons-threshold)
   (setq gc-cons-percentage init-gc-cons-percentage)
