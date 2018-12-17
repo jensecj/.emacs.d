@@ -2320,7 +2320,20 @@ initial search query."
   :demand t
   :commands lowkey-mode-line-enable
   :config
-  (lowkey-mode-line-enable))
+  (lowkey-mode-line-enable)
+  :custom-face
+  (lml-buffer-face ((t (:background "grey20"))))
+  (lml-buffer-face-inactive ((t (:background "grey25"))))
+  (lml-position-face ((t (:background "grey25"))))
+  (lml-position-face-inactive ((t (:background "grey25"))))
+  (lml-major-mode-face ((t (:background "grey30"))))
+  (lml-major-mode-face-inactive ((t (:background "grey25"))))
+  (lml-minor-modes-face ((t (:background "grey30"))))
+  (lml-minor-modes-face-inactive ((t (:background "grey25"))))
+  (lml-filler-face ((t (:background "grey30"))))
+  (lml-filler-face-inactive ((t (:background "grey25"))))
+  (lml-vc-face ((t (:background "grey20"))))
+  (lml-vc-face-inactive ((t (:background "grey25")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; advice and hooks ;;
