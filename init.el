@@ -1178,6 +1178,8 @@ restore the message."
 
 (use-package geiser
   :ensure t
+  :defer t
+  :hook (scheme-mode . geiser-mode)
   :config
   (setq geiser-active-implementations '(chicken)))
 
