@@ -55,8 +55,11 @@
   (require 'use-package))
 
 ;; make use-package tell us what its doing
-(setq use-package-verbose 't
-      use-package-enable-imenu-support 't)
+(use-package use-package
+  :config
+  (setq use-package-verbose t)
+  (setq use-package-enable-imenu-support t)
+  (setq use-package-compute-statistics t))
 
 ;;; download, setup, and load straight.el
 (defvar bootstrap-version)
