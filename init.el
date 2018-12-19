@@ -1399,13 +1399,12 @@ the overlay-map"
   :config
   (pdf-tools-install))
 
-(use-package smex
+(use-package amx
   :ensure t
-  :defer 1
-  :commands smex-initialize
+  :commands amx-mode
   :config
-  (setq smex-save-file (concat my-emacs-data-dir "smex-items"))
-  (smex-initialize))
+  (setq amx-save-file (concat my-emacs-data-dir "amx-items"))
+  (amx-mode))
 
 (use-package smartparens
   :ensure t
