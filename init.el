@@ -79,7 +79,7 @@
 (use-package dash ;; functional things, -map, -fold, etc
   :straight t
   :commands (-some -remove))
-(use-package dash-functional :straight t)
+(use-package dash-functional :straight t :demand t)
 
 (use-package s ;; string manipulations
   :straight t
@@ -1580,7 +1580,8 @@ the overlay-map"
   (hl-fill-column-face ((t (:background "#4d0000")))))
 
 (use-package helpful
-  :ensure t
+  :straight t
+  :demand t
   :commands (helpful-key
              helpful-callable
              helpful-variable
@@ -2320,17 +2321,17 @@ initial search query."
   (lowkey-mode-line-enable)
   :custom-face
   (lml-buffer-face ((t (:background "grey20"))))
-  (lml-buffer-face-inactive ((t (:background "grey25"))))
+  (lml-buffer-face-inactive ((t (:background "grey20"))))
   (lml-position-face ((t (:background "grey25"))))
-  (lml-position-face-inactive ((t (:background "grey25"))))
+  (lml-position-face-inactive ((t (:background "grey20"))))
   (lml-major-mode-face ((t (:background "grey30"))))
-  (lml-major-mode-face-inactive ((t (:background "grey25"))))
+  (lml-major-mode-face-inactive ((t (:background "grey20"))))
   (lml-minor-modes-face ((t (:background "grey30"))))
-  (lml-minor-modes-face-inactive ((t (:background "grey25"))))
+  (lml-minor-modes-face-inactive ((t (:background "grey20"))))
   (lml-filler-face ((t (:background "grey30"))))
-  (lml-filler-face-inactive ((t (:background "grey25"))))
+  (lml-filler-face-inactive ((t (:background "grey20"))))
   (lml-vc-face ((t (:background "grey20"))))
-  (lml-vc-face-inactive ((t (:background "grey25")))))
+  (lml-vc-face-inactive ((t (:background "grey20")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; advice and hooks ;;
