@@ -591,14 +591,6 @@ the overlay-map"
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
-(defmacro jens/with-supressed-message (&rest body)
-  "Save the current message in the minibuffer, execute body, then
-restore the message."
-  (let ((saved-message-symbol (make-symbol "saved-message")))
-    `(let ((,saved-message-symbol (current-message)))
-       (progn ,@body)
-       (message ,saved-message-symbol))))
-
 (defun jens/save-to-file (data filename)
   "Save lisp object to a file."
   (with-temp-file filename
@@ -835,7 +827,7 @@ restore the message."
   ;; save recentf file every 30s, but don't bother us about it
   (setq recentf-auto-save-timer
         (run-with-idle-timer 30 t '(lambda ()
-                                     (jens/with-supressed-message (recentf-save-list)))))
+                                     (shut-up (recentf-save-list)))))
   (recentf-mode 1))
 
 (use-package autorevert
@@ -1376,6 +1368,7 @@ restore the message."
 (use-package rainbow-mode :ensure t :defer t) ;; highlight color-strings (hex, etc.)
 (use-package ov :ensure t) ;; easy overlays
 (use-package popup :ensure t)
+(use-package shut-up :ensure t)
 
 (use-package help-fns+
   :init
