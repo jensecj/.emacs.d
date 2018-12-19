@@ -2438,9 +2438,6 @@ initial search query."
 (global-set-key (kbd "<home>") 'beginning-of-buffer)
 (global-set-key (kbd "<end>") 'end-of-buffer)
 
-;; indent with tab
-(global-set-key (kbd "<tab>") 'indent-for-tab-command)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybindings for defuns ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
