@@ -831,6 +831,12 @@ the overlay-map"
   (setq recentf-auto-save-timer
         (run-with-idle-timer 30 t '(lambda ()
                                      (shut-up (recentf-save-list)))))
+
+  (defun jens/recentf-cleanup (orig-fun &rest args)
+    "Silence `recentf-auto-cleanup'."
+    (shut-up (apply orig-fun args)))
+  (advice-add 'recentf-cleanup :around #'jens/recentf-cleanup)
+
   (recentf-mode 1))
 
 (use-package autorevert
