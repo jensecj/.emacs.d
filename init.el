@@ -1065,8 +1065,10 @@ the overlay-map"
 (use-package sh-script
   :mode (("\\.sh\\'" . shell-script-mode)
          ("\\.zsh\\'" . shell-script-mode)
-         ("\\zshrc\\'" . shell-script-mode)
-         ("\\PKGBUILD\\'" . shell-script-mode)))
+         ("\\.zshrc\\'" . shell-script-mode)
+         ("\\.zshenv\\'" . shell-script-mode)
+         ("\\.zprofile\\'" . shell-script-mode)
+         ("\\.PKGBUILD\\'" . shell-script-mode)))
 
 (use-package scheme
   :defer t
