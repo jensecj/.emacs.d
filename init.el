@@ -1867,6 +1867,10 @@ _M-n_: Unmark next    _M-p_: Unmark previous
     "face for emacs entries"
     :group 'elfeed-faces)
   (push '(emacs emacs-elfeed-face) elfeed-search-face-alist)
+  (defface aggregate-elfeed-face '((t :foreground "#948FF3"))
+    "face for aggregate entries"
+    :group 'elfeed-faces)
+  (push '(aggregate aggregate-elfeed-face) elfeed-search-face-alist)
 
   (setq elfeed-feeds (jens/load-from-file (concat my-emacs-dir "elfeeds.el")))
 
