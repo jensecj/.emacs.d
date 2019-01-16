@@ -83,7 +83,7 @@ and others, and return as string."
 
 ;; register the default elisp handler for doc-at-point
 (doc-at-point-register
- :mode 'emacs-lisp-mode
+ :mode '(emacs-lisp-mode lisp-interaction-mode)
  :symbol-fn #'symbol-at-point
  :doc-fn #'doc-at-point-elisp
  :should-run t)

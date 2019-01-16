@@ -36,12 +36,16 @@ should or not."
 ;;;###autoload
 (cl-defun doc-at-point-register (&key mode symbol-fn doc-fn (should-run t) (order 1))
   "Register a new documentation backend."
-  (map-put doc-at-point-alist mode
-           (list `(
-                   :symbol-fn ,symbol-fn
-                   :doc-fn ,doc-fn
-                   :should-run ,should-run
-                   :order ,order))))
+  (let ((entry (list `(
+                       :symbol-fn ,symbol-fn
+                       :doc-fn ,doc-fn
+                       :should-run ,should-run
+                       :order ,order))))
+    (cond
+     ((symbolp mode) (map-put doc-at-point-alist mode entry))
+     ((listp mode) (mapcar (lambda (m)
+                             (map-put doc-at-point-alist m entry))
+                           mode)))))
 
 ;;;###autoload
 (defun doc-at-point ()
