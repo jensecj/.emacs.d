@@ -19,17 +19,17 @@
   (etmux-tmux-run-command "send-keys" "-t" target "C-l"))
 
 ;;;###autoload
-(defun etmux-send-keys (target input)
+(defun etmux--send-keys (target keys)
   "Send a key combination to the tmux target."
-  (etmux-tmux-run-command "send-keys" "-t" target input "C-m"))
+  (etmux-tmux-run-command "send-keys" "-t" target keys "C-m"))
 
 ;;;###autoload
-(defun etmux-send-command (target command)
+(defun etmux-run-command (target command)
   "Send a command to the tmux target."
   (interactive)
   (when (etmux-tmux-running-p)
     (etmux--reset-prompt target)
-    (etmux-send-keys target command)))
+    (etmux--send-keys target command)))
 
 (provide 'etmux)
 ;;; etmux.el ends here
