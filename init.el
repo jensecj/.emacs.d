@@ -887,7 +887,8 @@ the overlay-map"
 
 (use-package eldoc
   :delight " eldoc "
-  :hook (emacs-lisp-mode . eldoc-mode))
+  :config
+  (global-eldoc-mode +1))
 
 (use-package dired+
   :straight (dired+ :type git :host github :repo "emacsmirror/dired-plus")
