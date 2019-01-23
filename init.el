@@ -889,6 +889,25 @@ the overlay-map"
   :delight " eldoc "
   :config
   (global-eldoc-mode +1))
+  (defface eldoc-highlight-&s-face '((t ())) "")
+
+  (defun jens/eldoc-highlight-&s (doc)
+    "Highlight &keywords in elisp eldoc arglists."
+    (condition-case nil
+        (with-temp-buffer
+          (insert doc)
+          (goto-char (point-min))
+
+          (while (re-search-forward "&optional\\|&rest\\|&key" nil 't)
+            (set-text-properties (match-beginning 0) (match-end 0) (list 'face 'eldoc-highlight-&s-face)))
+
+          (buffer-string))
+      (error doc)))
+
+  (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
+  :custom-face
+  (eldoc-highlight-function-argument ((t (:inherit font-lock-warning-face))))
+  (eldoc-highlight-&s-face ((t (:inherit font-lock-preprocessor-face)))))
 
 (use-package dired+
   :straight (dired+ :type git :host github :repo "emacsmirror/dired-plus")
