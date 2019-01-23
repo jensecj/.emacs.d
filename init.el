@@ -888,6 +888,8 @@ the overlay-map"
 (use-package eldoc
   :diminish
   :config
+  (setq eldoc-idle-delay 0)
+
   (defface eldoc-highlight-&s-face '((t ())) "")
 
   (defun jens/eldoc-highlight-&s (doc)
