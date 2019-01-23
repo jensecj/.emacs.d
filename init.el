@@ -886,9 +886,8 @@ the overlay-map"
   (emacs-lisp-mode "Elisp" :major))
 
 (use-package eldoc
-  :delight " eldoc "
+  :diminish
   :config
-  (global-eldoc-mode +1))
   (defface eldoc-highlight-&s-face '((t ())) "")
 
   (defun jens/eldoc-highlight-&s (doc)
@@ -905,6 +904,8 @@ the overlay-map"
       (error doc)))
 
   (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
+
+  (global-eldoc-mode +1)
   :custom-face
   (eldoc-highlight-function-argument ((t (:inherit font-lock-warning-face))))
   (eldoc-highlight-&s-face ((t (:inherit font-lock-preprocessor-face)))))
@@ -1396,7 +1397,7 @@ the overlay-map"
 (use-package centered-cursor-mode :ensure t :defer t)
 (use-package with-editor :ensure t) ;; run commands in `emacsclient'
 (use-package gist :ensure t :defer t) ;; work with github gists
-(use-package rainbow-mode :ensure t :defer t) ;; highlight color-strings (hex, etc.)
+(use-package rainbow-mode :ensure t :defer t :diminish) ;; highlight color-strings (hex, etc.)
 (use-package ov :ensure t) ;; easy overlays
 (use-package popup :ensure t)
 (use-package shut-up :ensure t)
@@ -1615,12 +1616,19 @@ the overlay-map"
   :commands (helpful-key
              helpful-callable
              helpful-variable
-             helpful-symbol)
+             helpful-symbol
+             helpful-key
+             helpful-mode)
+  :bind
+  (:map help-map
+        ("M-a" . helpful-at-point))
   :config
   (defalias #'describe-key #'helpful-key)
   (defalias #'describe-function #'helpful-callable)
   (defalias #'describe-variable #'helpful-variable)
-  (defalias #'describe-symbol #'helpful-symbol))
+  (defalias #'describe-symbol #'helpful-symbol)
+  (defalias #'describe-key #'helpful-key)
+  (defalias #'describe-mode #'helpful-mode))
 
 (use-package iedit
   :straight t
