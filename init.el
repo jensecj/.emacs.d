@@ -1393,7 +1393,6 @@ the overlay-map"
 (use-package loccur :straight t)
 (use-package paradox :ensure t :defer t) ;; improvements on package.el
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
-(use-package org-web-tools :ensure t :defer t)
 (use-package dumb-jump :ensure t :defer t)
 (use-package counsel-tramp :ensure t :defer t)
 (use-package centered-cursor-mode :ensure t :defer t)
@@ -1403,6 +1402,54 @@ the overlay-map"
 (use-package ov :ensure t) ;; easy overlays
 (use-package popup :ensure t)
 (use-package shut-up :ensure t)
+
+(use-package org-web-tools
+  :ensure t
+  :defer t
+  :after s
+  :config
+  (require 'subr-x)
+
+  (defun jens/website-title-from-url (url)
+    "Get the website title from a url."
+    (let* ((html (org-web-tools--get-url url))
+           (title (org-web-tools--html-title html))
+           (title (s-replace "[" "(" title))
+           (title (s-replace "]" ")" title)))
+      title))
+
+  (defun jens/youtube-duration-from-url (url)
+    "Get the duration of a youtube video, requires system tool `youtube-dl'."
+    (let ((raw-duration (shell-command-to-string
+                         (format "%s '%s'"
+                                 "youtube-dl --get-duration"
+                                 url))))
+      (if (<= (length raw-duration) 10)
+          (s-trim raw-duration)
+        "?")))
+
+  (defun jens/youtube-url-to-org-link (url)
+    "Return an org-link from a youtube url, including video title
+and duration."
+    (let* ((title (jens/website-title-from-url url))
+           (duration (jens/youtube-duration-from-url url))
+           (title (replace-regexp-in-string " - YouTube$" "" title))
+           (title (format "(%s) %s" duration title))
+           (org-link (org-make-link-string url title)))
+      org-link))
+
+  (defun jens/youtube-url-to-org-link-at-point ()
+    "Convert youtube-url-at-point to an org-link, including video
+title and duration."
+    (interactive)
+    (save-excursion
+      (if-let ((url (thing-at-point 'url)))
+          (let ((bounds (bounds-of-thing-at-point 'url))
+                (org-link (jens/youtube-url-to-org-link url)))
+            (delete-region (car bounds) (cdr bounds))
+            (goto-char (car bounds))
+            (insert org-link))
+        (error "no url at point")))))
 
 (use-package help-fns+
   :init
