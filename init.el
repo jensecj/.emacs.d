@@ -1902,12 +1902,17 @@ _M-n_: Unmark next    _M-p_: Unmark previous
    '(output-pdf "Zathura")))
 
 (use-package slime
-  :disabled
   :defer t
+  :ensure t
   :functions qlot-slime
   :commands slime-start
   :config
+  (setq inferior-lisp-program "sbcl")
+  (setq slime-contribs '(slime-fancy))
+
   (defun qlot-slime (directory)
+    "Start Common Lisp REPL using project-local libraries via
+`roswell' and `qlot'."
     (interactive (list (read-directory-name "Project directory: ")))
     (slime-start :program "~/.roswell/bin/qlot"
                  :program-args '("exec" "ros" "-S" "." "run")
