@@ -2261,9 +2261,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
    ("M-æ" . counsel-mark-ring)
    ("M-x" . counsel-M-x)
    ("M-b" . counsel-bookmark)
-   ("<f1> b" . describe-bindings)
-   ("<f1> l" . counsel-find-library)
-   ("<f1> M-f" . find-function))
+   ("<f1> l" . counsel-find-library))
   :config
   (setq
    counsel-grep-base-command
@@ -2485,6 +2483,9 @@ initial search query."
 ;; Rebind help to F1
 (define-key key-translation-map [?\C-h] [?\C-?])
 (global-set-key (kbd "<f1>") 'help-command)
+(define-key help-map (kbd "M-f") #'find-function)
+(define-key help-map (kbd "M-v") #'find-variable)
+(define-key help-map (kbd "b") #'describe-bindings)
 
 ;; Evaluate the current buffer/region
 (global-set-key (kbd "C-c C-k") 'eval-buffer)
