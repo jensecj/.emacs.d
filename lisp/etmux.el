@@ -6,9 +6,12 @@
 
 (defun etmux-tmux-run-command (&rest args)
   "Run a tmux-command in the running tmux session."
-  (let ((retval (apply 'process-file "tmux" nil nil nil args)))
-    (unless (zerop retval)
-      (error (format "Failed: %s(status = %d)" (mapconcat 'identity (cons "tmux" args) " ") retval)))))
+  (with-temp-buffer
+    (let ((retval (apply 'process-file "tmux" nil (current-buffer) nil args)))
+      (if (zerop retval)
+          (buffer-string)
+        (error (format "Failed: %s(status = %d)" (mapconcat 'identity (cons "tmux" args) " ") retval))))))
+
 
 (defun etmux--reset-prompt (target)
   "Clears the prompt of the tmux target."
