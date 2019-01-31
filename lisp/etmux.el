@@ -46,5 +46,34 @@
     (etmux--reset-prompt target)
     (etmux--send-keys target command)))
 
+(defun etmux-list-sessions ()
+  "List all running tmux sessions on the system."
+  (if (etmux-tmux-running?)
+      (let ((result (etmux-tmux-run-command "list-sessions" "-F" "#{session_name}")))
+        (s-split "\n" (s-trim result)))
+    (message "found no running tmux sessions")))
+
+(defun etmux-list-windows (session)
+  "List all windows in SESSION."
+  (if (etmux-tmux-running?)
+      (let ((result (etmux-tmux-run-command "list-windows" "-t" session "-F" "#{window_id},#{window_name}")))
+        (-map (-partial #'s-split ",") (s-split "\n" (s-trim result))))
+    (message "found no running tmux sessions")))
+
+(defun etmux--window-exists? (window)
+  "Returns whether a window exists."
+  (let* ((sessions (etmux-list-sessions))
+         (windows (-map #'etmux-list-windows sessions))
+         (window-ids (-map #'caar windows)))
+    (-contains? window-ids window)))
+
+(defun etmux-list-panes (window)
+  "List all panes in WINDOW."
+  (cond
+   ((not (etmux-tmux-running?)) (message "found no running tmux sessions"))
+   ((not (etmux--window-exists? window)) (message "window does not exist"))
+   (t (let ((result (etmux-tmux-run-command "list-panes" "-t" window "-F" "#{pane_id},#{pane_title}")))
+        (-map (-partial #'s-split ",") (s-split "\n" (s-trim result)))))))
+
 (provide 'etmux)
 ;;; etmux.el ends here
