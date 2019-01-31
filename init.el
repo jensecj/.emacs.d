@@ -523,10 +523,10 @@ otherwise comment or uncomment the current line."
         (buffer (current-buffer)))
     (if (not (and filename (file-exists-p filename)))
         (message "no such file exists")
-      (when (yes-or-no-p "Are you sure you want to remove this file? ")
+      (when (yes-or-no-p (format "really delete '%s'?" filename))
         (delete-file filename)
         (kill-buffer buffer)
-        (message "File '%s' successfully removed" filename)))))
+        (message "deleted '%s'" filename)))))
 
 (defun jens/touch-buffer-file ()
   "Touches the current buffer, marking it as dirty."
