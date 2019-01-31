@@ -60,20 +60,39 @@
         (-map (-partial #'s-split ",") (s-split "\n" (s-trim result))))
     (message "found no running tmux sessions")))
 
-(defun etmux--window-exists? (window)
+(defun etmux-list-all-windows ()
+  "List all windows in SESSION."
+  (if (etmux-tmux-running?)
+      (let ((result (etmux-tmux-run-command "list-windows" "-a" "-F" "#{window_id},#{window_name}")))
+        (-map (-partial #'s-split ",") (s-split "\n" (s-trim result))))
+    (message "found no running tmux sessions")))
+
+(defun etmux-window-exists? (window)
   "Returns whether WINDOW exists."
-  (let* ((sessions (etmux-list-sessions))
-         (windows (-map #'etmux-list-windows sessions))
-         (window-ids (-map #'caar windows)))
+  (let* ((windows (etmux-list-all-windows))
+         (window-ids (-map #'car windows)))
     (-contains? window-ids window)))
 
 (defun etmux-list-panes (window)
   "List all panes in WINDOW."
   (cond
    ((not (etmux-tmux-running?)) (message "found no running tmux sessions"))
-   ((not (etmux--window-exists? window)) (message "window does not exist"))
+   ((not (etmux-window-exists? window)) (message "window does not exist"))
    (t (let ((result (etmux-tmux-run-command "list-panes" "-t" window "-F" "#{pane_id},#{pane_title}")))
         (-map (-partial #'s-split ",") (s-split "\n" (s-trim result)))))))
+
+(defun etmux-list-all-panes ()
+  "List all panes in SESSION."
+  (if (etmux-tmux-running?)
+      (let ((result (etmux-tmux-run-command "list-panes" "-a" "-F" "#{pane_id},#{pane_title}")))
+        (-map (-partial #'s-split ",") (s-split "\n" (s-trim result))))
+    (message "found no running tmux sessions")))
+
+(defun etmux-pane-exists? (pane)
+  "Returns whether PANE exists."
+  (let* ((panes (etmux-list-all-panes))
+         (pane-ids (-map #'car panes)))
+    (-contains? pane-ids pane)))
 
 (defun etmux-pick-pane ()
   "Pick a tmux pane using completing-read."
