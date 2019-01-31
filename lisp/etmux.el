@@ -1,6 +1,9 @@
 ;;; etmux.el --- Communicating with tmux from emacs
 
-(defun etmux-tmux-running-p ()
+(require 'dash)
+(require 's)
+
+(defun etmux-tmux-running? ()
   "Return whether `tmux' is running on the system."
   (zerop (process-file "tmux" nil nil nil "has-session")))
 
@@ -36,11 +39,10 @@
   "Send TSTP signal to tmux target."
   (etmux-tmux-run-command "send-keys" "-t" target "C-z"))
 
-;;;###autoload
 (defun etmux-run-command (target command)
   "Send a command to the tmux target."
   (interactive)
-  (when (etmux-tmux-running-p)
+  (when (etmux-tmux-running?)
     (etmux--reset-prompt target)
     (etmux--send-keys target command)))
 
