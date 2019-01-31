@@ -12,19 +12,29 @@
           (buffer-string)
         (error (format "Failed: %s(status = %d)" (mapconcat 'identity (cons "tmux" args) " ") retval))))))
 
-
-(defun etmux--reset-prompt (target)
-  "Clears the prompt of the tmux target."
-  (etmux-tmux-run-command "send-keys" "-t" target "C-u"))
-
-(defun etmux--clear-screen (target)
-  "Clears the screen of the tmux target."
-  (etmux-tmux-run-command "send-keys" "-t" target "C-l"))
-
-;;;###autoload
 (defun etmux--send-keys (target keys)
   "Send a key combination to the tmux target."
   (etmux-tmux-run-command "send-keys" "-t" target keys "C-m"))
+
+(defun etmux-reset-prompt (target)
+  "Clears the prompt of the tmux target."
+  (etmux-tmux-run-command "send-keys" "-t" target "C-u"))
+
+(defun etmux-clear (target)
+  "Clears the screen of the tmux target."
+  (etmux-tmux-run-command "send-keys" "-t" target "C-l"))
+
+(defun etmux-C-c (target)
+  "Send interrupt signal to tmux target."
+  (etmux-tmux-run-command "send-keys" "-t" target "C-c"))
+
+(defun etmux-C-d (target)
+  "Send EOF signal to tmux target."
+  (etmux-tmux-run-command "send-keys" "-t" target "C-d"))
+
+(defun etmux-C-z (target)
+  "Send TSTP signal to tmux target."
+  (etmux-tmux-run-command "send-keys" "-t" target "C-z"))
 
 ;;;###autoload
 (defun etmux-run-command (target command)
