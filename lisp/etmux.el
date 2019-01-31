@@ -16,31 +16,31 @@
         (error (format "Failed: %s(status = %d)" (mapconcat 'identity (cons "tmux" args) " ") retval))))))
 
 (defun etmux--send-keys (target keys)
-  "Send a key combination to the tmux target."
+  "Send a key combination to TARGET."
   (etmux-tmux-run-command "send-keys" "-t" target keys "C-m"))
 
 (defun etmux-reset-prompt (target)
-  "Clears the prompt of the tmux target."
+  "Clears the prompt of the TARGET."
   (etmux-tmux-run-command "send-keys" "-t" target "C-u"))
 
 (defun etmux-clear (target)
-  "Clears the screen of the tmux target."
+  "Clears the screen of the TARGET."
   (etmux-tmux-run-command "send-keys" "-t" target "C-l"))
 
 (defun etmux-C-c (target)
-  "Send interrupt signal to tmux target."
+  "Send interrupt signal to TARGET."
   (etmux-tmux-run-command "send-keys" "-t" target "C-c"))
 
 (defun etmux-C-d (target)
-  "Send EOF signal to tmux target."
+  "Send EOF signal to TARGET."
   (etmux-tmux-run-command "send-keys" "-t" target "C-d"))
 
 (defun etmux-C-z (target)
-  "Send TSTP signal to tmux target."
+  "Send TSTP signal to TARGET."
   (etmux-tmux-run-command "send-keys" "-t" target "C-z"))
 
 (defun etmux-run-command (target command)
-  "Send a command to the tmux target."
+  "Send a command to the TARGET."
   (interactive)
   (when (etmux-tmux-running?)
     (etmux--reset-prompt target)
@@ -61,7 +61,7 @@
     (message "found no running tmux sessions")))
 
 (defun etmux--window-exists? (window)
-  "Returns whether a window exists."
+  "Returns whether WINDOW exists."
   (let* ((sessions (etmux-list-sessions))
          (windows (-map #'etmux-list-windows sessions))
          (window-ids (-map #'caar windows)))
@@ -76,7 +76,7 @@
         (-map (-partial #'s-split ",") (s-split "\n" (s-trim result)))))))
 
 (defun etmux-pick-pane ()
-  "Pick a tmux pane from a window in a session."
+  "Pick a tmux pane using completing-read."
   (let* ((session (completing-read "session:" (etmux-list-sessions)))
          (window (completing-read "window: " (etmux-list-windows session)))
          (pane (completing-read "pane: " (etmux-list-panes window))))
