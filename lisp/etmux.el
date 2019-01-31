@@ -75,5 +75,12 @@
    (t (let ((result (etmux-tmux-run-command "list-panes" "-t" window "-F" "#{pane_id},#{pane_title}")))
         (-map (-partial #'s-split ",") (s-split "\n" (s-trim result)))))))
 
+(defun etmux-pick-pane ()
+  "Pick a tmux pane from a window in a session."
+  (let* ((session (completing-read "session:" (etmux-list-sessions)))
+         (window (completing-read "window: " (etmux-list-windows session)))
+         (pane (completing-read "pane: " (etmux-list-panes window))))
+    pane))
+
 (provide 'etmux)
 ;;; etmux.el ends here
