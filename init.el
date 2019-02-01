@@ -1354,7 +1354,14 @@ title and duration."
              hydra-keyboard-quit
              hydra-show-hint
              hydra--call-interactively-remap-maybe
-             hydra-set-transient-map))
+             hydra-set-transient-map)
+  :bind (("C-x <left>" . buffer-carousel-hydra/body)
+         (("C-x <right>" . buffer-carousel-hydra/body)))
+  :config
+  (defhydra buffer-carousel-hydra ()
+    "Move betweet buffers."
+    ("<left>" #'previous-buffer "previous")
+    ("<right>" #'next-buffer "next")))
 
 (use-package pdf-tools
   :straight t
