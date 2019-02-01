@@ -96,14 +96,16 @@
 ;; whether by a user or a daemon, the first frame created will not have
 ;; the setup, as it is created before this is run, still looking into
 ;; this.
-(defun jens/init-font-setup ()
+(defun jens/init-fonts ()
   "Setup fonts, then remove self from `focus-in-hook' so we only run once."
   (let ((my-font "Source Code Pro Semibold 10"))
-    (when (find-font (font-spec :name my-font))
-      (add-to-list 'default-frame-alist `'(font . ,my-font))
-      (set-frame-font my-font))))
+    (if (find-font (font-spec :name my-font))
+        (progn
+          (add-to-list 'default-frame-alist `'(font . ,my-font))
+          (set-frame-font my-font))
+      (msg-warning (format "could not find font: %s" my-font)))))
 
-(add-hook 'server-after-make-frame-hook 'jens/init-font-setup)
+(add-hook 'server-after-make-frame-hook 'jens/init-fonts)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; temp files, etc. ;;
