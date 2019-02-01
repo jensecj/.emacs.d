@@ -610,96 +610,6 @@ the overlay-map"
 ;; window defuns ;;
 ;;;;;;;;;;;;;;;;;;;
 
-(defun jens/toggle-window-split ()
-  "Toggle window splitting between horizontal and vertical."
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))
-    (message "You can only toggle split of two windows!")))
-
-(defun jens/rotate-windows ()
-  "Rotate windows in current window configuration."
-  (interactive)
-  (cond ((not (> (count-windows)1))
-         (message "You can't rotate a single window!"))
-        (t
-         (let ((i 1)
-               (numWindows (count-windows)))
-           (while  (< i numWindows)
-             (let* ((w1 (elt (window-list) i))
-                    (w2 (elt (window-list) (+ (% i numWindows) 1)))
-
-                    (b1 (window-buffer w1))
-                    (b2 (window-buffer w2))
-
-                    (s1 (window-start w1))
-                    (s2 (window-start w2)))
-               (set-window-buffer w1  b2)
-               (set-window-buffer w2 b1)
-               (set-window-start w1 s2)
-               (set-window-start w2 s1)
-               (setq i (1+ i))))))))
-
-(defun xor (b1 b2)
-  "Exclusive OR."
-  (or (and b1 b2)
-      (and (not b1) (not b2))))
-
-(defun jens/move-border-left-or-right (arg dir)
-  "General function covering jens/move-border-left and jens/move-border-right.
-   If DIR is t, then move left, otherwise move right."
-  (interactive)
-  (if (null arg) (setq arg 3))
-  (let ((left-edge (nth 0 (window-edges))))
-    (if (xor (= left-edge 0) dir)
-        (shrink-window arg t)
-      (enlarge-window arg t))))
-
-(defun jens/move-border-up-or-down (arg dir)
-  "General function covering jens/move-border-up and jens/move-border-down.
-   If DIR is t, then move up, otherwise move down."
-  (interactive)
-  (if (null arg) (setq arg 3))
-  (let ((top-edge (nth 1 (window-edges))))
-    (if (xor (= top-edge 0) dir)
-        (shrink-window arg nil)
-      (enlarge-window arg nil))))
-
-(defun jens/move-border-left (arg)
-  (interactive "P")
-  (jens/move-border-left-or-right arg t))
-
-(defun jens/move-border-right (arg)
-  (interactive "P")
-  (jens/move-border-left-or-right arg nil))
-
-(defun jens/move-border-up (arg)
-  (interactive "P")
-  (jens/move-border-up-or-down arg t))
-
-(defun jens/move-border-down (arg)
-  (interactive "P")
-  (jens/move-border-up-or-down arg nil))
 
 ;;;;;;;;;;;;;;;;;
 ;; misc defuns ;;
@@ -2364,6 +2274,19 @@ initial search query."
 ;; home made things ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package sane-windows
+  :demand t
+  :bind (("C-x 0" . nil)
+         ("C-x 1" . nil)
+         ("C-x o" . delete-other-windows)
+         ("C-x p" . delete-window)
+         ("M-C-<tab>" . sw/toggle-window-split)
+         ("M-S-<iso-lefttab>" . sw/rotate-windows)
+         ("M-S-<left>" . sw/move-border-left)
+         ("M-S-<right>" . sw/move-border-right)
+         ("M-S-<up>" . sw/move-border-up)
+         ("M-S-<down>" . sw/move-border-down)))
+
 (use-package fullscreen
   :bind ("M-f" . fullscreen-toggle))
 
@@ -2526,12 +2449,6 @@ initial search query."
 ;; Disable suspend-frame
 (global-set-key (kbd "C-x C-z") nil)
 
-;; Move the delete windows, mnemonic is C-x OTHER
-(global-set-key (kbd "C-x 0") nil)
-(global-set-key (kbd "C-x 1") nil)
-(global-set-key (kbd "C-x o") 'delete-other-windows)
-(global-set-key (kbd "C-x p") 'delete-window)
-
 ;; Make Home and End to to the top and bottom of the buffer, we have C-a/e
 (global-set-key (kbd "<home>") 'beginning-of-buffer)
 (global-set-key (kbd "<end>") 'end-of-buffer)
@@ -2555,10 +2472,6 @@ initial search query."
 ;; Enable backwards killing of lines
 (global-set-key (kbd "C-S-k") 'jens/kill-to-beginning-of-line)
 
-;; Toggle window split
-(global-set-key (kbd "M-C-<tab>") 'jens/toggle-window-split)
-(global-set-key (kbd "M-S-<iso-lefttab>") 'jens/rotate-windows)
-
 (global-set-key (kbd "C-x b") 'ibuffer)
 
 ;; Move windows with S-<arrow>
@@ -2575,12 +2488,6 @@ initial search query."
 ;; (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
 ;; (global-set-key (kbd "C-:") 'hippie-expand-lines)
 ;; (global-set-key (kbd "C-,") 'completion-at-point)
-
-;; keybindings for window resizing
-(global-set-key (kbd "M-S-<left>") 'jens/move-border-left)
-(global-set-key (kbd "M-S-<right>") 'jens/move-border-right)
-(global-set-key (kbd "M-S-<up>") 'jens/move-border-up)
-(global-set-key (kbd "M-S-<down>") 'jens/move-border-down)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; experimantal things ;;
