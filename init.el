@@ -2259,7 +2259,7 @@ initial search query."
   (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;
-;; home made things ;;
+;; homemade things ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package sane-windows
