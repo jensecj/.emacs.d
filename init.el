@@ -2321,7 +2321,7 @@ initial search query."
 (use-package lowkey-mode-line
   :straight
   (lowkey-mode-line
-   :repo "git@github.com:jensecj/lowkey-mode-line.git")
+   :repo "git@github.com:jensecj/lowkey-mode-line.el.git")
   :demand t
   :commands lowkey-mode-line-enable
   :config
