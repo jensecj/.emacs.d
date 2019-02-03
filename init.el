@@ -2263,6 +2263,7 @@ initial search query."
 ;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package sane-windows
+  :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
   :demand t
   :bind (("C-x 0" . nil)
          ("C-x 1" . nil)
@@ -2279,6 +2280,7 @@ initial search query."
   :bind ("M-f" . fullscreen-toggle))
 
 (use-package etmux
+  :straight (etmux :repo "git@github.com:jensecj/etmux.el.git")
   :demand t
   :commands (etmux-send-command))
 
