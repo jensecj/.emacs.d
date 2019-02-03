@@ -2040,6 +2040,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (("M-p p" . ivy-push-view)
    ("M-p k" . ivy-pop-view)
    ("M-p b" . ivy-switch-view)
+   ("C-x C-b" . ivy-switch-buffer)
    :map ivy-minibuffer-map
    ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
    ("C-S-<return>" . ivy-immediate-done))
