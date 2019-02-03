@@ -1,4 +1,32 @@
-;;; etmux.el --- Communicating with tmux from emacs
+;;; etmux.el --- Interact with tmux from emacs
+
+;; Copyright (C) 2018 Jens Christian Jensen
+
+;; Author: Jens Christian Jensen <jensecj@gmail.com>
+;; Keywords: etmux
+;; Package-Version: 20190203
+;; Version: 0.2
+;; Package-Requires: ((emacs "25.1") (dash "2.14.1") (s "1.12.0"))
+
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Provides an interface to interact with tmux from elisp.
+
+;;; Code:
 
 (require 'dash)
 (require 's)
