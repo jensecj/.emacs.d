@@ -15,21 +15,6 @@ corresponding to DATE."
   (let ((subtree (today-util-cut-subtree-at-point)))
     (today-util-insert-entry subtree date)))
 
-(defun today-move--unfinished-to-date-action (source-date destination-date)
-  "Move all unfinished tasks to DATEs file."
-  ;; `today-move--subtree-action' is a destructive action, so each iteration
-  ;; should have fewer found matches occurring than the previous, there's no
-  ;; reason to move the search position along, since it would be changing
-  ;; anyway, because of cutting the subtree-at-point.
-  (today-move--unfinished-checkboxes-to-date destination-date)
-  (with-current-buffer (today-fs-buffer-from-date source-date)
-    (while (string-match today-move--unfinished-task-regexp (buffer-string))
-      (when (>= (match-beginning 0) 0)
-        ;; move 1 character into the found line, to make sure we're on the
-        ;; correct line, and not on the last character of the previous line.
-        (goto-char (+ 1 (match-beginning 0)))
-        (today-move--subtree-action destination-date)))))
-
 (defun today-move--unfinished-checkboxes-to-date (date)
   "Move all unfinished checkboxes to DATEs file. removing them
 from the current file. The destination file will be created if it
@@ -57,22 +42,6 @@ does not exist, as will the containing task."
       (goto-char (point-min))
       (delete-matching-lines empty-checkbox-entry)
       (save-buffer))))
-
-;;;###autoload
-(defun today-move-unfinished-checkboxes-to-date ()
-  "Move unfinished checkboxes to DATEs file, creating the
-containing task/file if it does not exist."
-  (interactive)
-  (let ((date (org-read-date)))
-    (today-move--unfinished-checkboxes-to-date date)))
-
-;;;###autoload
-(defun today-move-unfinished-checkboxes-to-tomorrow ()
-  "Move unfinished checkboxes to tomorrows file, creating the
-containing task/file if it does not exist."
-  (interactive)
-  (today-move--unfinished-checkboxes-to-date
-   (today-util-date-add-days (today-util-current-files-date) 1)))
 
 ;;;###autoload
 (defun today-move-completed-to-date (date)

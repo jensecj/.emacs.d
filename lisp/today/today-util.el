@@ -101,15 +101,6 @@ Symbols needs to be a list of variables or functions available globally."
 explanation."
   (f-base (f-no-ext (buffer-file-name))))
 
-(defun today-util-date-add-days (date days)
-  "Return the date DAYS after DATE."
-  (letrec ((date-in-seconds (float-time (date-to-time (concat date " 12:00:00 EST"))))
-           (seconds-in-a-day (* 60 60 24))
-           (total-seconds-in-days (* days seconds-in-a-day))
-           (next-date-in-seconds (+ date-in-seconds total-seconds-in-days))
-           (next-date (format-time-string "%Y-%m-%d" next-date-in-seconds)))
-    next-date))
-
 (defun today-util-dates-earlier-than (date)
   "Get all available dates, of files earlier than DATE, from
 latest to earliest."
