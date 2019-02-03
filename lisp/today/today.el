@@ -87,35 +87,10 @@
   "List all files from `today-directory', visit the one
 selected."
   (interactive)
-  (letrec ((dates (today-util-list-files))
-           (date (completing-read "Date: " dates)))
+  (let* ((ivy-sort-functions-alist nil) ;; dates are already sorted
+         (dates (today-util-list-files))
+         (date (completing-read "Date: " dates)))
     (today-fs-visit-date-file date)))
-
-;;;###autoload
-(defun today-goto-date ()
-  "Prompt for date using `org-calendar', then visit the
-corresponding file."
-  (interactive)
-  (letrec ((date (org-read-date)))
-    (today-fs-visit-date-file date)))
-
-(defun today-visit-previous ()
-  "Visit the previous file, based on the current files date."
-  (interactive)
-  (letrec ((current-date (today-util-current-files-date))
-           (previous-date (car (today-util-dates-earlier-than current-date))))
-    (if (null previous-date)
-        (today-fs-visit-date-file (today-util-date-add-days current-date -1))
-      (today-fs-visit-date-file previous-date))))
-
-(defun today-visit-next ()
-  "Visit the next file, based on the current files date."
-  (interactive)
-  (letrec ((current-date (today-util-current-files-date))
-           (next-date (car (today-util-dates-later-than current-date))))
-    (if (null next-date)
-        (today-fs-visit-date-file (today-util-date-add-days current-date +1))
-      (today-fs-visit-date-file next-date))))
 
 (require 'hydra)
 
@@ -183,7 +158,6 @@ _c_: capture with prompt                  ^ ^                               ^ ^
   ("T" #'today-visit-todays-file :exit t)
 
   ("l" #'today-list :exit t)
-  ("g" #'today-goto-date :exit t)
 
   ("q" nil "quit"))
 
