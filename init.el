@@ -2262,6 +2262,10 @@ initial search query."
 ;; homemade things ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package blog
+  :functions (blog-publish)
+  :load-path "~/vault/blog/src/")
+
 (use-package sane-windows
   :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
   :demand t
