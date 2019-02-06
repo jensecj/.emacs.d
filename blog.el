@@ -14,7 +14,7 @@
 (defun blog--head ()
   "Contents of the <head> tag."
   (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"/res/css/style.css\" />\n"
-          "<link rel=\"stylesheet\" type=\"text/css\" href=\"/res/css/theme.css\" />"))
+          "<link rel=\"icon\" type=\"image/png\" href=\"/res/logo.png\">"))
 
 (defun blog--header ()
   "Header content, including navigation."
