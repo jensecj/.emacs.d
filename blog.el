@@ -31,53 +31,80 @@
 (defun blog--footer ()
   ""
   "<footer></footer>")
+(defun blog-sitemap-format-entry (entry _style project)
+  "Return string for each ENTRY in PROJECT."
+  (when (s-starts-with-p "posts/" entry)
+    (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
+            (format-time-string
+             "%Y-%m-%d"
+             (org-publish-find-date entry project))
+            entry
+            (let ((file (org-publish--expand-file-name entry project)))
+              ;; need to purge the cache, otherwise title changes will not work
+              (org-publish-cache-set-file-property file :title nil)
+              (org-publish-find-title entry project)))))
+
+(defun blog-sitemap-function (title list)
+  "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
+  (concat
+   "\n#+begin_archive\n"
+   (mapconcat (lambda (li)
+                (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
+              (seq-filter #'car (cdr list))
+              "\n")
+   "\n#+end_archive\n"))
 
 
 (defun blog-publish (force)
   "Publish `blog' target using `org-publish'.
 Force publish all files if called with `prefix-argument'."
   (interactive "P")
-  (let ((org-html-head (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"/res/css/style.css\" />\n"
-                               "<link rel=\"stylesheet\" type=\"text/css\" href=\"/res/css/theme.css\" />"))
+  (save-excursion
+    (let ((org-html-htmlize-output-type 'css)
+          (org-confirm-babel-evaluate nil)
+          (org-export-babel-evaluate t)
+          (org-export-use-babel t)
 
-        (org-html-home/up-format (blog--header))
-        (org-html-doctype "html5")
-        (org-html-htmlize-output-type 'css)
-        (org-html-html5-fancy 't)
+          (org-publish-project-alist
+           `(("blog-org-to-html"
+              :recursive t
+              :base-directory "~/vault/blog/src/blog/"
+              :base-extension "org"
+              :publishing-directory "~/vault/blog/"
+              :publishing-function org-html-publish-to-html
 
-        (org-html-link-home "/")
-        (org-html-link-up "/")
+              :html-head ,(blog--head)
+              :html-home/up-format ,(blog--header)
+              :html-preamble nil
+              :html-postamble blog--footer
+              :html-head-include-scripts nil
+              :html-html5-fancy t
+              :html-doctype "html5"
+              :html-link-home "/"
+              :html-link-up "/"
 
-        (org-html-preamble nil)
-        (org-html-postamble nil)
+              :with-toc nil
+              :with-author t
+              :with-title t
+              :with-date t
+              :with-footnotes t
+              :section-numbers nil
 
-        (org-export-with-toc nil)
-        (org-export-with-author t)
-        (org-export-with-email nil)
-        (org-export-with-creator nil)
-        (org-export-with-section-numbers nil)
-
-        (org-confirm-babel-evaluate nil)
-        (org-export-babel-evaluate t)
-        (org-export-use-babel t)
-
-        (org-publish-project-alist
-         '(("blog-org-to-html"
-            :recursive t
-            :base-directory "~/vault/blog/src/blog/"
-            :base-extension "org"
-            :publishing-directory "~/vault/blog/"
-            :publishing-function org-html-publish-to-html
-            :headline-levels 4)
-           ("blog-copy-statics"
-            :recursive t
-            :base-directory "~/vault/blog/src/blog/"
-            :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf"
-            :publishing-directory "~/vault/blog/"
-            :publishing-function org-publish-attachment)
-           ("blog" :components ("blog-org-to-html" "blog-copy-statics"))
-           )))
-    (org-publish-project "blog" force)
-    (blog-reload-firefox)))
+              :auto-sitemap t
+              :sitemap-filename "archive.org"
+              :sitemap-style list
+              :sitemap-sort-files anti-chronologically
+              :sitemap-format-entry blog-sitemap-format-entry
+              :sitemap-function blog-sitemap-function)
+             ("blog-assets"
+              :recursive t
+              :base-directory "~/vault/blog/src/blog/"
+              :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf"
+              :publishing-directory "~/vault/blog/"
+              :publishing-function org-publish-attachment)
+             ("blog" :components ("blog-org-to-html" "blog-assets"))
+             )))
+      (org-publish-project "blog" force)
+      (blog-reload-firefox))))
 
 (provide 'blog)
