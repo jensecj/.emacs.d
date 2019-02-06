@@ -17,7 +17,7 @@
           "<link rel=\"stylesheet\" type=\"text/css\" href=\"/res/css/theme.css\" />"))
 
 (defun blog--header ()
-  "Header tag, including navigation."
+  "Header content, including navigation."
   "<header>
     <nav>
      <ul>
@@ -28,9 +28,10 @@
 </header>")
 
 
-(defun blog--footer ()
-  ""
-  "<footer></footer>")
+(defun blog--footer (_plist)
+  "Footer content"
+  "<footer> </footer>")
+
 (defun blog-sitemap-format-entry (entry _style project)
   "Return string for each ENTRY in PROJECT."
   (when (s-starts-with-p "posts/" entry)
