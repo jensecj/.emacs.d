@@ -9,6 +9,23 @@
     (shell-command "xdotool search --onlyvisible --classname Navigator windowactivate --sync key F5")
     (shell-command (format "xdotool windowactivate %s" current-window))))
 
+(defun blog--header ()
+  ""
+  "<header>
+    <nav>
+     <ul>
+      <li><a href=\"/\"> index </a></li>
+      <li><a href=\"/pages/about.html\"> about </a></li>
+     </ul>
+   </nav>
+</header>")
+
+
+(defun blog--footer ()
+  ""
+  "<footer></footer>")
+
+
 (defun blog-publish (force)
   "Publish `blog' target using `org-publish'.
 Force publish all files if called with `prefix-argument'."
@@ -16,23 +33,16 @@ Force publish all files if called with `prefix-argument'."
   (let ((org-html-head (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"/res/css/style.css\" />\n"
                                "<link rel=\"stylesheet\" type=\"text/css\" href=\"/res/css/theme.css\" />"))
 
-        (org-html-home/up-format "
-<div id=\"org-div-home-and-up\">
-  <nav>
-    <ul>
-      <li><a href=\"%s\"> index </a></li>
-      <li><a href=\"/pages/about.html\"> about </a></li>
-    </ul>
-  </nav>
-</div>
-")
+        (org-html-home/up-format (blog--header))
         (org-html-doctype "html5")
         (org-html-htmlize-output-type 'css)
         (org-html-html5-fancy 't)
-        (org-html-postamble nil)
 
         (org-html-link-home "/")
         (org-html-link-up "/")
+
+        (org-html-preamble nil)
+        (org-html-postamble nil)
 
         (org-export-with-toc nil)
         (org-export-with-author t)
