@@ -141,7 +141,7 @@ _C_: Clojure      _w_: Web       _u_: Urgent
 ^^^^^^^^----------------------------------------------------------------------------------------------
 _r_: capture read task                    _a_: archive completed tasks      _t_: go to todays file
 _R_: capture read task from clipboard     _s_: the move-to-section hydra    _l_: list all date files
-_w_: capture watch task                   ^ ^                               _g_: go to date from `org-calendar'
+_w_: capture watch task                   ^ ^                               ^ ^
 _W_: capture watch task from clipboard    ^ ^                               ^ ^
 _c_: capture with prompt                  ^ ^                               ^ ^
 "
