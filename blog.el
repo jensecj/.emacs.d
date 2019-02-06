@@ -1,5 +1,7 @@
 (require 'org)
+(require 'ox-html)
 (require 'ox-publish)
+(require 'ox-rss)
 
 (defun blog-reload-firefox ()
   "Reaload visible firefox browser using `xdotool'"
@@ -9,8 +11,13 @@
     (shell-command "xdotool search --onlyvisible --classname Navigator windowactivate --sync key F5")
     (shell-command (format "xdotool windowactivate %s" current-window))))
 
+(defun blog--head ()
+  "Contents of the <head> tag."
+  (concat "<link rel=\"stylesheet\" type=\"text/css\" href=\"/res/css/style.css\" />\n"
+          "<link rel=\"stylesheet\" type=\"text/css\" href=\"/res/css/theme.css\" />"))
+
 (defun blog--header ()
-  ""
+  "Header tag, including navigation."
   "<header>
     <nav>
      <ul>
