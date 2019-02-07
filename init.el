@@ -252,8 +252,8 @@
 (setq kill-ring-max 500)
 
 ;; keep a lot more undo history (expressed in bytes)
-(setq undo-limit (* 500 1000))
-(setq undo-strong-limit (* 800 1000))
+(setq undo-limit (* 5 1024 1024))
+(setq undo-strong-limit (* 20 1024 1024))
 
 (setq message-log-max 10000)
 
@@ -1777,11 +1777,13 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :bind
   (("C-x u" . undo-tree-visualize)
    ("C-_" . undo-tree-undo)
-   ("M-_" . undo-tree-redo))
+   ("M-_" . undo-tree-redo)
+   :map undo-tree-visualizer-mode-map
+   ("<return>" . undo-tree-visualizer-quit))
   :config
   (setq undo-tree-visualizer-diff t)
   (setq undo-tree-auto-save-history t)
-  (setq undo-tree-history-directory-alist `(("." . ,my-emacs-temp-dir)))
+  (setq undo-tree-history-directory-alist `(("." . ,my-emacs-data-dir)))
   (global-undo-tree-mode))
 
 (use-package goto-chg
