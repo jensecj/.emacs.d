@@ -1617,6 +1617,11 @@ title and duration."
   :straight t
   :bind ("C-;" . iedit-mode))
 
+(use-package smartscan
+  :straight t
+  :bind (("C->" . smartscan-symbol-go-forward)
+         ("C-<" . smartscan-symbol-go-backward)))
+
 (use-package multiple-cursors
   :ensure t
   :bind
