@@ -1137,6 +1137,13 @@ the overlay-map"
      elpy-module-eldoc
      elpy-module-pyvenv)))
 
+(use-package highlight-defined
+  :ensure t
+  :hook (emacs-lisp-mode . highlight-defined-mode)
+  :custom-face
+  (highlight-defined-function-name-face ((t (:foreground "#BDE0F3"))))
+  (highlight-defined-builtin-function-name-face ((t (:foreground "#BFBFBF")))))
+
 (use-package emr
   :ensure t
   :bind ("M-<return>" . emr-show-refactor-menu))
@@ -1629,13 +1636,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   :defer t
   :bind ("C-x C-y" . browse-kill-ring)
   :config (setq browse-kill-ring-quit-action 'save-and-restore))
-
-(use-package highlight-defined
-  :ensure t
-  :hook (emacs-lisp-mode . highlight-defined-mode)
-  :custom-face
-  (highlight-defined-function-name-face ((t (:foreground "#BDE0F3"))))
-  (highlight-defined-builtin-function-name-face ((t (:foreground "#BFBFBF")))))
 
 (use-package avy
   :ensure t
