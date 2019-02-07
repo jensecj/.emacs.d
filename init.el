@@ -1144,6 +1144,17 @@ the overlay-map"
   (highlight-defined-function-name-face ((t (:foreground "#BDE0F3"))))
   (highlight-defined-builtin-function-name-face ((t (:foreground "#BFBFBF")))))
 
+(use-package highlight-thing
+  :ensure t
+  :config
+  (setq highlight-thing-ignore-list '("nil" "t"))
+  (setq highlight-thing-delay-seconds 0.5)
+  (setq highlight-thing-case-sensitive-p nil)
+  (setq highlight-thing-exclude-thing-under-point t)
+  (global-highlight-thing-mode +1)
+  :custom-face
+  (highlight-thing ((t (:background "#4f4f4f" :weight bold)))))
+
 (use-package emr
   :ensure t
   :bind ("M-<return>" . emr-show-refactor-menu))
