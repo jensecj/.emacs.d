@@ -2269,6 +2269,9 @@ initial search query."
   :config
   (so-long-enable))
 
+(use-package treemacs
+  :straight t)
+
 (use-package zenburn-theme
   :ensure t
   :demand t
