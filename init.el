@@ -780,6 +780,25 @@ the overlay-map"
           (call-interactively 'goto-line))
       (display-line-numbers-mode -1))))
 
+(use-package smerge-mode
+  :bind (:map smerge-mode-map ("C-c ^" . jens/smerge/body))
+  :config
+  (defhydra jens/smerge ()
+    "Move betweet buffers."
+    ("n" #'smerge-next "next")
+    ("p" #'smerge-prev "previous")
+    ("u" #'smerge-keep-upper "keep upper")
+    ("l" #'smerge-keep-lower "keep lower"))
+
+  (defun jens/enable-smerge-if-diff-buffer ()
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "^<<<<<<< " nil t)
+        (smerge-mode 1))))
+
+  (add-hook 'find-file-hook 'jens/enable-smerge-if-diff-buffer t)
+  (add-hook 'after-revert-hook 'jens/enable-smerge-if-diff-buffer t))
+
 (use-package elisp-mode
   :delight
   (emacs-lisp-mode "Elisp" :major))
