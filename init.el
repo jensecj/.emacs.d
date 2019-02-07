@@ -142,9 +142,11 @@
 ;; set the paranoia level to medium, warns if connections are insecure
 (setq network-security-level 'medium)
 
-;; enable useful disabled features
-(put 'narrow-to-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
+;; don't disable function because they're confusing to beginners
+(setq disabled-command-function nil)
+
+;; never use dialog boxes
+(setq use-dialog-box nil)
 
 ;; load newer files, even if they have (outdated) byte-compiled counterparts
 (setq load-prefer-newer t)
@@ -179,6 +181,9 @@
 
 ;; Answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+;; make re-centering sane
+(setq recenter-positions '(top middle bottom))
 
 ;; use UTF-8
 (setq locale-coding-system 'utf-8)
@@ -257,6 +262,9 @@
 (setq scroll-conservatively 10)
 ;; only scroll the current line when moving outside window-bounds
 (setq auto-hscroll-mode 'current-line)
+
+;; save clipboard from other programs to kill-ring
+(setq save-interprogram-paste-before-kill t)
 
 (setq initial-scratch-message "")
 
