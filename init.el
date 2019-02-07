@@ -1633,8 +1633,7 @@ title and duration."
   (defalias #'describe-function #'helpful-callable)
   (defalias #'describe-variable #'helpful-variable)
   (defalias #'describe-symbol #'helpful-symbol)
-  (defalias #'describe-key #'helpful-key)
-  (defalias #'describe-mode #'helpful-mode))
+  (defalias #'describe-key #'helpful-key))
 
 (use-package elisp-demos
   :straight t
