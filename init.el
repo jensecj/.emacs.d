@@ -780,6 +780,9 @@ the overlay-map"
           (call-interactively 'goto-line))
       (display-line-numbers-mode -1))))
 
+(use-package hi-lock
+  :diminish hi-lock-mode)
+
 (use-package smerge-mode
   :bind (:map smerge-mode-map ("C-c ^" . jens/smerge/body))
   :config
@@ -1162,6 +1165,7 @@ the overlay-map"
 
 (use-package highlight-defined
   :ensure t
+  :diminish highlight-defined-mode
   :hook (emacs-lisp-mode . highlight-defined-mode)
   :custom-face
   (highlight-defined-function-name-face ((t (:foreground "#BDE0F3"))))
@@ -1169,6 +1173,7 @@ the overlay-map"
 
 (use-package highlight-thing
   :ensure t
+  :diminish highlight-thing-mode
   :config
   (setq highlight-thing-ignore-list '("nil" "t"))
   (setq highlight-thing-delay-seconds 0.5)
@@ -1601,6 +1606,7 @@ title and duration."
 
 (use-package hl-todo
   :ensure t
+  :diminish hl-todo-mode
   :commands global-hl-todo-mode
   :config
   (global-hl-todo-mode +1))
