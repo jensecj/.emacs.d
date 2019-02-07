@@ -1137,6 +1137,10 @@ the overlay-map"
      elpy-module-eldoc
      elpy-module-pyvenv)))
 
+(use-package emr
+  :ensure t
+  :bind ("M-<return>" . emr-show-refactor-menu))
+
 (use-package ggtags
   :ensure t
   :defer t
