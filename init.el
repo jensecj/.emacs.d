@@ -1605,7 +1605,7 @@ title and duration."
   (("C-d" . mc/mark-next-like-this)
    ("C-S-d" . mc/mark-previous-like-this)
    ("C-M-a" . mc/mark-all-like-this)
-   ("C-M-m" . mc-hydra/body))
+   ("C-M-<return>" . mc-hydra/body))
   :init
   (setq mc/list-file (concat my-emacs-data-dir "mc-lists"))
   :config
