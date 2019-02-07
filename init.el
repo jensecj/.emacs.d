@@ -1576,6 +1576,12 @@ title and duration."
   (defalias #'describe-key #'helpful-key)
   (defalias #'describe-mode #'helpful-mode))
 
+(use-package elisp-demos
+  :straight t
+  :after helpful
+  :config
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+
 (use-package iedit
   :straight t
   :bind ("C-;" . iedit-mode))
