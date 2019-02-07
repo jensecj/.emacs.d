@@ -891,6 +891,10 @@ the overlay-map"
   :config
   (fringe-mode '(5 . 0)))
 
+;;;;;;;;;
+;; Org ;;
+;;;;;;;;;
+
 ;; I want to use the new version of org-mode from upstream.
 ;; remove the built-in org-mode from the load path, so it does not get loaded
 (setq load-path (-remove (lambda (x) (string-match-p "org$" x)) load-path))
