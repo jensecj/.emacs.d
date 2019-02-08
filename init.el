@@ -2059,11 +2059,13 @@ _M-n_: Unmark next    _M-p_: Unmark previous
     (interactive)
     (if (null multi-term-buffer-list)
         (error "Error: No open terminals"))
-    (let ((buf (get-buffer (completing-read "Select term:" (mapcar 'buffer-name multi-term-buffer-list)))))
-      (with-current-buffer buf
-        (if (member default-directory multi-term-saved-terms)
-            (error "That term is already saved"))
+
+    (let* ((buf (get-buffer (completing-read "Select term:" (mapcar 'buffer-name multi-term-buffer-list))))
+           (dir (buffer-local-value 'default-directory buf)))
+      (if (member default-directory multi-term-saved-terms)
+          (message "That term is already saved")
         (add-to-list 'multi-term-saved-terms default-directory)))
+
     (jens/save-to-file multi-term-saved-terms multi-term-save-file))
 
   (defun jens/multi-term-unsave-term ()
