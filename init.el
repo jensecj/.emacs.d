@@ -638,6 +638,11 @@ the overlay-map"
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
 
+(defun jens/insert-todays-date-compact ()
+  "Insert the current date at point, in a compact format."
+  (interactive)
+  (insert (format-time-string "%Y%m%d")))
+
 (defun jens/processor-count ()
   "Return the number of logical processors of the system."
   (when (file-exists-p "/proc/cpuinfo")
