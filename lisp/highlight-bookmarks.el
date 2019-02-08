@@ -4,8 +4,8 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: highlight-bookmarks
-;; Package-Version: 20181209
-;; Version: 0.2
+;; Package-Version: 20190208
+;; Version: 0.3
 ;; Package-Requires: ((emacs "25.1") (ov "1.0.6") (dash "2.14.1") (f "0.20.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -25,14 +25,40 @@
 
 ;; Highlight bookmarks in the current buffer using overlays.
 
+;; a configuration might look like this:
+;; (add-hook 'find-file-hook #'highlight-bookmarks-in-this-buffer)
+;; (add-hook 'after-save-hook #'highlight-bookmarks-in-this-buffer)
+;; (advice-add #'bookmark-jump :after #'highlight-bookmarks-in-this-buffer)
+;; (advice-add #'bookmark-set :after #'highlight-bookmarks-in-this-buffer)
+;; (advice-add #'bookmark-delete :after #'highlight-bookmarks-in-this-buffer)
+
 ;;; Code:
 
 (require 'ov)
+(require 'bookmark)
+(require 'dash)
+(require 'f)
 
 (defcustom highlight-bookmarks-bookmark-face
   '(:background "#2B2B2B")
   "Face used to highlight the line of a bookmark."
   :group 'highlight-bookmarks)
+
+(defun hb--all-bookmarks ()
+  "Returns all files containing bookmarks, and the bookmarks positions."
+  (-map #'(lambda (e)
+            (let ((param-list (cdr e)))
+              (cons (f-expand (map-elt param-list 'filename))
+                    (map-elt param-list 'position))))
+        bookmark-alist))
+
+(defun hb--current-buffers-bookmarks ()
+  "Returns the positions of bookmarks in the current buffer."
+  (interactive)
+  (let ((current-file (buffer-file-name)))
+    (-select #'(lambda (o)
+                 (string= current-file (car o)))
+             (hb--all-bookmarks))))
 
 ;;;###autoload
 (defun highlight-bookmarks-in-this-buffer (&rest _args)
@@ -43,21 +69,11 @@
 
   ;; grab bookmarks from `bookmark-alist', and create an overlay for all
   ;; bookmarks that belong to the current buffer
-  (let* ((bm-list (-map #'(lambda (e)
-                            (cons (map-elt e 'filename)
-                                  (map-elt e 'position)))
-                        bookmark-alist))
-         (buffer-bms (-filter #'(lambda (e)
-                                  (f-same?
-                                   (car e)
-                                   (buffer-file-name (current-buffer))))
-                              bm-list)))
-    (if buffer-bms
-        (-map #'(lambda (b)
-                  (ov-set (ov-line (cdr b))
-                          'face highlight-bookmarks-bookmark-face
-                          'highlight-bookmarks-highlight t))
-              buffer-bms))))
+  (-map #'(lambda (b)
+            (ov-set (ov-line (cdr b))
+                    'face highlight-bookmarks-bookmark-face
+                    'highlight-bookmarks-highlight t))
+        (hb--current-buffers-bookmarks)))
 
 (provide 'highlight-bookmarks)
 ;;; highlight-bookmarks.el ends here
