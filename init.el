@@ -91,6 +91,8 @@
   :ensure t
   :commands (f-exists? f-glob f-no-ext))
 
+(use-package ht :straight t) ;; hash-table
+
 ;; Use =Source Code Pro= font if it is available. When launching emacs as a
 ;; daemon, fonts are not loaded until we actually produce a frame, so the
 ;; font list will be empty, focus-in-hook is run when a frame is created,
