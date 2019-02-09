@@ -23,9 +23,11 @@ and others, and return as string."
 (defun doc-at-point-elisp--describe-function (symbol)
   "Return documentation for elisp function."
   (doc-at-point-elisp--capture-to-string
-   (princ symbol)
-   (princ " is ")
-   (describe-function-1 symbol)))
+   (let ((args (elisp-get-fnsym-args-string symbol)))
+     (princ (format "(%s " symbol))
+     (princ (s-replace (format "%s: (" symbol) "" args))
+     (princ "\n\n")
+     (princ (help-documentation symbol)))))
 
 (defun doc-at-point-elisp--describe-variable (symbol)
   "Return documentation for elisp variable."
