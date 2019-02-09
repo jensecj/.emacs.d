@@ -2422,7 +2422,7 @@ initial search query."
   (setq today-directory "~/vault/org/planner/"))
 
 (use-package doc-at-point
-  :load-path "lisp/doc-at-point/"
+  :straight (doc-at-point :repo "git@github.com:jensecj/doc-at-point.el.git")
   :defer t
   :bind
   (("C-+" . doc-at-point))
