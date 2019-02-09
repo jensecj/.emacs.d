@@ -100,7 +100,8 @@
 ;; the setup, as it is created before this is run, still looking into
 ;; this.
 (defun jens/init-fonts ()
-  "Setup fonts, then remove self from `focus-in-hook' so we only run once."
+  "Setup fonts, then remove self from `focus-in-hook' so we only
+run once."
   (let ((my-font "Source Code Pro Semibold 10"))
     (if (find-font (font-spec :name my-font))
         (progn
@@ -320,7 +321,8 @@
       '("~/vault/authinfo.gpg" "~/.netrc"))
 
 (defun jens/kill-idle-gpg-buffers ()
-  "Kill .gpg buffers after they have not been used for 60 seconds."
+  "Kill .gpg buffers after they have not been used for 60
+seconds."
   (interactive)
   (let ((buffers-killed 0))
     (dolist (buffer (buffer-list))
@@ -357,7 +359,8 @@
     (get-buffer-create bufname)))
 
 (defun jens/create-scratch-buffer nil
-  "Create a new scratch buffer to work in.  (named *scratch* - *scratch<n>*)."
+  "Create a new scratch buffer to work in.  (named *scratch* -
+*scratch<n>*)."
   (interactive)
   (switch-to-buffer (jens/new-scratch-buffer))
   (funcall initial-major-mode))
@@ -381,7 +384,8 @@
 
 (defun jens/cleanup-buffer ()
   "Perform a bunch of operations on the white space content of a buffer.
-   Including indent-buffer, which should not be called automatically on save."
+Including indent-buffer, which should not be called automatically
+on save."
   (interactive)
   (indent-region (point-min) (point-max))
   (whitespace-cleanup)
@@ -396,7 +400,7 @@
 
 (defun jens/open-line-below ()
   "Inserts a line below the current line, indents it, and moves
-   the the beginning of that line."
+the the beginning of that line."
   (interactive)
   (end-of-line)
   (newline)
@@ -404,7 +408,7 @@
 
 (defun jens/open-line-above ()
   "Inserts a line above the current line, indents it, and moves
-  the the beginning of that line."
+the the beginning of that line."
   (interactive)
   (beginning-of-line)
   (newline)
@@ -435,7 +439,8 @@ otherwise the current line is saved."
       (kill-ring-save (line-beginning-position) (+ 1 (line-end-position))))))
 
 (defun jens/kill-region-or-current-line (arg)
-  "If a region is active then it is killed, otherwise the current line is killed."
+  "If a region is active then it is killed, otherwise the current
+line is killed."
   (interactive "P")
   (if (region-active-p)
       (kill-region (region-beginning) (region-end))
@@ -456,8 +461,8 @@ otherwise the current line is saved."
 
 (defun jens/join-region-or-line ()
   "If region is active, join all lines in region to a single
-   line. Otherwise join the line below the current line, with the
-   current line, placing it after."
+line. Otherwise join the line below the current line, with the
+current line, placing it after."
   (interactive)
   (if (region-active-p)
       (jens/join-region)
@@ -487,8 +492,8 @@ otherwise the current line is saved."
     (message "wrap-region: Error! invalid region!")))
 
 (defun jens/comment-uncomment-region-or-line ()
-  "If region is active, comment or uncomment it (based on what it currently is),
-otherwise comment or uncomment the current line."
+  "If region is active, comment or uncomment it (based on what it
+currently is), otherwise comment or uncomment the current line."
   (interactive)
   (if (region-active-p)
       (comment-or-uncomment-region (region-beginning) (region-end))
@@ -506,15 +511,18 @@ otherwise comment or uncomment the current line."
     (byte-compile-file (buffer-file-name))))
 
 (defun jens/get-buffer-file-name+ext ()
-  "Get the file name and extension of the file belonging to the current buffer."
+  "Get the file name and extension of the file belonging to the
+current buffer."
   (file-name-nondirectory buffer-file-name))
 
 (defun jens/get-buffer-file-name ()
-  "Get the file name of the file belonging to the current buffer."
+  "Get the file name of the file belonging to the current
+buffer."
   (file-name-sans-extension (jens/get-buffer-file-name+ext)))
 
 (defun jens/get-buffer-file-directory ()
-  "Get the directory of the file belonging to the current buffer."
+  "Get the directory of the file belonging to the current
+buffer."
   (file-name-directory (buffer-file-name)))
 
 (defun jens/file-age (file)
@@ -573,8 +581,8 @@ otherwise comment or uncomment the current line."
      ,lam))
 
 (defun jens/one-shot-keybinding (key command)
-  "Set a keybinding that disappear once you press a key that is not in
-the overlay-map"
+  "Set a keybinding that disappear once you press a key that is
+not in the overlay-map"
   (set-transient-map
    (let ((map (make-sparse-keymap)))
      (define-key map (kbd key) command)
@@ -583,8 +591,8 @@ the overlay-map"
 ;; (jens/one-shot-keybinding "a" (xi (previous-line)))
 
 (defun jens/one-shot-keymap (key-command-pairs)
-  "Set a keybinding that disappear once you press a key that is not in
-the overlay-map"
+  "Set a keybinding that disappear once you press a key that is
+not in the overlay-map"
   (set-transient-map
    (let ((map (make-sparse-keymap)))
      (dolist (kvp key-command-pairs)
@@ -662,7 +670,8 @@ the overlay-map"
       (how-many "^processor[[:space:]]+:"))))
 
 (defun jens/goto-msg-buffer ()
-  "View the *Messages* buffer, return to previous buffer when done."
+  "View the *Messages* buffer, return to previous buffer when
+done."
   (interactive)
   (view-buffer "*Messages*"))
 
@@ -810,7 +819,8 @@ the overlay-map"
   :bind ("M-g M-g" . jens/goto-line-with-feedback)
   :config
   (defun jens/goto-line-with-feedback ()
-    "Show line numbers temporarily, while prompting for the line number input"
+    "Show line numbers temporarily, while prompting for the line
+number input"
     (interactive)
     (unwind-protect
         (progn
@@ -832,6 +842,7 @@ the overlay-map"
     ("l" #'smerge-keep-lower "keep lower"))
 
   (defun jens/enable-smerge-if-diff-buffer ()
+    "Enable SMerge-mode if the current buffer is showing a diff."
     (save-excursion
       (goto-char (point-min))
       (when (re-search-forward "^<<<<<<< " nil t)
@@ -971,6 +982,7 @@ the overlay-map"
    ("C-c n" . jens/org-indent))
   :config
   (defun jens/org-indent ()
+    "Indent line or region in org-mode."
     (interactive)
     (if (region-active-p)
         (org-indent-region (region-beginning) (region-end)))
@@ -1406,7 +1418,8 @@ the overlay-map"
       title))
 
   (defun jens/youtube-duration-from-url (url)
-    "Get the duration of a youtube video, requires system tool `youtube-dl'."
+    "Get the duration of a youtube video, requires system tool
+`youtube-dl'."
     (let ((raw-duration (shell-command-to-string
                          (format "%s '%s'"
                                  "youtube-dl --get-duration"
@@ -1534,6 +1547,7 @@ title and duration."
       (message "Install `rg' to use `smart-jump-simple-find-references-with-rg'.")))
 
   (defun jens/select-rg-window nil
+    "Select the `rg' buffer, if visible."
     (select-window (get-buffer-window (get-buffer "*rg*"))))
 
   (setq smart-jump-find-references-fallback-function #'jens/smart-jump-find-references-with-rg)
@@ -1959,7 +1973,8 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (setq elfeed-feeds (jens/load-from-file (concat my-emacs-dir "elfeeds.el")))
 
   (defun jens/elfeed-copy-link-at-point ()
-    "Copy the link of the elfeed entry at point to the clipboard."
+    "Copy the link of the elfeed entry at point to the
+clipboard."
     (interactive)
     (letrec ((entry (car (elfeed-search-selected)))
              (link (elfeed-entry-link entry)))
@@ -2053,8 +2068,8 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (setq term-buffer-maximum-size 10000)
 
   (defun jens/term-paste (&optional string)
-    "Paste a string to the process of the current buffer, fixes paste for
-    multi-term mode."
+    "Paste a string to the process of the current buffer, fixes
+paste for multi-term mode."
     (interactive)
     (process-send-string
      (get-buffer-process (current-buffer))
@@ -2235,6 +2250,7 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
   :commands ivy-rich-mode
   :config
   (defun ivy-rich-bookmark-context-string (candidate)
+    "Transformer for pretty bookmarks in `counsel-bookmark'.n"
     (let ((front (cdr (assoc 'front-context-string (cdr (assoc candidate bookmark-alist))))))
       (s-replace "\n" ""  (concat  "" front))))
 
@@ -2343,6 +2359,7 @@ initial search query."
   (ispell-change-dictionary "english")
 
   (defun enable-spellchecking ()
+    "Enable spellchecking in the current buffer."
     (interactive)
     (ispell-change-dictionary "english")
     (flyspell-prog-mode)
@@ -2462,7 +2479,7 @@ initial search query."
 ;; expand-region cruft.
 (defun jens/pop-to-mark-command (orig-fun &rest args)
   "Call ORIG-FUN until the cursor moves. Try popping up to 10
-  times."
+times."
   (let ((p (point)))
     (dotimes (_ 10)
       (when (= p (point))
