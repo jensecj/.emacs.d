@@ -1,4 +1,4 @@
-;;; fullscreen.el --- Toggling fullscreen state of buffers
+;;; fullscreen.el --- Toggling fullscreen state of buffers. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018 Jens Christian Jensen
 

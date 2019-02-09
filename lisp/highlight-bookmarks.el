@@ -1,4 +1,4 @@
-;;; highlight-bookmarks.el --- Toggling highlight-bookmarks state of buffers
+;;; highlight-bookmarks.el --- Toggling highlight-bookmarks state of buffers. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018 Jens Christian Jensen
 

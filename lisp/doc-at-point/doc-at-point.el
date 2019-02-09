@@ -1,4 +1,4 @@
-;;; doc-at-point.el --- Popup documentation for the symbol-at-point.
+;;; doc-at-point.el --- Popup documentation for the symbol-at-point. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018 Jens Christian Jensen
 

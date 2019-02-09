@@ -1,5 +1,4 @@
-;;; -*- lexical-binding: t -*-
-;;; today.el --- simple daily planning
+;;; today.el --- simple daily planning. -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2018 Jens Christian Jensen
 
