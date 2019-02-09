@@ -783,7 +783,7 @@ done."
     (shut-up (apply orig-fun args)))
   (advice-add 'recentf-cleanup :around #'jens/recentf-cleanup)
 
-  (recentf-mode 1))
+  (recentf-mode +1))
 
 (use-package autorevert
   :diminish auto-revert-mode
@@ -1147,6 +1147,7 @@ number input"
   ;;        (figwheel-sidecar.repl-api/start-figwheel!)
   ;;        (figwheel-sidecar.repl-api/cljs-repl))")
 
+  ;; TODO: create doc-at-point entry for clojure
   (defun jens/company-clojure-quickhelp-at-point ()
     (interactive)
     (cider-try-symbol-at-point "symbol to show doc for" #'cider-create-doc-buffer)
@@ -1482,7 +1483,11 @@ title and duration."
   ;; need to use plain isearch, pdf-tools hooks into it to handle searching
   (:map pdf-view-mode-map ("C-s" . isearch-forward))
   :config
-  (pdf-tools-install))
+  ;; TODO: figure out how to disable epdf asking to rebuild when starting
+  ;; emacsclient, it does not work.
+
+  ;; (pdf-tools-install)
+  )
 
 (use-package amx
   :ensure t
@@ -1810,6 +1815,8 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (setq magit-section-visibility-indicator '("…", t)))
 
 (use-package magithub
+  ;; TODO: replace with forge.el?
+  :disabled
   :ensure t
   :after magit
   :config
