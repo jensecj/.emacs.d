@@ -675,6 +675,23 @@ done."
   (interactive)
   (view-buffer "*Messages*"))
 
+(defun goto-next-line-with-same-indentation ()
+  "Jump to the next line with the same indentation level as the
+current line."
+  (interactive)
+  (back-to-indentation)
+  (re-search-forward (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]")
+                     nil nil (if (= 0 (current-column)) 2 1))
+  (back-to-indentation))
+
+(defun goto-prev-line-with-same-indentation ()
+  "Jump to a previous line with the same indentation level as the
+current line."
+  (interactive)
+  (back-to-indentation)
+  (re-search-backward (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
+  (back-to-indentation))
+
 (defun jens/function-def-string (fnsym)
   "Return function definition of FNSYM as a string."
   (let* ((buffer-point (condition-case nil (find-definition-noselect fnsym nil) (error nil)))
@@ -2610,6 +2627,10 @@ times."
 ;; Copy current line / region
 (global-set-key (kbd "M-w") 'jens/save-region-or-current-line)
 (global-set-key (kbd "C-w") 'jens/kill-region-or-current-line)
+
+;; jump between indentation levels
+(global-set-key (kbd "s-n") 'goto-next-line-with-same-indentation)
+(global-set-key (kbd "s-p") 'goto-prev-line-with-same-indentation)
 
 ;; Completion that uses many different methods to find options.
 ;; (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
