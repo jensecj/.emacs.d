@@ -904,7 +904,7 @@ number input"
   :defer t
   :commands dired
   :bind
-  (("C-x C-d" . (lambda () (interactive) (dired default-directory)))
+  (("C-x C-d" . dired-jump)
    :map dired-mode-map
    ("C-." . dired-omit-mode))
   :init
