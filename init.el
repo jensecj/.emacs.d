@@ -666,6 +666,26 @@ the overlay-map"
   (interactive)
   (view-buffer "*Messages*"))
 
+(defun jens/function-def-string (fnsym)
+  "Return function definition of FNSYM as a string."
+  (let* ((buffer-point (condition-case nil (find-definition-noselect fnsym nil) (error nil)))
+         (new-buf (car buffer-point))
+         (new-point (cdr buffer-point)))
+    (cond (buffer-point
+           ;; try to get original definition
+           (with-current-buffer new-buf
+             (save-excursion
+               (goto-char new-point)
+               (buffer-substring-no-properties (point) (save-excursion (end-of-defun) (point))))))
+          ;; fallback: just print the functions definition
+          (t (concat (prin1-to-string (symbol-function fnsym)) "\n")))))
+
+(defun jens/function-def-org-code-block (fnsym)
+  "Return function definitoin of FNSYM as an org code-block."
+  (concat "#+begin_src emacs-lisp\n"
+          (jens/function-def-string fnsym)
+          "#+end_src"))
+
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
