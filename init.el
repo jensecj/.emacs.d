@@ -2371,6 +2371,7 @@ initial search query."
   :config
   (add-hook 'find-file-hook #'highlight-bookmarks-in-this-buffer)
   (add-hook 'after-save-hook #'highlight-bookmarks-in-this-buffer)
+  (advice-add #'bookmark-jump :after #'highlight-bookmarks-in-this-buffer)
   (advice-add #'bookmark-set :after #'highlight-bookmarks-in-this-buffer)
   (advice-add #'bookmark-delete :after #'highlight-bookmarks-in-this-buffer))
 
