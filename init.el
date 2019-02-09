@@ -463,6 +463,17 @@ otherwise the current line is saved."
       (jens/join-region)
     (join-line -1)))
 
+(defun jens/join-line-down ()
+  "Pull the line above down to the end of this line."
+  (interactive)
+  (save-excursion
+    (let ((cp (point)))
+      (previous-line)
+      (when (not (= (point) cp))
+        (call-interactively #'jens/kill-region-or-current-line)
+        (end-of-line)
+        (insert " " (s-chomp (current-kill 0)))))))
+
 (defun jens/wrap-region (b e text-begin text-end)
   "Surrounds region with given text."
   (interactive "r\nsStart text: \nsEnd text: ")
