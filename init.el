@@ -2479,6 +2479,11 @@ initial search query."
   :custom-face
   (internal-border ((t (:background "#777777")))))
 
+(use-package replace-at-point
+  :straight (replace-at-point :repo "git@github.com:jensecj/replace-at-point.el.git")
+  :bind ("C-M-SPC" . replace-at-point)
+  :config
+  (replace-at-point-setup-defaults))
 
 (use-package lowkey-mode-line
   :straight
