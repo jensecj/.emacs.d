@@ -2399,6 +2399,11 @@ initial search query."
 (use-package treemacs
   :straight t)
 
+(use-package posframe
+  :straight t
+  :config
+  (setq posframe-mouse-banish nil))
+
 (use-package zenburn-theme
   :ensure t
   :demand t
