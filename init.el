@@ -2604,8 +2604,9 @@ times."
 ;; Better C-a
 (global-set-key (kbd "C-a") 'jens/smart-beginning-of-line)
 
-;; Join lines (pull the below line up to this one)
+;; Join lines (pull the below line up to this one, or the above one down)
 (global-set-key (kbd "M-j") 'jens/join-region-or-line)
+(global-set-key (kbd "M-J") 'jens/join-line-down)
 
 ;; Comment/uncomment block
 (global-set-key (kbd "C-c c") 'jens/comment-uncomment-region-or-line)
