@@ -2475,7 +2475,10 @@ initial search query."
   :commands (doc-at-point doc-at-point-setup-defaults)
   :config
   (require 'help-fns+)
-  (doc-at-point-setup-defaults))
+  (doc-at-point-setup-defaults)
+  :custom-face
+  (internal-border ((t (:background "#777777")))))
+
 
 (use-package lowkey-mode-line
   :straight
