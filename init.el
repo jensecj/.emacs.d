@@ -2474,6 +2474,7 @@ initial search query."
   (("C-+" . doc-at-point))
   :commands (doc-at-point doc-at-point-setup-defaults)
   :config
+  (setq  doc-at-point--posframe-font "Source Code Pro Semibold")
   (require 'help-fns+)
   (doc-at-point-setup-defaults)
   :custom-face
