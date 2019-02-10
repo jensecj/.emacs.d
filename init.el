@@ -958,7 +958,9 @@ number input"
 (use-package fringe
   :commands fringe-mode
   :config
-  (fringe-mode '(5 . 0)))
+  (fringe-mode '(5 . 0))
+  :custom-face
+  (fringe ((t (:background "#3f3f3f")))))
 
 ;;;;;;;;;
 ;; Org ;;
