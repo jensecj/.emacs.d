@@ -105,7 +105,7 @@ run once."
   (let ((my-font "Source Code Pro Semibold 10"))
     (if (find-font (font-spec :name my-font))
         (progn
-          (add-to-list 'default-frame-alist `'(font . ,my-font))
+          (add-to-list 'default-frame-alist `(font . ,my-font))
           (set-frame-font my-font))
       (msg-warning (format "could not find font: %s" my-font)))))
 
