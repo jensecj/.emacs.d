@@ -1029,9 +1029,10 @@ number input"
 
   ;; (advice-add 'org-agenda :before #'jens/load-org-agenda-files)
 
-  ;; (org-babel-do-load-languages 'org-babel-load-languages
-  ;;                              '((emacs-lisp . t)
-  ;;                                (gnuplot . t)))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((emacs-lisp . t)
+                                 (python . t)
+                                 (gnuplot . t)))
 
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
