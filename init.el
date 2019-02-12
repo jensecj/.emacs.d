@@ -1250,6 +1250,23 @@ number input"
         ("<C-down>" . nil)
         ("C-c C-c" . nil)
         ("M-," . nil) ("M-." . nil) ("M--" . nil))
+  :config
+  (defun jens/lispify-eldoc-message (eldoc-msg)
+    (condition-case nil
+        (let* ((parts (s-split ": " eldoc-msg))
+               (sym (car parts))
+               (args (->> (cadr parts)
+                          (s-chop-prefix "(")
+                          (s-chop-suffix ")"))))
+          (format "(%s%s)"
+                  sym
+                  (if (and args
+                           (not (s-blank? args)))
+                      (format " %s" args)
+                    "")))
+      (error eldoc-msg)))
+
+  (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message)
   :custom
   (elpy-modules
    '(elpy-module-sane-defaults
