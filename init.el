@@ -1905,6 +1905,15 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (mapc (lambda (s) (diminish (cdr s))) beginend-modes)
   (beginend-global-mode))
 
+(use-package fold-this
+  :ensure t
+  :bind
+  (([(meta shift h)] . fold-this-unfold-all)
+   ("M-h" . fold-this)
+   (:map emacs-lisp-mode-map ("M-h" . fold-this-sexp)))
+  :custom-face
+  (fold-this-overlay ((t (:foreground nil :weight bold :background "#5f5f5f")))))
+
 (use-package which-key
   :ensure t
   :diminish which-key-mode
