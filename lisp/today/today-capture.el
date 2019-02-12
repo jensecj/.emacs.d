@@ -1,6 +1,5 @@
 ;;; -*- lexical-binding: t -*-
 
-(require 'today)
 (require 'today-fs)
 (require 'today-util)
 
