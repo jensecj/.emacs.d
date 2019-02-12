@@ -44,35 +44,12 @@ applying handler on ENTRY, otherwise return ENTRY."
       entry)))
 
 ;;;###autoload
-(defun today-capture-to-date (date task entry)
-  "Captures an ENTRY with TASK, into the file for DATE."
-  (let ((content (today-capture--apply-handler task entry)))
-    (with-current-buffer (today-fs-buffer-from-date date)
-      (goto-char (point-max))
-      (newline)
-      (insert "* TODO " content)
-      (save-buffer))))
-
-;;;###autoload
-(defun today-capture-to-date-async (date task entry)
+(defun today-capture-to-file-async (task entry)
   "Captures an ENTRY with TASK, into the file for DATE, asynchronously."
   (async-start
    (today-util-async-lambda () (task entry)
      (today-capture--apply-handler task entry))
-   (today-util-async-lambda (content) (date)
-     (with-current-buffer (today-fs-buffer-from-date date)
-       (save-excursion
-         (goto-char (point-max))
-         (newline)
-         (insert "* TODO " content)
-         (save-buffer))))))
-
-(defun today-capture-to-file-async (date task entry)
-  "Captures an ENTRY with TASK, into the file for DATE, asynchronously."
-  (async-start
-   (today-util-async-lambda () (task entry)
-     (today-capture--apply-handler task entry))
-   (today-util-async-lambda (content) (date)
+   (today-util-async-lambda (content) ()
      (with-current-buffer (find-file-noselect (concat today-directory today-file))
        (save-excursion
          (goto-char (point-max))
@@ -82,14 +59,14 @@ applying handler on ENTRY, otherwise return ENTRY."
 ;;;###autoload
 (defun today-capture (task entry)
   "Capture ENTRY with TASK into todays file."
-  (today-capture-to-file-async (today-util-todays-date) task entry))
+  (today-capture-to-file-async task entry))
 
 (defun today-capture-link-with-task-from-clipboard (task)
   "Capture ENTRY with TASK into todays file."
-  (let* ((entry (gui-get-selection 'CLIPBOARD 'UTF8_STRING))
-         (_ (set-text-properties 0 (length entry) nil entry)))
+  (let* ((entry (substring-no-properties
+                 (gui-get-selection 'CLIPBOARD 'UTF8_STRING))))
     (message "capturing from clipboard: %s" entry)
-    (today-capture-to-file-async (today-util-todays-date) task entry)))
+    (today-capture-to-file-async task entry)))
 
 ;;;###autoload
 (defun today-capture-link-with-task (task)
