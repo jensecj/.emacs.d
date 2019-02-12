@@ -6,6 +6,7 @@
 (require 'org-web-tools)
 (require 'cl-lib)
 
+(require 'today)
 (require 'today-fs)
 
 (defun today-util-copy-subtree-at-point ()

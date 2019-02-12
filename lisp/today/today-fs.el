@@ -2,6 +2,8 @@
 
 (require 'f)
 
+(require 'today)
+
 (defun today-fs-file-from-date (date)
   "Returns the path to the file corresponding to DATE."
   (f-join today-directory date (concat date ".org")))
