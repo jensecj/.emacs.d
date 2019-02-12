@@ -1178,6 +1178,29 @@ number input"
 ;; extensions to major modes ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package slime
+  :defer t
+  :ensure t
+  :functions qlot-slime
+  :commands slime-start
+  :config
+  (setq inferior-lisp-program "sbcl")
+  (setq slime-contribs '(slime-fancy))
+
+  (defun qlot-slime (directory)
+    "Start Common Lisp REPL using project-local libraries via
+`roswell' and `qlot'."
+    (interactive (list (read-directory-name "Project directory: ")))
+    (slime-start
+     :program "~/.roswell/bin/qlot"
+     :program-args '("exec" "ros" "-S" "." "run")
+     :directory directory
+     :name 'qlot
+     :env (list (concat "PATH="
+                        (mapconcat 'identity exec-path ":"))
+                (concat "QUICKLISP_HOME="
+                        (file-name-as-directory directory) "quicklisp/")))))
+
 (use-package cider
   :ensure t
   :defer t
@@ -1941,28 +1964,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
   (add-to-list
    'TeX-view-program-selection
    '(output-pdf "Zathura")))
-
-(use-package slime
-  :defer t
-  :ensure t
-  :functions qlot-slime
-  :commands slime-start
-  :config
-  (setq inferior-lisp-program "sbcl")
-  (setq slime-contribs '(slime-fancy))
-
-  (defun qlot-slime (directory)
-    "Start Common Lisp REPL using project-local libraries via
-`roswell' and `qlot'."
-    (interactive (list (read-directory-name "Project directory: ")))
-    (slime-start :program "~/.roswell/bin/qlot"
-                 :program-args '("exec" "ros" "-S" "." "run")
-                 :directory directory
-                 :name 'qlot
-                 :env (list (concat "PATH="
-                                    (mapconcat 'identity exec-path ":"))
-                            (concat "QUICKLISP_HOME="
-                                    (file-name-as-directory directory) "quicklisp/")))))
 
 (use-package elfeed
   :ensure t
