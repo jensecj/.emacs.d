@@ -1879,6 +1879,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous
 
 (use-package magit-todos
   :ensure t
+  :after magit
   :commands magit-todos-mode
   :config
   (magit-todos-mode))
