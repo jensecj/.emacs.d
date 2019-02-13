@@ -891,8 +891,20 @@ number input"
 
           (buffer-string))
       (error doc)))
-
   (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
+
+  (defun jens/lispify-eldoc-message (eldoc-msg)
+    "Change the format of eldoc messages for functions to `(fn args)'."
+    (if (and eldoc-msg
+             (member major-mode sp-lisp-modes))
+        (let* ((parts (s-split ": " eldoc-msg))
+               (sym (car parts))
+               (args (cadr parts)))
+          (cond
+           ((string= args "()") (format "(%s)" sym))
+           (t (format "(%s %s)" sym (substring args 1 (- (length args) 1))))))
+      eldoc-msg))
+  (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message)
 
   (global-eldoc-mode +1)
   :custom-face
@@ -1250,34 +1262,6 @@ number input"
         ("<C-down>" . nil)
         ("C-c C-c" . nil)
         ("M-," . nil) ("M-." . nil) ("M--" . nil))
-  :config
-  (defun jens/lispify-eldoc-message (eldoc-msg)
-    (when eldoc-msg
-      (let* ((parts (s-split ": " eldoc-msg))
-             (sym (car parts))
-             (args (->> (cadr parts)
-                        (s-chop-prefix "(")
-                        (s-chop-suffix ")"))))
-        (format "(%s%s)"
-                sym
-                (if (and args
-                         (not (s-blank? args)))
-                    (format " %s" args)
-                  "")))))
-
-  (defun jens/lispify-eldoc-message (eldoc-msg)
-    "Change the format of eldoc messages for functions to `(fn args)'."
-    (if (and eldoc-msg
-             (member major-mode sp-lisp-modes))
-        (let* ((parts (s-split ": " eldoc-msg))
-               (sym (car parts))
-               (args (cadr parts)))
-          (cond
-           ((string= args "()") (format "(%s)" sym))
-           (t (format "(%s %s)" sym (substring args 1 (- (length args) 1))))))
-      eldoc-msg))
-
-  (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message)
   :custom
   (elpy-modules
    '(elpy-module-sane-defaults
