@@ -759,7 +759,10 @@ current line."
 
 (use-package tramp
   :defer t
-  :config (setq tramp-persistency-file-name (concat my-emacs-data-dir "tramp")))
+  :config
+  (setq tramp-persistency-file-name (concat my-emacs-data-dir "tramp"))
+  (setq tramp-terminal-type "tramp")
+  (setq tramp-verbose 6))
 
 ;; Save point position between sessions
 (use-package saveplace
@@ -1193,8 +1196,7 @@ number input"
 (use-package slime
   :defer t
   :ensure t
-  :functions qlot-slime
-  :commands slime-start
+  :commands (qlot-slime slime-start)
   :config
   (setq inferior-lisp-program "sbcl")
   (setq slime-contribs '(slime-fancy))
@@ -2491,7 +2493,7 @@ initial search query."
   :bind
   (("C-x t" . today-hydra/body))
   :config
-  (setq today-directory "~/vault/org/planner/"))
+  (setq today-directory "~/vault/git/org/today/"))
 
 (use-package doc-at-point
   :straight (doc-at-point :repo "git@github.com:jensecj/doc-at-point.el.git")
