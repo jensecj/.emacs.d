@@ -391,12 +391,27 @@ on save."
   (whitespace-cleanup)
   (message "cleaned up"))
 
-(defun jens/sudo-reopen ()
-  "Re-open current buffer file with superuser permissions."
-  (interactive)
-  (let ((file-name (buffer-file-name)))
-    (when file-name
-      (find-alternate-file (concat "/sudo::" file-name)))))
+(defun jens/sudo-find-file (filename)
+  "Open FILENAME with superuser permissions."
+  (let ((remote-method (file-remote-p default-directory 'method))
+        (remote-user (file-remote-p default-directory 'user))
+        (remote-host (file-remote-p default-directory 'host))
+        (remote-localname (file-remote-p filename 'localname)))
+    (find-file (format "/%s:root@%s:%s"
+                       (or remote-method "sudo")
+                       (or remote-host "localhost")
+                       (or remote-localname filename)))))
+
+(defun jens/sudo-edit (&optional arg)
+  "Re-open current buffer file with superuser permissions.
+With prefix ARG, ask for file to open."
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (read-file-name "Find file:"))
+
+  (let ((place (point)))
+    (jens/sudo-find-file buffer-file-name)
+    (goto-char place)))
 
 (defun jens/open-line-below ()
   "Inserts a line below the current line, indents it, and moves
