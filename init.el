@@ -727,6 +727,12 @@ current line."
           (jens/function-def-string fnsym)
           "#+end_src"))
 
+(defun jens/copy-symbol-at-point ()
+  "Save the symbol-at-point to the kill-ring."
+  (interactive)
+  (let ((sym (symbol-at-point)))
+    (kill-new (symbol-name sym))))
+
 (defun jens/goto-repo ()
   "Quickly jump to a project, defined in repos.el"
   (interactive)
@@ -2676,6 +2682,8 @@ times."
 ;; jump between indentation levels
 (global-set-key (kbd "s-n") 'goto-next-line-with-same-indentation)
 (global-set-key (kbd "s-p") 'goto-prev-line-with-same-indentation)
+
+(global-set-key (kbd "C-M-k") #'jens/copy-symbol-at-point)
 
 ;; Completion that uses many different methods to find options.
 ;; (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
