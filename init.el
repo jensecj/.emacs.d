@@ -1479,7 +1479,6 @@ number input"
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
 (use-package loccur :straight t)
-(use-package paradox :ensure t :defer t) ;; improvements on package.el
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
 (use-package dumb-jump :ensure t :defer t)
 (use-package counsel-tramp :ensure t :defer t)
