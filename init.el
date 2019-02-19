@@ -655,6 +655,13 @@ not in the overlay-map"
     (cl-assert (eq (point) (point-min)))
     (read (current-buffer))))
 
+(defun jens/set-substring-properties (str substr &rest props)
+  "Add text-properties PROPS to every substring SUBSTR of the string STR."
+  (let ((result (substring str)) ;; copy string so we don't modify original
+        (positions (s-matched-positions-all substr str)))
+    (-map #'(lambda (p) (set-text-properties (car p) (cdr p) props result)) positions)
+    result))
+
 ;;;;;;;;;;;;;;;;;
 ;; misc defuns ;;
 ;;;;;;;;;;;;;;;;;
