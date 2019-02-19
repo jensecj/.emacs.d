@@ -2363,29 +2363,6 @@ Use `ivy-pop-view' to delete any item from `ivy-views'."
    counsel-grep-base-command
    "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
 
-  (defun jens/counsel-read-file-name (prompt &optional initial-input)
-    "Query for a file path using counsel and ivy"
-    (interactive)
-    (ivy-read prompt 'read-file-name-internal
-              :matcher #'counsel--find-file-matcher
-              :initial-input initial-input
-              :action
-              (lambda (x)
-                (with-ivy-window
-                  (if (and counsel-find-file-speedup-remote
-                           (file-remote-p ivy--directory))
-                      (let ((find-file-hook nil))
-                        (expand-file-name x ivy--directory))
-                    (expand-file-name x ivy--directory))))
-              :preselect (when counsel-find-file-at-point
-                           (require 'ffap)
-                           (let ((f (ffap-guesser)))
-                             (when f (expand-file-name f))))
-              :require-match 'confirm-after-completion
-              :history 'file-name-history
-              :keymap counsel-find-file-map
-              :caller 'counsel-read-find-name))
-
   (counsel-mode))
 
 (use-package swiper
