@@ -712,6 +712,16 @@ current line."
           (jens/function-def-string fnsym)
           "#+end_src"))
 
+(defun jens/goto-repo ()
+  "Quickly jump to a project, defined in repos.el"
+  (interactive)
+  (let* ((repos (jens/load-from-file (concat my-emacs-dir "repos.el")))
+         (pick (completing-read "Repo:" repos)))
+    (cond
+     ((f-directory? pick) (dired pick))
+     ((f-file? pick) (find-file pick))
+     (t (message "unknown repo: %s" pick)))))
+
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
