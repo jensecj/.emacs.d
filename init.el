@@ -188,6 +188,8 @@ run once."
 
 ;; make re-centering sane
 (setq recenter-positions '(top middle bottom))
+(global-set-key (kbd "C-l") #'recenter-top-bottom)
+(global-set-key (kbd "C-L") #'move-to-window-line-top-bottom)
 
 ;; use UTF-8
 (setq locale-coding-system 'utf-8)
@@ -2683,6 +2685,8 @@ times."
 (global-set-key (kbd "s-p") 'goto-prev-line-with-same-indentation)
 
 (global-set-key (kbd "C-M-k") #'jens/copy-symbol-at-point)
+
+(global-set-key (kbd "M-r") #'jens/goto-repo)
 
 ;; Completion that uses many different methods to find options.
 ;; (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
