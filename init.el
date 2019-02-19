@@ -743,10 +743,16 @@ current line."
     (kill-new (symbol-name sym))))
 
 (defun jens/goto-repo ()
-  "Quickly jump to a project, defined in repos.el"
+  "Quickly jump to a repository, defined in repos.el"
   (interactive)
   (let* ((repos (jens/load-from-file (concat my-emacs-dir "repos.el")))
-         (pick (completing-read "Repo:" repos)))
+         (repos-propped
+          (-map #'(lambda (r)
+                    (let ((parts (f-split (car r))))
+                      (jens/set-substring-properties
+                       (car r) (-last-item parts) 'face 'font-lock-keyword-face)))
+                repos))
+         (pick (completing-read "Repo:" repos-propped)))
     (cond
      ((f-directory? pick) (dired pick))
      ((f-file? pick) (find-file pick))
