@@ -189,7 +189,7 @@ run once."
 ;; make re-centering sane
 (setq recenter-positions '(top middle bottom))
 (global-set-key (kbd "C-l") #'recenter-top-bottom)
-(global-set-key (kbd "C-L") #'move-to-window-line-top-bottom)
+(global-set-key (kbd "C-S-L") #'move-to-window-line-top-bottom)
 
 ;; use UTF-8
 (setq locale-coding-system 'utf-8)
