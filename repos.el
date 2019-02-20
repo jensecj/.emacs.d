@@ -8,6 +8,7 @@
  ("~/.emacs.d/straight/repos/replace-at-point.el/")
  ("~/.emacs.d/straight/repos/sane-windows.el/")
  ("~/.emacs.d/straight/repos/views.el/")
+ ("~/.emacs.d/lisp/today/")
 
  ("~/vault/git/")
  ("~/vault/knowledge-base/")
