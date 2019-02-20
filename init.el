@@ -494,7 +494,8 @@ current line, placing it after."
       (when (not (= (point) cp))
         (call-interactively #'jens/kill-region-or-current-line)
         (end-of-line)
-        (insert " " (s-chomp (current-kill 0)))))))
+        (save-excursion (insert " " (s-chomp (current-kill 0))))
+        (just-one-space)))))
 
 (defun jens/wrap-region (b e text-begin text-end)
   "Surrounds region with given text."
