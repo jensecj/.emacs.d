@@ -690,7 +690,9 @@ not in the overlay-map"
   "View the *Messages* buffer, return to previous buffer when
 done."
   (interactive)
-  (view-buffer "*Messages*"))
+  (with-current-buffer (get-buffer "*Messages*")
+    (goto-char (point-max))
+    (view-buffer (current-buffer))))
 
 (defun goto-next-line-with-same-indentation ()
   "Jump to the next line with the same indentation level as the
