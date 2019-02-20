@@ -655,13 +655,6 @@ not in the overlay-map"
     (cl-assert (eq (point) (point-min)))
     (read (current-buffer))))
 
-(defun jens/set-substring-properties (str substr &rest props)
-  "Add text-properties PROPS to every substring SUBSTR of the string STR."
-  (let ((result (substring str)) ;; copy string so we don't modify original
-        (positions (s-matched-positions-all substr str)))
-    (-map #'(lambda (p) (set-text-properties (car p) (cdr p) props result)) positions)
-    result))
-
 ;;;;;;;;;;;;;;;;;
 ;; misc defuns ;;
 ;;;;;;;;;;;;;;;;;
@@ -748,9 +741,11 @@ current line."
   (let* ((repos (jens/load-from-file (concat my-emacs-dir "repos.el")))
          (repos-propped
           (-map #'(lambda (r)
-                    (let ((parts (f-split (car r))))
-                      (jens/set-substring-properties
-                       (car r) (-last-item parts) 'face 'font-lock-keyword-face)))
+                    (let ((last-part (-last-item (f-split (car r)))))
+                      (replace-regexp-in-string
+                       last-part
+                       #'(lambda (s) (propertize s 'face 'font-lock-keyword-face))
+                       (car r))))
                 repos))
          (pick (completing-read "Repo:" repos-propped)))
     (cond
