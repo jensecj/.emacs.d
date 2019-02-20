@@ -2147,13 +2147,6 @@ clipboard."
 (use-package multi-term
   :ensure t
   :demand t
-  :functions (jens/multi-term
-              jens/multi-term-save-term
-              jens/multi-term-unsave-term
-              jens/multi-term-restore-terms
-              jens/multi-term-list-saves)
-  :defines (multi-term-save-file
-            multi-term-saved-terms)
   :commands (multi-term-get-buffer
              multi-term-internal)
   :bind ("C-z" . jens/multi-term)
@@ -2175,17 +2168,6 @@ paste for multi-term mode."
   ;; (add-to-list 'term-bind-key-alist '("<C-backspace>" . (lambda () (interactive) (term-send-raw-string "\C-h")))) ;; backwards-kill-word
   ;; (add-to-list 'term-bind-key-alist '("<C-del>" . (lambda () (interactive) (term-send-raw-string "\e[3;5~")))) ;; forwards-kill-word
 
-
-  ;; Sets up the ability to store a multi-term using =jens/multi-term-save-term=, all
-  ;; terminals saved this was will be reopened when starting a new session.
-
-  ;; It does not restart programs, just starts the terminals in the folders they were
-  ;; in when saved.
-  (defvar multi-term-saved-terms '()
-    "List of saved terminals")
-  (defvar multi-term-save-file (concat my-emacs-data-dir "multi-terms")
-    "File on disk used to store the list of saved terminals")
-
   (defun jens/multi-term (&optional open-term-in-background)
     "Create new term buffer."
     (interactive)
@@ -2200,47 +2182,7 @@ paste for multi-term mode."
       ;; Switch buffer
       (if (not open-term-in-background)
           (switch-to-buffer term-buffer))
-      (rename-buffer buffer-new-name)))
-
-  (defun jens/multi-term-save-term ()
-    "Pick an open terminal and save it"
-    (interactive)
-    (if (null multi-term-buffer-list)
-        (error "Error: No open terminals"))
-
-    (let* ((buf (get-buffer (completing-read "Select term:" (mapcar 'buffer-name multi-term-buffer-list))))
-           (dir (buffer-local-value 'default-directory buf)))
-      (if (member default-directory multi-term-saved-terms)
-          (message "That term is already saved")
-        (add-to-list 'multi-term-saved-terms default-directory)))
-
-    (jens/save-to-file multi-term-saved-terms multi-term-save-file))
-
-  (defun jens/multi-term-unsave-term ()
-    "Pick a saved terminal to remove from the saved list"
-    (interactive)
-    (let ((trm (completing-read "Select term:" multi-term-saved-terms)))
-      (setq multi-term-saved-terms (delete trm multi-term-saved-terms)))
-    (jens/save-to-file multi-term-saved-terms multi-term-save-file))
-
-  (defun jens/multi-term-restore-terms ()
-    "Restores all terminals from the saved list"
-    (interactive)
-    (setq multi-term-saved-terms (jens/load-from-file multi-term-save-file))
-    (ignore-errors
-      (dolist (trm multi-term-saved-terms)
-        (if (f-exists? trm)
-            (let ((default-directory trm))
-              (jens/multi-term t))
-          (message (format "multi-term-restore error, path does not exist: %s" trm))))))
-
-  (defun jens/multi-term-list-saves ()
-    "List all saved terminals"
-    (interactive)
-    (completing-read "All saved terms:" (jens/load-from-file multi-term-save-file)))
-
-  ;; restore all saved terminals at startup
-  (jens/multi-term-restore-terms))
+      (rename-buffer buffer-new-name))))
 
 (use-package ivy
   :ensure t
