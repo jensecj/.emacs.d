@@ -782,6 +782,24 @@ current line."
              current-kill)
   :hook (org-mode . auto-fill-mode))
 
+(use-package elec-pair
+  :config
+  (setq electric-pair-pairs
+        '((?\( . ?\))
+          (?\[ . ?\])
+          (?\{ . ?\})
+          (?\' . ?\')
+          (?\" . ?\")))
+
+  (electric-pair-mode +1))
+
+(use-package paren
+  :config
+  (setq show-paren-delay 0
+        show-paren-when-point-inside-paren t)
+
+  (show-paren-mode +1))
+
 (use-package abbrev
   :demand t
   :diminish abbrev-mode
@@ -1606,8 +1624,6 @@ title and duration."
          ("M-<down>" . sp-forward-barf-sexp)
          ("M-<left>" . sp-backward-slurp-sexp)
          ("M-<right>" . sp-forward-slurp-sexp)
-         ("M-k" . sp-kill-sexp)
-         ("M-S-K" . sp-copy-sexp)
          ("C-S-a" . sp-beginning-of-sexp)
          ("C-S-e" . sp-end-of-sexp)
          ("S-<next>" . sp-split-sexp)
@@ -1615,8 +1631,9 @@ title and duration."
   :config
   (setq sp-show-pair-from-inside 't)
   (jens/try-require 'smartparens-config)
-  (smartparens-global-mode +1)
-  (show-smartparens-global-mode +1))
+  ;; (smartparens-global-mode -1)
+  ;; (show-smartparens-global-mode -1)
+  )
 
 (use-package smart-jump
   :straight t
@@ -1723,7 +1740,7 @@ title and duration."
              paxedit-transpose-backward)
   :bind (("M-t" . paxedit-transpose-hydra/body)
          ("M-k" . paxedit-kill)
-         ("M-K" . paxedit-copy)
+         ("M-S-K" . paxedit-copy)
          ("M-<prior>" . paxedit-backward-up)
          ("M-<next>" . paxedit-backward-end))
   :config
