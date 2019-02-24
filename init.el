@@ -1179,6 +1179,9 @@ number input"
         ("M-." . nil)
         ("M--" . nil)))
 
+(use-package c++-mode
+  :bind (:map c++-mode-map ("C-c C-c" . nil)))
+
 ;; homemade
 (use-package botcode-mode
   :mode "\\.bot\\'")
@@ -1192,6 +1195,7 @@ number input"
 (use-package lua-mode :ensure t :mode "\\.lua\\'")
 (use-package markdown-mode :ensure t :mode ("\\.md\\'" "\\.card\\'"))
 (use-package scss-mode :ensure t :mode "\\.scss\\'")
+(use-package tuareg :ensure t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
 
 (use-package c++-mode
   :bind

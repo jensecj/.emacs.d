@@ -17,5 +17,9 @@
  ("~/vault/projects/java/flatlab/")
  ("~/vault/projects/python/jackup/")
  ("~/vault/projects/rust/jepa/")
+ ("~/vault/projects/rust/jesp/")
+ ("~/vault/projects/rust/jeml/")
+ ("~/vault/projects/cpp/jaleidoscope/")
+
  ("~/vault/blog/")
  )
