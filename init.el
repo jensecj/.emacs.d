@@ -1197,6 +1197,9 @@ number input"
 (use-package scss-mode :ensure t :mode "\\.scss\\'")
 (use-package tuareg :ensure t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
 
+(use-package lsp-mode
+  :ensure t)
+
 (use-package c++-mode
   :bind
   (:map c++-mode-map
@@ -1372,7 +1375,13 @@ number input"
   :custom-face
   (ggtags-highlight ((t ()))))
 
-(use-package rtags :ensure t :defer t)
+;; language server for c++
+(use-package ccls
+  :ensure t
+  :hook ((c++-mode . #'lsp))
+  :commands (lsp))
+
+(use-package rtags :ensure t :defer t :disabled t)
 (use-package clang-format :ensure t :defer t)
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -1400,6 +1409,11 @@ number input"
     (let ((candidate (nth company-selection company-candidates)))
       (popup-tip (doc-at-point-elisp (intern candidate))
                  :margin-left 1 :margin-right 1))))
+
+(use-package company-lsp
+  :ensure t
+  :config
+  (push 'company-lsp company-backends))
 
 (use-package company-flx
   :ensure t
@@ -1704,7 +1718,7 @@ title and duration."
    :refs-fn #'smart-jump-simple-find-references
    :should-jump t
    :heuristic #'jens/select-rg-window
-   :order 3)
+   :order 4)
 
   (smart-jump-register
    :modes 'c++-mode
@@ -1714,7 +1728,7 @@ title and duration."
    :should-jump  (lambda () (bound-and-true-p ggtags-mode))
    :heuristic 'point
    :async 500
-   :order 2)
+   :order 3)
 
   (smart-jump-register
    :modes 'c++-mode
@@ -1729,7 +1743,18 @@ title and duration."
                    (rtags-is-indexed)))
    :heuristic 'point
    :async 500
-   :order 1))
+   :order 2)
+
+  (smart-jump-register
+   :modes 'c++-mode
+   :jump-fn #'lsp-find-definition
+   :pop-fn #'pop-tag-mark
+   :refs-fn #'lsp-find-references
+   :should-jump (lambda () (fboundp #'lsp))
+   :heuristic 'point
+   :async 500
+   :order 1)
+  )
 
 (use-package paxedit
   :ensure t
