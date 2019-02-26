@@ -368,7 +368,7 @@ seconds."
   (funcall initial-major-mode))
 
 (defun jens/clean-view ()
-  "Create a scratch buffer, and makes it the only buffer visible."
+  "Create a scratch buffer, and make it the only buffer visible."
   (interactive)
   (jens/create-scratch-buffer)
   (delete-other-windows))
@@ -416,16 +416,16 @@ With prefix ARG, ask for file to open."
     (goto-char place)))
 
 (defun jens/open-line-below ()
-  "Inserts a line below the current line, indents it, and moves
-the the beginning of that line."
+  "Insert a line below the current line, indent it, and move to
+the beginning of that line."
   (interactive)
   (end-of-line)
   (newline)
   (indent-for-tab-command))
 
 (defun jens/open-line-above ()
-  "Inserts a line above the current line, indents it, and moves
-the the beginning of that line."
+  "Insert a line above the current line, indent it, and move to
+the beginning of that line."
   (interactive)
   (beginning-of-line)
   (newline)
@@ -498,7 +498,7 @@ current line, placing it after."
         (just-one-space)))))
 
 (defun jens/wrap-region (b e text-begin text-end)
-  "Surrounds region with given text."
+  "Wrap region from B to E with TEXT-BEGIN and TEXT-END."
   (interactive "r\nsStart text: \nsEnd text: ")
   (if (use-region-p)
       (save-restriction
@@ -544,7 +544,7 @@ buffer."
   (file-name-directory (buffer-file-name)))
 
 (defun jens/file-age (file)
-  "Returns the number of seconds since FILE was last modified."
+  "Return the number of seconds since FILE was last modified."
   (float-time
    (time-subtract (current-time)
                   (nth 5 (file-attributes (file-truename file))))))
@@ -645,12 +645,12 @@ not in the overlay-map"
            (insert (current-kill 0)))))
 
 (defun jens/save-to-file (data filename)
-  "Save lisp object to a file."
+  "Save lisp object DATA to FILENAME."
   (with-temp-file filename
     (prin1 data (current-buffer))))
 
 (defun jens/load-from-file (filename)
-  "Load lisp object from file."
+  "Load lisp object DATA from FILENAME."
   (with-temp-buffer
     (insert-file-contents filename)
     (cl-assert (eq (point) (point-min)))
@@ -733,7 +733,7 @@ current line."
           "#+end_src"))
 
 (defun jens/copy-symbol-at-point ()
-  "Save the symbol-at-point to the kill-ring."
+  "Save the `symbol-at-point' to the kill-ring."
   (interactive)
   (let ((sym (symbol-at-point)))
     (kill-new (symbol-name sym))))
@@ -1527,7 +1527,7 @@ title and duration."
             (delete-region (car bounds) (cdr bounds))
             (goto-char (car bounds))
             (insert org-link))
-        (error "no url at point")))))
+        (error "No url at point")))))
 
 (use-package help-fns+
   :init
@@ -1694,8 +1694,7 @@ title and duration."
    :should-jump (lambda () (fboundp #'lsp))
    :heuristic 'point
    :async 500
-   :order 1)
-  )
+   :order 1))
 
 (use-package paxedit
   :ensure t
@@ -2209,6 +2208,7 @@ paste for multi-term mode."
                  ((ivy-rich-candidate (:width 30 :face font-lock-builtin-face))
                   (ivy-rich-bookmark-context-string (:width 20 :face font-lock-string-face))
                   (ivy-rich-bookmark-filename (:face font-lock-doc-face)))))
+
   (add-to-list 'ivy-rich--display-transformers-list 'counsel-bookmark)
 
   (ivy-rich-mode -1)
@@ -2436,7 +2436,7 @@ initial search query."
 ;; moves. also, if the last command was a copy - skip past all the
 ;; expand-region cruft.
 (defun jens/pop-to-mark-command (orig-fun &rest args)
-  "Call ORIG-FUN until the cursor moves. Try popping up to 10
+  "Call ORIG-FUN until the cursor moves.  Try popping up to 10
 times."
   (let ((p (point)))
     (dotimes (_ 10)
