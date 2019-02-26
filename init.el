@@ -1180,7 +1180,7 @@ number input"
         ("M-." . nil)
         ("M--" . nil)))
 
-(use-package c++-mode
+(use-package cc-mode
   :bind (:map c++-mode-map ("C-c C-c" . nil)))
 
 ;; homemade
