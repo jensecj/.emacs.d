@@ -1389,21 +1389,51 @@ number input"
 ;; auto completion ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-;; COMPANY-MODE
 (use-package company
   :ensure t
   :defer t
   :diminish company-mode
   :hook (emacs-lisp-mode . company-mode)
   :bind
-  (("M-<tab>" . company-complete)
+  (("M-<tab>" . jens/complete)
+   ("C-<tab>" . completion-at-point)
    :map company-active-map
    ("C-+" . jens/company-menu-at-selection-quickhelp))
   :config
   (setq company-search-regexp-function 'company-search-flex-regexp)
-  (setq company-require-match nil)
-  (setq company-show-numbers 't)
-  (add-to-list 'company-backends 'company-capf)
+
+  (setq company-backends
+        '(company-elisp
+          company-bbdb
+          company-css
+          company-semantic
+          company-clang
+          company-cmake
+          company-capf
+          company-files
+          (company-dabbrev-code company-gtags company-etags company-keywords)
+          company-oddmuse
+          company-dabbrev))
+
+  ;; don't use any frontends, I'm manually showing candidates with ivy
+  (setq company-frontends '())
+
+  (defun jens/complete ()
+    "Show company completions using ivy."
+    (interactive)
+    (unless company-candidates
+      (company-complete))
+
+    (when-let ((prefix (symbol-name (symbol-at-point)))
+               (bounds (bounds-of-thing-at-point 'symbol)))
+      (when company-candidates
+        (when-let ((pick
+                    (ivy-read "complete: " company-candidates
+                              :initial-input prefix)))
+
+          ;; replace the candidate with the pick
+          (delete-region (car bounds) (cdr bounds))
+          (insert pick)))))
 
   (defun jens/company-menu-at-selection-quickhelp ()
     (interactive)
@@ -1427,98 +1457,6 @@ number input"
   :config
   (setq company-quickhelp-use-propertized-text 't)
   (setq company-quickhelp-delay 0.2))
-
-
-;; AUTO-COMPLETE-MODE
-(use-package ac-rtags :ensure t :defer t :disabled t)
-;; auto-complete source for c/c++ header files
-(use-package ac-c-headers :disabled t :ensure t :defer t)
-;; auto-complete source for clang
-(use-package ac-clang :disabled t :ensure t :defer t)
-
-;; auto-complete source for octave
-(use-package ac-octave :disabled t :ensure t :defer t)
-;; auto-complete source for auctex
-(use-package auto-complete-auctex :disabled t :ensure t :defer t)
-
-;; auto-completion source for scheme
-(use-package scheme-complete :ensure t :defer t)
-
-(use-package auto-complete
-  :disabled
-  :ensure t
-  :diminish auto-complete-mode
-  :commands (global-auto-complete-mode
-             ac-symbol-documentation
-             company-indent-or-complete-common)
-  :functions (jens/ac-quick-help-at-point
-              jens/ac-c++-mode-setup
-              jens/ac-elisp-mode-setup)
-  :bind
-  (("C-+" . jens/ac-quick-help-at-point)
-   ("M-<tab>" . auto-complete))
-  :config
-  (jens/try-require 'auto-complete-config)
-  (setq ac-auto-start 't) ;; auto start completing
-  ;; (setq ac-show-menu 't) ;; show the menu instantly
-  (setq ac-use-menu-map 't)
-  (setq ac-show-menu-immediately-on-auto-complete t) ;; show the autocompletion menu instantly
-  (setq ac-delay 0.1) ;; show completion menu quickly
-  (setq ac-use-quick-help 't) ;; use the help
-  (setq ac-quick-help-delay 0.1) ;; show help quickly
-  (setq ac-quick-help-prefer-pos-tip nil) ;; use popup-tips
-  (setq ac-use-comphist t)
-  (setq ac-comphist-file (concat my-emacs-data-dir "ac-history")) ;; move the history file
-  (setq ac-ignore-case t)
-  (setq-default ac-sources
-                '(ac-source-imenu
-                  ac-source-words-in-same-mode-buffers))
-
-  (setq -quickhelp-at-point-cache ())
-  (defun jens/ac-quick-help-at-point ()
-    (interactive)
-    (let* ((position (point))
-           (string-under-cursor
-            (buffer-substring-no-properties
-             (progn (skip-syntax-backward "w_") (point))
-             (progn (skip-syntax-forward "w_") (point)))))
-      (goto-char position)
-
-      (if (not (string= "" string-under-cursor))
-          (setq -quickhelp-at-point-cache string-under-cursor))
-
-      (popup-tip (ac-symbol-documentation (intern -quickhelp-at-point-cache))
-                 :margin-left 1 :margin-right 1)))
-
-  (defun jens/ac-c++-mode-setup ()
-    (setq-default achead:include-directories c++-include-files)
-
-    (jens/try-require 'ac-rtags)
-    (add-to-list 'ac-sources 'ac-source-rtags)
-
-    ;; (jens/try-require 'ac-clang)
-    ;; (add-to-list 'ac-sources 'ac-source-clang)
-    ;; (setq ac-clang-flags (mapcar (lambda (item)(concat "-I" item)) c++-include-files))
-    ;; (ac-clang-activate-after-modify)
-
-    ;; (jens/try-require 'ac-c-headers)
-    ;; (add-to-list 'ac-sources 'ac-source-c-headers)
-    ;; (add-to-list 'ac-sources 'ac-source-c-header-symbols t)
-
-    ;; (add-to-list 'ac-sources 'ac-source-semantic)
-    )
-
-  (defun jens/ac-elisp-mode-setup ()
-    (add-to-list 'ac-sources 'ac-source-functions) ;; elisp functions
-    (add-to-list 'ac-sources 'ac-source-features) ;; elisp features
-    (add-to-list 'ac-sources 'ac-source-symbols) ;; elisp symbols
-    (add-to-list 'ac-sources 'ac-source-variables)) ;; elisp variables
-  (add-hook 'emacs-lisp-mode-hook 'jens/ac-elisp-mode-setup)
-
-  (global-auto-complete-mode -1)
-  :custom-face
-  (ac-candidate-face ((t (:foreground "#F0DFAF" :background "#313131"))))
-  (ac-selection-face ((t (:foreground "#FEFEFE" :background "#3E3E3E")))))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; misc packages ;;
