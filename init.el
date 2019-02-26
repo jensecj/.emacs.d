@@ -1421,6 +1421,7 @@ number input"
   :hook (company-mode . company-flx-mode))
 
 (use-package company-quickhelp
+  :disabled t
   :ensure t
   :hook (company-mode . company-quickhelp-mode)
   :config
@@ -1429,16 +1430,17 @@ number input"
 
 
 ;; AUTO-COMPLETE-MODE
-(use-package ac-rtags :ensure t :defer t)
+(use-package ac-rtags :ensure t :defer t :disabled t)
 ;; auto-complete source for c/c++ header files
-(use-package ac-c-headers :disabled :ensure t :defer t)
+(use-package ac-c-headers :disabled t :ensure t :defer t)
 ;; auto-complete source for clang
-(use-package ac-clang :disabled :ensure t :defer t)
+(use-package ac-clang :disabled t :ensure t :defer t)
 
 ;; auto-complete source for octave
-(use-package ac-octave :disabled :ensure t :defer t)
+(use-package ac-octave :disabled t :ensure t :defer t)
 ;; auto-complete source for auctex
-(use-package auto-complete-auctex :disabled :ensure t :defer t)
+(use-package auto-complete-auctex :disabled t :ensure t :defer t)
+
 ;; auto-completion source for scheme
 (use-package scheme-complete :ensure t :defer t)
 
