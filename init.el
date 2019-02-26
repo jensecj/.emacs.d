@@ -795,8 +795,9 @@ current line."
 
 (use-package paren
   :config
-  (setq show-paren-delay 0
-        show-paren-when-point-inside-paren t)
+  (setq show-paren-delay 0.1)
+  (setq show-paren-when-point-inside-paren t)
+
 
   (show-paren-mode +1))
 
@@ -940,7 +941,7 @@ number input"
 (use-package eldoc
   :diminish
   :config
-  (setq eldoc-idle-delay 0)
+  (setq eldoc-idle-delay 0.2)
 
   (defface eldoc-highlight-&s-face '((t ())) "")
 
