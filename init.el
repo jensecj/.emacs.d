@@ -659,6 +659,18 @@ not in the overlay-map"
     (cl-assert (eq (point) (point-min)))
     (read (current-buffer))))
 
+(defun jens/sexp-up ()
+  (interactive)
+  (condition-case nil
+      (forward-sexp -1)
+    (error (backward-char))))
+
+(defun jens/sexp-down ()
+  (interactive)
+  (condition-case nil
+      (forward-sexp 1)
+    (error (forward-char))))
+
 ;;;;;;;;;;;;;;;;;
 ;; misc defuns ;;
 ;;;;;;;;;;;;;;;;;
@@ -2532,6 +2544,9 @@ times."
 
 ;; Better C-a
 (global-set-key (kbd "C-a") 'jens/smart-beginning-of-line)
+
+(global-set-key (kbd "M-<prior>") #'jens/sexp-up)
+(global-set-key (kbd "M-<next>") #'jens/sexp-down)
 
 ;; Join lines (pull the below line up to this one, or the above one down)
 (global-set-key (kbd "M-j") 'jens/join-region-or-line)
