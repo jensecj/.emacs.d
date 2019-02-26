@@ -2584,5 +2584,30 @@ times."
 
 (msg-success (format "Emacs initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
 
+(defun jens/show-initial-important-messages ()
+  "Show all lines in *Messages* matching a regex for important messages."
+  (let* ((regex
+          (rx (or
+               ;; show info about loaded files with auto-save data
+               "recover-this-file"
+               ;; show warning messages that occured during init
+               (group bol "!"))))
+         (messages (with-current-buffer "*Messages*" (buffer-string)))
+         (important
+          (with-temp-buffer
+            (insert messages)
+            (delete-non-matching-lines regex (point-min) (point-max))
+            (buffer-string))))
+    (when (> (length important) 0)
+      (with-current-buffer (get-buffer-create "*Important Messages*")
+        (read-only-mode -1)
+        (erase-buffer)
+        (insert important)
+        (view-buffer-other-window (current-buffer)))))
+  ;; only show the messages buffer in the first frame created
+  (remove-hook #'server-after-make-frame-hook #'jens/show-initial-important-messages))
+
+(add-hook #'server-after-make-frame-hook #'jens/show-initial-important-messages)
+
 (provide 'init)
 ;;; init.el ends here
