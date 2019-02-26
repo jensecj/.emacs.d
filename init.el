@@ -1465,7 +1465,7 @@ number input"
 (use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
 (use-package fzf :ensure t) ;; fuzzy file finder
 (use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
-(use-package flycheck :disabled :ensure t :defer t)
+(use-package flycheck :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
 (use-package yasnippet :ensure t :defer t)
 (use-package loccur :straight t)
@@ -1575,10 +1575,7 @@ title and duration."
 
 (use-package smartparens
   :ensure t
-  :demand t
-  :diminish smartparens-mode
-  :commands (show-smartparens-global-mode
-             smartparens-global-mode)
+  :defer t
   :bind (("M-<up>" .  sp-backward-barf-sexp)
          ("M-<down>" . sp-forward-barf-sexp)
          ("M-<left>" . sp-backward-slurp-sexp)
@@ -1586,13 +1583,7 @@ title and duration."
          ("C-S-a" . sp-beginning-of-sexp)
          ("C-S-e" . sp-end-of-sexp)
          ("S-<next>" . sp-split-sexp)
-         ("S-<prior>" . sp-join-sexp))
-  :config
-  (setq sp-show-pair-from-inside 't)
-  (jens/try-require 'smartparens-config)
-  ;; (smartparens-global-mode -1)
-  ;; (show-smartparens-global-mode -1)
-  )
+         ("S-<prior>" . sp-join-sexp)))
 
 (use-package smart-jump
   :straight t
@@ -1902,7 +1893,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous
 
 (use-package magithub
   ;; TODO: replace with forge.el?
-  :disabled
   :ensure t
   :after magit
   :config
