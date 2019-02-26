@@ -2222,7 +2222,7 @@ paste for multi-term mode."
   :functions jens/counsel-read-file-name
   :commands (counsel-mode counsel--find-file-matcher)
   :bind
-  (("C-S-s" . counsel-rg)
+  (("C-S-s" . jens/ripgrep)
    ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
    ("C-x C-S-f" . counsel-fzf)
@@ -2235,6 +2235,16 @@ paste for multi-term mode."
   (setq
    counsel-grep-base-command
    "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
+
+  (defun jens/ripgrep ()
+    "Interactively search the current directory. Jump to result using ivy."
+    (interactive)
+    (let ((counsel-ag-base-command counsel-rg-base-command)
+          (initial-input (if (region-active-p)
+                             (buffer-substring-no-properties
+                              (region-beginning)
+                              (region-end)))))
+      (counsel-ag initial-input default-directory)))
 
   (counsel-mode))
 
