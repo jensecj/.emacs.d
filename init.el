@@ -228,6 +228,9 @@ run once."
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
 
+;; Move windows with S-<arrow>
+(windmove-default-keybindings 'shift)
+
 ;; use spaces instead of tabs
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
@@ -2487,6 +2490,8 @@ times."
 (global-set-key (kbd "M-l") #'downcase-dwim)
 (global-set-key (kbd "M-c") #'capitalize-dwim)
 
+(global-set-key (kbd "C-x b") 'ibuffer)
+
 ;; Scroll the buffer without moving the point (unless we over-move)
 (global-set-key
  (kbd "C-<up>")
@@ -2540,11 +2545,6 @@ times."
 
 ;; Enable backwards killing of lines
 (global-set-key (kbd "C-S-k") 'jens/kill-to-beginning-of-line)
-
-(global-set-key (kbd "C-x b") 'ibuffer)
-
-;; Move windows with S-<arrow>
-(windmove-default-keybindings 'shift)
 
 ;; Force save a file, mnemonic is C-x TOUCH
 (global-set-key (kbd "C-x C-t") 'jens/touch-buffer-file)
