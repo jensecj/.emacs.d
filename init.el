@@ -367,8 +367,13 @@ seconds."
   "Create a new scratch buffer to work in.  (named *scratch* -
 *scratch<n>*)."
   (interactive)
-  (switch-to-buffer (jens/new-scratch-buffer))
-  (funcall initial-major-mode))
+  (let ((scratch-buf (jens/new-scratch-buffer))
+        (initial-content (if (region-active-p)
+                             (buffer-substring (region-beginning) (region-end)))))
+    (xref-push-marker-stack)
+    (switch-to-buffer (jens/new-scratch-buffer))
+    (insert initial-content)
+    (funcall initial-major-mode)))
 
 (defun jens/clean-view ()
   "Create a scratch buffer, and make it the only buffer visible."
