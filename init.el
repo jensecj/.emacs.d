@@ -2387,7 +2387,24 @@ initial search query."
 (use-package etmux
   :straight (etmux :repo "git@github.com:jensecj/etmux.el.git")
   :demand t
-  :commands (etmux-send-command))
+  :commands (etmux-send-command jens/etmux-jackin)
+  :config
+  (defun jens/etmux-jackin ()
+    (interactive)
+    (let* ((history-file (concat my-emacs-data-dir "etmux-history.el"))
+           (etmux-command-history (jens/load-from-file history-file))
+           (pane (etmux-pick-pane))
+           (command (completing-read "command: " etmux-command-history)))
+
+      (unless (member command etmux-command-history)
+        (jens/save-to-file (cons command etmux-command-history) history-file))
+
+      (defun etmux-compile nil
+        (interactive)
+        (etmux-C-c pane)
+        (etmux-run-command pane command))
+
+      (global-set-key (kbd "C-c C-c") #'etmux-compile))))
 
 (use-package highlight-bookmarks
   :demand t
