@@ -1641,12 +1641,14 @@ title and duration."
                 :dir project
                 :files current))
 
-          (smart-jump-refs-search-rg (cond ((use-region-p)
-                                            (buffer-substring-no-properties (region-beginning)
-                                                                            (region-end)))
-                                           ((symbol-at-point)
-                                            (substring-no-properties
-                                             (symbol-name (symbol-at-point)))))))
+          (smart-jump-refs-search-rg
+           (cond ((use-region-p)
+                  (buffer-substring-no-properties (region-beginning)
+                                                  (region-end)))
+                 ((symbol-at-point)
+                  (substring-no-properties
+                   (symbol-name (symbol-at-point)))))))
+
       (message "Install `rg' to use `smart-jump-simple-find-references-with-rg'.")))
 
   (defun jens/select-rg-window nil
@@ -2621,10 +2623,10 @@ times."
             (buffer-string))))
     (when (> (length important) 0)
       (with-current-buffer (get-buffer-create "*Important Messages*")
-        (read-only-mode -1)
-        (erase-buffer)
-        (insert important)
-        (view-buffer-other-window (current-buffer)))))
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (insert important)
+          (view-buffer-other-window (current-buffer))))))
   ;; only show the messages buffer in the first frame created
   (remove-hook #'server-after-make-frame-hook #'jens/show-initial-important-messages))
 
