@@ -652,6 +652,17 @@ not in the overlay-map"
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
+(defun jens/remove-text-properties-region (beg end)
+  "Remove text properties from text in region between BEG and END."
+  (set-text-properties beg end nil))
+
+(defun jens/remove-text-propertiex-in-region ()
+  "Remove text propertiex from all text in active region."
+  (interactive)
+  (when (region-active-p)
+    (jens/remove-text-properties-region
+     (region-beginning) (region-end))))
+
 (defun jens/save-to-file (data filename)
   "Save lisp object DATA to FILENAME."
   (with-temp-file filename
