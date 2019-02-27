@@ -1829,18 +1829,21 @@ title and duration."
   :config
   (defhydra mc-hydra ()
     "
-^Next^                ^Previous^
+^Next^                ^Previous^              ^Lines^
 ^^^^^^^^----------------------------------------------------
-_n_: Mark next        _p_: Mark previous
-_N_: Skip to next     _P_: Skip to previous
-_M-n_: Unmark next    _M-p_: Unmark previous
+_n_: Mark next        _p_: Mark previous      _b_: Edit beginning of lines
+_N_: Skip to next     _P_: Skip to previous   _e_: Edit ends of lines
+_M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
 "
     ("n" #'mc/mark-next-like-this)
     ("N" #'mc/skip-to-next-like-this)
     ("M-n" #'mc/unmark-next-like-this)
     ("p" #'mc/mark-previous-like-this)
     ("P" #'mc/skip-to-previous-like-this)
-    ("M-p" #'mc/unmark-previous-like-this)))
+    ("M-p" #'mc/unmark-previous-like-this)
+
+    ("b" #'mc/edit-beginnings-of-lines)
+    ("e" #'mc/edit-ends-of-lines)))
 
 (use-package browse-kill-ring
   :ensure t
