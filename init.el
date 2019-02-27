@@ -670,10 +670,11 @@ not in the overlay-map"
 
 (defun jens/load-from-file (filename)
   "Load lisp object DATA from FILENAME."
-  (with-temp-buffer
-    (insert-file-contents filename)
-    (cl-assert (eq (point) (point-min)))
-    (read (current-buffer))))
+  (when (file-exists-p filename)
+    (with-temp-buffer
+      (insert-file-contents filename)
+      (cl-assert (eq (point) (point-min)))
+      (read (current-buffer)))))
 
 (defun jens/sexp-up ()
   (interactive)
