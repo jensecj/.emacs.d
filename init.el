@@ -606,6 +606,18 @@ buffer."
      (interactive)
      ,lam))
 
+(defun jens/inspect-variable-at-point ()
+  "Inspect variable at point."
+  (interactive)
+  (let ((sym (symbol-at-point)))
+    (if (boundp sym)
+        (with-current-buffer (get-buffer-create "*Inspect*")
+          (let ((inhibit-read-only t))
+            (erase-buffer)
+            (pp (symbol-value sym) (current-buffer))
+            (goto-char 0))
+          (view-buffer-other-window (current-buffer))))))
+
 (defun jens/one-shot-keybinding (key command)
   "Set a keybinding that disappear once you press a key that is
 not in the overlay-map"
