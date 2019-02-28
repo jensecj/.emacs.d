@@ -606,17 +606,25 @@ buffer."
      (interactive)
      ,lam))
 
-(defun jens/inspect-variable-at-point ()
+(defun jens/inspect-variable-at-point (&optional arg)
   "Inspect variable at point."
-  (interactive)
-  (let ((sym (symbol-at-point)))
-    (if (boundp sym)
+  (interactive "P")
+  (when-let* ((sym (symbol-at-point))
+              (_ (boundp sym))
+              (value (symbol-value sym)))
+    (if arg
         (with-current-buffer (get-buffer-create "*Inspect*")
           (let ((inhibit-read-only t))
             (erase-buffer)
-            (pp (symbol-value sym) (current-buffer))
+            (pp value (current-buffer))
             (goto-char 0))
-          (view-buffer-other-window (current-buffer))))))
+          (view-buffer-other-window (current-buffer)))
+
+      ;; TODO: create a posframe for all-purpose emacs things
+
+      (funcall doc-at-point-display-fn
+               (with-output-to-string
+                 (pp value))))))
 
 (defun jens/one-shot-keybinding (key command)
   "Set a keybinding that disappear once you press a key that is
@@ -2668,6 +2676,8 @@ times."
 (global-set-key (kbd "C-M-k") #'jens/copy-symbol-at-point)
 
 (global-set-key (kbd "M-r") #'jens/goto-repo)
+
+(global-set-key (kbd "<f12>") #'jens/inspect-variable-at-point)
 
 ;; Completion that uses many different methods to find options.
 ;; (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
