@@ -2482,7 +2482,9 @@ initial search query."
   :straight (doc-at-point :repo "git@github.com:jensecj/doc-at-point.el.git")
   :defer t
   :bind
-  (("C-+" . doc-at-point))
+  (("C-+" . doc-at-point)
+   :map company-active-map
+   ("C-+" . doc-at-point-company-menu-selection-quickhelp))
   :commands (doc-at-point doc-at-point-setup-defaults)
   :config
   (setq  doc-at-point--posframe-font "Source Code Pro Semibold")
