@@ -1517,6 +1517,9 @@ number input"
   (delete 'company-box-icons--elisp company-box-icons-functions)
   (add-to-list 'company-box-icons-functions #'jens/company-box-icon-elisp)
 
+  (map-put company-box-frame-parameters 'side 0.2)
+  (map-put company-box-frame-parameters 'min-width 40)
+
   (company-box-mode +1)
 
   :custom-face
