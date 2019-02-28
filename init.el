@@ -1014,6 +1014,8 @@ number input"
       (error doc)))
   (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
 
+  (require 'smartparens)
+
   (defun jens/lispify-eldoc-message (eldoc-msg)
     "Change the format of eldoc messages for functions to `(fn args)'."
     (if (and eldoc-msg
@@ -1781,7 +1783,7 @@ title and duration."
              paxedit-transpose-backward)
   :bind (("M-t" . paxedit-transpose-hydra/body)
          ("M-k" . paxedit-kill)
-         ("M-S-K" . paxedit-copy)
+         ("M-K" . paxedit-copy)
          ("M-<prior>" . paxedit-backward-up)
          ("M-<next>" . paxedit-backward-end))
   :config
