@@ -1459,9 +1459,7 @@ number input"
   :hook (emacs-lisp-mode . company-mode)
   :bind
   (("M-<tab>" . jens/complete)
-   ("C-<tab>" . completion-at-point)
-   :map company-active-map
-   ("C-+" . jens/company-menu-at-selection-quickhelp))
+   ("C-<tab>" . company-complete))
   :config
   (setq company-search-regexp-function 'company-search-flex-regexp)
 
@@ -1478,8 +1476,7 @@ number input"
           company-oddmuse
           company-dabbrev))
 
-  ;; don't use any frontends, I'm manually showing candidates with ivy
-  (setq company-frontends '())
+  (setq company-begin-commands '(self-insert-command))
 
   (defun jens/complete ()
     "Show company completions using ivy."
@@ -1496,13 +1493,32 @@ number input"
 
           ;; replace the candidate with the pick
           (delete-region (car bounds) (cdr bounds))
-          (insert pick)))))
+          (insert pick))))))
 
-  (defun jens/company-menu-at-selection-quickhelp ()
-    (interactive)
-    (let ((candidate (nth company-selection company-candidates)))
-      (popup-tip (doc-at-point-elisp (intern candidate))
-                 :margin-left 1 :margin-right 1))))
+(use-package company-box
+  :ensure t
+  :demand t
+  :after (company)
+  :config
+  (setq company-box-enable-icon t)
+  (setq company-box-show-single-candidate t)
+
+  (defun jens/company-box-icon-elisp (sym)
+    (when (derived-mode-p 'emacs-lisp-mode)
+      (let ((sym (if (stringp sym) (intern sym))))
+        (cond
+         ((functionp sym) (propertize "f" 'face font-lock-function-name-face))
+         ((macrop sym) (propertize "m" 'face font-lock-keyword-face))
+         ((boundp sym) (propertize "v" 'face font-lock-variable-name-face))
+         (t "")))))
+
+  (delete 'company-box-icons--elisp company-box-icons-functions)
+  (add-to-list 'company-box-icons-functions #'jens/company-box-icon-elisp)
+
+  (company-box-mode +1)
+
+  :custom-face
+  (company-box-selection ((t (:foreground nil :background "black")))))
 
 (use-package company-lsp
   :ensure t
