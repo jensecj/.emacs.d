@@ -225,6 +225,12 @@ run once."
 ;; Lines should be 80 characters wide, not 72
 (setq-default fill-column 80)
 
+;; show location of cursor in non-selected windows
+(setq cursor-in-non-selected-windows t)
+
+;; select the help window after spawning it
+(setq help-window-select t)
+
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
 
@@ -1472,6 +1478,7 @@ number input"
    ("C-<tab>" . company-complete))
   :config
   (setq company-search-regexp-function 'company-search-flex-regexp)
+  (setq company-require-match nil)
 
   (setq company-backends
         '(company-elisp
