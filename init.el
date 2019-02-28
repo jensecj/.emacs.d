@@ -1236,7 +1236,15 @@ number input"
         ("M--" . nil)))
 
 (use-package cc-mode
-  :bind (:map c++-mode-map ("C-c C-c" . nil)))
+  :bind
+  (:map c++-mode-map
+        ("C-c C-c" . nil))
+  (:map java-mode-map
+        ("C-c C-c" . nil)
+        ("M-e" . nil)
+        ("C-d" . nil)
+        ("M-j" . nil)))
+
 
 ;; homemade
 (use-package botcode-mode
