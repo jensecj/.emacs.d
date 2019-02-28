@@ -675,6 +675,17 @@ not in the overlay-map"
     (jens/remove-text-properties-region
      (region-beginning) (region-end))))
 
+(defun jens/space-to-dash-in-region ()
+  "Replace all spaces in region with dashes."
+  (interactive)
+  (when (region-active-p)
+    (let* ((p (point))
+           (str (buffer-substring (region-beginning) (region-end)))
+           (dashed (s-replace " " "-" str)))
+      (delete-region (region-beginning) (region-end))
+      (insert dashed)
+      (goto-char p))))
+
 (defun jens/save-to-file (data filename)
   "Save lisp object DATA to FILENAME."
   (with-temp-file filename
