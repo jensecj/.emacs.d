@@ -2421,6 +2421,7 @@ paste for multi-term mode."
                              (buffer-substring-no-properties
                               (region-beginning)
                               (region-end)))))
+      (deactivate-mark)
       (counsel-ag initial-input default-directory)))
 
   (counsel-mode))
