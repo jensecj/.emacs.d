@@ -825,6 +825,14 @@ current line."
      ((f-file? pick) (find-file pick))
      (t (message "unknown repo: %s" pick)))))
 
+(defun jens/load-secrets ()
+  "Eval everything in secrets.el.gpg."
+  (interactive)
+  (with-current-buffer
+      (find-file-noselect (concat my-emacs-dir "secrets.el.gpg"))
+    (eval-buffer)
+    (kill-current-buffer)))
+
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
