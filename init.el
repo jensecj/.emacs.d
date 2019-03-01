@@ -1363,19 +1363,7 @@ number input"
   :bind
   (:map c++-mode-map
         ("C-c n" . clang-format-buffer)
-        ("M-," . nil) ("M-." . nil) ("M--" . nil))
-  :config
-  (set (make-local-variable 'compile-command)
-       (format "clang++ -std=c++17 -stdlib=libstdc++ %s -o %s"
-               (jens/get-buffer-file-name+ext) (jens/get-buffer-file-name)))
-  (setq c++-include-files
-        '("/usr/include"
-          "/usr/include/c++/7.3.0"
-          "/usr/include/c++/7.3.0/backward"
-          "/usr/include/c++/7.3.0/x86_64-unknown-linux-gnu"
-          "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include"
-          "/usr/lib/gcc/x86_64-unknown-linux-gnu/7.3.0/include-fixed"
-          "/usr/lib/clang/5.0.1/include")))
+        ("M-," . nil) ("M-." . nil) ("M--" . nil)))
 
 (use-package rust-mode
   :ensure t
@@ -1627,13 +1615,20 @@ number input"
   :ensure t
   :hook (company-mode . company-flx-mode))
 
-(use-package company-quickhelp
-  :disabled t
+(use-package company-c-headers
   :ensure t
-  :hook (company-mode . company-quickhelp-mode)
   :config
-  (setq company-quickhelp-use-propertized-text 't)
-  (setq company-quickhelp-delay 0.2))
+  (setq c++-include-files
+        '("/usr/include/"
+          "/usr/include/c++/8.2.1/"
+          "/usr/lib/clang/7.0.1/include/"
+          "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include/"
+          "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed/"))
+
+  (setq company-c-headers-path-system
+        (-uniq (-concat c++-include-files company-c-headers-path-system)))
+
+  (add-to-list 'company-backends 'company-c-headers))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; misc packages ;;
