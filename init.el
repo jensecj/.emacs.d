@@ -1296,6 +1296,11 @@ number input"
         ("M-j" . nil)))
 
 
+(use-package make-mode
+  :config
+  ;; TODO: fix indentation
+  )
+
 ;; homemade
 (use-package botcode-mode
   :mode "\\.bot\\'")
