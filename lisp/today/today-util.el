@@ -8,29 +8,6 @@
 
 (require 'today-fs)
 
-(defun today-util-copy-subtree-at-point ()
-  "Returns a copy of the current subtree-at-point."
-  (org-copy-subtree)
-  (with-temp-buffer
-    (yank)
-    (buffer-string)))
-
-(defun today-util-cut-subtree-at-point ()
-  "Returns the current subtree-at-point, cutting from the
-document."
-  (org-cut-subtree)
-  (with-temp-buffer
-    (yank)
-    (buffer-string)))
-
-(defun today-util-list-files ()
-  "Get the list of all planning files, from newest to oldest."
-  (reverse (-map #'f-base (f-directories today-directory))))
-
-(defun today-util-to-org-link (link title)
-  "Convert a link and its title into `org-link' format."
-  (org-make-link-string link title))
-
 (defun today-util-link-to-org-link (link)
   "Try to get the website title of LINK, then convert into
 `org-link' format."
@@ -87,77 +64,5 @@ Symbols needs to be a list of variables or functions available globally."
     (if (<= (length raw-duration) 10)
         (s-trim raw-duration)
       "?")))
-
-;;;;;;;;;;;;;;;;
-;; date utils ;;
-;;;;;;;;;;;;;;;;
-
-(defun today-util-todays-date ()
-  "Today's date."
-  (format-time-string "%Y-%m-%d"))
-
-(defun today-util-current-files-date ()
-  "Get the date of the current file. See `Notes on structure' for
-explanation."
-  (f-base (f-no-ext (buffer-file-name))))
-
-(defun today-util-dates-earlier-than (date)
-  "Get all available dates, of files earlier than DATE, from
-latest to earliest."
-  (letrec ((file-dates (today-util-list-files))
-           (sorting-fn (lambda (s) (string< s date)))
-           (earlier-dates (-filter sorting-fn file-dates)))
-    earlier-dates))
-
-(defun today-util-dates-later-than (date)
-  "Get all available dates, of files later than DATE, from
-earliest to latest."
-  (letrec ((file-dates (today-util-list-files))
-           (sorting-fn (lambda (s) (string> s date)))
-           (later-dates (-filter sorting-fn file-dates)))
-    (reverse later-dates)))
-
-;;;;;;;;;;;;;;;
-;; usability ;;
-;;;;;;;;;;;;;;;
-
-(defun today-util-insert-entry (entry date)
-  "Inserts ENTRY at the bottom of the file for DATE."
-  (with-current-buffer (today-fs-buffer-from-date date)
-    (goto-char (point-max))
-    (insert entry)
-    (save-buffer)))
-
-(defun today-util-remove-checkboxes-from-subtree (subtree &optional checkbox-state)
-  "Returns SUBTREE with all checkboxes that are in CHECKBOX-STATE removed."
-  (letrec ((checked-checkbox-regex "^\\- \\[X\\]")
-           (empty-checkbox-regex "^\\- \\[ \\]")
-           (checkbox-regex (if (eq checkbox-state 'checked)
-                               checked-checkbox-regex
-                             empty-checkbox-regex)))
-    (with-temp-buffer
-      (insert subtree)
-      (goto-char (point-min))
-      (org-mode)
-
-      ;; walk through all the org-items, and remove the ones matching the
-      ;; supplied checkbox regex
-      (save-excursion
-        (save-match-data
-          (while (string-match checkbox-regex (buffer-string))
-            (goto-char (match-end 0))
-
-            (let ((beginning-of-item (save-excursion (org-beginning-of-item) (point)))
-                  (end-of-item (save-excursion (org-end-of-item) (point))))
-              (delete-region beginning-of-item end-of-item)))))
-
-      ;; update the checkbox-count for the heading
-      (org-update-checkbox-count 't)
-
-      ;; if we remove all the incomplete checkboxes, this task becomes DONE.
-      (when (not (eq checkbox-state 'checked))
-        (org-todo))
-
-      (buffer-string))))
 
 (provide 'today-util)
