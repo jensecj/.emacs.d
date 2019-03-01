@@ -64,9 +64,17 @@
   "today.org"
   "Accumulating file for today entries.")
 
-(require 'today-fs)
 (require 'today-util)
 (require 'today-capture)
+
+(defun today--path-from-date (date)
+  "Returns the path to the file corresponding to DATE."
+  (f-join today-directory date (concat date ".org")))
+
+(defun today--visit-date-file (date)
+  "Visit the file for DATE, create it if it does not exist."
+  (let ((date-file (today--path-from-date date)))
+    (find-file date-file)))
 
 ;;;###autoload
 (defun today ()
@@ -79,7 +87,7 @@
   "Visit today's file, create it if it does not exist."
   (interactive)
   (xref-push-marker-stack)
-  (today-fs-visit-date-file (format-time-string "%Y-%m-%d")))
+  (today--visit-date-file (format-time-string "%Y-%m-%d")))
 
 ;;;###autoload
 (defun today-list ()
@@ -90,6 +98,6 @@ selected."
          (dates (reverse (-map #'f-base (f-directories today-directory))))
          (date (completing-read "Date: " dates)))
     (xref-push-marker-stack)
-    (today-fs-visit-date-file date)))
+    (today--visit-date-file date)))
 
 (provide 'today)

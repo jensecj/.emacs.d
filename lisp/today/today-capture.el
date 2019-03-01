@@ -1,6 +1,5 @@
 ;;; -*- lexical-binding: t -*-
 
-(require 'today-fs)
 (require 'today-util)
 
 (defcustom today-capture-tasks
