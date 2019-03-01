@@ -48,7 +48,6 @@
   "today.org"
   "Accumulating file for today entries.")
 
-(require 'today-util)
 (require 'today-capture)
 
 (defun today--path-from-date (date)
