@@ -15,7 +15,7 @@ title of the website, and convert the link into an `org-mode'
 link, using the title."
   (letrec ((lines (today-util-get-website-lines-from-link link))
            (org-link (today-util-link-to-org-link link)))
-    (format "read (%s lines) %s" lines org-link)))
+    (format "(%s lines) %s" lines org-link)))
 
 (defun today-capture--watch-link-handler (link)
   "Handler for the WATCH task. Expects the LINK to be a source
@@ -27,7 +27,7 @@ extract the duration of the video."
            (duration (today-util-get-youtube-duration-from-link link))
            (org-link (today-util-to-org-link link title))
            (entry (format "(%s) %s" duration org-link)))
-    (format "watch %s" entry)))
+    (format "%s" entry)))
 
 (defvar today-capture-handlers-alist
   '((read . today-capture--read-link-handler)
