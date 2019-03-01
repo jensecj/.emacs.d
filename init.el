@@ -599,6 +599,38 @@ buffer."
   (backward-delete-char 1)
   (save-buffer))
 
+(defun jens/new-package ()
+  "Create a skeleton for a elisp package."
+  (interactive)
+  (let* ((path (read-file-name "package name: "))
+         (file (f-filename path))
+         (name (f-no-ext file))
+         (p))
+    (with-current-buffer (find-file-noselect path)
+      (insert (format ";;; %s. -*- lexical-binding: t; -*-\n\n" file))
+      (insert (format ";; Copyright (C) %s %s\n\n"
+                      (format-time-string "%Y")
+                      user-full-name))
+
+      (insert (format ";; Author: %s <%s>\n" user-full-name user-mail-address))
+      (insert ";; Keywords:\n")
+      (insert (format ";; Package-Version: %s\n" (format-time-string "%Y%m%d")))
+      (insert ";; Version: 0.1\n\n")
+
+      (insert ";; This file is NOT part of GNU Emacs.\n\n")
+
+      (insert ";;; Commentary:\n\n")
+      (insert ";;; Code:\n\n")
+
+      (setq p (point))
+
+      (insert "\n\n")
+
+      (insert (format "(provide '%s)" name))
+
+      (goto-char p)
+      (switch-to-buffer (current-buffer)))))
+
 ;;;;;;;;;;;;;;;;;
 ;; lisp defuns ;;
 ;;;;;;;;;;;;;;;;;
