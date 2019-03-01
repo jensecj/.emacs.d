@@ -35,7 +35,7 @@ document."
   "Try to get the website title of LINK, then convert into
 `org-link' format."
   (let ((title (today-util-get-website-title-from-link link)))
-    (today-util-to-org-link link title)))
+    (org-make-link-string link title)))
 
 (defmacro today-util-async-lambda (args symbols &rest body)
   "Returns a lambda expression with ARGS, where each symbol in SYMBOLS is

@@ -79,7 +79,7 @@
   "Visit today's file, create it if it does not exist."
   (interactive)
   (xref-push-marker-stack)
-  (today-fs-visit-date-file (today-util-todays-date)))
+  (today-fs-visit-date-file (format-time-string "%Y-%m-%d")))
 
 ;;;###autoload
 (defun today-list ()
@@ -87,7 +87,7 @@
 selected."
   (interactive)
   (let* ((ivy-sort-functions-alist nil) ;; dates are already sorted
-         (dates (today-util-list-files))
+         (dates (reverse (-map #'f-base (f-directories today-directory))))
          (date (completing-read "Date: " dates)))
     (xref-push-marker-stack)
     (today-fs-visit-date-file date)))

@@ -25,7 +25,7 @@ extract the duration of the video."
   (letrec ((title (today-util-get-website-title-from-link link))
            (title (replace-regexp-in-string " - YouTube$" "" title))
            (duration (today-util-get-youtube-duration-from-link link))
-           (org-link (today-util-to-org-link link title))
+           (org-link (org-make-link-string link title))
            (entry (format "(%s) %s" duration org-link)))
     (format "%s" entry)))
 
@@ -89,7 +89,7 @@ applying handler on ENTRY, otherwise return ENTRY."
   (letrec ((entry (car (elfeed-search-selected)))
            (link (elfeed-entry-link entry))
            (title (elfeed-entry-title entry))
-           (org-link (today-util-to-org-link link title)))
+           (org-link (org-make-link-string link title)))
     (elfeed-untag entry 'unread)
     (elfeed-search-update-entry entry)
     (today-capture 'elfeed org-link)
