@@ -2363,7 +2363,8 @@ paste for multi-term mode."
    ("M-æ" . counsel-mark-ring)
    ("M-x" . counsel-M-x)
    ("M-b" . counsel-bookmark)
-   ("<f1> l" . counsel-find-library))
+   :map help-map
+   ("l" . counsel-find-library))
   :config
   (setq
    counsel-grep-base-command
@@ -2659,9 +2660,6 @@ times."
 ;; don't close emacs
 (global-set-key (kbd "C-x C-c") nil)
 
-;; Rebind help to F1
-(define-key key-translation-map [?\C-h] [?\C-?])
-(global-set-key (kbd "<f1>") 'help-command)
 (define-key help-map (kbd "M-f") #'find-function)
 (define-key help-map (kbd "M-v") #'find-variable)
 (define-key help-map (kbd "b") #'describe-bindings)

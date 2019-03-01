@@ -29,6 +29,3 @@ I symlink this script to `/usr/bin/em`:
 Then use `em` to run emacs, the first time it is run it
 starts the daemon, otherwise it starts a new client and connects
 to the daemon.
-
-The help key is remapped to `F1`, so `F1 m` for mode help,
-`F1 k <key>` for describing a keybinding, etc.
