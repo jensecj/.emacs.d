@@ -92,28 +92,4 @@ selected."
     (xref-push-marker-stack)
     (today-fs-visit-date-file date)))
 
-(require 'hydra)
-
-(defhydra today-hydra (:foreign-keys run)
-  "
-^Capture^                                 ^Actions^                          ^Find^
-^^^^^^^^----------------------------------------------------------------------------------------------
-_r_: capture read task                    _a_: archive completed tasks      _t_: go to todays file
-_R_: capture read task from clipboard     ^ ^                               _l_: list all date files
-_w_: capture watch task                   ^ ^                               ^ ^
-_W_: capture watch task from clipboard    ^ ^                               ^ ^
-_c_: capture with prompt                  ^ ^                               ^ ^
-"
-  ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
-  ("R" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'read)))
-  ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
-  ("W" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'watch)))
-  ("c" #'today-capture-prompt)
-
-  ("t" #'today :exit t)
-  ("T" #'today-visit-todays-file :exit t)
-  ("l" #'today-list :exit t)
-
-  ("q" nil "quit"))
-
 (provide 'today)
