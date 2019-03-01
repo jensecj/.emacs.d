@@ -94,45 +94,6 @@ selected."
 
 (require 'hydra)
 
-(defun today-move-to-section (title)
-  "Move the entry at point to the section described by `title'."
-  (interactive)
-  (kill-whole-line)
-  (save-excursion
-    (search-backward title)
-    (next-line)
-    (yank))
-  (message (format "moved to %s" title)))
-
-;; TODO: extract sections, and make then configurable from use-package definition.
-(defhydra today-move-to-section-hydra (:foreign-keys run)
-  "
-^Bindings^        ^ ^            ^ ^
-^^^^^^^^-------------------------------------------
-_a_: AI           _j_: Java      _t_: Tech Talks
-_r_: Rust         _l_: Linux     _T_: Ted Talks
-_p_: Python       _L_: Lisp      _k_: Climate
-_c_: C++          _e_: Emacs     _g_: Git
-_C_: Clojure      _w_: Web       _u_: Urgent
-"
-  ("a" (lambda () (interactive) (today-move-to-section "# AI")))
-  ("r" (lambda () (interactive) (today-move-to-section "# Rust")))
-  ("p" (lambda () (interactive) (today-move-to-section "# Python")))
-  ("C" (lambda () (interactive) (today-move-to-section "# Clojure")))
-  ("c" (lambda () (interactive) (today-move-to-section "# C++")))
-  ("j" (lambda () (interactive) (today-move-to-section "# Java")))
-  ("l" (lambda () (interactive) (today-move-to-section "# Linux")))
-  ("L" (lambda () (interactive) (today-move-to-section "# Lisp")))
-  ("g" (lambda () (interactive) (today-move-to-section "# Git")))
-  ("e" (lambda () (interactive) (today-move-to-section "# Emacs")))
-  ("w" (lambda () (interactive) (today-move-to-section "# Web")))
-  ("t" (lambda () (interactive) (today-move-to-section "# Tech Talks")))
-  ("T" (lambda () (interactive) (today-move-to-section "# Ted Talks")))
-  ("u" (lambda () (interactive) (today-move-to-section "# Urgent")))
-  ("k" (lambda () (interactive) (today-move-to-section "# Climate")))
-
-  ("q" nil "quit"))
-
 ;; This hydra will exit on one-off commands, such as `today-list', or
 ;; `today-goto-date', but will persist when using capture or movement commands.
 (defhydra today-hydra (:foreign-keys run)
@@ -152,7 +113,6 @@ _c_: capture with prompt                  ^ ^                               ^ ^
   ("c" #'today-capture-prompt)
 
   ("a" #'today-move-archive-completed :exit t)
-  ("s" #'today-move-to-section-hydra/body :exit t)
 
   ("t" #'today :exit t)
   ("T" #'today-visit-todays-file :exit t)
