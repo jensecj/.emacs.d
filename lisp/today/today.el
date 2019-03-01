@@ -89,6 +89,7 @@ selected."
   (let* ((ivy-sort-functions-alist nil) ;; dates are already sorted
          (dates (today-util-list-files))
          (date (completing-read "Date: " dates)))
+    (xref-push-marker-stack)
     (today-fs-visit-date-file date)))
 
 (require 'hydra)
