@@ -4,8 +4,8 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: org, org-mode, planning, today, todo
-;; Package-Version: 20190203
-;; Version: 0.8
+;; Package-Version: 20190301
+;; Version: 0.9
 ;; Package-Requires: ((emacs "25.1") (org "9.0") (dash "2.14.1")  (s "1.12.0") (f "0.20.0") (hydra "0.14.0") (org-web-tools "0.1.0-pre"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -27,22 +27,6 @@
 
 ;; A collection of commands that enable a certain workflow of creating,
 ;; manipulating, and ordering files, to enable low-hassle daily planning.
-
-;; All the planning files can be added to `org-agenda-files' by appending
-;; `today-directory', and then changing `org-agenda-file-regex' to match the
-;; sub-directories of `today-directory'.  A less intrusive way is to hook
-;; `org-agenda', and find all the .org files recursively on each invocation.
-
-;; (require 'f)
-;; (defun load-org-agenda-files ()
-;;   (interactive)
-;;   (setq org-agenda-files
-;;         (append '("")
-;;                 (f-glob "**/*.org" "~/org/today-planner"))))
-
-;; (advice-add 'org-agenda :before #'load-org-agenda-files)
-
-;; (note: this will be slow for big collections for files):
 
 ;;; Notes on structure:
 
