@@ -23,7 +23,7 @@
 
 ;;; Commentary:
 
-;; A simple daily planner, using org-mode.
+;; A simple tool to capture links to your org inbox.
 
 ;; A collection of commands that enable a certain workflow of creating,
 ;; manipulating, and ordering files, to enable low-hassle daily planning.
@@ -31,12 +31,12 @@
 ;;; Notes on structure:
 
 ;; Entries are collected in a central file, `today-file', and when completed
-;; each entry is archived as a file in a directory inside of `today-directory',
-;; whose name is the date for that entry. The org file for the entry resides in
-;; this directory, and is also named with the date, ending with the `.org'
-;; extension.  This is done so that each entry can have its own extra content
-;; (e.g. images, pdfs), reside in its directory and not interfere with the other
-;; entries.
+;; each entry can be archived as a file in a directory inside of
+;; `today-directory', whose name is the date for that entry. The org file for
+;; the entry resides in this directory, and is also named with the date, ending
+;; with the `.org' extension.  This is done so that each entry can have its own
+;; extra content (e.g. images, pdfs), reside in its directory and not interfere
+;; with the other entries.
 
 ;;; Code:
 
