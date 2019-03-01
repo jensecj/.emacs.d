@@ -78,6 +78,7 @@
 (defun today-visit-todays-file ()
   "Visit today's file, create it if it does not exist."
   (interactive)
+  (xref-push-marker-stack)
   (today-fs-visit-date-file (today-util-todays-date)))
 
 ;;;###autoload
