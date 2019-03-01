@@ -1201,7 +1201,41 @@ number input"
   (setq-default org-preview-latex-default-process 'dvisvgm)
   ;; use some noise in scheduling org-drills
   ;; (setq-default org-drill-add-random-noise-to-intervals-p t)
-  )
+
+  ;;;;;;;;;;;;
+  ;; filing ;;
+  ;;;;;;;;;;;;
+
+  (setq org-outline-path-complete-in-steps t)
+  (setq org-refile-allow-creating-parent-nodes (quote confirm))
+  (setq org-refile-use-outline-path t)
+  (setq org-refile-targets '( (nil . (:maxlevel . 1))))
+
+  ;;;;;;;;;;;;;;;
+  ;; archiving ;;
+  ;;;;;;;;;;;;;;;
+
+  (defun jens/org-archive-todays-file ()
+    "Return filepath of todays archive file."
+    (let* ((dir "~/vault/git/org/today/")
+           (date (format-time-string "%Y-%m-%d"))
+           (date-file (f-join dir date (concat date ".org"))))
+      date-file))
+
+  (defun jens/org-archive-done-todos ()
+    "Archive all completed TODOs in the current file."
+    (interactive)
+    (let* ((date-file (jens/org-archive-todays-file))
+           (org-archive-file-header-format "")
+           (org-archive-save-context-info '(time))
+           (org-archive-location (concat date-file "::")))
+      (org-map-entries
+       (lambda ()
+         (org-archive-subtree)
+         (setq org-map-continue-from (outline-previous-heading)))
+       "/DONE" 'file)
+      (with-current-buffer (find-file-noselect date-file)
+        (save-buffer)))))
 
 (use-package ob-async
   :disabled
