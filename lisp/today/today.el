@@ -67,7 +67,6 @@
 (require 'today-fs)
 (require 'today-util)
 (require 'today-capture)
-(require 'today-move)
 
 ;;;###autoload
 (defun today ()
@@ -94,14 +93,12 @@ selected."
 
 (require 'hydra)
 
-;; This hydra will exit on one-off commands, such as `today-list', or
-;; `today-goto-date', but will persist when using capture or movement commands.
 (defhydra today-hydra (:foreign-keys run)
   "
 ^Capture^                                 ^Actions^                          ^Find^
 ^^^^^^^^----------------------------------------------------------------------------------------------
 _r_: capture read task                    _a_: archive completed tasks      _t_: go to todays file
-_R_: capture read task from clipboard     _s_: the move-to-section hydra    _l_: list all date files
+_R_: capture read task from clipboard     ^ ^                               _l_: list all date files
 _w_: capture watch task                   ^ ^                               ^ ^
 _W_: capture watch task from clipboard    ^ ^                               ^ ^
 _c_: capture with prompt                  ^ ^                               ^ ^
@@ -112,34 +109,10 @@ _c_: capture with prompt                  ^ ^                               ^ ^
   ("W" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'watch)))
   ("c" #'today-capture-prompt)
 
-  ("a" #'today-move-archive-completed :exit t)
-
   ("t" #'today :exit t)
   ("T" #'today-visit-todays-file :exit t)
-
   ("l" #'today-list :exit t)
 
   ("q" nil "quit"))
 
 (provide 'today)
-
-
-;; (comment
-
-
-;;  (--map (list (org-element-property :raw-value it))
-;;         (org-ql "~/test/test.org" (done)
-;;           :action (org-toggle-tag "kagemand")
-;;           ))
-
-;;  (defun testsb ()
-;;    (interactive)
-;;    (let* ((subtree (today-util-copy-subtree-at-point))
-;;           (fixed (today-util-remove-checkboxes-from-subtree subtree 'unchecked)))
-;;      (beginning-of-line)
-;;      (newline)
-;;      (insert fixed)
-;;      ))
-
-
-;;  )
