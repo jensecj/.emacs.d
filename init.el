@@ -48,7 +48,7 @@
 
 ;; install use-package if we don't already have it
 (unless (package-installed-p 'use-package)
-  (msg-warning "use-package is not installed. installing...")
+  (msg-warning "use-package.el was not found. installing...")
   (package-refresh-contents)
   (package-install 'use-package))
 
@@ -68,6 +68,7 @@
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
+    (msg-warning "straight.el was not found, installing.")
     (with-current-buffer
         (url-retrieve-synchronously
          "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
@@ -328,8 +329,7 @@ run once."
   ;; (cancel-timer gpg-reset-timer)
   )
 
-(setq auth-sources
-      '("~/vault/authinfo.gpg" "~/.netrc"))
+(setq auth-sources '("~/vault/authinfo.gpg" "~/.netrc"))
 
 (defun jens/kill-idle-gpg-buffers ()
   "Kill .gpg buffers after they have not been used for 60
@@ -1363,7 +1363,6 @@ number input"
   :bind
   (:map c++-mode-map
         ("C-c n" . clang-format-buffer)
-        ("C-c C-c" . compile)
         ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :config
   (set (make-local-variable 'compile-command)
@@ -1645,7 +1644,6 @@ number input"
 (use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
 (use-package flycheck :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
-(use-package yasnippet :ensure t :defer t)
 (use-package loccur :straight t)
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
 (use-package dumb-jump :ensure t :defer t)
@@ -1657,6 +1655,11 @@ number input"
 (use-package ov :ensure t) ;; easy overlays
 (use-package popup :ensure t)
 (use-package shut-up :ensure t)
+
+(use-package yasnippet
+  :ensure t
+  :defer t
+  :bind ("C-<return>" . yas-expand))
 
 (use-package org-web-tools
   :ensure t
