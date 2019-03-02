@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: cmd
+# key: cmd
+# --
+(defun $1 ($2)
+  ""
+  (interactive)
+  $0
+  )
