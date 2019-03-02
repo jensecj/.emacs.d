@@ -1607,7 +1607,7 @@ _j_: Java        _m_: Math        _b_: Business                ^ ^
   :diminish company-mode
   :hook (emacs-lisp-mode . company-mode)
   :bind
-  (("<tab>" . #'completion-at-point)
+  (("<tab>" . #'jens/indent-and-complete-at-point)
    ("M-<tab>" . #'jens/complete)
    ("C-<tab>" . #'company-complete))
   :config
@@ -1629,6 +1629,12 @@ _j_: Java        _m_: Math        _b_: Business                ^ ^
 
   ;; don't show the company menu automatically
   (setq company-begin-commands nil)
+
+  (defun jens/indent-and-complete-at-point ()
+    "Indent line and call `completion-at-point'."
+    (interactive)
+    (indent-for-tab-command)
+    (completion-at-point))
 
   (defun jens/complete ()
     "Show company completions using ivy."
