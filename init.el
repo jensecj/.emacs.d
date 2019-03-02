@@ -1747,9 +1747,11 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   :defer t
   :bind ("C-<return>" . yas-expand)
   :config
+  (setq yas-snippet-dirs (list (concat my-emacs-dir "snippets")))
   (setq yas-indent-line 'fixed)
   (setq yas-also-auto-indent-first-line t)
   (setq yas-also-indent-empty-lines t)
+  (yas-reload-all)
   (yas-global-mode +1))
 
 (use-package org-web-tools
