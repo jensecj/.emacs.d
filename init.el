@@ -1670,7 +1670,12 @@ number input"
 (use-package yasnippet
   :ensure t
   :defer t
-  :bind ("C-<return>" . yas-expand))
+  :bind ("C-<return>" . yas-expand)
+  :config
+  (setq yas-indent-line 'fixed)
+  (setq yas-also-auto-indent-first-line t)
+  (setq yas-also-indent-empty-lines t)
+  (yas-global-mode +1))
 
 (use-package org-web-tools
   :ensure t
