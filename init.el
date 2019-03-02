@@ -360,8 +360,9 @@ seconds."
         (initial-content (if (region-active-p)
                              (buffer-substring (region-beginning) (region-end)))))
     (xref-push-marker-stack)
-    (switch-to-buffer (jens/new-scratch-buffer))
+    (switch-to-buffer scratch-buf)
     (insert initial-content)
+    (goto-char (point-min))
     (funcall initial-major-mode)))
 
 (defun jens/clean-view ()
