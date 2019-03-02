@@ -730,6 +730,17 @@ not in the overlay-map"
       (insert dashed)
       (goto-char p))))
 
+(defun jens/replace-string-in-buffer ()
+  "Replace occurance of string in the entire buffer."
+  (interactive)
+  (let ((from (if (region-active-p)
+                  (buffer-substring (region-beginning) (region-end))
+                (completing-read "Replace: " '())))
+        (to (completing-read "Replace with: " '())))
+    (save-excursion
+      (goto-char (point-min))
+      (replace-string from to))))
+
 (defun jens/save-to-file (data filename)
   "Save lisp object DATA to FILENAME."
   (with-temp-file filename
