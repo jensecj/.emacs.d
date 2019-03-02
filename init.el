@@ -1399,7 +1399,6 @@ number input"
         ("C-+" . jens/company-clojure-quickhelp-at-point)
         ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :config
-  (auto-complete-mode -1)
   (company-mode +1)
   (add-to-list 'company-backends 'company-capf)
 
