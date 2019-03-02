@@ -1289,7 +1289,8 @@ number input"
          (setq org-map-continue-from (outline-previous-heading)))
        "/DONE" 'file)
       (with-current-buffer (find-file-noselect date-file)
-        (save-buffer)))))
+        (when (buffer-modified-p)
+          (save-buffer))))))
 
 (use-package ob-async
   :disabled
