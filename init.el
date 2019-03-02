@@ -1274,45 +1274,61 @@ number input"
       (org-refile arg nil (list headline file nil pos)))
     (switch-to-buffer (current-buffer)))
 
-  (defhydra jens/org-today-refile (:foreign-keys run)
+  (defhydra jens/org-today-refile-pl (:foreign-keys run)
     "
-^Bindings^        ^ ^            ^ ^                           ^ ^
-^^^^^^^^----------------------------------------------------------------------
-_r_: Rust        _l_: Linux       _a_: AI                      _P_: Programming
-_c_: C/C++       _L_: Lisp        _m_: Machine Learning        _n_: Next
-_C_: Clojure     _e_: Emacs       _M_: Math                    _s_: Computer Science
-_p_: Python      _g_: Git         _w_: Work                    _S_: Statistics
-_j_: Java        _m_: Math        _b_: Business                ^ ^
+^Bindings^        ^ ^
+^^^^^^^^-------------------
+_r_: Rust        _g_: Git
+_c_: C/C++       _l_: Lisp
+_C_: Clojure     _e_: Emacs
+_p_: Python      _m_: ML
+_j_: Java        ^ ^
 "
-    ("n" (jens/org-refile "today.org" "Next"))
-    ("s" (jens/org-refile "today.org" "Computer Science"))
-    ("S" (jens/org-refile "today.org" "Statistics"))
-
-    ("a" (jens/org-refile "today.org" "AI"))
-    ("A" (jens/org-refile "today.org" "Algorithms"))
-
-    ("m" (jens/org-refile "today.org" "Machine Learning"))
-    ("M" (jens/org-refile "today.org" "Math"))
-    ("d" (jens/org-refile "today.org" "DevOps"))
-    ("P" (jens/org-refile "today.org" "Programming"))
-
-    ("r" (jens/org-refile "today.org" "Rust"))
-    ("p" (jens/org-refile "today.org" "Python"))
     ("c" (jens/org-refile "today.org" "C/C++"))
     ("C" (jens/org-refile "today.org" "Clojure"))
-    ("j" (jens/org-refile "today.org" "Java"))
-    ("l" (jens/org-refile "today.org" "Linux"))
-    ("L" (jens/org-refile "today.org" "Lisp"))
-
-    ("g" (jens/org-refile "today.org" "Git"))
     ("e" (jens/org-refile "today.org" "Emacs"))
-    ("w" (jens/org-refile "today.org" "Work"))
-    ("W" (jens/org-refile "today.org" "Web"))
+    ("g" (jens/org-refile "today.org" "Git"))
+    ("j" (jens/org-refile "today.org" "Java"))
+    ("l" (jens/org-refile "today.org" "Lisp"))
+    ("m" (jens/org-refile "today.org" "ML"))
+    ("p" (jens/org-refile "today.org" "Python"))
+    ("r" (jens/org-refile "today.org" "Rust"))
+
+    ("b" jens/org-today-refile/body "Back to refiling hydra" :exit t)
+    ("z" org-refile-goto-last-stored "Jump to last refile")
+    ("q" nil "quit"))
+
+  (defhydra jens/org-today-refile (:foreign-keys run)
+    "
+^Bindings^         ^ ^                     ^ ^                         ^ ^
+^^^^^^^^--------------------------------------------------------------------------------
+_a_: AI            _d_: DevOps             _o_: Other Talks            _t_: Tech Talks
+_A_: Algorithms    _l_: Linux              _p_: Programming            _T_: TED Talks
+_b_: Business      _m_: Machine Learning   _P_: Programming Languages  _w_: Workd
+_c_: Climate       _M_: Math               _s_: Computer Science       _W_: Web
+_C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-Hydra
+"
+    ("a" (jens/org-refile "today.org" "AI"))
+    ("A" (jens/org-refile "today.org" "Algorithms"))
     ("b" (jens/org-refile "today.org" "Business"))
+    ("c" (jens/org-refile "today.org" "Climate"))
+    ("C" (jens/org-refile "today.org" "Courses"))
+    ("d" (jens/org-refile "today.org" "DevOps"))
+    ("l" (jens/org-refile "today.org" "Linux"))
+    ("m" (jens/org-refile "today.org" "Machine Learning"))
+    ("M" (jens/org-refile "today.org" "Math"))
+    ("n" (jens/org-refile "today.org" "Next"))
+    ("o" (jens/org-refile "today.org" "Other Talks"))
+    ("p" (jens/org-refile "today.org" "Programming"))
+    ("P" (jens/org-refile "today.org" "Programming Languages"))
+    ("s" (jens/org-refile "today.org" "Computer Science"))
+    ("S" (jens/org-refile "today.org" "Statistics"))
     ("t" (jens/org-refile "today.org" "Tech Talks"))
     ("T" (jens/org-refile "today.org" "TED Talks"))
-    ("k" (jens/org-refile "today.org" "Climate"))
+    ("w" (jens/org-refile "today.org" "Work"))
+    ("W" (jens/org-refile "today.org" "Web"))
 
+    ("x" jens/org-today-refile-pl/body "Refile programming languages" :exit t)
     ("z" org-refile-goto-last-stored "Jump to last refile")
     ("q" nil "quit"))
 
