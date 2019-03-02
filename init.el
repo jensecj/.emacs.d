@@ -1405,16 +1405,24 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
         ("M-." . nil)
         ("M--" . nil)))
 
-(use-package cc-mode
+(use-package c++-mode
+  :defer t
   :bind
   (:map c++-mode-map
-        ("C-c C-c" . nil))
-  (:map java-mode-map
-        ("C-c C-c" . nil)
-        ("M-e" . nil)
-        ("C-d" . nil)
-        ("M-j" . nil)))
+        ("C-c n" . clang-format-buffer))
+  :config
+  (unbind-key "C-c C-c" c++-mode-map)
+  (unbind-key "M-," c++-mode-map)
+  (unbind-key "M-." c++-mode-map)
+  (unbind-key "M--" c++-mode-map))
 
+(use-package java-mode
+  :defer t
+  :config
+  (unbind-key "C-c C-c" java-mode-map)
+  (unbind-key "M-," java-mode-map)
+  (unbind-key "M-." java-mode-map)
+  (unbind-key "M--" java-mode-map))
 
 (use-package make-mode
   :config
@@ -1438,12 +1446,6 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
 
 (use-package lsp-mode
   :ensure t)
-
-(use-package c++-mode
-  :bind
-  (:map c++-mode-map
-        ("C-c n" . clang-format-buffer)
-        ("M-," . nil) ("M-." . nil) ("M--" . nil)))
 
 (use-package rust-mode
   :ensure t
