@@ -1201,6 +1201,8 @@ number input"
    ("<M-S-down>" . nil)
    ("<C-S-up>" . nil)
    ("<C-S-down>" . nil)
+   ("M-<next>" . org-move-subtree-down)
+   ("M-<prior>" . org-move-subtree-up)
    ("C-c n" . jens/org-indent))
   :config
   (defun jens/org-indent ()
