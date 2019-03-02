@@ -18,26 +18,9 @@
 (defconst my-emacs-dir user-emacs-directory)
 (defconst my-emacs-elpa-dir (concat my-emacs-dir "elpa"))
 (defconst my-emacs-lisp-dir (concat my-emacs-dir "lisp/"))
-(defconst my-emacs-modes-dir (concat my-emacs-dir "modes/"))
-(defconst my-emacs-temp-dir (concat my-emacs-dir ".temp/"))
-(defconst my-emacs-data-dir (concat my-emacs-dir "data/")) ;; config and cache files
-(defconst my-emacs-backup-dir (concat my-emacs-data-dir "backups/")) ;; backups, auto saves, etc.
-
-;; create them if they don't exist
-(unless (file-exists-p my-emacs-lisp-dir)
-  (make-directory my-emacs-lisp-dir))
-(unless (file-exists-p my-emacs-modes-dir)
-  (make-directory my-emacs-modes-dir))
-(unless (file-exists-p my-emacs-temp-dir)
-  (make-directory my-emacs-temp-dir))
-(unless (file-exists-p my-emacs-data-dir)
-  (make-directory my-emacs-data-dir))
-(unless (file-exists-p my-emacs-backup-dir)
-  (make-directory my-emacs-backup-dir))
 
 ;; add the lispy directories to the load-path
 (add-to-list 'load-path my-emacs-lisp-dir)
-(add-to-list 'load-path my-emacs-modes-dir)
 (add-to-list 'load-path my-emacs-elpa-dir)
 
 ;; setup package archives
@@ -94,6 +77,9 @@
 
 (use-package ht :straight t) ;; hash-table
 
+;; contain extra files in etc/ and var/
+(use-package no-littering :ensure t :demand t)
+
 ;; Use =Source Code Pro= font if it is available. When launching emacs as a
 ;; daemon, fonts are not loaded until we actually produce a frame, so the
 ;; font list will be empty, focus-in-hook is run when a frame is created,
@@ -119,15 +105,12 @@ run once."
 ;; try to place all the extra files emacs creates into suitable folders
 
 ;; Save temp files in the =.temp= folder
-(setq temporary-file-directory my-emacs-temp-dir)
-(setq bookmark-default-file (concat my-emacs-data-dir "bookmarks"))
-;; the session persistent cache, used by unicode-fonts, etc.
-(setq pcache-directory (concat my-emacs-data-dir "pcache/"))
+(setq temporary-file-directory (no-littering-expand-var-file-name "temp/"))
+(setq bookmark-default-file (no-littering-expand-etc-file-name "bookmarks.el"))
 
-;; Save backup and auto-save files in the =data= folder.
-(setq backup-directory-alist `((".*" . ,my-emacs-backup-dir)))
-(setq auto-save-file-name-transforms `((".*" ,my-emacs-backup-dir t)))
-(setq auto-save-list-file-prefix my-emacs-backup-dir)
+(let ((auto-save-dir (no-littering-expand-var-file-name "auto-save/")))
+  (setq auto-save-file-name-transforms `((".*" ,auto-save-dir t)))
+  (setq auto-save-list-file-prefix auto-save-dir))
 
 ;; Keep emacs custom settings in a separate file, and load it if it exists.
 (setq custom-file (concat my-emacs-dir "custom.el"))
@@ -921,7 +904,6 @@ current line."
   (setq show-paren-delay 0.1)
   (setq show-paren-when-point-inside-paren t)
 
-
   (show-paren-mode +1))
 
 (use-package abbrev
@@ -930,8 +912,9 @@ current line."
   :hook (org-mode . abbrev-mode)
   :commands read-abbrev-file
   :config
-  (setq abbrev-file-name (concat my-emacs-data-dir "abbreviations"))
-  (read-abbrev-file))
+  (setq abbrev-file-name (no-littering-expand-etc-file-name "abbreviations.el"))
+  (read-abbrev-file)
+  (abbrev-mode +1))
 
 ;; Easily navigate silly cased words
 (use-package subword
@@ -946,7 +929,7 @@ current line."
 (use-package tramp
   :defer t
   :config
-  (setq tramp-persistency-file-name (concat my-emacs-data-dir "tramp"))
+  (setq tramp-persistency-file-name (no-littering-expand-var-file-name "tramp"))
   (setq tramp-terminal-type "tramp")
   (setq tramp-verbose 6))
 
@@ -954,14 +937,14 @@ current line."
 (use-package saveplace
   :config
   (setq-default save-place t)
-  (setq save-place-file (concat my-emacs-data-dir "saveplaces")))
+  (setq save-place-file (no-littering-expand-var-file-name "saveplaces")))
 
 ;; Persist some vars across sessions
 (use-package savehist
   :defer 2
   :commands savehist-mode
   :config
-  (setq savehist-file (concat my-emacs-data-dir "savehist"))
+  (setq savehist-file (no-littering-expand-var-file-name "savehist"))
   (setq savehist-autosave-interval 60) ;; save every minute
   (setq savehist-additional-variables '(kill-ring
                                         search-ring
@@ -975,8 +958,11 @@ current line."
 (use-package recentf
   :commands recentf-mode
   :config
-  (setq recentf-save-file (recentf-expand-file-name (concat my-emacs-data-dir "recentf")))
-  (setq recentf-exclude '(".emacs.d/elpa/" ".emacs.d/data/" "COMMIT_EDITMSG"))
+  (setq recentf-save-file (recentf-expand-file-name (no-littering-expand-etc-file-name "recentf.el")))
+  (setq recentf-exclude (list my-emacs-elpa-dir
+                              no-littering-etc-directory
+                              no-littering-var-directory
+                              "COMMIT_EDITMSG"))
   (setq recentf-max-saved-items 500) ;; just 20 is too few
   (setq recentf-auto-cleanup 300) ;; cleanup every 5 mins.
   ;; save recentf file every 30s, but don't bother us about it
@@ -1009,7 +995,7 @@ current line."
   ;; :hook ((emacs-lisp-mode python-mode c++-mode java-mode) . semantic-mode)
   :config
   ;; persist the semantic parse database
-  (setq semanticdb-default-save-directory (concat my-emacs-data-dir "semantic/"))
+  (setq semanticdb-default-save-directory (no-littering-expand-var-file-name "semantic/"))
   (unless (file-exists-p semanticdb-default-save-directory)
     (make-directory semanticdb-default-save-directory))
 
@@ -1842,7 +1828,7 @@ title and duration."
   :ensure t
   :commands amx-mode
   :config
-  (setq amx-save-file (concat my-emacs-data-dir "amx-items"))
+  (setq amx-save-file (no-littering-expand-var-file-name "amx-items"))
   (amx-mode))
 
 (use-package smartparens
@@ -2066,7 +2052,7 @@ title and duration."
    ("C-M-a" . mc/mark-all-like-this)
    ("C-M-<return>" . mc-hydra/body))
   :init
-  (setq mc/list-file (concat my-emacs-data-dir "mc-lists"))
+  (setq mc/list-file (no-littering-expand-etc-file-name "mc-lists.el"))
   :config
   (defhydra mc-hydra ()
     "
@@ -2196,7 +2182,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
   :config
   (setq undo-tree-visualizer-diff t)
   (setq undo-tree-auto-save-history t)
-  (setq undo-tree-history-directory-alist `(("." . ,my-emacs-data-dir)))
+  (setq undo-tree-history-directory-alist `(("." . ,no-littering-var-directory)))
   (global-undo-tree-mode))
 
 (use-package goto-chg
@@ -2538,8 +2524,8 @@ initial search query."
   :defer t
   :diminish projectile-mode
   :config
-  (setq projectile-known-projects-file (concat my-emacs-data-dir "projectile-bookmarks"))
-  (setq projectile-cache-file (concat my-emacs-data-dir "projectile.cache")))
+  (setq projectile-known-projects-file (no-littering-expand-var-file-name "projectile-bookmarks"))
+  (setq projectile-cache-file (no-littering-expand-var-file-name "projectile.cache")))
 
 (use-package counsel-projectile
   :ensure t
@@ -2633,7 +2619,7 @@ initial search query."
   :config
   (defun jens/etmux-jackin ()
     (interactive)
-    (let* ((history-file (concat my-emacs-data-dir "etmux-history.el"))
+    (let* ((history-file (no-littering-expand-etc-file-name "etmux-history.el"))
            (etmux-command-history (jens/load-from-file history-file))
            (pane (etmux-pick-pane))
            (command (completing-read "command: " etmux-command-history)))
