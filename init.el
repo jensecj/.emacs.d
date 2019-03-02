@@ -1578,7 +1578,8 @@ number input"
           company-oddmuse
           company-dabbrev))
 
-  (setq company-begin-commands '(self-insert-command))
+  ;; don't show the company menu automatically
+  (setq company-begin-commands nil)
 
   (defun jens/complete ()
     "Show company completions using ivy."
