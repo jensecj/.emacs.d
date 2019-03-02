@@ -1267,6 +1267,55 @@ number input"
   (setq org-refile-use-outline-path t)
   (setq org-refile-targets '( (nil . (:maxlevel . 1))))
 
+  (defun jens/org-refile (file headline &optional arg)
+    (let ((pos (save-excursion
+                 (find-file file)
+                 (org-find-exact-headline-in-buffer headline))))
+      (org-refile arg nil (list headline file nil pos)))
+    (switch-to-buffer (current-buffer)))
+
+  (defhydra jens/org-today-refile (:foreign-keys run)
+    "
+^Bindings^        ^ ^            ^ ^                           ^ ^
+^^^^^^^^----------------------------------------------------------------------
+_r_: Rust        _l_: Linux       _a_: AI                      _P_: Programming
+_c_: C/C++       _L_: Lisp        _m_: Machine Learning        _n_: Next
+_C_: Clojure     _e_: Emacs       _M_: Math                    _s_: Computer Science
+_p_: Python      _g_: Git         _w_: Work                    _S_: Statistics
+_j_: Java        _m_: Math        _b_: Business                ^ ^
+"
+    ("n" (jens/org-refile "today.org" "Next"))
+    ("s" (jens/org-refile "today.org" "Computer Science"))
+    ("S" (jens/org-refile "today.org" "Statistics"))
+
+    ("a" (jens/org-refile "today.org" "AI"))
+    ("A" (jens/org-refile "today.org" "Algorithms"))
+
+    ("m" (jens/org-refile "today.org" "Machine Learning"))
+    ("M" (jens/org-refile "today.org" "Math"))
+    ("d" (jens/org-refile "today.org" "DevOps"))
+    ("P" (jens/org-refile "today.org" "Programming"))
+
+    ("r" (jens/org-refile "today.org" "Rust"))
+    ("p" (jens/org-refile "today.org" "Python"))
+    ("c" (jens/org-refile "today.org" "C/C++"))
+    ("C" (jens/org-refile "today.org" "Clojure"))
+    ("j" (jens/org-refile "today.org" "Java"))
+    ("l" (jens/org-refile "today.org" "Linux"))
+    ("L" (jens/org-refile "today.org" "Lisp"))
+
+    ("g" (jens/org-refile "today.org" "Git"))
+    ("e" (jens/org-refile "today.org" "Emacs"))
+    ("w" (jens/org-refile "today.org" "Work"))
+    ("W" (jens/org-refile "today.org" "Web"))
+    ("b" (jens/org-refile "today.org" "Business"))
+    ("t" (jens/org-refile "today.org" "Tech Talks"))
+    ("T" (jens/org-refile "today.org" "TED Talks"))
+    ("k" (jens/org-refile "today.org" "Climate"))
+
+    ("z" org-refile-goto-last-stored "Jump to last refile")
+    ("q" nil "quit"))
+
   ;;;;;;;;;;;;;;;
   ;; archiving ;;
   ;;;;;;;;;;;;;;;
@@ -2623,6 +2672,8 @@ _c_: capture with prompt                  ^ ^                               ^ ^
     ("t" #'today :exit t)
     ("T" #'today-visit-todays-file :exit t)
     ("l" #'today-list :exit t)
+
+    ("f" #'jens/org-today-refile/body :exit t)
 
     ("q" nil "quit"))
 
