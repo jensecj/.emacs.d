@@ -1558,8 +1558,9 @@ number input"
   :diminish company-mode
   :hook (emacs-lisp-mode . company-mode)
   :bind
-  (("M-<tab>" . jens/complete)
-   ("C-<tab>" . company-complete))
+  (("<tab>" . #'completion-at-point)
+   ("M-<tab>" . #'jens/complete)
+   ("C-<tab>" . #'company-complete))
   :config
   (setq company-search-regexp-function 'company-search-flex-regexp)
   (setq company-require-match nil)
