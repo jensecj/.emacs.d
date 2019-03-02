@@ -531,6 +531,20 @@ currently is), otherwise comment or uncomment the current line."
       (comment-or-uncomment-region (region-beginning) (region-end))
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
 
+(defun jens/brace-breaking-newline (&rest arg)
+  "Insert newline,breaking open parenthesis, and placing point in
+between."
+  (interactive)
+  (let ((break-open-pair (or (and (looking-back "{") (looking-at "}"))
+                             (and (looking-back "(") (looking-at ")"))
+                             (and (looking-back "\\[") (looking-at "\\]")))))
+    (newline)
+    (when break-open-pair
+      (save-excursion
+        (newline)
+        (indent-for-tab-command)))
+    (indent-for-tab-command)))
+
 ;;;;;;;;;;;;;;;;;
 ;; file defuns ;;
 ;;;;;;;;;;;;;;;;;
@@ -2787,6 +2801,12 @@ times."
 (global-set-key (kbd "M-r") #'jens/goto-repo)
 
 (global-set-key (kbd "<f12>") #'jens/inspect-variable-at-point)
+
+(dolist (m (list emacs-lisp-mode-map
+                 lisp-interaction-mode-map
+                 c++-mode-map
+                 java-mode-map))
+  (define-key m (kbd "<return>") #'jens/brace-breaking-newline))
 
 ;; Completion that uses many different methods to find options.
 ;; (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
