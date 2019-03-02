@@ -2386,7 +2386,7 @@ paste for multi-term mode."
 
   (ivy-mode)
   :custom-face
-  (ivy-current-match ((t (:foreground nil :background "#4f4f4f" :box t :underline nil)))))
+  (ivy-current-match ((t (:foreground nil :background "#313131" :box t :underline nil)))))
 
 (use-package ivy-rich
   :ensure t
