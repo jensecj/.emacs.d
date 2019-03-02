@@ -2,41 +2,39 @@
 ;; use lexical binding for initialization code
 (setq-default lexical-binding t)
 
+;; some functions for logging
 (defun msg-info (txt) (message "# %s" txt))
 (defun msg-warning (txt) (message "! %s" txt))
 (defun msg-success (txt) (message "@ %s" txt))
 
 (msg-info "Started initializing emacs!")
 
-;; Turn off excess interface early in startup to avoid momentary display
+;; turn off excess interface early in startup to avoid momentary display
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (tooltip-mode -1)
 
-;; directories for things related to emacs
-(defconst my-emacs-dir user-emacs-directory)
-(defconst my-emacs-elpa-dir (concat my-emacs-dir "elpa"))
-(defconst my-emacs-lisp-dir (concat my-emacs-dir "lisp/"))
+;; directories for elisp things
+(defconst user-emacs-elpa-dir (concat user-emacs-directory "elpa"))
+(defconst user-emacs-lisp-dir (concat user-emacs-directory "lisp/"))
 
-;; add the lispy directories to the load-path
-(add-to-list 'load-path my-emacs-lisp-dir)
-(add-to-list 'load-path my-emacs-elpa-dir)
+;; add user directories to the load-path
+(add-to-list 'load-path user-emacs-lisp-dir)
+(add-to-list 'load-path user-emacs-elpa-dir)
 
 ;; setup package archives
-(setq-default package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                                 ("melpa-stable" . "https://stable.melpa.org/packages/")
-                                 ("melpa" . "https://melpa.org/packages/")
-                                 ("org" . "https://orgmode.org/elpa/")))
+(setq-default package-archives
+              '(("gnu" . "https://elpa.gnu.org/packages/")
+                ("melpa-stable" . "https://stable.melpa.org/packages/")
+                ("melpa" . "https://melpa.org/packages/")
+                ("org" . "https://orgmode.org/elpa/")))
 
-;; install use-package if we don't already have it
+;; make sure use-package is installed
 (unless (package-installed-p 'use-package)
   (msg-warning "use-package.el was not found. installing...")
   (package-refresh-contents)
   (package-install 'use-package))
-
-(eval-when-compile
-  (require 'use-package))
 
 ;; make use-package tell us what its doing
 (use-package use-package
@@ -45,7 +43,7 @@
   (setq use-package-enable-imenu-support t)
   (setq use-package-compute-statistics t))
 
-;;; download, setup, and load straight.el
+;;; make sure straight.el is installed
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -60,25 +58,18 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; some libraries that are frequently used
-(use-package dash ;; functional things, -map, -fold, etc
-  :straight t
-  :commands (-some -remove))
+;; functional things, -map, -concat, etc
+(use-package dash :straight t)
 (use-package dash-functional :straight t :demand t)
 
-(use-package s ;; string manipulations
-  :straight t
-  :commands (s-trim s-prefix? s-replace))
+;; string things, s-trim, s-replace, etc.
+(use-package s :straight t)
 
-(use-package f ;; handling the file-system
-  :straight t
-  :ensure t
-  :commands (f-exists? f-glob f-no-ext))
+;; file-system things, f-exists-p, f-base, etc.
+(use-package f :straight t :ensure t)
 
-(use-package ht :straight t) ;; hash-table
-
-;; contain extra files in etc/ and var/
-(use-package no-littering :ensure t :demand t)
+;; a great hash-table wrapper.
+(use-package ht :straight t)
 
 (defun jens/init-fonts ()
   "Setup font configuration for new frames."
@@ -93,13 +84,14 @@
 
 (add-hook 'server-after-make-frame-hook #'jens/init-fonts)
 
-;;;;;;;;;;;;;;;;;;;;;;
-;; temp files, etc. ;;
-;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cache, temp files, etc. ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; try to place all the extra files emacs creates into suitable folders
+;; contain extra files in etc/ and var/.
+;; load early, and overwrite locations in configs if needed.
+(use-package no-littering :ensure t :demand t)
 
-;; Save temp files in the =.temp= folder
 (setq temporary-file-directory (no-littering-expand-var-file-name "temp/"))
 (setq bookmark-default-file (no-littering-expand-etc-file-name "bookmarks.el"))
 
@@ -107,8 +99,8 @@
   (setq auto-save-file-name-transforms `((".*" ,auto-save-dir t)))
   (setq auto-save-list-file-prefix auto-save-dir))
 
-;; Keep emacs custom settings in a separate file, and load it if it exists.
-(setq custom-file (concat my-emacs-dir "custom.el"))
+;; keep emacs custom settings in a separate file, and load it if it exists.
+(setq custom-file (concat user-emacs-directory "custom.el"))
 (if (file-exists-p custom-file)
     (load custom-file))
 
@@ -119,7 +111,7 @@
 ;; location of emacs source files
 (setq source-directory "/home/jens/.aur/emacs-git-src/")
 
-;; Hide the splash screen
+;; hide the splash screen
 (setq inhibit-startup-message t)
 
 ;; set the paranoia level to medium, warns if connections are insecure
@@ -131,41 +123,41 @@
 ;; never use dialog boxes
 (setq use-dialog-box nil)
 
-;; load newer files, even if they have (outdated) byte-compiled counterparts
+;; load newer files, even if they have outdated byte-compiled counterparts
 (setq load-prefer-newer t)
 
-;; Don't blink the cursor
+;; don't blink the cursor
 (blink-cursor-mode -1)
 
-;; Highlight current line, with a sane color, and transparent foreground
+;; highlight current line, with a low-contrast color, and transparent foreground
 ;; (so it does not mess with syntax highlighting)
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "gray30")
 (set-face-foreground 'highlight nil)
 (set-face-underline 'highlight nil)
 
-;; Allow pasting selection outside of Emacs
+;; allow pasting selection outside of Emacs
 (setq select-enable-clipboard t)
 
-;; Show keystrokes in progress
+;; show keystrokes in progress
 (setq echo-keystrokes 0.1)
 
-;; Move files to trash when deleting
+;; move files to trash when deleting
 (setq delete-by-moving-to-trash t)
 
 ;; don't use shift to mark things
 (setq shift-select-mode nil)
 
-;; Transparently open compressed files
+;; transparently open compressed files
 (auto-compression-mode t)
 
-;; Enable syntax highlighting for older Emacsen that have it off
+;; enable syntax highlighting
 (global-font-lock-mode t)
 
-;; Answering just 'y' or 'n' will do
+;; answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;; make re-centering sane
+;; make re-centering more intuitive
 (setq recenter-positions '(top middle bottom))
 (global-set-key (kbd "C-l") #'recenter-top-bottom)
 (global-set-key (kbd "C-S-L") #'move-to-window-line-top-bottom)
@@ -177,8 +169,8 @@
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-;; Make backups of files, even when they're in version control, and set
-;; how many backups we want to save for each file.
+;; make backups of files, even when they're in version control, and set how many
+;; backups we want to save for each file.
 (setq make-backup-files t
       vc-make-backup-files t
       version-control t
@@ -187,10 +179,10 @@
       kept-new-versions 9
       auto-save-default t)
 
-;; Show active region
+;; show active region
 (transient-mark-mode 1)
 
-;; Remove text in active region if inserting text
+;; remove text in active region if inserting text
 (delete-selection-mode 1)
 
 ;; display line and column numbers in mode-line
@@ -201,7 +193,7 @@
 (set-face-attribute 'mode-line nil :box nil)
 (set-face-attribute 'mode-line-inactive nil :box nil)
 
-;; Lines should be 80 characters wide, not 72
+;; lines should be 80 characters wide
 (setq-default fill-column 80)
 
 ;; show location of cursor in non-selected windows
@@ -210,10 +202,10 @@
 ;; select the help window after spawning it
 (setq help-window-select t)
 
-;; Undo/redo window configuration with C-c <left>/<right>
+;; undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
 
-;; Move windows with S-<arrow>
+;; move windows with S-<arrow>
 (windmove-default-keybindings 'shift)
 
 ;; use spaces instead of tabs
@@ -223,22 +215,22 @@
 ;; tabs are converted to spaces automatically
 (setq-default indent-line-function 'insert-tab)
 
-;; Show me empty lines after buffer end
+;; show me empty lines after buffer end
 (setq-default indicate-empty-lines t)
 
-;; Don't automatically break lines
+;; don't automatically break lines
 (setq-default truncate-lines t)
 
-;; Allow recursive mini buffers
+;; allow recursive mini buffers
 (setq enable-recursive-minibuffers t)
 
-;; show everything that's happening when evaluating somethingx
+;; show everything that's happening when evaluating something
 (setq eval-expression-print-level nil)
 
-;; End files in newlines
+;; end files with a newline
 (setq require-final-newline nil)
 
-;; Save before compiling, dont ask
+;; save before compiling, don't ask
 (setq compilation-ask-about-save nil)
 
 ;; save more things in the kill ring
@@ -248,22 +240,23 @@
 (setq undo-limit (* 5 1024 1024))
 (setq undo-strong-limit (* 20 1024 1024))
 
+;; remember a lot of messages
 (setq message-log-max 10000)
 
 (setq auto-window-vscroll nil)
-;; if moving the poijt more than 10 lines away,
+
+;; if moving the point more than 10 lines away,
 ;; center point in the middle of the window, otherwise be conservative.
 (setq scroll-conservatively 10)
+
 ;; only scroll the current line when moving outside window-bounds
 (setq auto-hscroll-mode 'current-line)
 
 ;; save clipboard from other programs to kill-ring
 (setq save-interprogram-paste-before-kill t)
 
+;; just give me a clean scratch buffer
 (setq initial-scratch-message "")
-
-;; used to be transpose-words, used for new keybindings
-(global-unset-key (kbd "M-t"))
 
 ;; don't show trailing whitespace by default
 (setq-default show-trailing-whitespace nil)
@@ -832,7 +825,7 @@ current line."
 (defun jens/goto-repo ()
   "Quickly jump to a repository, defined in repos.el"
   (interactive)
-  (let* ((repos (jens/load-from-file (concat my-emacs-dir "repos.el")))
+  (let* ((repos (jens/load-from-file (concat user-emacs-directory "repos.el")))
          (repos-propped
           (-map #'(lambda (r)
                     (let ((last-part (-last-item (f-split (car r)))))
@@ -851,7 +844,7 @@ current line."
   "Eval everything in secrets.el.gpg."
   (interactive)
   (with-current-buffer
-      (find-file-noselect (concat my-emacs-dir "secrets.el.gpg"))
+      (find-file-noselect (concat user-emacs-directory "secrets.el.gpg"))
     (eval-buffer)
     (kill-current-buffer)))
 
@@ -860,7 +853,7 @@ current line."
 ;;;;;;;;;;;;;;
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
-;; extentions of `use-package', so we need to have those packages.
+;; extensions of `use-package', so we need to have those packages.
 (use-package bind-key :ensure t)
 (use-package diminish :ensure t :commands diminish)
 (use-package delight :ensure t)
@@ -881,6 +874,7 @@ current line."
              current-kill)
   :hook (org-mode . auto-fill-mode))
 
+;; insert parens-type things in pairs
 (use-package elec-pair
   :config
   (setq electric-pair-pairs
@@ -895,6 +889,7 @@ current line."
 
   (electric-pair-mode +1))
 
+;; show matching parens
 (use-package paren
   :config
   (setq show-paren-delay 0.1)
@@ -902,6 +897,7 @@ current line."
 
   (show-paren-mode +1))
 
+;; auto-replace common abbreviations
 (use-package abbrev
   :demand t
   :diminish abbrev-mode
@@ -912,7 +908,7 @@ current line."
   (read-abbrev-file)
   (abbrev-mode +1))
 
-;; Easily navigate silly cased words
+;; easily navigate silly cased words
 (use-package subword
   :diminish subword-mode
   :commands global-subword-mode
@@ -922,6 +918,7 @@ current line."
 (use-package uniquify
   :config (setq uniquify-buffer-name-style 'forward))
 
+;; easily access and edit files on remote machines
 (use-package tramp
   :defer t
   :config
@@ -929,38 +926,45 @@ current line."
   (setq tramp-terminal-type "tramp")
   (setq tramp-verbose 6))
 
-;; Save point position between sessions
+;; save point position between sessions
 (use-package saveplace
   :config
   (setq-default save-place t)
   (setq save-place-file (no-littering-expand-var-file-name "saveplaces")))
 
-;; Persist some vars across sessions
+;; persist some variables between sessions
 (use-package savehist
   :defer 2
   :commands savehist-mode
   :config
   (setq savehist-file (no-littering-expand-var-file-name "savehist"))
-  (setq savehist-autosave-interval 60) ;; save every minute
-  (setq savehist-additional-variables '(kill-ring
-                                        search-ring
-                                        regexp-search-ring))
+  ;; save every minute
+  (setq savehist-autosave-interval 60)
+  (setq savehist-additional-variables
+        '(kill-ring
+          search-ring
+          regexp-search-ring))
   ;; just keep all history
   (setq history-length t)
   (setq history-delete-duplicates t)
   (savehist-mode 1))
 
-;; Save a list of recently visited files.
+;; save a list of recently visited files.
 (use-package recentf
   :commands recentf-mode
   :config
+  ;; TODO: maybe move to var directory?
   (setq recentf-save-file (recentf-expand-file-name (no-littering-expand-etc-file-name "recentf.el")))
-  (setq recentf-exclude (list my-emacs-elpa-dir
+  (setq recentf-exclude (list user-emacs-elpa-dir
                               no-littering-etc-directory
                               no-littering-var-directory
                               "COMMIT_EDITMSG"))
-  (setq recentf-max-saved-items 500) ;; just 20 is too few
-  (setq recentf-auto-cleanup 300) ;; cleanup every 5 mins.
+  ;; save a bunch of recent items
+  (setq recentf-max-saved-items 500)
+
+  ;; clean the list every 5 minutes
+  (setq recentf-auto-cleanup 300)
+
   ;; save recentf file every 30s, but don't bother us about it
   (setq recentf-auto-save-timer
         (run-with-idle-timer 30 t '(lambda ()
@@ -973,25 +977,27 @@ current line."
 
   (recentf-mode +1))
 
+;; always show the version of a file as it appears on disk
 (use-package autorevert
   :diminish auto-revert-mode
   :commands global-auto-revert-mode
   :config
-  ;; Also auto refresh dired, but be quiet about it
+  ;; also auto refresh dired, but be quiet about it
   (setq global-auto-revert-non-file-buffers t)
   (setq auto-revert-verbose nil)
 
-  ;; Auto refresh buffers
+  ;; auto refresh buffers
   (global-auto-revert-mode 1))
 
-;; Semantic analysis in supported modes (cpp, java, etc.)
+;; semantic analysis in supported modes (cpp, java, etc.)
 (use-package semantic
-  :disabled
+  :disabled t
   :defer t
-  ;; :hook ((emacs-lisp-mode python-mode c++-mode java-mode) . semantic-mode)
   :config
   ;; persist the semantic parse database
-  (setq semanticdb-default-save-directory (no-littering-expand-var-file-name "semantic/"))
+  (setq semanticdb-default-save-directory
+        (no-littering-expand-var-file-name "semantic/"))
+
   (unless (file-exists-p semanticdb-default-save-directory)
     (make-directory semanticdb-default-save-directory))
 
@@ -1019,11 +1025,12 @@ number input"
 (use-package hi-lock
   :diminish hi-lock-mode)
 
+;; easily handle merge conflicts
 (use-package smerge-mode
   :bind (:map smerge-mode-map ("C-c ^" . jens/smerge/body))
   :config
   (defhydra jens/smerge ()
-    "Move betweet buffers."
+    "Move between buffers."
     ("n" #'smerge-next "next")
     ("p" #'smerge-prev "previous")
     ("u" #'smerge-keep-upper "keep upper")
@@ -1040,9 +1047,9 @@ number input"
   (add-hook 'after-revert-hook 'jens/enable-smerge-if-diff-buffer t))
 
 (use-package elisp-mode
-  :delight
-  (emacs-lisp-mode "Elisp" :major))
+  :delight (emacs-lisp-mode "Elisp" :major))
 
+;; show useful contextual information in the minibuffer
 (use-package eldoc
   :diminish
   :config
@@ -1135,7 +1142,6 @@ number input"
 
   (advice-add 'dired-readin :after #'jens/dired-sort))
 
-;; use firefox as the default browser
 (use-package browse-url
   :defer t
   :config (setq browse-url-firefox-program "firefox"))
@@ -1151,13 +1157,12 @@ number input"
 ;; Org ;;
 ;;;;;;;;;
 
-;; I want to use the new version of org-mode from upstream.
+;; I want to use the version of org-mode from upstream.
 ;; remove the built-in org-mode from the load path, so it does not get loaded
 (setq load-path (-remove (lambda (x) (string-match-p "org$" x)) load-path))
 ;; remove org-mode from the built-ins list, because we're using upstream
 (setq package--builtins (assq-delete-all 'org package--builtins))
 
-;; install upstream org-mode
 (use-package org
   :ensure org-plus-contrib
   :pin org
@@ -1720,7 +1725,7 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   :defer t
   :bind ("C-<return>" . yas-expand)
   :config
-  (setq yas-snippet-dirs (list (concat my-emacs-dir "snippets")))
+  (setq yas-snippet-dirs (list (concat user-emacs-directory "snippets")))
   (setq yas-indent-line 'fixed)
   (setq yas-also-auto-indent-first-line t)
   (setq yas-also-indent-empty-lines t)
@@ -1778,7 +1783,7 @@ title and duration."
 
 (use-package help-fns+
   :init
-  (let ((help-fns-plus-file (concat my-emacs-elpa-dir "/help-fns+.el"))
+  (let ((help-fns-plus-file (concat user-emacs-elpa-dir "/help-fns+.el"))
         (url "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"))
     (unless (file-exists-p help-fns-plus-file)
       (url-copy-file url help-fns-plus-file))))
@@ -2293,7 +2298,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
     :group 'elfeed-faces)
   (push '(aggregate aggregate-elfeed-face) elfeed-search-face-alist)
 
-  (setq elfeed-feeds (jens/load-from-file (concat my-emacs-dir "elfeeds.el")))
+  (setq elfeed-feeds (jens/load-from-file (concat user-emacs-directory "elfeeds.el")))
 
   (defun jens/elfeed-copy-link-at-point ()
     "Copy the link of the elfeed entry at point to the
