@@ -1609,7 +1609,7 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   :diminish company-mode
   :hook (emacs-lisp-mode . company-mode)
   :bind
-  (("<tab>" . #'jens/indent-and-complete-at-point)
+  (("<backtab>" . #'completion-at-point)
    ("M-<tab>" . #'jens/complete)
    ("C-<tab>" . #'company-complete))
   :config
@@ -1618,31 +1618,23 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
 
   (setq company-backends
         '(company-elisp
-          company-bbdb
-          company-css
           company-semantic
           company-clang
           company-cmake
           company-capf
           company-files
           (company-dabbrev-code company-gtags company-etags company-keywords)
-          company-oddmuse
           company-dabbrev))
 
   ;; don't show the company menu automatically
   (setq company-begin-commands nil)
 
-  (defun jens/indent-and-complete-at-point ()
-    "Indent line and call `completion-at-point'."
-    (interactive)
-    (indent-for-tab-command)
-    (completion-at-point))
-
   (defun jens/complete ()
     "Show company completions using ivy."
     (interactive)
     (unless company-candidates
-      (company-complete))
+      (let ((company-frontends nil))
+        (company-complete)))
 
     (when-let ((prefix (symbol-name (symbol-at-point)))
                (bounds (bounds-of-thing-at-point 'symbol)))
