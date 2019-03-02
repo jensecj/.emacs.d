@@ -1103,15 +1103,15 @@ number input"
 (use-package dired+
   :straight (dired+ :type git :host github :repo "emacsmirror/dired-plus")
   :after dired
-  :demand t
+  :defer t
   :commands (toggle-diredp-find-file-reuse-dir
              diredp-up-directory-reuse-dir-buffer)
   :bind
   (:map dired-mode-map
-        ("<backspace>" . diredp-up-directory-reuse-dir-buffer)
-        ("C-<down>" . nil)
-        ("C-<up>" . nil))
+        ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
   :config
+  (unbind-key "C-<up>" dired-mode-map)
+  (unbind-key "C-<down>" dired-mode-map)
   (toggle-diredp-find-file-reuse-dir +1)
   :custom-face
   (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
@@ -1125,11 +1125,11 @@ number input"
   (("C-x C-d" . dired-jump)
    :map dired-mode-map
    ("C-." . dired-omit-mode))
-  :init
   :config
   ;; pull in extra functionality for dired
   (load-library "dired-x")
   (load-library "dired-aux")
+  (require 'dired+)
 
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
   (setq dired-listing-switches "-agholXN")
