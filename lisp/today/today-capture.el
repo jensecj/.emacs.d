@@ -120,7 +120,7 @@ applying handler on ENTRY, otherwise return ENTRY."
      (with-current-buffer (find-file-noselect (concat today-directory today-file))
        (save-excursion
          (goto-char (point-max))
-         (insert "* " content)
+         (insert "** " content)
          (save-buffer))))))
 
 ;;;###autoload
