@@ -80,23 +80,18 @@
 ;; contain extra files in etc/ and var/
 (use-package no-littering :ensure t :demand t)
 
-;; Use =Source Code Pro= font if it is available. When launching emacs as a
-;; daemon, fonts are not loaded until we actually produce a frame, so the
-;; font list will be empty, focus-in-hook is run when a frame is created,
-;; whether by a user or a daemon, the first frame created will not have
-;; the setup, as it is created before this is run, still looking into
-;; this.
 (defun jens/init-fonts ()
-  "Setup fonts, then remove self from `focus-in-hook' so we only
-run once."
+  "Setup font configuration for new frames."
   (let ((my-font "Source Code Pro Semibold 10"))
-    (if (find-font (font-spec :name my-font))
-        (progn
-          (add-to-list 'default-frame-alist `(font . ,my-font))
-          (set-frame-font my-font))
-      (msg-warning (format "could not find font: %s" my-font)))))
+    (if (not (find-font (font-spec :name my-font)))
+        (msg-warning (format "could not find font: %s" my-font))
+      (add-to-list 'default-frame-alist `(font . ,my-font))
+      (set-frame-font my-font)
 
-(add-hook 'server-after-make-frame-hook 'jens/init-fonts)
+      ;; only setup fonts once
+      (remove-hook 'server-after-make-frame-hook #'jens/init-fonts))))
+
+(add-hook 'server-after-make-frame-hook #'jens/init-fonts)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; temp files, etc. ;;
