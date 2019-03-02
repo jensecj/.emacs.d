@@ -1522,7 +1522,9 @@ number input"
 
 (use-package emr
   :ensure t
-  :bind ("M-<return>" . emr-show-refactor-menu))
+  :bind
+  (:map emacs-lisp-mode-map
+        ("M-<return>" . emr-show-refactor-menu)))
 
 (use-package ggtags
   :ensure t
