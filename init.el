@@ -1445,6 +1445,7 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
 (use-package tuareg :ensure t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
 
 (use-package lsp-mode
+  :defer t
   :ensure t)
 
 (use-package rust-mode
@@ -2401,7 +2402,7 @@ clipboard."
 
 (use-package multi-term
   :ensure t
-  :demand t
+  :defer t
   :commands (multi-term-get-buffer
              multi-term-internal)
   :bind ("C-z" . jens/multi-term)
@@ -2601,6 +2602,7 @@ initial search query."
 ;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package blog
+  :defer t
   :functions (blog-publish)
   :load-path "~/vault/blog/src/")
 
@@ -2630,8 +2632,8 @@ initial search query."
 
 (use-package etmux
   :straight (etmux :repo "git@github.com:jensecj/etmux.el.git")
-  :demand t
-  :commands (etmux-send-command jens/etmux-jackin)
+  :defer t
+  :commands (jens/etmux-jackin)
   :config
   (defun jens/etmux-jackin ()
     (interactive)
