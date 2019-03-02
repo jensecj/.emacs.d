@@ -2364,7 +2364,7 @@ clipboard."
         erc-insert-timestamp-function 'erc-insert-timestamp-left
         erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
 
-  (setq erc-user-full-name "Jens Christian Jensen")
+  (setq erc-user-full-name user-full-name)
   (erc-hl-nicks-enable)
 
   (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs" "##java")))
