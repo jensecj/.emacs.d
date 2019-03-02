@@ -1418,10 +1418,6 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   ;; TODO: fix indentation
   )
 
-;; homemade
-(use-package botcode-mode
-  :mode "\\.bot\\'")
-
 ;; from repos
 (use-package cmake-mode :ensure t :mode "\\CmakeLists.txt\\'")
 (use-package dockerfile-mode :ensure t :mode "\\Dockerfile\\'")
@@ -2880,13 +2876,6 @@ times."
 (global-set-key (kbd "<f12>") #'jens/inspect-variable-at-point)
 
 ;; Completion that uses many different methods to find options.
-;; (global-set-key (kbd "C-.") 'hippie-expand-no-case-fold)
-;; (global-set-key (kbd "C-:") 'hippie-expand-lines)
-;; (global-set-key (kbd "C-,") 'completion-at-point)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;
-;; experimantal things ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (load (concat my-emacs-dir "experimental.el"))
 
