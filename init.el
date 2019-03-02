@@ -2203,7 +2203,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
    ("M-h" . fold-this)
    (:map emacs-lisp-mode-map ("M-h" . fold-this-sexp)))
   :custom-face
-  (fold-this-overlay ((t (:foreground nil :weight bold :background "#5f5f5f")))))
+  (fold-this-overlay ((t (:foreground nil :background "#5f5f5f")))))
 
 (use-package which-key
   :ensure t
@@ -2868,8 +2868,7 @@ times."
 (global-set-key (kbd "<f12>") #'jens/inspect-variable-at-point)
 
 ;; Completion that uses many different methods to find options.
-
-(load (concat my-emacs-dir "experimental.el"))
+(global-set-key (kbd "C-.") 'hippie-expand)
 
 (msg-success (format "Emacs initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
 
