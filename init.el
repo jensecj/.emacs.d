@@ -109,7 +109,10 @@
 ;;;;;;;;;;;;;;
 
 ;; location of emacs source files
-(setq source-directory "/home/jens/.aur/emacs-git-src/")
+(let ((src-dir "/home/jens/.aur/emacs-git-src/"))
+  (if (f-exists-p src-dir)
+      (setq source-directory src-dir)
+    (msg-warning "Unable to locate emacs source directory.")))
 
 ;; hide the splash screen
 (setq inhibit-startup-message t)
@@ -264,6 +267,8 @@
 ;; authentication and security ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(setq auth-sources '("~/vault/authinfo.gpg" "~/.netrc"))
+
 ;; gpg and auth
 (use-package epa-file
   :demand t
@@ -291,8 +296,6 @@
   (setq gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset))
   ;; (cancel-timer gpg-reset-timer)
   )
-
-(setq auth-sources '("~/vault/authinfo.gpg" "~/.netrc"))
 
 (defun jens/kill-idle-gpg-buffers ()
   "Kill .gpg buffers after they have not been used for 60
@@ -713,7 +716,7 @@ not in the overlay-map"
     (prin1 data (current-buffer))))
 
 (defun jens/load-from-file (filename)
-  "Load lisp object DATA from FILENAME."
+  "Load lisp object from FILENAME."
   (when (file-exists-p filename)
     (with-temp-buffer
       (insert-file-contents filename)
@@ -736,16 +739,6 @@ not in the overlay-map"
 ;; misc defuns ;;
 ;;;;;;;;;;;;;;;;;
 
-(defun jens/is-online-p ()
-  "Return a non-nil value if we have a network connection."
-  (if (and (functionp 'network-interface-list)
-           (network-interface-list))
-      (-some (lambda (iface) (unless (equal "lo" (car iface))
-                               (member 'up (first (last (network-interface-info
-                                                         (car iface)))))))
-             (network-interface-list))
-    t))
-
 (defun jens/insert-todays-date ()
   "Insert the current date at point."
   (interactive)
@@ -756,13 +749,6 @@ not in the overlay-map"
   (interactive)
   (insert (format-time-string "%Y%m%d")))
 
-(defun jens/processor-count ()
-  "Return the number of logical processors of the system."
-  (when (file-exists-p "/proc/cpuinfo")
-    (with-temp-buffer
-      (insert-file-contents "/proc/cpuinfo")
-      (how-many "^processor[[:space:]]+:"))))
-
 (defun jens/goto-msg-buffer ()
   "View the *Messages* buffer, return to previous buffer when
 done."
@@ -771,21 +757,23 @@ done."
     (goto-char (point-max))
     (view-buffer (current-buffer))))
 
-(defun goto-next-line-with-same-indentation ()
+(defun jens/goto-next-line-with-same-indentation ()
   "Jump to the next line with the same indentation level as the
 current line."
   (interactive)
   (back-to-indentation)
-  (re-search-forward (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]")
-                     nil nil (if (= 0 (current-column)) 2 1))
+  (re-search-forward
+   (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]")
+   nil nil (if (= 0 (current-column)) 2 1))
   (back-to-indentation))
 
-(defun goto-prev-line-with-same-indentation ()
+(defun jens/goto-prev-line-with-same-indentation ()
   "Jump to a previous line with the same indentation level as the
 current line."
   (interactive)
   (back-to-indentation)
-  (re-search-backward (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
+  (re-search-backward
+   (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
   (back-to-indentation))
 
 (defun jens/function-def-string (fnsym)
@@ -1411,6 +1399,7 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   )
 
 ;; from repos
+(use-package lsp-mode :defer t :ensure t)
 (use-package cmake-mode :ensure t :mode "\\CmakeLists.txt\\'")
 (use-package dockerfile-mode :ensure t :mode "\\Dockerfile\\'")
 (use-package gitconfig-mode :ensure t :mode "\\.gitconfig\\'")
@@ -1421,16 +1410,17 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
 (use-package scss-mode :ensure t :mode "\\.scss\\'")
 (use-package tuareg :ensure t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
 
-(use-package lsp-mode
-  :defer t
-  :ensure t)
-
 (use-package rust-mode
   :ensure t
-  :bind (:map rust-mode-map
-              ("C-c n" . rust-format-buffer)
-              ("M-," . nil) ("M-." . nil) ("M--" . nil))
-  :mode "\\.rs\\'")
+  :defer t
+  :bind
+  (:map rust-mode-map
+        ("C-c n" . rust-format-buffer))
+  :mode "\\.rs\\'"
+  :config
+  (unbind-key "M-," rust-mode-map)
+  (unbind-key "M-." rust-mode-map)
+  (unbind-key "M--" rust-mode-map))
 
 (use-package clojure-mode
   :ensure t
@@ -1441,13 +1431,13 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
              cider-try-symbol-at-point)
   :bind
   (:map clojure-mode-map
-        ("C-+" . jens/company-clojure-quickhelp-at-point)
-        ("M-," . nil) ("M-." . nil) ("M--" . nil))
+        ("C-+" . jens/company-clojure-quickhelp-at-point))
   :config
-  (company-mode +1)
-  (add-to-list 'company-backends 'company-capf)
+  (unbind-key "M-," clojure-mode-map)
+  (unbind-key "M-." clojure-mode-map)
+  (unbind-key "M--" clojure-mode-map)
 
-  ;; clojure emacs power settings
+  (company-mode +1)
   (cider-mode +1)
   (clj-refactor-mode +1)
 
@@ -1455,13 +1445,7 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   ;;       "(do (require 'figwheel-sidecar.repl-api)
   ;;        (figwheel-sidecar.repl-api/start-figwheel!)
   ;;        (figwheel-sidecar.repl-api/cljs-repl))")
-
-  ;; TODO: create doc-at-point entry for clojure
-  (defun jens/company-clojure-quickhelp-at-point ()
-    (interactive)
-    (cider-try-symbol-at-point "symbol to show doc for" #'cider-create-doc-buffer)
-    (popup-tip (with-current-buffer "*cider-doc*"
-                 (buffer-substring-no-properties (point-min) (point-max))))))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; extensions to major modes ;;
@@ -1470,12 +1454,12 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
 (use-package slime
   :defer t
   :ensure t
-  :commands (qlot-slime slime-start)
+  :commands (jens/qlot-slime slime-start)
   :config
   (setq inferior-lisp-program "sbcl")
   (setq slime-contribs '(slime-fancy))
 
-  (defun qlot-slime (directory)
+  (defun jens/qlot-slime (directory)
     "Start Common Lisp REPL using project-local libraries via
 `roswell' and `qlot'."
     (interactive (list (read-directory-name "Project directory: ")))
@@ -1506,7 +1490,7 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   :defer t
   :hook (clojure-mode . clj-refactor-mode)
   :config
-  ;; dont warn on refactor evals
+  ;; don't warn on refactor evals
   (setq cljr-warn-on-eval nil))
 
 (use-package geiser
@@ -1520,9 +1504,6 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   :ensure t
   :defer t
   :after rust-mode
-  :bind
-  (:map racer-mode-map
-        ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :hook ((rust-mode . racer-mode)
          (racer-mode . eldoc-mode)))
 
@@ -1532,12 +1513,6 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   :delight " elpy "
   :commands (elpy-goto-definition)
   :hook (python-mode . elpy-mode)
-  :bind
-  (:map elpy-mode-map
-        ("<C-up>" . nil)
-        ("<C-down>" . nil)
-        ("C-c C-c" . nil)
-        ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :custom
   (elpy-modules
    '(elpy-module-sane-defaults
@@ -1576,9 +1551,6 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   :defer t
   :delight " ggtags "
   :hook (c++-mode . ggtags-mode)
-  :bind
-  (:map ggtags-mode-map
-        ("M-," . nil) ("M-." . nil) ("M--" . nil))
   :custom-face
   (ggtags-highlight ((t ()))))
 
@@ -1837,7 +1809,7 @@ title and duration."
   :functions (jens/smart-jump-find-references-with-rg
               smart-jump-refs-search-rg
               jens/select-rg-window)
-  :bind
+  :bind*
   (("M-." . smart-jump-go)
    ("M-," . smart-jump-back)
    ("M--" . smart-jump-references))
@@ -2584,7 +2556,7 @@ initial search query."
   :bind
   (("M-p p" . views-push)
    ("M-p k" . views-pop)
-   ("M-p b" . views-switch)))
+   ("M-v" . views-switch)))
 
 (use-package sane-windows
   :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
@@ -2674,9 +2646,7 @@ _c_: capture with prompt                  ^ ^                               ^ ^
 
     ("f" #'jens/org-today-refile/body :exit t)
 
-    ("q" nil "quit"))
-
-  )
+    ("q" nil "quit")))
 
 (use-package doc-at-point
   :straight (doc-at-point :repo "git@github.com:jensecj/doc-at-point.el.git")
@@ -2764,15 +2734,15 @@ times."
 (global-set-key (kbd "<menu>") (lambda () (interactive) (insert "~")))
 
 ;; Easily mark the entire buffer
-(global-set-key (kbd "C-x a") 'mark-whole-buffer)
+(bind-key* "C-x a" 'mark-whole-buffer)
 
 ;; Quit emacs, mnemonic is C-x REALLY QUIT
-(global-set-key (kbd "C-x r q") 'save-buffers-kill-terminal)
+(bind-key* "C-x r q" 'save-buffers-kill-terminal)
 ;; Kill emacs, mnemonic is C-x REALLY KILL
-(global-set-key (kbd "C-x r k") 'save-buffers-kill-emacs)
+(bind-key* "C-x r k" 'save-buffers-kill-emacs)
 
 ;; don't close emacs
-(global-set-key (kbd "C-x C-c") nil)
+(unbind-key "C-x C-c")
 
 (define-key help-map (kbd "M-f") #'find-function)
 (define-key help-map (kbd "M-v") #'find-variable)
@@ -2790,76 +2760,76 @@ times."
 (global-set-key (kbd "C-x b") 'ibuffer)
 
 ;; Scroll the buffer without moving the point (unless we over-move)
-(global-set-key
- (kbd "C-<up>")
+(bind-key*
+ "C-<up>"
  (lambda ()
    (interactive)
    (scroll-down 5)))
 
-(global-set-key
- (kbd "C-<down>")
+(bind-key*
+ "C-<down>"
  (lambda ()
    (interactive)
    (scroll-up 5)))
 
 ;; dont use the mouse
-(global-set-key (kbd "<down-mouse-1>") nil)
-(global-set-key (kbd "<down-mouse-2>") nil)
-(global-set-key (kbd "<down-mouse-3>") nil)
-(global-set-key (kbd "C-<down-mouse-1>") nil)
-(global-set-key (kbd "C-<down-mouse-2>") nil)
-(global-set-key (kbd "C-<down-mouse-3>") nil)
-(global-set-key (kbd "S-<down-mouse-1>") nil)
-(global-set-key (kbd "S-<down-mouse-2>") nil)
-(global-set-key (kbd "S-<down-mouse-3>") nil)
-(global-set-key (kbd "M-<down-mouse-1>") nil)
-(global-set-key (kbd "M-<down-mouse-2>") nil)
-(global-set-key (kbd "M-<down-mouse-3>") nil)
+(unbind-key "<down-mouse-1>")
+(unbind-key "<down-mouse-2>")
+(unbind-key "<down-mouse-3>")
+(unbind-key "C-<down-mouse-1>")
+(unbind-key "C-<down-mouse-2>")
+(unbind-key "C-<down-mouse-3>")
+(unbind-key "S-<down-mouse-1>")
+(unbind-key "S-<down-mouse-2>")
+(unbind-key "S-<down-mouse-3>")
+(unbind-key "M-<down-mouse-1>")
+(unbind-key "M-<down-mouse-2>")
+(unbind-key "M-<down-mouse-3>")
 
 ;; Disable suspend-frame
-(global-set-key (kbd "C-x C-z") nil)
+(unbind-key "C-x C-z")
 
-;; Make Home and End to to the top and bottom of the buffer, we have C-a/e
-(global-set-key (kbd "<home>") 'beginning-of-buffer)
-(global-set-key (kbd "<end>") 'end-of-buffer)
+;; Make Home and End go to the top and bottom of the buffer, we have C-a/e for lines
+(bind-key* "<home>" 'beginning-of-buffer)
+(bind-key* "<end>" 'end-of-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybindings for defuns ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Better C-a
-(global-set-key (kbd "C-a") 'jens/smart-beginning-of-line)
+(bind-key* "C-a" 'jens/smart-beginning-of-line)
 
-(global-set-key (kbd "M-<prior>") #'jens/sexp-up)
-(global-set-key (kbd "M-<next>") #'jens/sexp-down)
+(bind-key* "M-<prior>" #'jens/sexp-up)
+(bind-key* "M-<next>" #'jens/sexp-down)
 
 ;; Join lines (pull the below line up to this one, or the above one down)
-(global-set-key (kbd "M-j") 'jens/join-region-or-line)
-(global-set-key (kbd "M-J") 'jens/join-line-down)
+(bind-key* "M-j" 'jens/join-region-or-line)
+(bind-key* "M-J" 'jens/join-line-down)
 
 ;; Comment/uncomment block
-(global-set-key (kbd "C-c c") 'jens/comment-uncomment-region-or-line)
+(bind-key* "C-c c" 'jens/comment-uncomment-region-or-line)
 
 ;; Fix spaces / tabs
-(global-set-key (kbd "C-c n") 'jens/cleanup-buffer)
+(bind-key* "C-c n" 'jens/cleanup-buffer)
 
 ;; Enable backwards killing of lines
-(global-set-key (kbd "C-S-k") 'jens/kill-to-beginning-of-line)
+(bind-key* "C-S-k" 'jens/kill-to-beginning-of-line)
 
 ;; Force save a file, mnemonic is C-x TOUCH
 (global-set-key (kbd "C-x C-t") 'jens/touch-buffer-file)
 
 ;; Copy current line / region
-(global-set-key (kbd "M-w") 'jens/save-region-or-current-line)
-(global-set-key (kbd "C-w") 'jens/kill-region-or-current-line)
+(bind-key* "M-w" 'jens/save-region-or-current-line)
+(bind-key* "C-w" 'jens/kill-region-or-current-line)
 
 ;; jump between indentation levels
-(global-set-key (kbd "s-n") 'goto-next-line-with-same-indentation)
-(global-set-key (kbd "s-p") 'goto-prev-line-with-same-indentation)
+(bind-key* "s-n" 'jens/goto-next-line-with-same-indentation)
+(bind-key* "s-p" 'jens/goto-prev-line-with-same-indentation)
 
-(global-set-key (kbd "C-M-k") #'jens/copy-symbol-at-point)
+(bind-key* "C-M-k" #'jens/copy-symbol-at-point)
 
-(global-set-key (kbd "M-r") #'jens/goto-repo)
+(bind-key* "M-r" #'jens/goto-repo)
 
 (global-set-key (kbd "<f12>") #'jens/inspect-variable-at-point)
 
