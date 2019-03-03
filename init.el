@@ -1546,6 +1546,9 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
   (:map emacs-lisp-mode-map
         ("M-<return>" . emr-show-refactor-menu)))
 
+(use-package package-lint :ensure t :defer t :commands (package-lint-current-buffer))
+(use-package flycheck-package :ensure t :defer t :commands (flycheck-package-setup))
+
 (use-package ggtags
   :ensure t
   :defer t
