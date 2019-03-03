@@ -129,12 +129,8 @@
 ;; don't blink the cursor
 (blink-cursor-mode -1)
 
-;; highlight current line, with a low-contrast color, and transparent foreground
-;; (so it does not mess with syntax highlighting)
+;; always highlight current line
 (global-hl-line-mode 1)
-(set-face-background 'hl-line "gray30")
-(set-face-foreground 'highlight nil)
-(set-face-underline 'highlight nil)
 
 ;; allow pasting selection outside of Emacs
 (setq select-enable-clipboard t)
@@ -188,10 +184,6 @@
 ;; display line and column numbers in mode-line
 (setq line-number-mode t)
 (setq column-number-mode t)
-
-;; make the mode-line not look weird
-(set-face-attribute 'mode-line nil :box nil)
-(set-face-attribute 'mode-line-inactive nil :box nil)
 
 ;; lines should be 80 characters wide
 (setq-default fill-column 80)
@@ -2572,6 +2564,10 @@ initial search query."
   :config
   (load-theme 'zenburn t)
   :custom-face
+  (mode-line ((t (:box nil))))
+  (mode-line-inactive ((t (:box nil))))
+  (hl-line ((t (:background "gray30"))))
+  (highlight ((t (:background nil :foreground nil))))
   (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;
