@@ -365,6 +365,7 @@ seconds."
     (switch-to-buffer newbuf)
     (goto-char oldpoint)))
 
+;; TODO: use reformatter.el?
 (defun jens/cleanup-buffer ()
   "Perform a bunch of operations on the white space content of a buffer.
 Including indent-buffer, which should not be called automatically
@@ -574,7 +575,7 @@ buffer."
          (name (f-no-ext file))
          (p))
     (with-current-buffer (find-file-noselect path)
-      (insert (format ";;; %s. -*- lexical-binding: t; -*-\n\n" file))
+      (insert (format ";;; %s. --- -*- lexical-binding: t; -*-\n\n" file))
       (insert (format ";; Copyright (C) %s %s\n\n"
                       (format-time-string "%Y")
                       user-full-name))
@@ -807,12 +808,12 @@ current line."
   (interactive)
   (let* ((repos (jens/load-from-file (concat user-emacs-directory "repos.el")))
          (repos-propped
-          (-map #'(lambda (r)
-                    (let ((last-part (-last-item (f-split (car r)))))
-                      (replace-regexp-in-string
-                       last-part
-                       #'(lambda (s) (propertize s 'face 'font-lock-keyword-face))
-                       (car r))))
+          (-map (lambda (r)
+                  (let ((last-part (-last-item (f-split (car r)))))
+                    (replace-regexp-in-string
+                     last-part
+                     (lambda (s) (propertize s 'face 'font-lock-keyword-face))
+                     (car r))))
                 repos))
          (pick (completing-read "Repo:" repos-propped)))
     (cond
@@ -947,8 +948,8 @@ current line."
 
   ;; save recentf file every 30s, but don't bother us about it
   (setq recentf-auto-save-timer
-        (run-with-idle-timer 30 t '(lambda ()
-                                     (shut-up (recentf-save-list)))))
+        (run-with-idle-timer 30 t (lambda ()
+                                    (shut-up (recentf-save-list)))))
 
   (defun jens/recentf-cleanup (orig-fun &rest args)
     "Silence `recentf-auto-cleanup'."
