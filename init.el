@@ -250,6 +250,9 @@
 ;; save clipboard from other programs to kill-ring
 (setq save-interprogram-paste-before-kill t)
 
+;; always follow symlinks
+(setq vc-follow-symlinks t)
+
 ;; just give me a clean scratch buffer
 (setq initial-scratch-message "")
 
@@ -1262,7 +1265,7 @@ _j_: Java        ^ ^
     ("p" (jens/org-refile "today.org" "Python"))
     ("r" (jens/org-refile "today.org" "Rust"))
 
-    ("b" jens/org-today-refile/body "Back to refiling hydra" :exit t)
+    ("x" jens/org-today-refile/body "Back to refiling hydra" :exit t)
     ("z" org-refile-goto-last-stored "Jump to last refile")
     ("q" nil "quit"))
 
@@ -1691,6 +1694,7 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
 (use-package yasnippet
   :ensure t
   :defer t
+  :diminish yas-minor-mode
   :bind ("C-<return>" . yas-expand)
   :config
   (setq yas-snippet-dirs (list (concat user-emacs-directory "snippets")))
