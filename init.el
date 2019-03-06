@@ -2117,7 +2117,8 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
   :ensure t
   :commands fullframe/maybe-restore-configuration
   :config
-  (fullframe magit-status magit-mode-quit-window))
+  (fullframe magit-status magit-mode-quit-window)
+  (fullframe list-packages quit-window))
 
 (use-package magit
   :ensure t
