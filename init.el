@@ -449,6 +449,11 @@ line is killed."
     (save-excursion
       (kill-whole-line arg))))
 
+(defun jens/clean-current-line ()
+  "Delete the contents of the current line."
+  (interactive)
+  (delete-region (line-beginning-position) (line-end-position)))
+
 (defun jens/join-region ()
   "Join all lines in a region into a single line."
   (interactive)
