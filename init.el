@@ -1377,7 +1377,10 @@ _j_: Java        ^ ^
          ("\\.zshrc\\'" . shell-script-mode)
          ("\\.zshenv\\'" . shell-script-mode)
          ("\\.zprofile\\'" . shell-script-mode)
-         ("\\.PKGBUILD\\'" . shell-script-mode)))
+         ("\\.PKGBUILD\\'" . shell-script-mode))
+  :config
+  (add-hook 'sh-mode-hook #'flymake-mode)
+  (add-hook 'sh-mode-hook #'flycheck-mode))
 
 (use-package scheme
   :defer t
@@ -1584,6 +1587,12 @@ _j_: Java        ^ ^
 
 (use-package rtags :ensure t :defer t :disabled t)
 (use-package clang-format :ensure t :defer t)
+
+(use-package flymake-shellcheck
+  :ensure t
+  :commands flymake-shellcheck-load
+  :init
+  (add-hook 'sh-mode-hook 'flymake-shellcheck-load))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; auto completion ;;
