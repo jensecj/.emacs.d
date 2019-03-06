@@ -338,18 +338,18 @@ seconds."
              (get-buffer bufname)))
     (get-buffer-create bufname)))
 
-(defun jens/create-scratch-buffer nil
+(defun jens/create-scratch-buffer ()
   "Create a new scratch buffer to work in.  (named *scratch* -
 *scratch<n>*)."
   (interactive)
   (let ((scratch-buf (jens/new-scratch-buffer))
-        (initial-content (if (region-active-p)
+        (initial-content (if (use-region-p)
                              (buffer-substring (region-beginning) (region-end)))))
     (xref-push-marker-stack)
     (switch-to-buffer scratch-buf)
-    (insert initial-content)
+    (when initial-content (insert initial-content))
     (goto-char (point-min))
-    (funcall initial-major-mode)))
+    (emacs-lisp-mode)))
 
 (defun jens/clean-view ()
   "Create a scratch buffer, and make it the only buffer visible."
