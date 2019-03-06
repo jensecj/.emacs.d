@@ -1191,6 +1191,23 @@ number input"
    ("M-<prior>" . org-move-subtree-up)
    ("C-c n" . jens/org-indent))
   :config
+  (defun jens/org-outline ()
+    "Jump to a level 1 heading in an org-buffer."
+    (interactive)
+    (require 'org-ql)
+
+    (let* ((level-1-entries (org-ql (buffer-file-name) (level 1)))
+           (cleaned-entries (-map (lambda (e) (cadr e)) level-1-entries))
+           (headlines (-map (lambda (h)
+                              (cons (plist-get h ':raw-value)
+                                    (plist-get h ':begin)))
+                            cleaned-entries))
+           ;; don't auto sort candidates, they're in order of appearance.
+           (ivy-sort-functions-alist nil)
+           (pick (completing-read "Jump to heading: " headlines))
+           (location (cdr (assoc pick headlines))))
+      (goto-char location)))
+
   (defun jens/org-indent ()
     "Indent line or region in org-mode."
     (interactive)
