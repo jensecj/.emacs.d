@@ -714,6 +714,16 @@ not in the overlay-map"
       (goto-char (point-min))
       (replace-string from to))))
 
+(defun jens/foreach-line-in-region (fn &optional beg end)
+  "Call FN on each line in region (BEG END)."
+  (let ((beg (or beg (region-beginning)))x
+        (end (or end (region-end))))
+    (goto-char beg)
+    (beginning-of-line)
+    (while (< (point) end)
+      (funcall fn)
+      (forward-line))))
+
 (defun jens/save-to-file (data filename)
   "Save lisp object DATA to FILENAME."
   (with-temp-file filename
