@@ -2544,6 +2544,7 @@ initial search query."
   :demand t
   :commands so-long-enable
   :config
+  (setq so-long-threshold 500)
   (so-long-enable))
 
 (use-package treemacs
@@ -2572,7 +2573,7 @@ initial search query."
 
 (use-package blog
   :defer t
-  :functions (blog-publish)
+  :commands (blog-publish)
   :load-path "~/vault/blog/src/")
 
 (use-package views
@@ -2846,6 +2847,7 @@ times."
 ;; Copy current line / region
 (bind-key* "M-w" 'jens/save-region-or-current-line)
 (bind-key* "C-w" 'jens/kill-region-or-current-line)
+(bind-key* "C-M-w" 'jens/clean-current-line)
 
 ;; jump between indentation levels
 (bind-key* "s-n" 'jens/goto-next-line-with-same-indentation)
