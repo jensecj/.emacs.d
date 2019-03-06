@@ -1266,13 +1266,12 @@ number input"
 ^^^^^^^^-------------------
 _r_: Rust        _g_: Git
 _c_: C/C++       _l_: Lisp
-_C_: Clojure     _e_: Emacs
-_p_: Python      _m_: ML
+_C_: Clojure     _m_: ML
+_p_: Python      ^ ^
 _j_: Java        ^ ^
 "
     ("c" (jens/org-refile "today.org" "C/C++"))
     ("C" (jens/org-refile "today.org" "Clojure"))
-    ("e" (jens/org-refile "today.org" "Emacs"))
     ("g" (jens/org-refile "today.org" "Git"))
     ("j" (jens/org-refile "today.org" "Java"))
     ("l" (jens/org-refile "today.org" "Lisp"))
@@ -1286,13 +1285,13 @@ _j_: Java        ^ ^
 
   (defhydra jens/org-today-refile (:foreign-keys run)
     "
-^Bindings^         ^ ^                     ^ ^                         ^ ^
-^^^^^^^^--------------------------------------------------------------------------------
-_a_: AI            _d_: DevOps             _o_: Other Talks            _t_: Tech Talks
-_A_: Algorithms    _l_: Linux              _p_: Programming            _T_: TED Talks
-_b_: Business      _m_: Machine Learning   _P_: Programming Languages  _w_: Workd
-_c_: Climate       _M_: Math               _s_: Computer Science       _W_: Web
-_C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-Hydra
+^Bindings^         ^ ^                     ^ ^                         ^ ^                   ^ ^
+^^^^^^^^-------------------------------------------------------------------------------------------------
+ _a_: AI            _d_: DevOps            _n_: Next                    _S_: Statistics     _x_: PL-Hydra
+ _A_: Algorithms    _e_: Emacs             _o_: Other Talks             _t_: Tech Talks
+ _b_: Business      _l_: Linux             _p_: Programming             _T_: TED Talks
+ _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Workd
+ _C_: Courses       _M_: Math              _s_: Computer Science        _W_: Web
 "
     ("a" (jens/org-refile "today.org" "AI"))
     ("A" (jens/org-refile "today.org" "Algorithms"))
@@ -1300,6 +1299,7 @@ _C_: Courses       _n_: Next               _S_: Statistics             _x_: PL-H
     ("c" (jens/org-refile "today.org" "Climate"))
     ("C" (jens/org-refile "today.org" "Courses"))
     ("d" (jens/org-refile "today.org" "DevOps"))
+    ("e" (jens/org-refile "today.org" "Emacs"))
     ("l" (jens/org-refile "today.org" "Linux"))
     ("m" (jens/org-refile "today.org" "Machine Learning"))
     ("M" (jens/org-refile "today.org" "Math"))
