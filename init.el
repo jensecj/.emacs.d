@@ -1441,24 +1441,16 @@ _j_: Java        ^ ^
         ("M-." . nil)
         ("M--" . nil)))
 
-(use-package c++-mode
-  :defer t
-  :bind
+(use-package cc-mode
+  :bind*
+  (:map java-mode-map
+        ("C-c C-c" . projectile-compile-project))
   (:map c++-mode-map
+        ("C-c C-c" . projectile-compile-project)
         ("C-c n" . clang-format-buffer))
   :config
-  (unbind-key "C-c C-c" c++-mode-map)
-  (unbind-key "M-," c++-mode-map)
-  (unbind-key "M-." c++-mode-map)
-  (unbind-key "M--" c++-mode-map))
-
-(use-package java-mode
-  :defer t
-  :config
-  (unbind-key "C-c C-c" java-mode-map)
-  (unbind-key "M-," java-mode-map)
-  (unbind-key "M-." java-mode-map)
-  (unbind-key "M--" java-mode-map))
+  (dolist (k '("\M-," "\M-." "\M--"))
+    (bind-key k nil c-mode-base-map)))
 
 (use-package make-mode
   :config
