@@ -709,17 +709,6 @@ not in the overlay-map"
       (insert dashed)
       (goto-char p))))
 
-(defun jens/replace-string-in-buffer ()
-  "Replace occurance of string in the entire buffer."
-  (interactive)
-  (let ((from (if (region-active-p)
-                  (buffer-substring (region-beginning) (region-end))
-                (completing-read "Replace: " '())))
-        (to (completing-read "Replace with: " '())))
-    (save-excursion
-      (goto-char (point-min))
-      (replace-string from to))))
-
 (defun jens/foreach-line-in-region (fn &optional beg end)
   "Call FN on each line in region (BEG END)."
   (let ((beg (or beg (region-beginning)))x
@@ -988,6 +977,31 @@ current line."
 
   ;; auto refresh buffers
   (global-auto-revert-mode 1))
+
+(use-package replace
+  :bind
+  (("C-c r" . jens/replace)
+   ("C-c q" . jens/query-replace))
+  :config
+  (defun jens--replace (fn)
+    "Get replace arguments and delegate to replace FN."
+    (let ((from (if (use-region-p)
+                    (buffer-substring (region-beginning) (region-end))
+                  (completing-read "Replace: " '())))
+          (to (completing-read "Replace with: " '())))
+      (deactivate-mark)
+      (save-excursion
+        (funcall fn from to nil (point-min) (point-max)))))
+
+  (defun jens/replace ()
+    "Replace occurance of regexp in the entire buffer."
+    (interactive)
+    (jens--replace #'replace-regexp))
+
+  (defun jens/query-replace ()
+    "Interactively replace occurance of regexp in the entire buffer."
+    (interactive)
+    (jens--replace #'query-replace-regexp)))
 
 ;; semantic analysis in supported modes (cpp, java, etc.)
 (use-package semantic
@@ -2172,13 +2186,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
   :bind
   (("C-S-<up>" . move-text-up)
    ("C-S-<down>" . move-text-down)))
-
-(use-package visual-regexp-steroids
-  :ensure t
-  :defer t
-  :bind
-  (("C-c r" . vr/replace)
-   ("C-c q" . vr/query-replace)))
 
 (use-package fullframe
   :ensure t
