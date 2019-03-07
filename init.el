@@ -1732,6 +1732,27 @@ _j_: Java        ^ ^
 (use-package popup :ensure t)
 (use-package shut-up :ensure t)
 
+(use-package spinner
+  :ensure t
+  :config
+  (defun jens/package-spinner-start (&rest _arg)
+    "Create and start package-spinner."
+    (with-current-buffer (get-buffer "*Packages*")
+      (spinner-start 'progress-bar 2)))
+
+  (defun jens/package-spinner-stop (&rest _arg)
+    "Stop the package-spinner."
+    (with-current-buffer (get-buffer "*Packages*")
+      (spinner-stop)))
+
+  ;; create a spinner when launching `list-packages' and waiting for archive refresh
+  (advice-add #'list-packages :after #'jens/package-spinner-start)
+  (add-hook 'package--post-download-archives-hook #'jens/package-spinner-stop)
+
+  ;; create a spinner when updating packages using `U x'
+  (advice-add #'package-menu--perform-transaction :before #'jens/package-spinner-start)
+  (advice-add #'package-menu--perform-transaction :after #'jens/package-spinner-stop))
+
 (use-package yasnippet
   :ensure t
   :defer t
