@@ -1006,6 +1006,34 @@ current line."
   (global-semantic-idle-scheduler-mode -1)
   (semantic-mode -1))
 
+(use-package compile
+  :bind
+  (("M-g n" . jens/next-error)
+   ("M-g p" . jens/previous-error))
+  :commands (jens/next-error jens/previous-error)
+  :config
+  ;; stop scrolling compilation buffer when encountering an error
+  (setq compilation-scroll-output 'first-error)
+  ;; wrap lines
+  (add-hook 'compilation-mode-hook 'visual-line-mode)
+
+  (defhydra jens/goto-error-hydra ()
+    "Hydra for navigating between errors."
+    ("n" #'next-error "next error")
+    ("p" #'previous-error "previous error"))
+
+  (defun jens/next-error ()
+    "Go to next error in buffer, and start goto-error-hydra."
+    (interactive)
+    (next-error)
+    (jens/goto-error-hydra/body))
+
+  (defun jens/previous-error ()
+    "Go to previous error in buffer, and start goto-error-hydra."
+    (interactive)
+    (previous-error)
+    (jens/goto-error-hydra/body)))
+
 (use-package display-line-numbers
   :defer t
   :commands display-line-numbers-mode
