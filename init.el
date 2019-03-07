@@ -16,7 +16,7 @@
 (tooltip-mode -1)
 
 ;; directories for elisp things
-(defconst user-emacs-elpa-dir (concat user-emacs-directory "elpa"))
+(defconst user-emacs-elpa-dir (concat user-emacs-directory "elpa/"))
 (defconst user-emacs-lisp-dir (concat user-emacs-directory "lisp/"))
 
 ;; add user directories to the load-path
@@ -60,17 +60,24 @@
   (load bootstrap-file nil 'nomessage))
 
 ;; functional things, -map, -concat, etc
-(use-package dash :straight t)
-(use-package dash-functional :straight t :demand t)
+(use-package dash
+  :straight (dash :host github :repo "magnars/dash.el"
+                  :fork (:host github :repo "jensecj/dash.el")))
 
 ;; string things, s-trim, s-replace, etc.
-(use-package s :straight t)
+(use-package s
+  :straight (s :host github :repo "magnars/s.el"
+               :fork (:host github :repo "jensecj/s.el")))
 
 ;; file-system things, f-exists-p, f-base, etc.
-(use-package f :straight t :ensure t)
+(use-package f
+  :straight (f :host github :repo "rejeep/f.el"
+               :fork (:host github :repo "jensecj/f.el")))
 
 ;; a great hash-table wrapper.
-(use-package ht :straight t)
+(use-package ht
+  :straight (ht :host github :repo "Wilfred/ht.el"
+                :fork (:host github :repo "jensecj/ht.el")))
 
 (defun jens/init-fonts ()
   "Setup font configuration for new frames."
@@ -624,22 +631,25 @@ buffer."
 (defun jens/inspect-variable-at-point (&optional arg)
   "Inspect variable at point."
   (interactive "P")
-  (when-let* ((sym (symbol-at-point))
-              (_ (boundp sym))
-              (value (symbol-value sym)))
+  (let* ((sym (symbol-at-point))
+         (value (cond
+                 ((fboundp sym) (symbol-function sym))
+                 ((boundp sym) (symbol-value sym)))))
     (if arg
         (with-current-buffer (get-buffer-create "*Inspect*")
           (let ((inhibit-read-only t))
             (erase-buffer)
             (pp value (current-buffer))
+            (emacs-lisp-mode)
             (goto-char 0))
           (view-buffer-other-window (current-buffer)))
 
       ;; TODO: create a posframe for all-purpose emacs things
 
       (funcall doc-at-point-display-fn
-               (with-output-to-string
-                 (pp value))))))
+               (doc-at-point-elisp--fontify-as-code
+                (with-output-to-string
+                  (pp value)))))))
 
 (defun jens/one-shot-keybinding (key command)
   "Set a keybinding that disappear once you press a key that is
@@ -944,10 +954,10 @@ current line."
   :config
   ;; TODO: maybe move to var directory?
   (setq recentf-save-file (recentf-expand-file-name (no-littering-expand-etc-file-name "recentf.el")))
-  (setq recentf-exclude (list user-emacs-elpa-dir
-                              no-littering-etc-directory
-                              no-littering-var-directory
-                              "COMMIT_EDITMSG"))
+  (setq recentf-exclude
+        `(,(regexp-quote (expand-file-name no-littering-var-directory))
+          "COMMIT_EDITMSG"))
+
   ;; save a bunch of recent items
   (setq recentf-max-saved-items 500)
 
@@ -1697,7 +1707,7 @@ _j_: Java        ^ ^
 (use-package company-box
   :ensure t
   :demand t
-  :after (company)
+  :after company
   :config
   (setq company-box-enable-icon t)
   (setq company-box-show-single-candidate t)
@@ -2062,6 +2072,7 @@ title and duration."
 
 (use-package hl-todo
   :ensure t
+  :demand t
   :diminish hl-todo-mode
   :commands global-hl-todo-mode
   :config
