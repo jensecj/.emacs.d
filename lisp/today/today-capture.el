@@ -39,11 +39,6 @@ Requires system tool `youtube-dl'."
         (s-trim raw-duration)
       "?")))
 
-
-(defcustom today-capture-tasks
-  '(read watch)
-  "Tasks that can be captured by `today-capture' functions")
-
 (defun today-capture--read-link-handler (link)
   "Handler for READ task. Expects CONTENT to be a link to some
 website. Will try to extract the number of lines on the website,
@@ -121,7 +116,7 @@ applying handler on ENTRY, otherwise return ENTRY."
 (defun today-capture-prompt ()
   "Captures a LINK into today's file, with the selected TASK."
   (interactive)
-  (letrec ((task (completing-read "task: " today-capture-tasks))
+  (letrec ((task (completing-read "task: " today-capture-handlers-alist))
            (entry (completing-read "entry: " '())))
     (today-capture task entry)))
 
