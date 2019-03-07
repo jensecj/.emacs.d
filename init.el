@@ -2333,9 +2333,10 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
   :after today
   :commands (elfeed elfeed-search-selected)
   :functions jens/elfeed-copy-link-at-point
-  :bind (:map elfeed-search-mode-map
-              ("t" . today-capture-elfeed-at-point)
-              ("c" . jens/elfeed-copy-link-at-point))
+  :bind
+  (:map elfeed-search-mode-map
+        ("t" . today-capture-elfeed-at-point)
+        ("c" . jens/elfeed-copy-link-at-point))
   :config
   (setq-default elfeed-search-filter "@1-month-ago +unread ")
 
@@ -2490,6 +2491,7 @@ paste for multi-term mode."
              ivy--get-window)
   :bind
   (("C-x C-b" . ivy-switch-buffer)
+   ("C-c C-r" . ivy-resume)
    :map ivy-minibuffer-map
    ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
    ("C-S-<return>" . ivy-immediate-done))
@@ -2514,14 +2516,15 @@ paste for multi-term mode."
 
   (add-to-list 'ivy-rich--display-transformers-list
                '(:columns
-                 ((ivy-rich-candidate (:width 30 :face font-lock-builtin-face))
+                 ((ivy-rich-candidate (:width 35 :face font-lock-builtin-face))
                   (ivy-rich-bookmark-context-string (:width 20 :face font-lock-string-face))
                   (ivy-rich-bookmark-filename (:face font-lock-doc-face)))))
 
   (add-to-list 'ivy-rich--display-transformers-list 'counsel-bookmark)
 
   (ivy-rich-mode -1)
-  (ivy-rich-mode 1))
+  (ivy-rich-mode +1))
+
 
 (use-package counsel
   :ensure t
@@ -2544,16 +2547,15 @@ paste for multi-term mode."
   :config
   (setq
    counsel-grep-base-command
-   "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
+   "rg -i -M 250 --no-heading --line-number --color never '%s' %s")
 
   (defun jens/ripgrep ()
     "Interactively search the current directory. Jump to result using ivy."
     (interactive)
     (let ((counsel-ag-base-command counsel-rg-base-command)
-          (initial-input (if (region-active-p)
+          (initial-input (if (use-region-p)
                              (buffer-substring-no-properties
-                              (region-beginning)
-                              (region-end)))))
+                              (region-beginning) (region-end)))))
       (deactivate-mark)
       (counsel-ag initial-input default-directory)))
 
