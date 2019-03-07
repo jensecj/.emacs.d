@@ -1594,7 +1594,7 @@ _j_: Java        ^ ^
   (setq highlight-thing-ignore-list '("nil" "t"))
   (setq highlight-thing-delay-seconds 0.5)
   (setq highlight-thing-case-sensitive-p nil)
-  (setq highlight-thing-exclude-thing-under-point t)
+  (setq highlight-thing-exclude-thing-under-point nil)
   (global-highlight-thing-mode +1)
   :custom-face
   (highlight-thing ((t (:background "#4f4f4f" :weight bold)))))
@@ -1740,7 +1740,6 @@ _j_: Java        ^ ^
 (use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
 (use-package flycheck :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
-(use-package loccur :straight t)
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
 (use-package dumb-jump :ensure t :defer t)
 (use-package counsel-tramp :ensure t :defer t)
@@ -2592,8 +2591,8 @@ initial search query."
 (use-package flyspell
   :ensure t
   :defer t
-  :functions enable-spellchecking
-  :commands (flyspell-mode
+  :commands (enable-spellchecking
+             flyspell-mode
              flyspell-prog-mode
              flyspell-buffer)
   :config
