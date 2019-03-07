@@ -2571,9 +2571,22 @@ initial search query."
   :ensure t
   :defer t
   :diminish projectile-mode
+  :bind
+  (("M-p c" . projectile-compile-project)
+   ("M-p t" . projectile-test-project)
+   ("M-p r" . projectile-run-project))
   :config
-  (setq projectile-known-projects-file (no-littering-expand-var-file-name "projectile-bookmarks"))
-  (setq projectile-cache-file (no-littering-expand-var-file-name "projectile.cache")))
+  (setq projectile-completion-system 'ivy)
+  (setq projectile-enable-caching t)
+
+  (projectile-register-project-type
+   'ant
+   '("build.xml")
+   :compile "ant build"
+   :test "ant test"
+   :run "ant run")
+
+  (projectile-mode +1))
 
 (use-package counsel-projectile
   :ensure t
