@@ -12,36 +12,6 @@
   (let ((title (today-capture--title-from-url url)))
     (org-make-link-string url title)))
 
-(defmacro today-capture--async-lambda (args symbols &rest body)
-  "Returns a lambda expression with ARGS, where each symbol in
-SYMBOLS is available for use and is bound to it's value at
-creation.  Symbols needs to be a list of variables or functions
-available globally."
-  (declare (indent defun))
-  (let ((vars (cl-remove-if-not 'boundp symbols))
-        (funcs (cl-remove-if-not 'functionp symbols)))
-    `(lambda ,args
-       ;; because async starts in a new emacs process, we have to load all the
-       ;; functionality we need,
-       (add-to-list 'load-path "/home/jens/.emacs.d/elpa/")
-       (add-to-list 'load-path "/home/jens/.emacs.d/lisp/today/")
-       (add-to-list 'load-path "/home/jens/.emacs.d/straight/builds/f/")
-
-       (let ((default-directory "/home/jens/.emacs.d/straight/repos/"))
-         (normal-top-level-add-subdirs-to-load-path))
-
-       (package-initialize)
-       (load "/home/jens/.emacs.d/straight/repos/f.el/f.el")
-
-       (require 'f)
-       (require 's)
-       (require 'dash)
-       (require 'today)
-
-       (let ,(mapcar (lambda (sym) (list sym (symbol-value sym))) vars)
-         ,@(mapcar (lambda (sym) `(fset ',sym ,(symbol-function sym))) funcs)
-         ,@body))))
-
 (defun today-capture--title-from-url (url)
   "Get the website title of URL."
   (let* ((html (org-web-tools--get-url url))
@@ -114,14 +84,20 @@ applying handler on ENTRY, otherwise return ENTRY."
 (defun today-capture-async (task entry)
   "Captures an ENTRY with TASK, into the file for DATE, asynchronously."
   (async-start
-   (today-capture--async-lambda () (task entry)
-     (today-capture--apply-handler task entry))
-   (today-capture--async-lambda (content) ()
-     (with-current-buffer (find-file-noselect (concat today-directory today-file))
-       (save-excursion
-         (goto-char (point-max))
-         (insert "** " content)
-         (save-buffer))))))
+   `(lambda ()
+      ,(async-inject-variables "^load-path$")
+      (require 'today)
+
+      (today-capture--apply-handler ',task ,entry))
+   `(lambda (result)
+      ,(async-inject-variables "^load-path$")
+      (require 'today)
+
+      (with-current-buffer (find-file-noselect (concat today-directory today-file))
+        (save-excursion
+          (goto-char (point-max))
+          (insert "** " result)
+          (save-buffer))))))
 
 ;;;###autoload
 (defun today-capture (task entry)
