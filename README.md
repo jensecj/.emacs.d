@@ -10,6 +10,11 @@ into a clean install of emacs, and it should set everything up
 properly, that's how I use it when I need to get something done on a
 new machine.
 
+# Notes
+
+I usually use the current master release, so somethings may not work with older
+emacsen.
+
 The keybindings are optimized for a
 [danish keyboard layout](http://fontmeme.com/images/danish-keyboard-550x183.png).
 
