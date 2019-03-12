@@ -16,8 +16,8 @@
 (tooltip-mode -1)
 
 ;; directories for elisp things
-(defconst user-emacs-elpa-dir (concat user-emacs-directory "elpa/"))
-(defconst user-emacs-lisp-dir (concat user-emacs-directory "lisp/"))
+(defconst user-emacs-elpa-dir (locate-user-emacs-file "elpa/"))
+(defconst user-emacs-lisp-dir (locate-user-emacs-file "lisp/"))
 
 ;; add user directories to the load-path
 (add-to-list 'load-path user-emacs-lisp-dir)
@@ -47,7 +47,7 @@
 ;;; make sure straight.el is installed
 (defvar bootstrap-version)
 (let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+       (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (msg-warning "straight.el was not found, installing.")
@@ -108,7 +108,7 @@
   (setq auto-save-list-file-prefix auto-save-dir))
 
 ;; keep emacs custom settings in a separate file, and load it if it exists.
-(setq custom-file (concat user-emacs-directory "custom.el"))
+(setq custom-file (locate-user-emacs-file "custom.el"))
 (if (file-exists-p custom-file)
     (load custom-file))
 
@@ -824,7 +824,7 @@ current line."
 (defun jens/goto-repo ()
   "Quickly jump to a repository, defined in repos.el"
   (interactive)
-  (let* ((repos (jens/load-from-file (concat user-emacs-directory "repos.el")))
+  (let* ((repos (jens/load-from-file (locate-user-emacs-file "repos.el")))
          (repos-propped
           (-map (lambda (r)
                   (let ((last-part (-last-item (f-split (car r)))))
@@ -843,7 +843,7 @@ current line."
   "Eval everything in secrets.el.gpg."
   (interactive)
   (with-current-buffer
-      (find-file-noselect (concat user-emacs-directory "secrets.el.gpg"))
+      (find-file-noselect (locate-user-emacs-file "secrets.el.gpg"))
     (eval-buffer)
     (kill-current-buffer)))
 
@@ -953,9 +953,11 @@ current line."
   :commands recentf-mode
   :config
   ;; TODO: maybe move to var directory?
-  (setq recentf-save-file (recentf-expand-file-name (no-littering-expand-etc-file-name "recentf.el")))
+  (setq recentf-save-file
+        (recentf-expand-file-name (no-littering-expand-etc-file-name "recentf.el")))
   (setq recentf-exclude
-        `(,(regexp-quote (expand-file-name no-littering-var-directory))
+        `(,(regexp-quote
+            (locate-user-emacs-file no-littering-var-directory))
           "COMMIT_EDITMSG"))
 
   ;; save a bunch of recent items
@@ -1803,7 +1805,7 @@ _j_: Java        ^ ^
   :diminish yas-minor-mode
   :bind ("C-<return>" . yas-expand)
   :config
-  (setq yas-snippet-dirs (list (concat user-emacs-directory "snippets")))
+  (setq yas-snippet-dirs (list (locate-user-emacs-file "snippets")))
   (setq yas-indent-line 'fixed)
   (setq yas-also-auto-indent-first-line t)
   (setq yas-also-indent-empty-lines t)
@@ -2372,7 +2374,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
     :group 'elfeed-faces)
   (push '(aggregate aggregate-elfeed-face) elfeed-search-face-alist)
 
-  (setq elfeed-feeds (jens/load-from-file (concat user-emacs-directory "elfeeds.el")))
+  (setq elfeed-feeds (jens/load-from-file (locate-user-emacs-file "elfeeds.el")))
 
   (defun jens/elfeed-copy-link-at-point ()
     "Copy the link of the elfeed entry at point to the
