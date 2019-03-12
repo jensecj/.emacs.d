@@ -2657,6 +2657,23 @@ initial search query."
   :config
   (setq posframe-mouse-banish nil))
 
+(use-package eros
+  :ensure t
+  :bind (:map slime-mode-map
+              ("C-x C-e" . jens/slime-eval-last-sexp))
+  :config
+  (eros-mode +1)
+
+  (defun jens/slime-eval-last-sexp ()
+    "Show the result of evaluating the last-sexp in an overlay."
+    (interactive)
+    (slime-eval-async `(swank:eval-and-grab-output ,(slime-last-expression))
+      (lambda (result)
+        (cl-destructuring-bind (output value) result
+          (let ((string (concat output value)))
+            (eros--eval-overlay string (point))))))
+    (slime-sync)))
+
 (use-package zenburn-theme
   :ensure t
   :demand t
