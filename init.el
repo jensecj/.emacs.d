@@ -1332,6 +1332,20 @@ number input"
       (org-refile arg nil (list headline file nil pos)))
     (switch-to-buffer (current-buffer)))
 
+  (defun jens/org-refile-this-file ()
+    "Refile entry at point to a headline in the current file."
+    (interactive)
+    (require 'org-ql)
+    (let* ((entries (org-ql (current-buffer) (level 1)))
+           (headlines (-map
+                       (lambda (e)
+                         (plist-get (cadr e) ':raw-value))
+                       entries))
+           (pick (completing-read "Refile to: " headlines nil t)))
+      (if (org-at-heading-p)
+          (jens/org-refile (buffer-file-name) pick)
+        (message "Point is not at a refilable ting"))))
+
   (defhydra jens/org-today-refile-pl (:foreign-keys run)
     "
 ^Bindings^        ^ ^
