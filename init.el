@@ -1378,7 +1378,7 @@ _j_: Java        ^ ^
  _a_: AI            _d_: DevOps            _n_: Next                    _S_: Statistics     _x_: PL-Hydra
  _A_: Algorithms    _e_: Emacs             _o_: Other Talks             _t_: Tech Talks
  _b_: Business      _l_: Linux             _p_: Programming             _T_: TED Talks
- _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Workd
+ _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Work
  _C_: Courses       _M_: Math              _s_: Computer Science        _W_: Web
 "
     ("a" (jens/org-refile "today.org" "AI"))

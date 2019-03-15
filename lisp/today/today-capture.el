@@ -77,7 +77,7 @@ applying handler on ENTRY, otherwise return ENTRY."
 
 ;;;###autoload
 (defun today-capture-async (task entry)
-  "Captures an ENTRY with TASK, into the file for DATE, asynchronously."
+  "Captures an ENTRY with TASK, into the the today-file, asynchronously."
   (async-start
    `(lambda ()
       ,(async-inject-variables "^load-path$")
