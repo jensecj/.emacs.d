@@ -1039,6 +1039,8 @@ current line."
    ("M-g p" . jens/previous-error))
   :commands (jens/next-error jens/previous-error)
   :config
+  ;; don't keep asking for the commands
+  (setq compilation-read-command nil)
   ;; stop scrolling compilation buffer when encountering an error
   (setq compilation-scroll-output 'first-error)
   ;; wrap lines
@@ -1422,6 +1424,7 @@ _j_: Java        ^ ^
            (org-archive-file-header-format "")
            (org-archive-save-context-info '(time))
            (org-archive-location (concat date-file "::")))
+      (f-touch date-file)
       (org-map-entries
        (lambda ()
          (org-archive-subtree)
@@ -2256,7 +2259,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
   :defer t
   :diminish undo-tree-mode
   :commands global-undo-tree-mode
-  :bind
+  :bind*
   (("C-x u" . undo-tree-visualize)
    ("C-_" . undo-tree-undo)
    ("M-_" . undo-tree-redo)
@@ -2684,7 +2687,8 @@ initial search query."
     (slime-eval-async `(swank:eval-and-grab-output ,(slime-last-expression))
       (lambda (result)
         (cl-destructuring-bind (output value) result
-          (let ((string (concat output value)))
+          (let ((string (s-replace "\n" " " (concat output value))))
+            (message string)
             (eros--eval-overlay string (point))))))
     (slime-sync)))
 
@@ -2706,7 +2710,8 @@ initial search query."
 
 (use-package blog
   :defer t
-  :commands (blog-publish)
+  :commands (blog-publish
+             blog-find-posts-file)
   :load-path "~/vault/blog/src/")
 
 (use-package views
