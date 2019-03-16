@@ -847,6 +847,23 @@ current line."
     (eval-buffer)
     (kill-current-buffer)))
 
+(defun jens/goto-comment-box ()
+  "Goto a comment-box in the current file."
+  (interactive)
+  (let* ((semi-line '((1+ ";") "\n"))
+         (desc-line '(";;" (1+ (or alnum whitespace)) ";;" "\n"))
+         (box (eval `(rx (and line-start ,@desc-line))))
+         (content (buffer-substring-no-properties (point-min) (point-max)))
+         (boxes (s-match-strings-all box content))
+         (boxes (-map #'car boxes))
+         (boxes (-map #'s-trim boxes))
+         (positions (s-matched-positions-all box content))
+         (positions (-map #'cdr positions))
+         (al (-zip boxes positions))
+         (ivy-sort-functions-alist nil) ; don't sort them, they're in order or appearance
+         (pick (completing-read "asd" boxes nil t)))
+    (goto-char (cdr (assoc pick al)))))
+
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
