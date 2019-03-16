@@ -2667,6 +2667,11 @@ initial search query."
     (flyspell-prog-mode)
     (flyspell-buffer)))
 
+(use-package flyspell-correct
+  :ensure t
+  :bind (("C-," . flyspell-correct-at-point))
+  :commands flyspell-correct-at-point)
+
 (use-package so-long
   :straight (so-long :type git :repo "https://git.savannah.gnu.org/git/so-long.git/")
   :demand t
