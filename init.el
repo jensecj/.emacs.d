@@ -1807,13 +1807,15 @@ _j_: Java        ^ ^
   :config
   (defun jens/package-spinner-start (&rest _arg)
     "Create and start package-spinner."
-    (with-current-buffer (get-buffer "*Packages*")
-      (spinner-start 'progress-bar 2)))
+    (when-let ((buf (get-buffer "*Packages*")))
+      (with-current-buffer buf
+        (spinner-start 'progress-bar 2))))
 
   (defun jens/package-spinner-stop (&rest _arg)
     "Stop the package-spinner."
-    (with-current-buffer (get-buffer "*Packages*")
-      (spinner-stop)))
+    (when-let ((buf (get-buffer "*Packages*")))
+      (with-current-buffer (get-buffer "*Packages*")
+        (spinner-stop))))
 
   ;; create a spinner when launching `list-packages' and waiting for archive refresh
   (advice-add #'list-packages :after #'jens/package-spinner-start)
