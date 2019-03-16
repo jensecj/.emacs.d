@@ -1421,10 +1421,17 @@ _j_: Java        ^ ^
     "Archive all completed TODOs in the current file."
     (interactive)
     (let* ((date-file (jens/org-archive-todays-file))
+           (dir (f-dirname date-file))
            (org-archive-file-header-format "")
            (org-archive-save-context-info '(time))
            (org-archive-location (concat date-file "::")))
-      (f-touch date-file)
+
+      (unless (f-exists-p dir)
+        (f-mkdir dir))
+
+      (unless (f-exists-p date-file)
+        (f-touch date-file))
+
       (org-map-entries
        (lambda ()
          (org-archive-subtree)
