@@ -1240,6 +1240,16 @@ number input"
   :commands fringe-mode
   :config
   (fringe-mode '(5 . 0))
+
+  (defun jens/toggle-window-margins ()
+    "Toggle left and right window margins, centering `fill-column' lines."
+    (interactive)
+    (let ((margins (window-margins)))
+      (if (and (null (car margins)) (null (cdr margins)))
+          (let* ((win-width (window-width (selected-window)))
+             (margin (/ (- win-width fill-column) 2)))
+            (set-window-margins (selected-window) margin margin))
+        (set-window-margins (selected-window) 0 0))))
   :custom-face
   (fringe ((t (:background "#3f3f3f")))))
 
