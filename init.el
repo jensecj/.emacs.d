@@ -1182,13 +1182,22 @@ number input"
   (diredp-file-name ((t (:foreground "#DCDCCC"))))
   (diredp-dir-name ((t (:foreground "#8CD0D3")))))
 
+(use-package dired-ranger
+  :ensure t
+  :bind
+  (:map dired-mode-map
+        ("c" . dired-ranger-copy)
+        ("p" . dired-ranger-paste)))
+
 (use-package dired
   :defer t
   :commands dired
   :bind
   (("C-x C-d" . dired-jump)
    :map dired-mode-map
-   ("C-." . dired-omit-mode))
+   ("C-." . dired-omit-mode)
+   ("SPC" . jens/dired-toggle-mark)
+   ("T" . dired-create-empty-file))
   :config
   ;; pull in extra functionality for dired
   (load-library "dired-x")
@@ -1213,7 +1222,15 @@ number input"
         (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
       (set-buffer-modified-p nil)))
 
-  (advice-add 'dired-readin :after #'jens/dired-sort))
+  (advice-add 'dired-readin :after #'jens/dired-sort)
+
+  (defun jens/dired-toggle-mark (arg)
+    "Toggle mark on the current line."
+    (interactive "P")
+    (let ((this-line (buffer-substring (line-beginning-position) (line-end-position))))
+      (if (s-matches-p (dired-marker-regexp) this-line)
+          (dired-unmark arg)
+        (dired-mark arg)))))
 
 (use-package browse-url
   :defer t
