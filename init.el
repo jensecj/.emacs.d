@@ -2601,7 +2601,9 @@ paste for multi-term mode."
    ("C-c C-r" . ivy-resume)
    :map ivy-minibuffer-map
    ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
-   ("C-S-<return>" . ivy-immediate-done))
+   ("C-S-<return>" . ivy-immediate-done)
+   :map ivy-occur-grep-mode-map
+   ("d" . ivy-occur-delete-candidate))
   :config
   (setq ivy-height 15)
   (setq ivy-count-format "")
