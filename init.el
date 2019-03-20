@@ -2454,6 +2454,22 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
 
   (setq elfeed-feeds (jens/load-from-file (locate-user-emacs-file "elfeeds.el")))
 
+  (defun jens/elfeed-select-emacs-after-browse-url (fn &rest args)
+    "Activate the emacs-window"
+    (let* ((emacs-window (shell-command-to-string "xdotool getactivewindow"))
+           (active-window "")
+           (counter 0))
+      (apply fn args)
+      (sleep-for 0.5)
+      (while (and (not (string= active-window emacs-window))
+                  (< counter 5))
+        (sleep-for 0.2)
+        (incf counter)
+        (setq active-window (shell-command-to-string "xdotool getactivewindow"))
+        (shell-command-to-string (format "xdotool windowactivate %s" emacs-window)))))
+
+  (advice-add #'elfeed-search-browse-url :around #'jens/elfeed-select-emacs-after-browse-url)
+
   (defun jens/elfeed-copy-link-at-point ()
     "Copy the link of the elfeed entry at point to the
 clipboard."
