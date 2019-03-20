@@ -1346,11 +1346,13 @@ number input"
 
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((emacs-lisp . t)
+                                 (shell . t)
                                  (python . t)
                                  (gnuplot . t)))
 
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
+
   ;; keep #+BEGIN_SRC blocks aligned with their contents
   (setq org-edit-src-content-indentation 0)
   ;; dont indent things
