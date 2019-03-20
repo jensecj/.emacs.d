@@ -1292,6 +1292,12 @@ number input"
    ("M-<prior>" . org-move-subtree-up)
    ("C-c n" . jens/org-indent))
   :config
+  (defun jens/toggle-org-babel-safe ()
+    "Toggle whether it is safe to eval babel code blocks in the current buffer."
+    (interactive)
+    (set (make-variable-buffer-local 'org-confirm-babel-evaluate)
+         (not org-confirm-babel-evaluate)))
+
   (defun jens/org-outline ()
     "Jump to a level 1 heading in an org-buffer."
     (interactive)
