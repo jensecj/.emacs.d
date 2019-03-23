@@ -1347,8 +1347,23 @@ number input"
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((emacs-lisp . t)
                                  (shell . t)
+                                 (latex . t)
+                                 (ditaa . t)
+                                 (plantuml . t)
+                                 (dot . t)
                                  (python . t)
                                  (gnuplot . t)))
+
+  (let* ((ditaa-dir "/usr/share/java/ditaa/")
+         (ditaa-jar
+          (-as-> (f-entries ditaa-dir) es
+                 (-filter (lambda (e)
+                            (and
+                             (s-starts-with-p "ditaa" (f-filename e))
+                             (string= "jar" (f-ext e))))
+                          es)
+                 (car es))))
+    (setq org-ditaa-jar-path ditaa-jar))
 
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
