@@ -11,13 +11,14 @@
  ("~/.emacs.d/lisp/today/")
 
  ("~/vault/git/")
+ ("~/vault/courses/")
  ("~/vault/knowledge-base/")
  ("~/vault/projects/clojure/microblog/")
  ("~/vault/projects/code-challenges/")
  ("~/vault/projects/java/flatlab/")
  ("~/vault/projects/python/jackup/")
  ("~/vault/projects/rust/jepa/")
- ("~/vault/projects/rust/jesp/")
+ ("~/vault/projects/rust/jelp/")
  ("~/vault/projects/rust/jeml/")
  ("~/vault/projects/cpp/jaleidoscope/")
 
