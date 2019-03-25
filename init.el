@@ -847,9 +847,21 @@ current line."
     (eval-buffer)
     (kill-current-buffer)))
 
-(defun jens/goto-comment-box ()
-  "Goto a comment-box in the current file."
-  (interactive)
+(defun jens/--headings-org-level-1 ()
+  "Return list of level 1 heading in an org-buffer."
+  (require 'org-ql)
+  (let* ((level-1-entries (org-ql (buffer-file-name) (level 1)))
+         (cleaned-entries (-map (lambda (e) (cadr e)) level-1-entries))
+         (headings (-map (lambda (h)
+                            (cons (plist-get h ':raw-value)
+                                  (plist-get h ':begin)))
+                          cleaned-entries)))
+    headings))
+
+(defun jens/--headings-comment-boxes ()
+  "Return list of comment-boxes in the current file."
+  ;; TODO: use comment-box syntax to collect comment boxes from different modes,
+  ;; not just emacs-lisp syntax
   (let* ((semi-line '((1+ ";") "\n"))
          (desc-line '(";;" (1+ (or alnum whitespace)) ";;" "\n"))
          (box (eval `(rx (and line-start ,@desc-line))))
@@ -859,10 +871,22 @@ current line."
          (boxes (-map #'s-trim boxes))
          (positions (s-matched-positions-all box content))
          (positions (-map #'cdr positions))
-         (al (-zip boxes positions))
-         (ivy-sort-functions-alist nil) ; don't sort them, they're in order or appearance
-         (pick (completing-read "asd" boxes nil t)))
-    (goto-char (cdr (assoc pick al)))))
+         (headings (-zip boxes positions)))
+    headings))
+
+(defun jens/headings ()
+  "Jump to a heading in the current file."
+  (interactive)
+  (let* ((headings (-remove #'null
+                            (-flatten
+                             (-cons*
+                              (jens/--headings-comment-boxes)
+                              (when (derived-mode-p 'org-mode)
+                                (jens/--headings-org-level-1))))))
+         (_ (sort headings (lambda (a b) (< (cdr a) (cdr b)))))
+         (ivy-sort-functions-alist nil)
+         (pick (completing-read "jump to heading: " headings nil t)))
+    (goto-char (cdr (assoc pick headings)))))
 
 ;;;;;;;;;;;;;;
 ;; packages ;;
@@ -1297,23 +1321,6 @@ number input"
     (interactive)
     (set (make-variable-buffer-local 'org-confirm-babel-evaluate)
          (not org-confirm-babel-evaluate)))
-
-  (defun jens/org-outline ()
-    "Jump to a level 1 heading in an org-buffer."
-    (interactive)
-    (require 'org-ql)
-
-    (let* ((level-1-entries (org-ql (buffer-file-name) (level 1)))
-           (cleaned-entries (-map (lambda (e) (cadr e)) level-1-entries))
-           (headlines (-map (lambda (h)
-                              (cons (plist-get h ':raw-value)
-                                    (plist-get h ':begin)))
-                            cleaned-entries))
-           ;; don't auto sort candidates, they're in order of appearance.
-           (ivy-sort-functions-alist nil)
-           (pick (completing-read "Jump to heading: " headlines))
-           (location (cdr (assoc pick headlines))))
-      (goto-char location)))
 
   (defun jens/org-indent ()
     "Indent line or region in org-mode."
