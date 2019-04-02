@@ -2705,7 +2705,14 @@ initial search query."
       (call-interactively #'swiper))))
 
 (use-package bookmark+
-  :straight (bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus"))
+  :straight (bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus")
+  :config
+  (advice-add #'bookmark-jump :around
+              (lambda (fn &rest args)
+                "Push point to the marker-stack before jumping to bookmark."
+                (let ((pm (point-marker)))
+                  (apply fn args)
+                  (xref-push-marker-stack pm)))))
 
 (use-package projectile
   :ensure t
