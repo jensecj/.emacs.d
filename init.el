@@ -3080,7 +3080,7 @@ times."
 (bind-key* "C-c c" 'jens/comment-uncomment-region-or-line)
 
 ;; Fix spaces / tabs
-(bind-key* "C-c n" 'jens/cleanup-buffer)
+(bind-key "C-c n" 'jens/cleanup-buffer)
 
 ;; Enable backwards killing of lines
 (bind-key* "C-S-k" 'jens/kill-to-beginning-of-line)
