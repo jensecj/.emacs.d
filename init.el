@@ -2924,10 +2924,11 @@ _c_: capture with prompt                  ^ ^                               ^ ^
   (("C-+" . doc-at-point)
    :map company-active-map
    ("C-+" . doc-at-point-company-menu-selection-quickhelp))
-  :commands (doc-at-point doc-at-point-setup-defaults)
+  :commands (doc-at-point
+             doc-at-point-company-menu-selection-quickhelp
+             doc-at-point-setup-defaults)
   :config
-  (setq  doc-at-point--posframe-font "Source Code Pro Semibold")
-  (require 'help-fns+)
+  (setq doc-at-point--posframe-font "Source Code Pro Semibold")
   (doc-at-point-setup-defaults)
   :custom-face
   (internal-border ((t (:background "#777777")))))
