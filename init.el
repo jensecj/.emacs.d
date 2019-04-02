@@ -853,9 +853,9 @@ current line."
   (let* ((level-1-entries (org-ql (buffer-file-name) (level 1)))
          (cleaned-entries (-map (lambda (e) (cadr e)) level-1-entries))
          (headings (-map (lambda (h)
-                            (cons (plist-get h ':raw-value)
-                                  (plist-get h ':begin)))
-                          cleaned-entries)))
+                           (cons (plist-get h ':raw-value)
+                                 (plist-get h ':begin)))
+                         cleaned-entries)))
     headings))
 
 (defun jens/--headings-comment-boxes ()
@@ -1271,7 +1271,7 @@ number input"
     (let ((margins (window-margins)))
       (if (and (null (car margins)) (null (cdr margins)))
           (let* ((win-width (window-width (selected-window)))
-             (margin (/ (- win-width fill-column) 2)))
+                 (margin (/ (- win-width fill-column) 2)))
             (set-window-margins (selected-window) margin margin))
         (set-window-margins (selected-window) 0 0))))
   :custom-face
@@ -2002,7 +2002,6 @@ title and duration."
   :ensure t
   :commands amx-mode
   :config
-  (setq amx-save-file (no-littering-expand-var-file-name "amx-items"))
   (amx-mode))
 
 (use-package smartparens
@@ -2791,11 +2790,11 @@ initial search query."
     "Show the result of evaluating the last-sexp in an overlay."
     (interactive)
     (slime-eval-async `(swank:eval-and-grab-output ,(slime-last-expression))
-      (lambda (result)
-        (cl-destructuring-bind (output value) result
-          (let ((string (s-replace "\n" " " (concat output value))))
-            (message string)
-            (eros--eval-overlay string (point))))))
+                      (lambda (result)
+                        (cl-destructuring-bind (output value) result
+                          (let ((string (s-replace "\n" " " (concat output value))))
+                            (message string)
+                            (eros--eval-overlay string (point))))))
     (slime-sync)))
 
 (use-package zenburn-theme
