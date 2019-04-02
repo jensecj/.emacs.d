@@ -3115,7 +3115,9 @@ times."
                ;; show info about loaded files with auto-save data
                "recover-this-file"
                ;; show warning messages that occured during init
-               (group bol "!"))))
+               (group bol "!")
+               ;; lines containing the word `warning'
+               (group bol (0+ any) "warning" (0+ any) eol))))
          (messages (with-current-buffer "*Messages*" (buffer-string)))
          (important
           (with-temp-buffer
