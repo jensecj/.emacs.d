@@ -27,6 +27,19 @@ Requires system tool `lynx'."
   (let ((lines (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" url)))))
     (if (< (length lines) 5) lines "?")))
 
+(defun today-capture--youtube-get-upload-date (url)
+  "Return the upload date for a youtube URL.
+Requires system tools `youtube-dl' and `jq'."
+  (let* ((ytdl "youtube-dl --simulate --dump-json")
+         (jq "jq '.upload_date'")
+         (raw-date (shell-command-to-string
+                    (format "%s '%s' | %s" ytdl url jq)))
+         (clean-date (s-replace "\"" "" (s-trim raw-date)))
+         (year (substring clean-date 0 4))
+         (month (substring clean-date 4 6))
+         (day (substring clean-date 6 8)))
+    (format "%s-%s-%s" year month day)))
+
 (defun today-capture--youtube-duration-from-url (url)
   "Get the duration of a youtube video.
 
@@ -57,8 +70,9 @@ extract the duration of the video."
   (letrec ((title (today-capture--title-from-url link))
            (title (replace-regexp-in-string " - YouTube$" "" title))
            (duration (today-capture--youtube-duration-from-url link))
+           (upload-date (today-capture--youtube-get-upload-date link))
            (org-link (org-make-link-string link title))
-           (entry (format "(%s) %s" duration org-link)))
+           (entry (format "%s (%s) %s" upload-date duration org-link)))
     (format "%s" entry)))
 
 (defvar today-capture-handlers-alist
