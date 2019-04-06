@@ -2931,7 +2931,9 @@ initial search query."
              today-capture-elfeed-at-point
              today-hydra/body)
   :bind
-  (("C-x t" . today-hydra/body))
+  (("C-x t" . today-hydra/body)
+   :map org-mode-map
+   ("M-o" . today-set-hydra/body))
   :config
   (setq today-directory "~/vault/git/org/today/")
 
