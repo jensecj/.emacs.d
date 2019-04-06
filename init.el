@@ -1342,6 +1342,13 @@ number input"
 
   (setq org-log-done 'time)
 
+  (defun jens/org-summary-todo (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)   ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
+  (add-hook 'org-after-todo-statistics-hook 'jens/org-summary-todo)
+
   (defun jens/org-add-electric-pairs ()
     (setq-local electric-pair-pairs (-concat org-extra-electric-pairs electric-pair-pairs)))
 
