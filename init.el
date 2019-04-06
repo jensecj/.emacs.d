@@ -1338,6 +1338,13 @@ number input"
    ("M-<prior>" . org-move-subtree-up)
    ("C-c n" . jens/org-indent))
   :config
+  (setq org-extra-electric-pairs '((?\$ . ?\$)))
+
+  (defun jens/org-add-electric-pairs ()
+    (setq-local electric-pair-pairs (-concat org-extra-electric-pairs electric-pair-pairs)))
+
+  (add-hook 'org-mode-hook 'jens/org-add-electric-pairs)
+
   (defun jens/toggle-org-babel-safe ()
     "Toggle whether it is safe to eval babel code blocks in the current buffer."
     (interactive)
