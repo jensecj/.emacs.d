@@ -1340,6 +1340,8 @@ number input"
   :config
   (setq org-extra-electric-pairs '((?\$ . ?\$)))
 
+  (setq org-log-done 'time)
+
   (defun jens/org-add-electric-pairs ()
     (setq-local electric-pair-pairs (-concat org-extra-electric-pairs electric-pair-pairs)))
 
