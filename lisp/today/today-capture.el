@@ -124,6 +124,8 @@ applying handler on ENTRY, otherwise return ENTRY."
         (save-excursion
           (goto-char (point-max))
           (insert "** " result)
+          (org-set-property "CAPTURED_TIME" (format-time-string "%Y-%m-%d %H:%M:%S"))
+          (org-cycle)
           (save-buffer))))))
 
 ;;;###autoload
