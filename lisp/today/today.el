@@ -155,4 +155,11 @@ selected."
               (start-date (nth 1 bounds-and-dates)))
           (today-set-dates-field bounds start-date end-date)))))
 
+(defhydra today-set-hydra (:foreign-keys run)
+  ("s" (today-set-started) "start")
+  ("c" (today-set-completed) "complete")
+  ("r" (today-set-rating) "rate")
+
+  ("q" nil "quit"))
+
 (provide 'today)
