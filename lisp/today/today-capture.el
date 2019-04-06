@@ -27,6 +27,23 @@ Requires system tool `lynx'."
   (let ((lines (s-trim (shell-command-to-string (format "lynx -dump %s | wc -l" url)))))
     (if (< (length lines) 5) lines "?")))
 
+(defun today-capture--date-from-wayback-machine (url)
+  "Try to return the date of the first time the wayback machine
+saw URL. This may not be the real publishing date for URL."
+  (let* ((wa-query "http://web.archive.org/cdx/search/cdx?url=")
+         (wa-params "&fl=timestamp&output=json&limit=1")
+         (query (s-concat wa-query url wa-params))
+         (response (->> (shell-command-to-string (format "curl -s \"%s\"" query)) (s-trim)))
+         (jq "jq -r '.[1]? | add?'")
+         (date (unless (s-blank-str-p response)
+                 (->> (shell-command-to-string (format "echo '%s' | %s" response jq)) (s-trim)))))
+    (if (not (s-blank-str? date))
+        (let ((year (substring date 0 4))
+              (month (substring date 4 6))
+              (day (substring date 6 8)))
+          (format "%s-%s-%s" year month day))
+      "?")))
+
 (defun today-capture--youtube-get-upload-date (url)
   "Return the upload date for a youtube URL.
 Requires system tools `youtube-dl' and `jq'."
@@ -59,8 +76,9 @@ and add to the front of the entry. Will also try to extract the
 title of the website, and convert the link into an `org-mode'
 link, using the title."
   (letrec ((lines (today-capture--count-lines-from-url link))
+           (date (today-capture--date-from-wayback-machine link))
            (org-link (today-capture--url-to-org-link link)))
-    (format "(%s lines) %s" lines org-link)))
+    (format "%s (%s lines) %s" date lines org-link)))
 
 (defun today-capture--watch-link-handler (link)
   "Handler for the WATCH task. Expects the LINK to be a source
