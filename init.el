@@ -2908,7 +2908,7 @@ initial search query."
         (etmux-C-c pane)
         (etmux-run-command pane command))
 
-      (global-set-key (kbd "C-c C-c") #'etmux-compile))))
+      (global-set-key (kbd "C-x C-c") #'etmux-compile))))
 
 (use-package highlight-bookmarks
   :demand t
