@@ -40,6 +40,8 @@
 
 ;;; Code:
 
+(require 'hydra)
+
 (defcustom today-directory
   (concat user-emacs-directory "today-planner")
   "Directory used for planning files.")
@@ -145,6 +147,15 @@ selected."
               (end-date (nth 2 bounds-and-dates)))
           (today-set-dates-field bounds start-date end-date)))))
 
+(defun today-clear-started ()
+  "Clear the started part of the dates field."
+  (interactive)
+  (let ((bounds-and-dates (today-get-dates-field)))
+    (if (listp bounds-and-dates)
+        (let ((bounds (nth 0 bounds-and-dates))
+              (end-date (nth 2 bounds-and-dates)))
+          (today-set-dates-field bounds "" end-date)))))
+
 (defun today-set-completed ()
   "Set the completed part of the dates field to today."
   (interactive)
@@ -155,9 +166,22 @@ selected."
               (start-date (nth 1 bounds-and-dates)))
           (today-set-dates-field bounds start-date end-date)))))
 
+(defun today-clear-completed ()
+  "Clear the completed part of the dates field."
+  (interactive)
+  (let ((bounds-and-dates (today-get-dates-field)))
+    (if (listp bounds-and-dates)
+        (let ((bounds (nth 0 bounds-and-dates))
+              (start-date (nth 1 bounds-and-dates)))
+          (today-set-dates-field bounds start-date "")))))
+
 (defhydra today-set-hydra (:foreign-keys run)
   ("s" (today-set-started) "start")
+  ("S" (today-clear-started) "clear start")
+
   ("c" (today-set-completed) "complete")
+  ("C" (today-clear-completed) "clear complete")
+
   ("r" (today-set-rating) "rate")
 
   ("q" nil "quit"))
