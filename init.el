@@ -1441,27 +1441,6 @@ number input"
   (setq org-refile-use-outline-path t)
   (setq org-refile-targets '( (nil . (:maxlevel . 1))))
 
-  (defun jens/org-refile (file headline &optional arg)
-    (let ((pos (save-excursion
-                 (find-file file)
-                 (org-find-exact-headline-in-buffer headline))))
-      (org-refile arg nil (list headline file nil pos)))
-    (switch-to-buffer (current-buffer)))
-
-  (defun jens/org-refile-this-file ()
-    "Refile entry at point to a headline in the current file."
-    (interactive)
-    (require 'org-ql)
-    (let* ((entries (org-ql (current-buffer) (level 1)))
-           (headlines (-map
-                       (lambda (e)
-                         (plist-get (cadr e) ':raw-value))
-                       entries))
-           (pick (completing-read "Refile to: " headlines nil t)))
-      (if (org-at-heading-p)
-          (jens/org-refile (buffer-file-name) pick)
-        (message "Point is not at a refilable ting"))))
-
   (defhydra jens/org-today-refile-pl (:foreign-keys run)
     "
 ^Bindings^        ^ ^
@@ -1472,14 +1451,14 @@ _C_: Clojure     _m_: ML
 _p_: Python      ^ ^
 _j_: Java        ^ ^
 "
-    ("c" (jens/org-refile "today.org" "C/C++"))
-    ("C" (jens/org-refile "today.org" "Clojure"))
-    ("g" (jens/org-refile "today.org" "Git"))
-    ("j" (jens/org-refile "today.org" "Java"))
-    ("l" (jens/org-refile "today.org" "Lisp"))
-    ("m" (jens/org-refile "today.org" "ML"))
-    ("p" (jens/org-refile "today.org" "Python"))
-    ("r" (jens/org-refile "today.org" "Rust"))
+    ("c" (today-refile "today.org" "C/C++"))
+    ("C" (today-refile "today.org" "Clojure"))
+    ("g" (today-refile "today.org" "Git"))
+    ("j" (today-refile "today.org" "Java"))
+    ("l" (today-refile "today.org" "Lisp"))
+    ("m" (today-refile "today.org" "ML"))
+    ("p" (today-refile "today.org" "Python"))
+    ("r" (today-refile "today.org" "Rust"))
 
     ("x" jens/org-today-refile/body "Back to refiling hydra" :exit t)
     ("z" org-refile-goto-last-stored "Jump to last refile")
@@ -1495,70 +1474,30 @@ _j_: Java        ^ ^
  _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Work
  _C_: Courses       _M_: Math              _s_: Computer Science        _W_: Web
 "
-    ("a" (jens/org-refile "today.org" "AI"))
-    ("A" (jens/org-refile "today.org" "Algorithms"))
-    ("b" (jens/org-refile "today.org" "Business"))
-    ("c" (jens/org-refile "today.org" "Climate"))
-    ("C" (jens/org-refile "today.org" "Courses"))
-    ("d" (jens/org-refile "today.org" "DevOps"))
-    ("e" (jens/org-refile "today.org" "Emacs"))
-    ("l" (jens/org-refile "today.org" "Linux"))
-    ("m" (jens/org-refile "today.org" "Machine Learning"))
-    ("M" (jens/org-refile "today.org" "Math"))
-    ("n" (jens/org-refile "today.org" "Next"))
-    ("o" (jens/org-refile "today.org" "Other Talks"))
-    ("p" (jens/org-refile "today.org" "Programming"))
-    ("P" (jens/org-refile "today.org" "Programming Languages"))
-    ("s" (jens/org-refile "today.org" "Computer Science"))
-    ("S" (jens/org-refile "today.org" "Statistics"))
-    ("t" (jens/org-refile "today.org" "Tech Talks"))
-    ("T" (jens/org-refile "today.org" "TED Talks"))
-    ("w" (jens/org-refile "today.org" "Work"))
-    ("W" (jens/org-refile "today.org" "Web"))
+    ("a" (today-refile "today.org" "AI"))
+    ("A" (today-refile "today.org" "Algorithms"))
+    ("b" (today-refile "today.org" "Business"))
+    ("c" (today-refile "today.org" "Climate"))
+    ("C" (today-refile "today.org" "Courses"))
+    ("d" (today-refile "today.org" "DevOps"))
+    ("e" (today-refile "today.org" "Emacs"))
+    ("l" (today-refile "today.org" "Linux"))
+    ("m" (today-refile "today.org" "Machine Learning"))
+    ("M" (today-refile "today.org" "Math"))
+    ("n" (today-refile "today.org" "Next"))
+    ("o" (today-refile "today.org" "Other Talks"))
+    ("p" (today-refile "today.org" "Programming"))
+    ("P" (today-refile "today.org" "Programming Languages"))
+    ("s" (today-refile "today.org" "Computer Science"))
+    ("S" (today-refile "today.org" "Statistics"))
+    ("t" (today-refile "today.org" "Tech Talks"))
+    ("T" (today-refile "today.org" "TED Talks"))
+    ("w" (today-refile "today.org" "Work"))
+    ("W" (today-refile "today.org" "Web"))
 
     ("x" jens/org-today-refile-pl/body "Refile programming languages" :exit t)
     ("z" org-refile-goto-last-stored "Jump to last refile")
-    ("q" nil "quit"))
-
-  ;;;;;;;;;;;;;;;
-  ;; archiving ;;
-  ;;;;;;;;;;;;;;;
-
-  (defun jens/org-archive-todays-file (date)
-    "Return filepath of todays archive file."
-    (let* ((dir "~/vault/git/org/today/")
-           (date-file (f-join dir date (concat date ".org"))))
-      date-file))
-
-  (defun jens/org-archive-done-todos ()
-    "Archive all completed TODOs in the current file."
-    (interactive)
-    (org-map-entries
-     (lambda ()
-       (let* ((org-archive-file-header-format "")
-              (org-archive-save-context-info '(time))
-
-              (closed-date (assoc "CLOSED" (org-entry-properties)))
-              (date-format (when (cdr closed-date) (substring (cdr closed-date) 1 11)))
-              (date-file (jens/org-archive-todays-file (format-time-string
-                                                        (if date-format date-format "%Y-%m-%d"))))
-              (dir (f-dirname date-file))
-              (org-archive-location (concat date-file "::")))
-
-         (unless (f-exists-p dir)
-           (f-mkdir dir))
-
-         (unless (f-exists-p date-file)
-           (f-touch date-file))
-
-         (org-archive-subtree)
-
-         (with-current-buffer (find-file-noselect date-file)
-           (when (buffer-modified-p)
-             (save-buffer)))
-
-         (setq org-map-continue-from (outline-previous-heading))))
-     "/DONE" 'file)))
+    ("q" nil "quit")))
 
 (use-package ob-async
   :disabled
@@ -2960,7 +2899,7 @@ _c_: capture with prompt                  ^ ^                               ^ ^
     ("W" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'watch)))
     ("c" #'today-capture-prompt)
 
-    ("a" #'jens/org-archive-done-todos :exit t)
+    ("a" #'today-archive-done-todos :exit t)
 
     ("t" #'today :exit t)
     ("T" #'today-visit-todays-file :exit t)
