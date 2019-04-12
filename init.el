@@ -1430,6 +1430,8 @@ number input"
   ;; use some noise in scheduling org-drills
   ;; (setq-default org-drill-add-random-noise-to-intervals-p t)
 
+  (setq org-html-head "<style type=\"text/css\">body {max-width: 800px; margin: 0 auto;} img {max-width: 100%;}</style>")
+
   ;;;;;;;;;;;;
   ;; filing ;;
   ;;;;;;;;;;;;
