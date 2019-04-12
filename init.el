@@ -1524,36 +1524,41 @@ _j_: Java        ^ ^
   ;; archiving ;;
   ;;;;;;;;;;;;;;;
 
-  (defun jens/org-archive-todays-file ()
+  (defun jens/org-archive-todays-file (date)
     "Return filepath of todays archive file."
     (let* ((dir "~/vault/git/org/today/")
-           (date (format-time-string "%Y-%m-%d"))
            (date-file (f-join dir date (concat date ".org"))))
       date-file))
 
   (defun jens/org-archive-done-todos ()
     "Archive all completed TODOs in the current file."
     (interactive)
-    (let* ((date-file (jens/org-archive-todays-file))
-           (dir (f-dirname date-file))
-           (org-archive-file-header-format "")
-           (org-archive-save-context-info '(time))
-           (org-archive-location (concat date-file "::")))
+    (org-map-entries
+     (lambda ()
+       (let* ((org-archive-file-header-format "")
+              (org-archive-save-context-info '(time))
 
-      (unless (f-exists-p dir)
-        (f-mkdir dir))
+              (closed-date (assoc "CLOSED" (org-entry-properties)))
+              (date-format (when (cdr closed-date) (substring (cdr closed-date) 1 11)))
+              (date-file (jens/org-archive-todays-file (format-time-string
+                                                        (if date-format date-format "%Y-%m-%d"))))
+              (dir (f-dirname date-file))
+              (org-archive-location (concat date-file "::")))
 
-      (unless (f-exists-p date-file)
-        (f-touch date-file))
+         (unless (f-exists-p dir)
+           (f-mkdir dir))
 
-      (org-map-entries
-       (lambda ()
+         (unless (f-exists-p date-file)
+           (f-touch date-file))
+
          (org-archive-subtree)
-         (setq org-map-continue-from (outline-previous-heading)))
-       "/DONE" 'file)
-      (with-current-buffer (find-file-noselect date-file)
-        (when (buffer-modified-p)
-          (save-buffer))))))
+
+         (with-current-buffer (find-file-noselect date-file)
+           (when (buffer-modified-p)
+             (save-buffer)))
+
+         (setq org-map-continue-from (outline-previous-heading))))
+     "/DONE" 'file)))
 
 (use-package ob-async
   :disabled
