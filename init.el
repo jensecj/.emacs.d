@@ -2849,12 +2849,21 @@ initial search query."
       (unless (member command etmux-command-history)
         (jens/save-to-file (cons command etmux-command-history) history-file))
 
-      (defun etmux-compile nil
-        (interactive)
-        (etmux-C-c pane)
-        (etmux-run-command pane command))
+      (dir-locals-set-class-variables
+       'etmux
+       `((nil . ((tmux-cmd . ,command)
+                 (tmux-pane . ,pane)))))
 
-      (global-set-key (kbd "C-x C-c") #'etmux-compile))))
+      (dir-locals-set-directory-class
+       (projectile-project-root) 'etmux)
+
+      (defun jackin-etmux-do nil
+        (interactive)
+        (etmux-C-c tmux-pane)
+        (etmux-run-command tmux-pane tmux-cmd))
+
+      (global-set-key (kbd "C-x C-c") #'jackin-etmux-do)
+      (hack-local-variables))))
 
 (use-package highlight-bookmarks
   :demand t
