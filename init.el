@@ -2559,7 +2559,11 @@ clipboard."
   :defer t
   :commands (multi-term-get-buffer
              multi-term-internal)
-  :bind ("C-z" . jens/multi-term)
+  :bind* (("C-z" . jens/multi-term)
+          :map term-raw-map
+          ("C-c C-j" . term-line-mode)
+          :map term-mode-map
+          ("C-c C-k" . term-char-mode))
   :config
   (setq multi-term-program "/bin/zsh")
   ;; (setq term-bind-key-alist '()) ;; clear the binds list, defaulting to emacs binds
