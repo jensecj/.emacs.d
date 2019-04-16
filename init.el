@@ -2915,6 +2915,8 @@ _c_: capture with prompt                  ^ ^                               ^ ^
     ("T" #'today-visit-todays-file :exit t)
     ("l" #'today-list :exit t)
 
+    ("m" (lambda () (interactive) (find-file "~/vault/git/roadmap.org")) :exit t)
+
     ("f" #'jens/org-today-refile/body :exit t)
 
     ("q" nil "quit")))
