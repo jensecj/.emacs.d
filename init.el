@@ -1368,7 +1368,7 @@ number input"
     (org-indent-line)
     (message "indented"))
 
-  (defun jens/copy-org-url-at-point ()
+  (defun jens/org-copy-url-at-point ()
     "Grab URL from org-link at point."
     (interactive)
     (let* ((link-info (assoc :link (org-context)))
