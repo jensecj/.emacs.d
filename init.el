@@ -2868,35 +2868,53 @@ initial search query."
   :bind
   (("C-x t" . today-hydra/body)
    :map org-mode-map
-   ("M-o" . today-set-hydra/body))
+   ("M-o" . today-track-hydra/body))
   :config
-  (setq today-directory "~/vault/git/org/today/")
+  (setq today-directory "~/vault/git/org/archive/")
+  (setq today-file "~/vault/git/org/today.org")
+  (setq today-inbox-file "~/vault/git/org/inbox.org")
 
-  (defhydra today-hydra (:foreign-keys run)
+  (defhydra today-capture-hydra (:foreign-keys run)
     "
-^Capture^                                 ^Actions^                          ^Find^
-^^^^^^^^----------------------------------------------------------------------------------------------
-_r_: capture read task                    _a_: archive completed tasks      _t_: go to todays file
-_R_: capture read task from clipboard     ^ ^                               _l_: list all date files
-_w_: capture watch task                   ^ ^                               ^ ^
-_W_: capture watch task from clipboard    ^ ^                               ^ ^
-_c_: capture with prompt                  ^ ^                               ^ ^
+^Capture^
+^^^^^^^^------------------------------
+_r_: capture read task
+_R_: capture read task from clipboard
+_w_: capture watch task
+_W_: capture watch task from clipboard
 "
     ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
     ("R" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'read)))
     ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
     ("W" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'watch)))
-    ("c" #'today-capture-prompt)
+    ("q" nil "quit"))
+
+  (defhydra today-hydra (:foreign-keys run)
+    "
+^Today^
+^^^^^^^^------------------------------
+_c_: Capture
+_a_: Archive completed todos
+_l_: list all archived files
+_f_: refile hydra
+
+_t_: go to today-file
+_i_: go to inbox file
+_m_: go to roadmap file
+_k_: go to tracking file
+"
+    ("c" #'today-capture-hydra/body :exit t)
 
     ("a" #'today-archive-done-todos :exit t)
 
     ("t" #'today :exit t)
     ("T" #'today-visit-todays-file :exit t)
     ("l" #'today-list :exit t)
-
-    ("m" (lambda () (interactive) (find-file "~/vault/git/roadmap.org")) :exit t)
-
     ("f" #'jens/org-today-refile/body :exit t)
+
+    ("m" (lambda () (interactive) (find-file "~/vault/git/org/roadmap.org")) :exit t)
+    ("k" (lambda () (interactive) (find-file "~/vault/git/org/tracking.org")) :exit t)
+    ("i" (lambda () (interactive) (find-file "~/vault/git/org/inbox.org")) :exit t)
 
     ("q" nil "quit")))
 
