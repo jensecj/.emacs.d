@@ -2838,33 +2838,7 @@ initial search query."
 (use-package etmux
   :straight (etmux :repo "git@github.com:jensecj/etmux.el.git")
   :defer t
-  :commands (jens/etmux-jackin)
-  :config
-  (defun jens/etmux-jackin ()
-    (interactive)
-    (let* ((history-file (no-littering-expand-etc-file-name "etmux-history.el"))
-           (etmux-command-history (jens/load-from-file history-file))
-           (pane (etmux-pick-pane))
-           (command (completing-read "command: " etmux-command-history)))
-
-      (unless (member command etmux-command-history)
-        (jens/save-to-file (cons command etmux-command-history) history-file))
-
-      (dir-locals-set-class-variables
-       'etmux
-       `((nil . ((tmux-cmd . ,command)
-                 (tmux-pane . ,pane)))))
-
-      (dir-locals-set-directory-class
-       (projectile-project-root) 'etmux)
-
-      (defun jackin-etmux-do nil
-        (interactive)
-        (etmux-C-c tmux-pane)
-        (etmux-run-command tmux-pane tmux-cmd))
-
-      (global-set-key (kbd "C-x C-c") #'jackin-etmux-do)
-      (hack-local-variables))))
+  :commands (etmux-jackin))
 
 (use-package highlight-bookmarks
   :demand t
