@@ -1545,7 +1545,7 @@ _j_: Java        ^ ^
   :defer t
   :bind
   (:map python-mode-map
-        ("C-c C-c" . nil)
+        ("C-c C-c" . projectile-compile-project)
         ("M-," . nil)
         ("M-." . nil)
         ("M--" . nil)))
@@ -1682,6 +1682,7 @@ _j_: Java        ^ ^
   :delight " elpy "
   :commands (elpy-goto-definition)
   :hook (python-mode . elpy-mode)
+  :bind (:map elpy-mode-map ("C-c C-c" . nil))
   :custom
   (elpy-modules
    '(elpy-module-sane-defaults
