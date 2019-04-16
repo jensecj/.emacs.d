@@ -7,6 +7,21 @@
 (require 'cl-lib)
 (require 'org-ql)
 
+(defun today-move-to-today ()
+  "Move an entry to the today file."
+  (interactive)
+  (when (org-at-heading-p)
+    (let ((file today-file)
+          (org-yank-adjusted-subtrees t))
+      (org-cut-subtree)
+      (save-buffer)
+
+      (with-current-buffer (find-file-noselect file)
+        (goto-char (point-min))
+        (org-yank)
+        (goto-char (point-min))
+        (save-buffer)))))
+
 (defun today-refile (file headline &optional arg)
   (let ((pos (save-excursion
                (find-file file)

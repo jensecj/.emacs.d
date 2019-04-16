@@ -121,7 +121,7 @@ applying handler on ENTRY, otherwise return ENTRY."
       ,(async-inject-variables "^load-path$")
       (require 'today)
 
-      (with-current-buffer (find-file-noselect (concat today-directory today-file))
+      (with-current-buffer (find-file-noselect today-inbox-file)
         (save-excursion
           (goto-char (point-max))
           (insert "** " result)
