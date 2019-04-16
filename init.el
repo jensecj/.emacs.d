@@ -833,7 +833,7 @@ current line."
                      (lambda (s) (propertize s 'face 'font-lock-keyword-face))
                      (car r))))
                 repos))
-         (pick (completing-read "Repo:" repos-propped nil t)))
+         (pick (completing-read "Repo: " repos-propped nil t)))
     (cond
      ((f-directory? pick) (dired pick))
      ((f-file? pick) (find-file pick))
