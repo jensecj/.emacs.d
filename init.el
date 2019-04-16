@@ -1577,6 +1577,7 @@ _j_: Java        ^ ^
 (use-package markdown-mode :ensure t :mode ("\\.md\\'" "\\.card\\'"))
 (use-package scss-mode :ensure t :mode "\\.scss\\'")
 (use-package tuareg :ensure t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
+(use-package restclient :ensure t)
 
 (use-package rust-mode
   :ensure t
