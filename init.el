@@ -1439,65 +1439,7 @@ number input"
   (setq org-outline-path-complete-in-steps t)
   (setq org-refile-allow-creating-parent-nodes (quote confirm))
   (setq org-refile-use-outline-path t)
-  (setq org-refile-targets '( (nil . (:maxlevel . 1))))
-
-  (defhydra jens/org-today-refile-pl (:foreign-keys run)
-    "
-^Bindings^        ^ ^
-^^^^^^^^-------------------
-_r_: Rust        _g_: Git
-_c_: C/C++       _l_: Lisp
-_C_: Clojure     _m_: ML
-_p_: Python      ^ ^
-_j_: Java        ^ ^
-"
-    ("c" (today-refile "today.org" "C/C++"))
-    ("C" (today-refile "today.org" "Clojure"))
-    ("g" (today-refile "today.org" "Git"))
-    ("j" (today-refile "today.org" "Java"))
-    ("l" (today-refile "today.org" "Lisp"))
-    ("m" (today-refile "today.org" "ML"))
-    ("p" (today-refile "today.org" "Python"))
-    ("r" (today-refile "today.org" "Rust"))
-
-    ("x" jens/org-today-refile/body "Back to refiling hydra" :exit t)
-    ("z" org-refile-goto-last-stored "Jump to last refile")
-    ("q" nil "quit"))
-
-  (defhydra jens/org-today-refile (:foreign-keys run)
-    "
-^Bindings^         ^ ^                     ^ ^                         ^ ^                   ^ ^
-^^^^^^^^-------------------------------------------------------------------------------------------------
- _a_: AI            _d_: DevOps            _n_: Next                    _S_: Statistics     _x_: PL-Hydra
- _A_: Algorithms    _e_: Emacs             _o_: Other Talks             _t_: Tech Talks
- _b_: Business      _l_: Linux             _p_: Programming             _T_: TED Talks
- _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Work
- _C_: Courses       _M_: Math              _s_: Computer Science        _W_: Web
-"
-    ("a" (today-refile "today.org" "AI"))
-    ("A" (today-refile "today.org" "Algorithms"))
-    ("b" (today-refile "today.org" "Business"))
-    ("c" (today-refile "today.org" "Climate"))
-    ("C" (today-refile "today.org" "Courses"))
-    ("d" (today-refile "today.org" "DevOps"))
-    ("e" (today-refile "today.org" "Emacs"))
-    ("l" (today-refile "today.org" "Linux"))
-    ("m" (today-refile "today.org" "Machine Learning"))
-    ("M" (today-refile "today.org" "Math"))
-    ("n" (today-refile "today.org" "Next"))
-    ("o" (today-refile "today.org" "Other Talks"))
-    ("p" (today-refile "today.org" "Programming"))
-    ("P" (today-refile "today.org" "Programming Languages"))
-    ("s" (today-refile "today.org" "Computer Science"))
-    ("S" (today-refile "today.org" "Statistics"))
-    ("t" (today-refile "today.org" "Tech Talks"))
-    ("T" (today-refile "today.org" "TED Talks"))
-    ("w" (today-refile "today.org" "Work"))
-    ("W" (today-refile "today.org" "Web"))
-
-    ("x" jens/org-today-refile-pl/body "Refile programming languages" :exit t)
-    ("z" org-refile-goto-last-stored "Jump to last refile")
-    ("q" nil "quit")))
+  (setq org-refile-targets '( (nil . (:maxlevel . 1)))))
 
 (use-package ob-async
   :disabled
@@ -2858,13 +2800,7 @@ initial search query."
 (use-package today
   :load-path "lisp/today/"
   :defer t
-  :commands (today
-             today-list
-             today-move-to-date
-             today-move-to-tomorrow
-             today-capture--with-task
-             today-capture-elfeed-at-point
-             today-hydra/body)
+  :commands (today-hydra/body)
   :bind
   (("C-x t" . today-hydra/body)
    :map org-mode-map
@@ -2873,6 +2809,64 @@ initial search query."
   (setq today-directory "~/vault/git/org/archive/")
   (setq today-file "~/vault/git/org/today.org")
   (setq today-inbox-file "~/vault/git/org/inbox.org")
+
+  (defhydra today-refile-pl-hydra (:foreign-keys run)
+    "
+^Bindings^        ^ ^
+^^^^^^^^-------------------
+_r_: Rust        _g_: Git
+_c_: C/C++       _l_: Lisp
+_C_: Clojure     _m_: ML
+_p_: Python      ^ ^
+_j_: Java        ^ ^
+"
+    ("c" (today-refile "today.org" "C/C++"))
+    ("C" (today-refile "today.org" "Clojure"))
+    ("g" (today-refile "today.org" "Git"))
+    ("j" (today-refile "today.org" "Java"))
+    ("l" (today-refile "today.org" "Lisp"))
+    ("m" (today-refile "today.org" "ML"))
+    ("p" (today-refile "today.org" "Python"))
+    ("r" (today-refile "today.org" "Rust"))
+
+    ("x" today-refile-hydra/body "Back to refiling hydra" :exit t)
+    ("z" org-refile-goto-last-stored "Jump to last refile")
+    ("q" nil "quit"))
+
+  (defhydra today-refile-hydra (:foreign-keys run)
+    "
+^Bindings^         ^ ^                     ^ ^                         ^ ^                   ^ ^
+^^^^^^^^-------------------------------------------------------------------------------------------------
+ _a_: AI            _d_: DevOps            _n_: Next                    _S_: Statistics     _x_: PL-Hydra
+ _A_: Algorithms    _e_: Emacs             _o_: Other Talks             _t_: Tech Talks
+ _b_: Business      _l_: Linux             _p_: Programming             _T_: TED Talks
+ _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Work
+ _C_: Courses       _M_: Math              _s_: Computer Science        _W_: Web
+"
+    ("a" (today-refile "today.org" "AI"))
+    ("A" (today-refile "today.org" "Algorithms"))
+    ("b" (today-refile "today.org" "Business"))
+    ("c" (today-refile "today.org" "Climate"))
+    ("C" (today-refile "today.org" "Courses"))
+    ("d" (today-refile "today.org" "DevOps"))
+    ("e" (today-refile "today.org" "Emacs"))
+    ("l" (today-refile "today.org" "Linux"))
+    ("m" (today-refile "today.org" "Machine Learning"))
+    ("M" (today-refile "today.org" "Math"))
+    ("n" (today-refile "today.org" "Next"))
+    ("o" (today-refile "today.org" "Other Talks"))
+    ("p" (today-refile "today.org" "Programming"))
+    ("P" (today-refile "today.org" "Programming Languages"))
+    ("s" (today-refile "today.org" "Computer Science"))
+    ("S" (today-refile "today.org" "Statistics"))
+    ("t" (today-refile "today.org" "Tech Talks"))
+    ("T" (today-refile "today.org" "TED Talks"))
+    ("w" (today-refile "today.org" "Work"))
+    ("W" (today-refile "today.org" "Web"))
+
+    ("x" today-refile-pl-hydra/body "Refile programming languages" :exit t)
+    ("z" org-refile-goto-last-stored "Jump to last refile")
+    ("q" nil "quit"))
 
   (defhydra today-capture-hydra (:foreign-keys run)
     "
