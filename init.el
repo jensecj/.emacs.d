@@ -2877,11 +2877,15 @@ _r_: capture read task
 _R_: capture read task from clipboard
 _w_: capture watch task
 _W_: capture watch task from clipboard
+_H_: capture task from clipboard to this buffer
 "
     ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
     ("R" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'read)))
     ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
     ("W" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'watch)))
+
+    ("H" #'today-capture-here-from-clipboard)
+
     ("q" nil "quit"))
 
   (defhydra today-hydra (:foreign-keys run)
@@ -2892,6 +2896,7 @@ _c_: Capture
 _a_: Archive completed todos
 _l_: list all archived files
 _f_: refile hydra
+_g_: move entry to today-file
 
 _t_: go to today-file
 _i_: go to inbox file
@@ -2905,7 +2910,9 @@ _k_: go to tracking file
     ("t" #'today :exit t)
     ("T" #'today-visit-todays-file :exit t)
     ("l" #'today-list :exit t)
-    ("f" #'jens/org-today-refile/body :exit t)
+    ("f" #'today-refile-hydra/body :exit t)
+
+    ("g" #'today-move-to-today)
 
     ("m" (lambda () (interactive) (find-file "~/vault/git/org/roadmap.org")) :exit t)
     ("k" (lambda () (interactive) (find-file "~/vault/git/org/tracking.org")) :exit t)
