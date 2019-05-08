@@ -2722,6 +2722,7 @@ initial search query."
   :ensure t
   :bind (:map slime-mode-map
               ("C-x C-e" . jens/slime-eval-last-sexp))
+  :hook (emacs-lisp-mode . eros-mode)
   :config
   (eros-mode +1)
 
