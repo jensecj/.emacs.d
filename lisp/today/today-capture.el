@@ -76,9 +76,9 @@ website. Will try to extract the number of lines on the website,
 and add to the front of the entry. Will also try to extract the
 title of the website, and convert the link into an `org-mode'
 link, using the title."
-  (letrec ((lines (today-capture--count-lines-from-url link))
-           (date (today-capture--date-from-wayback-machine link))
-           (org-link (today-capture--url-to-org-link link)))
+  (let* ((lines (today-capture--count-lines-from-url link))
+         (date (today-capture--date-from-wayback-machine link))
+         (org-link (today-capture--url-to-org-link link)))
     (format "%s (%s lines) %s" date lines org-link)))
 
 (defun today-capture--watch-link-handler (link)
@@ -86,12 +86,12 @@ link, using the title."
 compatible with `youtube-dl'.will try to extract the title of the
 link, and create an `org-mode' link using that title, will also
 extract the duration of the video."
-  (letrec ((title (today-capture--title-from-url link))
-           (title (replace-regexp-in-string " - YouTube$" "" title))
-           (duration (today-capture--youtube-duration-from-url link))
-           (upload-date (today-capture--youtube-get-upload-date link))
-           (org-link (org-make-link-string link title))
-           (entry (format "%s (%s) %s" upload-date duration org-link)))
+  (let* ((title (today-capture--title-from-url link))
+         (title (replace-regexp-in-string " - YouTube$" "" title))
+         (duration (today-capture--youtube-duration-from-url link))
+         (upload-date (today-capture--youtube-get-upload-date link))
+         (org-link (org-make-link-string link title))
+         (entry (format "%s (%s) %s" upload-date duration org-link)))
     (format "%s" entry)))
 
 (defvar today-capture-handlers-alist
@@ -109,7 +109,7 @@ applying handler on ENTRY, otherwise return ENTRY."
       entry)))
 
 ;;;###autoload
-(defun today-capture-async (task entry)
+(defun today-capture-async (task entry &optional buffer)
   "Captures an ENTRY with TASK, into the the today-file, asynchronously."
   (async-start
    `(lambda ()
@@ -121,7 +121,7 @@ applying handler on ENTRY, otherwise return ENTRY."
       ,(async-inject-variables "^load-path$")
       (require 'today)
 
-      (with-current-buffer (find-file-noselect today-inbox-file)
+      (with-current-buffer (or ,buffer (find-file-noselect today-inbox-file))
         (save-excursion
           (goto-char (point-max))
           (insert "** " result)
@@ -130,16 +130,16 @@ applying handler on ENTRY, otherwise return ENTRY."
           (save-buffer))))))
 
 ;;;###autoload
-(defun today-capture (task entry)
+(defun today-capture (task entry &optional buffer)
   "Capture ENTRY with TASK into todays file."
-  (today-capture-async task entry))
+  (today-capture-async task entry buffer))
 
 (defun today-capture-link-with-task-from-clipboard (task)
   "Capture ENTRY with TASK into todays file."
   (let* ((entry (substring-no-properties
                  (gui-get-selection 'CLIPBOARD 'UTF8_STRING))))
     (message "capturing from clipboard: %s" entry)
-    (today-capture-async task entry)))
+    (today-capture-async task entry nil)))
 
 ;;;###autoload
 (defun today-capture-link-with-task (task)
@@ -151,9 +151,17 @@ applying handler on ENTRY, otherwise return ENTRY."
 (defun today-capture-prompt ()
   "Captures a LINK into today's file, with the selected TASK."
   (interactive)
-  (letrec ((task (completing-read "task: " today-capture-handlers-alist))
-           (entry (completing-read "entry: " '())))
+  (let ((task (intern (completing-read "task: " today-capture-handlers-alist)))
+        (entry (completing-read "entry: " '())))
     (today-capture task entry)))
+
+(defun today-capture-here-from-clipboard ()
+  "Capture url from clipboard to current buffer."
+  (interactive)
+  (let ((task (intern (completing-read "task: " today-capture-handlers-alist)))
+        (entry (substring-no-properties
+                (gui-get-selection 'CLIPBOARD 'UTF8_STRING))))
+    (today-capture-async task entry (current-buffer))))
 
 ;;;###autoload
 (defun today-capture-elfeed-at-point ()
