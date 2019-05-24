@@ -899,6 +899,13 @@ current line."
          (pick (completing-read "jump to heading: " headings nil t)))
     (goto-char (cdr (assoc pick headings)))))
 
+(defhydra jens/shortcut ()
+  "Shortcuts for common commands."
+  ("m" #'jens/goto-msg-buffer "goto msg buffer")
+  ("c" #'jens/create-scratch-buffer "create scratch buffer"))
+
+(global-set-key (kbd "C-M-s") #'jens/shortcut/body)
+
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
