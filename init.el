@@ -1398,7 +1398,8 @@ number input"
         (with-temp-buffer
           (string-match "\\[\\[.*\\]\\[" text)
           (insert (substring-no-properties text (+ (match-beginning 0) 2) (- (match-end 0) 2)))
-          (clipboard-kill-ring-save (point-min) (point-max))))))
+          (clipboard-kill-ring-save (point-min) (point-max))
+          (buffer-string)))))
 
   ;; (defun jens/load-org-agenda-files ()
   ;;   (interactive)
