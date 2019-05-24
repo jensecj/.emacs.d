@@ -2829,7 +2829,7 @@ initial search query."
   (advice-add #'bookmark-delete :after #'highlight-bookmarks-in-this-buffer))
 
 (use-package today
-  :load-path "lisp/today/"
+  :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
   :defer t
   :commands (today-hydra/body)
   :bind
