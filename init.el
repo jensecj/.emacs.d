@@ -1353,10 +1353,11 @@ number input"
    ("<C-S-up>" . nil)
    ("<C-S-down>" . nil)
    ("M-<next>" . org-move-subtree-down)
-   ("M-<prior>" . org-move-subtree-up)
-   ("C-c n" . jens/org-indent))
+   ("M-<prior>" . org-move-subtree-up))
   :config
   (setq org-extra-electric-pairs '((?\$ . ?\$)))
+
+  (add-hook 'org-mode-hook (lambda () (setq cleanup-buffer-fns '((jens/org-indent)))))
 
   (setq org-log-done 'time)
 
