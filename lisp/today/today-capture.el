@@ -45,6 +45,18 @@ saw URL. This may not be the real publishing date for URL."
           (format "%s-%s-%s" year month day))
       "?")))
 
+(defun today-capture--fix-youtube-org-link-at-point ()
+  "Add upload-date and duration to a youtube org-link."
+  (interactive)
+  (let* ((link (jens/org-copy-url-at-point))
+         (date (today-capture--youtube-get-upload-date link))
+         (duration (today-capture--youtube-duration-from-url link)))
+    (save-excursion
+      (jens/smart-beginning-of-line)
+      (insert " ")
+      (backward-char)
+      (insert (format "%s (%s)" date duration)))))
+
 (defun today-capture--youtube-get-upload-date (url)
   "Return the upload date for a youtube URL.
 Requires system tools `youtube-dl' and `jq'."
