@@ -82,6 +82,45 @@ Requires system tool `youtube-dl'."
         (s-trim raw-duration)
       "?")))
 
+(defun today-capture--youtube-playlist (url)
+  "Capture a youtube playlist from URL."
+  (let* ((playlist-entries-query (format "youtube-dl --no-warnings --flat-playlist '%s' -j | jq '.title, .url'" url))
+         (playlist-title-query (format "youtube-dl --no-warnings --playlist-end 1 -j '%s' | jq '.playlist'" url))
+         (entries (shell-command-to-string playlist-entries-query))
+         (entries (s-replace "\"" "" entries))
+         (entries (s-split "\n" entries))
+         (entries (-partition 2 entries))
+         (title (shell-command-to-string playlist-title-query))
+         (final))
+
+    (-each entries
+      (lambda (e)
+        (when (cadr e)
+          (push
+           (format "[[https://www.youtube.com/watch?v=%s][%s]]" (cadr e) (car e))
+           final))))
+
+    (with-temp-buffer
+      (newline)
+      (insert "* " (format "[[%s][%s]]" url title))
+      (newline)
+
+      (-map
+       (lambda (e) (insert "** " e) (newline))
+       (reverse final))
+
+      (buffer-string))))
+
+(defun today-capture--youtube-video (url)
+  "Capture a youtube video from URL."
+  (let* ((title (today-capture--title-from-url url))
+         (title (replace-regexp-in-string " - YouTube$" "" title))
+         (duration (today-capture--youtube-duration-from-url url))
+         (upload-date (today-capture--youtube-get-upload-date url))
+         (org-link (org-make-link-string url title))
+         (entry (format "%s (%s) %s" upload-date duration org-link)))
+    (format "%s" entry)))
+
 (defun today-capture--read-link-handler (link)
   "Handler for READ task. Expects CONTENT to be a link to some
 website. Will try to extract the number of lines on the website,
@@ -98,13 +137,9 @@ link, using the title."
 compatible with `youtube-dl'.will try to extract the title of the
 link, and create an `org-mode' link using that title, will also
 extract the duration of the video."
-  (let* ((title (today-capture--title-from-url link))
-         (title (replace-regexp-in-string " - YouTube$" "" title))
-         (duration (today-capture--youtube-duration-from-url link))
-         (upload-date (today-capture--youtube-get-upload-date link))
-         (org-link (org-make-link-string link title))
-         (entry (format "%s (%s) %s" upload-date duration org-link)))
-    (format "%s" entry)))
+  (if (string-match-p (regexp-quote "https://www.youtube.com/playlist?list=") link)
+      (today-capture--youtube-playlist link)
+    (today-capture--youtube-video link)))
 
 (defvar today-capture-handlers-alist
   '((read . today-capture--read-link-handler)
