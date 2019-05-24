@@ -1652,6 +1652,16 @@ number input"
      elpy-module-eldoc
      elpy-module-pyvenv)))
 
+(use-package blacken
+  :ensure t
+  :demand t
+  :config
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (setq cleanup-buffer-fns
+                    '((blacken-buffer)
+                      (whitespace-cleanup))))))
+
 (use-package highlight-defined
   :ensure t
   :diminish highlight-defined-mode
