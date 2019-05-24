@@ -48,7 +48,7 @@ saw URL. This may not be the real publishing date for URL."
 (defun today-capture--youtube-get-upload-date (url)
   "Return the upload date for a youtube URL.
 Requires system tools `youtube-dl' and `jq'."
-  (let* ((ytdl "youtube-dl --simulate --dump-json")
+  (let* ((ytdl "youtube-dl --simulate --dump-json --no-warnings")
          (jq "jq '.upload_date'")
          (raw-date (shell-command-to-string
                     (format "%s '%s' | %s" ytdl url jq)))
@@ -64,7 +64,7 @@ Requires system tools `youtube-dl' and `jq'."
 Requires system tool `youtube-dl'."
   (letrec ((raw-duration (shell-command-to-string
                           (format "%s '%s'"
-                                  "youtube-dl --get-duration"
+                                  "youtube-dl --get-duration --no-warnings"
                                   url))))
     (if (<= (length raw-duration) 10)
         (s-trim raw-duration)
