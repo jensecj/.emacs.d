@@ -382,8 +382,19 @@ seconds."
 Including indent-buffer, which should not be called automatically
 on save."
   (interactive)
-  (indent-region (point-min) (point-max))
-  (whitespace-cleanup)
+  (unless (boundp 'cleanup-buffer-fns)
+    (make-variable-buffer-local 'cleanup-buffer-fns)
+    (setq cleanup-buffer-fns
+          '((indent-region (point-min) (point-max))
+            (whitespace-cleanup))))
+
+  (message "cleaning buffer")
+
+  (-map-indexed (lambda (i e)
+                  (message "%s: %s" i e)
+                  (eval e))
+                cleanup-buffer-fns)
+
   (message "cleaned up"))
 
 (defun jens/sudo-find-file (filename)
