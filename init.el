@@ -2816,7 +2816,8 @@ initial search query."
 (use-package etmux
   :straight (etmux :repo "git@github.com:jensecj/etmux.el.git")
   :defer t
-  :commands (etmux-jackin))
+  :commands (etmux-jackin etmux-spawn-here)
+  :bind (("C-S-Z" . etmux-spawn-here)))
 
 (use-package highlight-bookmarks
   :demand t
