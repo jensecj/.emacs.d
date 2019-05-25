@@ -382,27 +382,6 @@ seconds."
     (switch-to-buffer newbuf)
     (goto-char oldpoint)))
 
-;; TODO: use reformatter.el?
-(defun jens/cleanup-buffer ()
-  "Perform a bunch of operations on the white space content of a buffer.
-Including indent-buffer, which should not be called automatically
-on save."
-  (interactive)
-  (unless (boundp 'cleanup-buffer-fns)
-    (make-variable-buffer-local 'cleanup-buffer-fns)
-    (setq cleanup-buffer-fns
-          '((indent-region (point-min) (point-max))
-            (whitespace-cleanup))))
-
-  (message "cleaning buffer")
-
-  (-map-indexed (lambda (i e)
-                  (message "%s: %s" i e)
-                  (eval e))
-                cleanup-buffer-fns)
-
-  (message "cleaned up"))
-
 (defun jens/sudo-find-file (filename)
   "Open FILENAME with superuser permissions."
   (let ((remote-method (file-remote-p default-directory 'method))
@@ -1689,12 +1668,9 @@ number input"
 (use-package blacken
   :ensure t
   :demand t
+  :after struere
   :config
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (setq cleanup-buffer-fns
-                    '((blacken-buffer)
-                      (whitespace-cleanup))))))
+  (struere-add 'python-mode #'blacken-buffer))
 
 (use-package highlight-defined
   :ensure t
@@ -2812,6 +2788,9 @@ initial search query."
   :commands (blog-publish
              blog-find-posts-file))
 
+(use-package struere
+  :bind (("C-c n" . struere-cleanup-buffer)))
+
 (use-package views
   :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
   :bind
@@ -3136,9 +3115,6 @@ times."
 
 ;; Comment/uncomment block
 (bind-key* "C-c c" 'jens/comment-uncomment-region-or-line)
-
-;; Fix spaces / tabs
-(bind-key "C-c n" 'jens/cleanup-buffer)
 
 ;; Enable backwards killing of lines
 (bind-key* "C-S-k" 'jens/kill-to-beginning-of-line)
