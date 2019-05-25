@@ -1377,6 +1377,8 @@ number input"
 
   (add-hook 'org-mode-hook (lambda () (setq cleanup-buffer-fns '((jens/org-indent)))))
 
+  (setq org-catch-invisible-edits 'show-and-error)
+
   (setq org-log-done 'time)
 
   (defun jens/org-summary-todo (n-done n-not-done)
