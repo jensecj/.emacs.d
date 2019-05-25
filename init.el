@@ -272,13 +272,6 @@
 
 ;; don't show trailing whitespace by default
 (setq-default show-trailing-whitespace nil)
-(defun jens/show-trailing-whitespace ()
-  "Show trailing whitespace in buffer."
-  (interactive)
-  (setq show-trailing-whitespace t))
-
-(add-hook 'text-mode-hook 'jens/show-trailing-whitespace)
-(add-hook 'prog-mode-hook 'jens/show-trailing-whitespace)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; authentication and security ;;
@@ -750,6 +743,30 @@ not in the overlay-map"
       (forward-sexp 1)
     (error (forward-char))))
 
+(defun add-hook* (hook &rest fns)
+  "Add multiple FNS to HOOK."
+  (dolist (fn fns) (add-hook hook fn)))
+
+(defun add-hooks (func &rest hooks)
+  "Add a FUNC to multiple HOOKS."
+  (dolist (hook hooks) (add-hook hook func)))
+
+(defun add-one-shot-hook (hook fun &optional append local)
+  (let ((sym (gensym "one-shot-hook-")))
+    (fset sym
+          (lambda ()
+            (remove-hook hook sym local)
+            (funcall fun)))
+    (add-hook hook sym append local)))
+
+(defmacro before-next-command (&rest body)
+  "Execute BODY before next command runs.
+
+Inside BODY `this-command' is bound to the command that is about
+to run and `this-command-keys' returns the key pressed."
+  `(add-one-shot-hook 'pre-command-hook
+                      (lambda () ,@body)))
+
 ;;;;;;;;;;;;;;;;;
 ;; misc defuns ;;
 ;;;;;;;;;;;;;;;;;
@@ -890,6 +907,14 @@ current line."
   ("c" #'jens/create-scratch-buffer "create scratch buffer"))
 
 (global-set-key (kbd "C-M-s") #'jens/shortcut/body)
+
+(defun jens/show-trailing-whitespace ()
+  "Show trailing whitespace in buffer."
+  (interactive)
+  (setq show-trailing-whitespace t))
+
+(add-hooks #'jens/show-trailing-whitespace
+           'text-mode-hook 'prog-mode-hook)
 
 ;;;;;;;;;;;;;;
 ;; packages ;;
@@ -1114,7 +1139,7 @@ current line."
   ;; stop scrolling compilation buffer when encountering an error
   (setq compilation-scroll-output 'first-error)
   ;; wrap lines
-  (add-hook 'compilation-mode-hook 'visual-line-mode)
+  (add-hook 'compilation-mode-hook #'visual-line-mode)
 
   (defhydra jens/goto-error-hydra ()
     "Hydra for navigating between errors."
@@ -1169,8 +1194,8 @@ number input"
       (when (re-search-forward "^<<<<<<< " nil t)
         (smerge-mode 1))))
 
-  (add-hook 'find-file-hook 'jens/enable-smerge-if-diff-buffer t)
-  (add-hook 'after-revert-hook 'jens/enable-smerge-if-diff-buffer t))
+  (add-hooks #'jens/enable-smerge-if-diff-buffer
+             'find-file-hook 'after-revert-hook))
 
 (use-package elisp-mode
   :delight (emacs-lisp-mode "Elisp" :major)
@@ -1354,7 +1379,7 @@ number input"
   :config
   (setq org-extra-electric-pairs '((?\$ . ?\$)))
 
-  (add-hook 'org-mode-hook (lambda () (setq cleanup-buffer-fns '((jens/org-indent)))))
+  (struere-add 'org-mode #'jens/org-indent)
 
   (setq org-catch-invisible-edits 'show-and-error)
 
@@ -1365,12 +1390,12 @@ number input"
     (let (org-log-done org-log-states)   ; turn off logging
       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
-  (add-hook 'org-after-todo-statistics-hook 'jens/org-summary-todo)
+  (add-hook 'org-after-todo-statistics-hook #'jens/org-summary-todo)
 
   (defun jens/org-add-electric-pairs ()
     (setq-local electric-pair-pairs (-concat org-extra-electric-pairs electric-pair-pairs)))
 
-  (add-hook 'org-mode-hook 'jens/org-add-electric-pairs)
+  (add-hook 'org-mode-hook #'jens/org-add-electric-pairs)
 
   (defun jens/toggle-org-babel-safe ()
     "Toggle whether it is safe to eval babel code blocks in the current buffer."
@@ -1494,8 +1519,7 @@ number input"
          ("\\.zprofile\\'" . shell-script-mode)
          ("\\.PKGBUILD\\'" . shell-script-mode))
   :config
-  (add-hook 'sh-mode-hook #'flymake-mode)
-  (add-hook 'sh-mode-hook #'flycheck-mode))
+  (add-hook* 'sh-mode-hook #'flymake-mode #'flycheck-mode))
 
 (use-package scheme
   :defer t
@@ -1722,7 +1746,7 @@ number input"
   :ensure t
   :commands flymake-shellcheck-load
   :init
-  (add-hook 'sh-mode-hook 'flymake-shellcheck-load))
+  (add-hook 'sh-mode-hook #'flymake-shellcheck-load))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; auto completion ;;
@@ -2825,8 +2849,8 @@ initial search query."
   :demand t
   :commands highlight-bookmarks-in-this-buffer
   :config
-  (add-hook 'find-file-hook #'highlight-bookmarks-in-this-buffer)
-  (add-hook 'after-save-hook #'highlight-bookmarks-in-this-buffer)
+  (add-hooks #'highlight-bookmarks-in-this-buffer
+             'find-file-hook 'after-save-hook)
   (advice-add #'bookmark-jump :after #'highlight-bookmarks-in-this-buffer)
   (advice-add #'bookmark-set :after #'highlight-bookmarks-in-this-buffer)
   (advice-add #'bookmark-delete :after #'highlight-bookmarks-in-this-buffer))
