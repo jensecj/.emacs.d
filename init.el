@@ -1603,10 +1603,24 @@ number input"
 (use-package slime
   :defer t
   :ensure t
+  :after eros
   :commands (jens/qlot-slime slime-start)
+  :bind (:map slime-mode-map
+              ("C-x C-e" . jens/slime-eval-last-sexp))
   :config
   (setq inferior-lisp-program "sbcl")
   (setq slime-contribs '(slime-fancy))
+
+  (defun jens/slime-eval-last-sexp ()
+    "Show the result of evaluating the last-sexp in an overlay."
+    (interactive)
+    (slime-eval-async `(swank:eval-and-grab-output ,(slime-last-expression))
+                      (lambda (result)
+                        (cl-destructuring-bind (output value) result
+                          (let ((string (s-replace "\n" " " (concat output value))))
+                            (message string)
+                            (eros--eval-overlay string (point))))))
+    (slime-sync))
 
   (defun jens/qlot-slime (directory)
     "Start Common Lisp REPL using project-local libraries via
@@ -2769,22 +2783,10 @@ initial search query."
 
 (use-package eros
   :ensure t
-  :bind (:map slime-mode-map
-              ("C-x C-e" . jens/slime-eval-last-sexp))
+
   :hook (emacs-lisp-mode . eros-mode)
   :config
-  (eros-mode +1)
-
-  (defun jens/slime-eval-last-sexp ()
-    "Show the result of evaluating the last-sexp in an overlay."
-    (interactive)
-    (slime-eval-async `(swank:eval-and-grab-output ,(slime-last-expression))
-                      (lambda (result)
-                        (cl-destructuring-bind (output value) result
-                          (let ((string (s-replace "\n" " " (concat output value))))
-                            (message string)
-                            (eros--eval-overlay string (point))))))
-    (slime-sync)))
+  (eros-mode +1))
 
 (use-package zenburn-theme
   :ensure t
