@@ -155,6 +155,12 @@
 ;; don't use shift to mark things
 (setq shift-select-mode nil)
 
+;; always display text left-to-right
+(setq-default bidi-display-reordering nil)
+
+;; fold characters in searches (e.g. 'a' matches 'â')
+(setq search-default-mode 'char-fold-to-regexp)
+
 ;; transparently open compressed files
 (auto-compression-mode t)
 
@@ -1002,6 +1008,7 @@ current line."
 (use-package tramp
   :defer t
   :config
+  (setq tramp-default-method "ssh")
   (setq tramp-persistency-file-name (no-littering-expand-var-file-name "tramp"))
   (setq tramp-terminal-type "tramp")
   (setq tramp-verbose 6))
@@ -1067,6 +1074,9 @@ current line."
   ;; also auto refresh dired, but be quiet about it
   (setq global-auto-revert-non-file-buffers t)
   (setq auto-revert-verbose nil)
+
+  ;; just revert pdf files without asking
+  (setq revert-without-query '("\\.pdf"))
 
   ;; auto refresh buffers
   (global-auto-revert-mode 1))
@@ -1271,6 +1281,10 @@ number input"
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
   (setq dired-listing-switches "-agholXN")
   (setq-default dired-create-destination-dirs 'always)
+
+  ;; always delete and copy recursively
+  (setq dired-recursive-deletes 'always)
+  (setq dired-recursive-copies 'always)
 
   (setq ibuffer-formats
         '((mark modified read-only " "
