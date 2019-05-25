@@ -2617,7 +2617,6 @@ paste for multi-term mode."
   (ivy-rich-mode -1)
   (ivy-rich-mode +1))
 
-
 (use-package counsel
   :ensure t
   :after (ivy fzf)
@@ -2741,7 +2740,9 @@ initial search query."
   (so-long-enable))
 
 (use-package treemacs
-  :straight t)
+  :straight t
+  :config
+  (treemacs-resize-icons 15))
 
 (use-package posframe
   :straight t
@@ -2784,10 +2785,10 @@ initial search query."
 ;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package blog
+  :load-path "~/vault/blog/src/"
   :defer t
   :commands (blog-publish
-             blog-find-posts-file)
-  :load-path "~/vault/blog/src/")
+             blog-find-posts-file))
 
 (use-package views
   :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
@@ -2861,7 +2862,7 @@ _j_: Java        ^ ^
     ("p" (today-refile "today.org" "Python"))
     ("r" (today-refile "today.org" "Rust"))
 
-    ("x" today-refile-hydra/body "Back to refiling hydra" :exit t)
+    ("x" today-refile-hydra/body "Refile entries" :exit t)
     ("z" org-refile-goto-last-stored "Jump to last refile")
     ("q" nil "quit"))
 
