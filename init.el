@@ -1194,7 +1194,11 @@ number input"
   (add-hook 'after-revert-hook 'jens/enable-smerge-if-diff-buffer t))
 
 (use-package elisp-mode
-  :delight (emacs-lisp-mode "Elisp" :major))
+  :delight (emacs-lisp-mode "Elisp" :major)
+  :config
+  (setq cleanup-buffer-fns
+        '((indent-region (point-min) (point-max))
+          (whitespace-cleanup))))
 
 ;; show useful contextual information in the minibuffer
 (use-package eldoc
