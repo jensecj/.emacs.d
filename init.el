@@ -1385,10 +1385,7 @@ number input"
   :config
   (setq org-extra-electric-pairs '((?\$ . ?\$)))
 
-  (struere-add 'org-mode #'jens/org-indent)
-
   (setq org-catch-invisible-edits 'show-and-error)
-
   (setq org-log-done 'time)
 
   (defun jens/org-summary-todo (n-done n-not-done)
@@ -1697,10 +1694,7 @@ number input"
 
 (use-package blacken
   :ensure t
-  :demand t
-  :after struere
-  :config
-  (struere-add 'python-mode #'blacken-buffer))
+  :demand t)
 
 (use-package highlight-defined
   :ensure t
@@ -2822,7 +2816,10 @@ initial search query."
              blog-find-posts-file))
 
 (use-package struere
-  :bind (("C-c n" . struere-cleanup-buffer)))
+  :bind (("C-c n" . struere-buffer))
+  :config
+  (struere-add 'org-mode #'jens/org-indent)
+  (struere-add 'python-mode #'blacken-buffer))
 
 (use-package views
   :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
