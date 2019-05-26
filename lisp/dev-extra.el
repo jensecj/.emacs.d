@@ -1,3 +1,29 @@
+;;; dev-extra.el --- Convenience functions for lisp maintainers. -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2018, 2019 Jens Christian Jensen
+
+;; Author: Jens Christian Jensen <jensecj@gmail.com>
+;; Keywords: library, maintenance
+;; Package-Version: 20190526
+;; Version: 0.1
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+
 (require 'lisp-mnt)
 (require 's)
 (require 'dash)
@@ -62,5 +88,44 @@
       (lm-header "package-version")
       (kill-line)
       (insert (format-time-string "%Y%m%d")))))
+
+(defun dev-insert-header ()
+  "Insert standard library header at the top of the current buffer."
+  (interactive)
+  (goto-char (point-min))
+  (insert
+   (format ";;; %s.el --- some description. -*- lexical-binding: t; -*-
+
+;; Copyright (C) %s %s
+
+;; Author: %s <%s>
+;; Keywords:
+;; Package-Version: %s
+;; Version: 0.1.0
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+
+"
+           (buffer-name)
+           (format-time-string "%Y")
+           (user-full-name)
+           (user-full-name)
+           user-mail-address
+           (format-time-string "%Y%m%d"))))
 
 (provide 'dev-extra)
