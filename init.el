@@ -273,6 +273,12 @@
 ;; don't show trailing whitespace by default
 (setq-default show-trailing-whitespace nil)
 
+;; timestamp messages in the *Warnings* buffer
+(setq warning-prefix-function
+      (lambda (level entry)
+        (insert (format-time-string "[%H:%M:%S] "))
+        entry))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; authentication and security ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
