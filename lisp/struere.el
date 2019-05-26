@@ -3,9 +3,9 @@
 ;; Copyright (C) 2019 Jens Christian Jensen
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
-;; Keywords: reformat, clean, buffer
-;; Package-Version: 20190525
-;; Version: 0.1
+;; Keywords: format, reformat, clean, buffer
+;; Package-Version: 20190526
+;; Version: 0.1.0
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,27 +22,28 @@
 
 ;;; Commentary:
 
-
 ;;; Code:
 
 (require 'ht)
 (require 'dash)
 
-(setq struere-default-cleanup
-      (list #'whitespace-cleanup
-            (lambda () (indent-region (point-min) (point-max)))))
+(defvar struere-default-fns
+  (list #'whitespace-cleanup
+        (lambda () (indent-region (window-start) (window-end))))
+  "List of functions to cleanup a buffer if no backend is added.")
 
-(setq struere-backends (ht))
+(defvar struere-backends (ht)
+  "Backends with functions to use for cleaning up buffers.")
 
 (defun struere--add (mode fn)
-  "Map a single function to a mode."
+  "Add MODE->FN mapping to the backends."
   (assert (atom mode))
   (assert (functionp fn))
   (let ((val (ht-get struere-backends mode '())))
     (ht-set struere-backends mode (-snoc val fn))))
 
 (defun struere-add (modes fns)
-  "Map FNS to MODES in the struere backends."
+  "Add MODES->FNS mappings to backends."
   (cond
    ((consp modes)
     (dolist (m modes) (struere-add m fns)))
@@ -52,18 +53,13 @@
     (struere--add modes fns))))
 
 (defun struere-cleanup-buffer ()
-  "Perform a bunch of operations on the white space content of a buffer.
-Including indent-buffer, which should not be called automatically
-on save."
+  "Apply backends for current mode, or use the default functions."
   (interactive)
-
-  (message "cleaning buffer")
-
   (-map-indexed (lambda (i e)
-                  (message "%s: %s" i e)
+                  (message "cleanup %s: %s" i e)
                   (funcall e))
-                (ht-get struere-backends major-mode struere-default-cleanup))
+                (ht-get struere-backends major-mode struere-default-fns))
 
-  (message "cleaned up"))
+  (message "buffer cleaned"))
 
 (provide 'struere)
