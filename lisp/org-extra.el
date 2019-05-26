@@ -44,3 +44,5 @@ document."
   (with-temp-buffer
     (yank)
     (buffer-string)))
+
+(provide 'org-extra)

@@ -2806,6 +2806,9 @@ initial search query."
 ;; homemade things ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package org-extra)
+(use-package dev-extra)
+
 (use-package blog
   :load-path "~/vault/blog/src/"
   :defer t
