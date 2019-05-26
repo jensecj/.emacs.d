@@ -2,6 +2,7 @@
  ("~/.dotfiles/")
 
  ("~/.emacs.d/init.el")
+
  ("~/.emacs.d/straight/repos/doc-at-point.el/")
  ("~/.emacs.d/straight/repos/etmux.el/")
  ("~/.emacs.d/straight/repos/lowkey-mode-line.el/")

@@ -618,10 +618,10 @@ buffer."
 (defmacro comment (&rest _args))
 
 ;; easy interactive lambda forms
-(defmacro xi (lam)
+(defmacro xi (body)
   `(lambda ()
      (interactive)
-     ,lam))
+     ,body))
 
 (defun jens/inspect-variable-at-point (&optional arg)
   "Inspect variable at point."
@@ -666,6 +666,7 @@ not in the overlay-map"
              (cmd (cdr kvp)))
          (define-key map (kbd key) cmd)))
      map) t))
+
 ;; example:
 ;; (does not work yet, use explicit interactive lambda form)
 ;; (jens/one-shot-keymap
@@ -1853,7 +1854,6 @@ number input"
 ;;;;;;;;;;;;;;;;;;;
 
 (use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
-(use-package fzf :ensure t) ;; fuzzy file finder
 (use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
 (use-package flycheck :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
@@ -2653,7 +2653,7 @@ paste for multi-term mode."
 
 (use-package counsel
   :ensure t
-  :after (ivy fzf)
+  :after ivy
   :defer 1
   :diminish counsel-mode
   :functions jens/counsel-read-file-name
@@ -2662,7 +2662,6 @@ paste for multi-term mode."
   (("C-S-s" . jens/ripgrep)
    ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
-   ("C-x C-S-f" . counsel-fzf)
    ("C-x C-i" . counsel-imenu)
    ("M-æ" . counsel-mark-ring)
    ("M-x" . counsel-M-x)
@@ -2785,7 +2784,6 @@ initial search query."
 
 (use-package eros
   :ensure t
-
   :hook (emacs-lisp-mode . eros-mode)
   :config
   (eros-mode +1))

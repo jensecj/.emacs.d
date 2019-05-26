@@ -3,7 +3,7 @@
 ;; Copyright (C) 2018 Jens Christian Jensen
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
-;; Keywords: highlight-bookmarks
+;; Keywords: highlighting, bookmarks
 ;; Package-Version: 20190208
 ;; Version: 0.3
 ;; Package-Requires: ((emacs "25.1") (ov "1.0.6") (dash "2.14.1") (f "0.20.0"))
