@@ -52,7 +52,7 @@
    ((and (atom modes) (functionp fns))
     (struere--add modes fns))))
 
-(defun struere-cleanup-buffer ()
+(defun struere-buffer ()
   "Apply backends for current mode, or use the default functions."
   (interactive)
   (-map-indexed (lambda (i e)
