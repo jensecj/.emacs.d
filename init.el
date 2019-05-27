@@ -1389,10 +1389,63 @@ number input"
    ("M-<next>" . org-move-subtree-down)
    ("M-<prior>" . org-move-subtree-up))
   :config
+  ;;;;;;;;;;;;;;;;;;;;;;
+  ;; general settings ;;
+  ;;;;;;;;;;;;;;;;;;;;;;
+
+  ;; `$ $' is a pair for latex-math in org-mode
   (setq org-extra-electric-pairs '((?\$ . ?\$)))
 
   (setq org-catch-invisible-edits 'show-and-error)
   (setq org-log-done 'time)
+
+  ;; fontify src blocks
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+
+  ;; keep #+BEGIN_SRC blocks aligned with their contents
+  (setq org-edit-src-content-indentation 0)
+
+  ;; don't indent things
+  (setq org-adapt-indentation nil)
+
+  (setq org-archive-save-context-info '(time file olpath itags))
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (latex . t)
+     (ditaa . t)
+     (plantuml . t)
+     (dot . t)
+     (python . t)
+     (gnuplot . t)))
+
+  (let* ((ditaa-dir "/usr/share/java/ditaa/")
+         (ditaa-jar
+          (-as-> (f-entries ditaa-dir) es
+                 (-filter (lambda (e)
+                            (and
+                             (s-starts-with-p "ditaa" (f-filename e))
+                             (string= "jar" (f-ext e))))
+                          es)
+                 (car es))))
+    (setq org-ditaa-jar-path ditaa-jar))
+
+  ;; try to get non-fuzzy latex fragments
+  (plist-put org-format-latex-options :scale 1.6)
+  (setq org-preview-latex-default-process 'dvisvgm)
+
+  (setq org-html-head "<style type=\"text/css\">body {max-width: 800px; margin: 0 auto;} img {max-width: 100%;}</style>")
+  (setq org-outline-path-complete-in-steps t)
+  (setq org-refile-allow-creating-parent-nodes (quote confirm))
+  (setq org-refile-use-outline-path t)
+  (setq org-refile-targets '( (nil . (:maxlevel . 1))))
+
+  ;;;;;;;;;;;;;
+  ;; advices ;;
+  ;;;;;;;;;;;;;
 
   (defun jens/org-summary-todo (n-done n-not-done)
     "Switch entry to DONE when all subentries are done, to TODO otherwise."
@@ -1405,6 +1458,10 @@ number input"
     (setq-local electric-pair-pairs (-concat org-extra-electric-pairs electric-pair-pairs)))
 
   (add-hook 'org-mode-hook #'jens/org-add-electric-pairs)
+
+  ;;;;;;;;;;;;;;;;;;;;;;
+  ;; helper functions ;;
+  ;;;;;;;;;;;;;;;;;;;;;;
 
   (defun jens/toggle-org-babel-safe ()
     "Toggle whether it is safe to eval babel code blocks in the current buffer."
@@ -1420,20 +1477,6 @@ number input"
     (org-indent-line)
     (message "indented"))
 
-  (defun jens/org-copy-url-at-point ()
-    "Grab URL from org-link at point."
-    (interactive)
-    (let* ((link-info (assoc :link (org-context)))
-           (text (when link-info
-                   (buffer-substring-no-properties (cadr link-info) (caddr link-info)))))
-      (if (not text)
-          (error "Not in org link")
-        (with-temp-buffer
-          (string-match "\\[\\[.*\\]\\[" text)
-          (insert (substring-no-properties text (+ (match-beginning 0) 2) (- (match-end 0) 2)))
-          (clipboard-kill-ring-save (point-min) (point-max))
-          (buffer-string)))))
-
   ;; (defun jens/load-org-agenda-files ()
   ;;   (interactive)
   ;;   (setq org-agenda-files
@@ -1442,57 +1485,13 @@ number input"
 
   ;; (advice-add 'org-agenda :before #'jens/load-org-agenda-files)
 
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               '((emacs-lisp . t)
-                                 (shell . t)
-                                 (latex . t)
-                                 (ditaa . t)
-                                 (plantuml . t)
-                                 (dot . t)
-                                 (python . t)
-                                 (gnuplot . t)))
-
-  (let* ((ditaa-dir "/usr/share/java/ditaa/")
-         (ditaa-jar
-          (-as-> (f-entries ditaa-dir) es
-                 (-filter (lambda (e)
-                            (and
-                             (s-starts-with-p "ditaa" (f-filename e))
-                             (string= "jar" (f-ext e))))
-                          es)
-                 (car es))))
-    (setq org-ditaa-jar-path ditaa-jar))
-
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-
-  ;; keep #+BEGIN_SRC blocks aligned with their contents
-  (setq org-edit-src-content-indentation 0)
-  ;; dont indent things
-  (setq org-adapt-indentation nil)
   ;; syntax highlight org-mode code blocks when exporting as pdf
   ;; (setq-default org-latex-listings 'minted
   ;;               org-latex-packages-alist '(("" "minted"))
   ;;               org-latex-pdf-process
   ;;               '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
   ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-  ;; try to get non-fuzzy latex fragments
-  (plist-put org-format-latex-options :scale 1.6)
-  ;; (setq org-latex-create-formula-image-program 'dvisvgm) ;; obsolete as of org 9.0
-  (setq-default org-preview-latex-default-process 'dvisvgm)
-  ;; use some noise in scheduling org-drills
-  ;; (setq-default org-drill-add-random-noise-to-intervals-p t)
-
-  (setq org-html-head "<style type=\"text/css\">body {max-width: 800px; margin: 0 auto;} img {max-width: 100%;}</style>")
-
-  ;;;;;;;;;;;;
-  ;; filing ;;
-  ;;;;;;;;;;;;
-
-  (setq org-outline-path-complete-in-steps t)
-  (setq org-refile-allow-creating-parent-nodes (quote confirm))
-  (setq org-refile-use-outline-path t)
-  (setq org-refile-targets '( (nil . (:maxlevel . 1)))))
+  )
 
 (use-package ob-async
   :disabled

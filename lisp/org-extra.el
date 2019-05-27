@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(defun org-subtree-remove-checkboxes (subtree &optional checkbox-state)
+(defun org-extra-subtree-remove-checkboxes (subtree &optional checkbox-state)
   "Returns SUBTREE with all checkboxes that are in CHECKBOX-STATE removed."
   (letrec ((checked-checkbox-regex "^\\- \\[X\\]")
            (empty-checkbox-regex "^\\- \\[ \\]")
@@ -56,19 +56,33 @@
 
       (buffer-string))))
 
-(defun copy-subtree-at-point ()
+(defun org-extra-copy-subtree-at-point ()
   "Return a copy of the current subtree-at-point."
   (org-copy-subtree)
   (with-temp-buffer
     (yank)
     (buffer-string)))
 
-(defun cut-subtree-at-point ()
+(defun org-extra-cut-subtree-at-point ()
   "Return the current subtree-at-point, cutting from the
 document."
   (org-cut-subtree)
   (with-temp-buffer
     (yank)
     (buffer-string)))
+
+(defun org-extra-copy-url-at-point ()
+  "Grab URL from org-link at point."
+  (interactive)
+  (let* ((link-info (assoc :link (org-context)))
+         (text (when link-info
+                 (buffer-substring-no-properties (cadr link-info) (caddr link-info)))))
+    (if (not text)
+        (error "Not in org link")
+      (with-temp-buffer
+        (string-match "\\[\\[.*\\]\\[" text)
+        (insert (substring-no-properties text (+ (match-beginning 0) 2) (- (match-end 0) 2)))
+        (clipboard-kill-ring-save (point-min) (point-max))
+        (buffer-string)))))
 
 (provide 'org-extra)
