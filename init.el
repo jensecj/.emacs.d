@@ -774,6 +774,11 @@ to run and `this-command-keys' returns the key pressed."
   `(add-one-shot-hook 'pre-command-hook
                       (lambda () ,@body)))
 
+(defun add-to-list* (list-var elements &optional append compare-fn)
+  "Add multiple ELEMENTS to a LIST-VAR."
+  (dolist (e elements)
+    (add-to-list list-var e append compare-fn)))
+
 ;;;;;;;;;;;;;;;;;
 ;; misc defuns ;;
 ;;;;;;;;;;;;;;;;;
