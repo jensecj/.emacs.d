@@ -24,11 +24,11 @@
 (add-to-list 'load-path user-emacs-elpa-dir)
 
 ;; setup package archives
-(setq-default package-archives
-              '(("gnu" . "https://elpa.gnu.org/packages/")
-                ("melpa-stable" . "https://stable.melpa.org/packages/")
-                ("melpa" . "https://melpa.org/packages/")
-                ("org" . "https://orgmode.org/elpa/")))
+(setq package-archives
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+        ("melpa-stable" . "https://stable.melpa.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")
+        ("org" . "https://orgmode.org/elpa/")))
 
 ;; make sure use-package is installed
 (unless (package-installed-p 'use-package)
@@ -203,7 +203,7 @@
 (setq column-number-mode t)
 
 ;; lines should be 80 characters wide
-(setq-default fill-column 80)
+(setq fill-column 80)
 
 ;; show location of cursor in non-selected windows
 (setq cursor-in-non-selected-windows t)
@@ -225,10 +225,10 @@
 (setq-default indent-line-function 'insert-tab)
 
 ;; show me empty lines after buffer end
-(setq-default indicate-empty-lines t)
+(setq indicate-empty-lines t)
 
 ;; don't automatically break lines
-(setq-default truncate-lines t)
+(setq truncate-lines t)
 
 ;; allow recursive mini buffers
 (setq enable-recursive-minibuffers t)
@@ -271,7 +271,7 @@
 (setq initial-scratch-message "")
 
 ;; don't show trailing whitespace by default
-(setq-default show-trailing-whitespace nil)
+(setq show-trailing-whitespace nil)
 
 ;; timestamp messages in the *Warnings* buffer
 (setq warning-prefix-function
@@ -1027,8 +1027,8 @@ current line."
 ;; save point position between sessions
 (use-package saveplace
   :config
-  (setq-default save-place t)
-  (setq save-place-file (no-littering-expand-var-file-name "saveplaces")))
+  (setq save-place-file (no-littering-expand-var-file-name "saveplaces"))
+  (save-place-mode +1))
 
 ;; persist some variables between sessions
 (use-package savehist
@@ -1295,7 +1295,7 @@ number input"
 
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
   (setq dired-listing-switches "-agholXN")
-  (setq-default dired-create-destination-dirs 'always)
+  (setq dired-create-destination-dirs 'always)
 
   ;; always delete and copy recursively
   (setq dired-recursive-deletes 'always)
@@ -1528,7 +1528,7 @@ number input"
 (use-package scheme
   :defer t
   :mode ("\\.scm\\'" . scheme-mode)
-  :config (setq-default scheme-program-name "csi -:c"))
+  :config (setq scheme-program-name "csi -:c"))
 
 (use-package python
   :defer t
@@ -2402,14 +2402,14 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
             TeX-view-program-list)
   :functions (TeX-PDF-mode TeX-source-correlate-mode)
   :config
-  (setq-default TeX-PDF-mode t) ;; default to pdf
-  (setq-default TeX-global-PDF-mode t) ;; default to pdf
-  (setq-default TeX-parse-self t) ;; parse on load
-  (setq-default TeX-auto-save t) ;; parse on save
-  (setq-default TeX-save-query nil) ;; save before compiling
-  (setq-default TeX-master nil) ;; try to figure out which file is the master
-  (setq-default reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
-  (setq-default doc-view-resolution 300)
+  (setq TeX-PDF-mode t) ;; default to pdf
+  (setq TeX-global-PDF-mode t) ;; default to pdf
+  (setq TeX-parse-self t) ;; parse on load
+  (setq TeX-auto-save t) ;; parse on save
+  (setq TeX-save-query nil) ;; save before compiling
+  (setq TeX-master nil) ;; try to figure out which file is the master
+  (setq reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
+  (setq doc-view-resolution 300)
 
   ;; (setq TeX-view-program-selection (quote ((output-pdf "zathura") (output-dvi "xdvi"))))
   (TeX-source-correlate-mode)        ; activate forward/reverse search
@@ -2442,7 +2442,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
         ("t" . today-capture-elfeed-at-point)
         ("c" . jens/elfeed-copy-link-at-point))
   :config
-  (setq-default elfeed-search-filter "@1-month-ago +unread ")
+  (setq elfeed-search-filter "@1-month-ago +unread ")
 
   (defface youtube-elfeed-face '((t :foreground "#E0CF9F"))
     "face for youtube.com entries"
