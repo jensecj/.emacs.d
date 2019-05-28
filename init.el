@@ -2829,9 +2829,7 @@ initial search query."
   :bind
   (("M-p p" . views-push)
    ("M-p k" . views-pop)
-   ("M-v" . views-switch))
-  :config
-  (views-setup-defaults))
+   ("M-v" . views-switch)))
 
 (use-package sane-windows
   :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
