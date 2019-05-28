@@ -1003,9 +1003,12 @@ current line."
 (use-package paren
   :config
   (setq show-paren-delay 0.1)
+  (setq show-paren-style 'paren)
   (setq show-paren-when-point-inside-paren t)
 
-  (show-paren-mode +1))
+  (show-paren-mode +1)
+  :custom-face
+  (show-paren-match-expression ((t (:foreground nil :background "#353535")))))
 
 ;; auto-replace common abbreviations
 (use-package abbrev
@@ -1765,7 +1768,14 @@ number input"
   (setq highlight-thing-exclude-thing-under-point nil)
   (global-highlight-thing-mode +1)
   :custom-face
-  (highlight-thing ((t (:background "#4f4f4f" :weight bold)))))
+  (highlight-thing ((t (:background "#5f5f5f" :weight bold)))))
+
+(use-package highlight-blocks
+  :ensure t
+  :config
+  (setq highlight-blocks-max-innermost-block-count 1)
+  :custom-face
+  (highlight-blocks-depth-1-face ((t (:foreground nil :background "#353535")))))
 
 (use-package emr
   :ensure t
