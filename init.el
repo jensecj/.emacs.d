@@ -36,13 +36,13 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+(require 'use-package)
+
 ;; need to enable imenu support before requiring `use-package'
 (setq use-package-enable-imenu-support t)
 ;; make use-package tell us what its doing
 (setq use-package-verbose t)
 (setq use-package-compute-statistics t)
-
-(require 'use-package)
 
 ;;; make sure straight.el is installed
 (defvar bootstrap-version)
@@ -275,7 +275,7 @@
 
 ;; timestamp messages in the *Warnings* buffer
 (setq warning-prefix-function
-      (lambda (level entry)
+      (lambda (_level entry)
         (insert (format-time-string "[%H:%M:%S] "))
         entry))
 
@@ -309,7 +309,7 @@
 
   (jens/pinentry-reset)
 
-  (setq gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset))
+  (setq jens/gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset))
   ;; (cancel-timer gpg-reset-timer)
   )
 
@@ -471,7 +471,7 @@ line is killed."
 
 (defun jens/join-region-or-line ()
   "If region is active, join all lines in region to a single
-line. Otherwise join the line below the current line, with the
+line.  Otherwise join the line below the current line, with the
 current line, placing it after."
   (interactive)
   (if (region-active-p)
@@ -483,7 +483,7 @@ current line, placing it after."
   (interactive)
   (save-excursion
     (let ((cp (point)))
-      (previous-line)
+      (forward-line -1)
       (when (not (= (point) cp))
         (call-interactively #'jens/kill-region-or-current-line)
         (end-of-line)
@@ -717,7 +717,7 @@ not in the overlay-map"
 
 (defun jens/foreach-line-in-region (fn &optional beg end)
   "Call FN on each line in region (BEG END)."
-  (let ((beg (or beg (region-beginning)))x
+  (let ((beg (or beg (region-beginning)))
         (end (or end (region-end))))
     (goto-char beg)
     (beginning-of-line)
@@ -767,7 +767,7 @@ not in the overlay-map"
     (add-hook hook sym append local)))
 
 (defmacro before-next-command (&rest body)
-  "Execute BODY before next command runs.
+  "Execute BODY before the next command is run.
 
 Inside BODY `this-command' is bound to the command that is about
 to run and `this-command-keys' returns the key pressed."
@@ -841,7 +841,7 @@ current line."
           "#+end_src"))
 
 (defun jens/copy-symbol-at-point ()
-  "Save the `symbol-at-point' to the kill-ring."
+  "Save the `symbol-at-point' to the `kill-ring'."
   (interactive)
   (let ((sym (symbol-at-point)))
     (kill-new (symbol-name sym))))
