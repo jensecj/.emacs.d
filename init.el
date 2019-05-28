@@ -1915,7 +1915,6 @@ number input"
 
 (use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
 (use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
-(use-package flycheck :ensure t :defer t)
 (use-package git-timemachine :ensure t :defer t)
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
 (use-package dumb-jump :ensure t :defer t)
@@ -1927,6 +1926,30 @@ number input"
 (use-package ov :ensure t) ;; easy overlays
 (use-package popup :ensure t)
 (use-package shut-up :ensure t)
+
+(use-package flycheck
+  :ensure t
+  :defer t
+  :config
+  (defun magnars/adjust-flycheck-automatic-syntax-eagerness ()
+    "Adjust how often we check for errors based on if there are any.
+  This lets us fix any errors as quickly as possible, but in a
+  clean buffer we're an order of magnitude laxer about checking."
+    (setq flycheck-idle-change-delay
+          (if flycheck-current-errors 0.3 3.0)))
+
+  ;; Each buffer gets its own idle-change-delay because of the
+  ;; buffer-sensitive adjustment above.
+  (make-variable-buffer-local 'flycheck-idle-change-delay)
+
+  (add-hook 'flycheck-after-syntax-check-hook
+            #'magnars/adjust-flycheck-automatic-syntax-eagerness)
+
+  ;; Remove newline checks, since they would trigger an immediate check
+  ;; when we want the idle-change-delay to be in effect while editing.
+  (setq-default flycheck-check-syntax-automatically '(save
+                                                      idle-change
+                                                      mode-enabled)))
 
 (use-package fill-column-indicator
   :ensure t
