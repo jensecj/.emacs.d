@@ -2351,7 +2351,8 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
   :after magit
   :commands magit-todos-mode
   :config
-  (magit-todos-mode))
+  (setq magit-todos-exclude-globs '("var/*"))
+  (magit-todos-mode +1))
 
 (use-package undo-tree
   :ensure t
