@@ -913,7 +913,7 @@ current line."
          (pick (completing-read "jump to heading: " headings nil t)))
     (goto-char (cdr (assoc pick headings)))))
 
-(defhydra jens/shortcut ()
+(defhydra jens/shortcut (:exit t)
   "Shortcuts for common commands."
   ("m" #'jens/goto-msg-buffer "goto msg buffer")
   ("c" #'jens/create-scratch-buffer "create scratch buffer"))
