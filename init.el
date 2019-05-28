@@ -141,7 +141,7 @@
 (blink-cursor-mode -1)
 
 ;; always highlight current line
-(global-hl-line-mode 1)
+(global-hl-line-mode +1)
 
 ;; allow pasting selection outside of Emacs
 (setq select-enable-clipboard t)
@@ -1677,11 +1677,11 @@ number input"
     "Show the result of evaluating the last-sexp in an overlay."
     (interactive)
     (slime-eval-async `(swank:eval-and-grab-output ,(slime-last-expression))
-                      (lambda (result)
-                        (cl-destructuring-bind (output value) result
-                          (let ((string (s-replace "\n" " " (concat output value))))
-                            (message string)
-                            (eros--eval-overlay string (point))))))
+      (lambda (result)
+        (cl-destructuring-bind (output value) result
+          (let ((string (s-replace "\n" " " (concat output value))))
+            (message string)
+            (eros--eval-overlay string (point))))))
     (slime-sync))
 
   (defun jens/qlot-slime (directory)
@@ -2021,7 +2021,7 @@ title and duration."
 
 (use-package help-fns+
   :init
-  (let ((help-fns-plus-file (concat user-emacs-elpa-dir "/help-fns+.el"))
+  (let ((help-fns-plus-file (concat user-emacs-elpa-dir "help-fns+.el"))
         (url "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"))
     (unless (file-exists-p help-fns-plus-file)
       (url-copy-file url help-fns-plus-file))))
@@ -2364,7 +2364,6 @@ title and duration."
   (setq magit-auto-revert-mode nil)
   (setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
   (setq magit-merge-arguments '("--no-ff"))
-
   (setq magit-section-visibility-indicator '("…", t)))
 
 (use-package magithub
