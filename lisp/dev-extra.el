@@ -27,6 +27,7 @@
 (require 'lisp-mnt)
 (require 's)
 (require 'dash)
+(require 'hydra)
 
 (defun dev--header-exists (header)
   "Return content of header if it exists."
@@ -79,6 +80,12 @@
   (interactive)
   (when-let ((ver (dev--header-exists "version")))
     (dev--update-version (dev--bump-version ver 'major))))
+
+(defhydra dev-bump-version-hydra ()
+  "Hydra for bumping package version"
+  ("p" #'dev-bump-patch "patch")
+  ("m" #'dev-bump-minor "minor")
+  ("M" #'dev-bump-major "major"))
 
 (defun dev-update-package-version ()
   "Update the package-version to current date in compact format."
