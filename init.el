@@ -2286,29 +2286,13 @@ title and duration."
   :ensure t
   :bind
   (("C-d" . mc/mark-next-like-this)
-   ("C-S-d" . mc/mark-previous-like-this)
-   ("C-M-a" . mc/mark-all-like-this)
-   ("C-M-<return>" . mc-hydra/body))
+   ("C-S-d" . mc/mark-previous-like-this))
   :init
-  (setq mc/list-file (no-littering-expand-etc-file-name "mc-lists.el"))
-  :config
-  (defhydra mc-hydra ()
-    "
-^Next^                ^Previous^              ^Lines^
-^^^^^^^^----------------------------------------------------
-_n_: Mark next        _p_: Mark previous      _b_: Edit beginning of lines
-_N_: Skip to next     _P_: Skip to previous   _e_: Edit ends of lines
-_M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
-"
-    ("n" #'mc/mark-next-like-this)
-    ("N" #'mc/skip-to-next-like-this)
-    ("M-n" #'mc/unmark-next-like-this)
-    ("p" #'mc/mark-previous-like-this)
-    ("P" #'mc/skip-to-previous-like-this)
-    ("M-p" #'mc/unmark-previous-like-this)
+  (setq mc/list-file (no-littering-expand-etc-file-name "mc-lists.el")))
 
-    ("b" #'mc/edit-beginnings-of-lines)
-    ("e" #'mc/edit-ends-of-lines)))
+(use-package ace-mc
+  :ensure t
+  :bind ("C-M-<return>" . ace-mc-add-multiple-cursors))
 
 (use-package browse-kill-ring
   :ensure t
@@ -2335,10 +2319,6 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
   :ensure t
   :defer t
   :bind ("C-å" . avy-zap-to-char))
-
-(use-package ace-mc
-  :ensure t
-  :bind ("C-M-d" . ace-mc-add-multiple-cursors))
 
 (use-package expand-region
   :ensure t
