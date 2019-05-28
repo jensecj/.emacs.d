@@ -202,8 +202,7 @@
 (setq line-number-mode t)
 (setq column-number-mode t)
 
-;; lines should be 80 characters wide
-(setq fill-column 80)
+(setq fill-column 85)
 
 ;; show location of cursor in non-selected windows
 (setq cursor-in-non-selected-windows t)
@@ -1065,7 +1064,7 @@ current line."
           "COMMIT_EDITMSG"))
 
   ;; save a bunch of recent items
-  (setq recentf-max-saved-items 500)
+  (setq recentf-max-saved-items 1000)
 
   ;; clean the list every 5 minutes
   (setq recentf-auto-cleanup 300)
@@ -2316,6 +2315,7 @@ _M-n_: Unmark next    _M-p_: Unmark previous  ^ ^
   (setq magit-auto-revert-mode nil)
   (setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
   (setq magit-merge-arguments '("--no-ff"))
+
   (setq magit-section-visibility-indicator '("…", t)))
 
 (use-package magithub
@@ -2630,6 +2630,7 @@ paste for multi-term mode."
   (setq ivy-count-format "")
   (setq ivy-use-virtual-buffers t)
   (setq ivy-re-builders-alist '((t . ivy--regex-plus)))
+  (setq ivy-on-del-error-function nil)
 
   (ivy-mode)
   :custom-face
