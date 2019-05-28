@@ -1871,6 +1871,12 @@ number input"
 (use-package popup :ensure t)
 (use-package shut-up :ensure t)
 
+(use-package fill-column-indicator
+  :ensure t
+  :config
+  (setq fci-rule-color "#555555")
+  (fci-mode +1))
+
 (use-package spinner
   :ensure t
   :config
@@ -2197,6 +2203,12 @@ title and duration."
   (defalias #'describe-variable #'helpful-variable)
   (defalias #'describe-symbol #'helpful-symbol)
   (defalias #'describe-key #'helpful-key))
+
+(use-package shackle
+  :ensure t
+  :config
+  (setq shackle-rules
+        '(("\\`\\*xref\\*\\'" :regexp t :same t :inhibit-window-quit t))))
 
 (use-package elisp-demos
   :straight t
