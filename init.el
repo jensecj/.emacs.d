@@ -845,6 +845,15 @@ current line."
   (let ((sym (symbol-at-point)))
     (kill-new (symbol-name sym))))
 
+(defun jens/copy-buffer-file-path ()
+  "Copy the current buffers file path to the clipboard."
+  (interactive)
+  (let ((path (buffer-file-name)))
+    (with-temp-buffer
+      (insert path)
+      (clipboard-kill-ring-save (point-min) (point-max)))
+    path))
+
 (defun jens/goto-repo ()
   "Quickly jump to a repository, defined in repos.el"
   (interactive)
