@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: \matrix
+# key: \matrix
+# --
+\begin{align*}
+\begin{bmatrix}
+1 \\
+2 \\
+3
+\end{bmatrix}
+\end{align*}
