@@ -1938,6 +1938,37 @@ number input"
 (use-package popup :ensure t)
 (use-package shut-up :ensure t)
 
+(use-package frog-menu
+  :ensure t
+  :config
+  (setq frog-menu-avy-padding t)
+  (setq frog-menu-min-col-padding 4)
+  (setq frog-menu-format 'vertical)
+
+  (defun frog-menu-flyspell-correct (candidates word)
+    "Run `frog-menu-read' for the given CANDIDATES.
+
+List of CANDIDATES is given by flyspell for the WORD.
+
+Return selected word to use as a replacement or a tuple
+of (command . word) to be used by `flyspell-do-correct'."
+    (let* ((corrects (if flyspell-sort-corrections
+                         (sort candidates 'string<)
+                       candidates))
+           (actions `(("C-s" "Save word"         (save    . ,word))
+                      ("C-a" "Accept (session)"  (session . ,word))
+                      ("C-b" "Accept (buffer)"   (buffer  . ,word))
+                      ("C-c" "Skip"              (skip    . ,word))))
+           (prompt   (format "Dictionary: [%s]"  (or ispell-local-dictionary
+                                                     ispell-dictionary
+                                                     "default")))
+           (res      (frog-menu-read prompt corrects actions)))
+      (unless res
+        (error "Quit"))
+      res))
+
+  (setq flyspell-correct-interface #'frog-menu-flyspell-correct))
+
 (use-package flycheck
   :ensure t
   :defer t
@@ -2333,6 +2364,8 @@ title and duration."
   :defer t
   :bind ("C-x C-y" . browse-kill-ring)
   :config (setq browse-kill-ring-quit-action 'save-and-restore))
+
+(use-package browse-at-remote :ensure t)
 
 (use-package avy
   :ensure t
