@@ -2102,7 +2102,7 @@ title and duration."
          (("C-x <right>" . buffer-carousel-hydra/body)))
   :config
   (defhydra buffer-carousel-hydra ()
-    "Move betweet buffers."
+    "Move between buffers."
     ("<left>" #'previous-buffer "previous")
     ("<right>" #'next-buffer "next")))
 
@@ -2478,7 +2478,7 @@ title and duration."
   :bind (("M-<" . beginning-of-buffer)
          ("M->" . end-of-buffer))
   :config
-  ;; diminish all the beginend modes
+  ;; diminish all the `beginend' modes
   (mapc (lambda (s) (diminish (cdr s))) beginend-modes)
   (beginend-global-mode))
 
