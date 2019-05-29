@@ -1781,7 +1781,18 @@ number input"
   :ensure t
   :bind
   (:map emacs-lisp-mode-map
-        ("M-<return>" . emr-show-refactor-menu)))
+        ("M-<return>" . jens/emr-show-refactor-menu))
+  :config
+  (defun jens/emr-show-refactor-menu ()
+    "Alternative emr refactoring menu."
+    (interactive)
+    (when-let* ((candidates (->> emr:refactor-commands
+                                 (emr:hash-values)
+                                 (-map 'emr:make-popup)
+                                 (-remove 'null)))
+                (pick (ivy-completing-read "" candidates))
+                (fn (get-text-property 0 'value pick)))
+      (call-interactively fn))))
 
 (use-package package-lint :ensure t :defer t :commands (package-lint-current-buffer))
 (use-package flycheck-package :ensure t :defer t :commands (flycheck-package-setup))
