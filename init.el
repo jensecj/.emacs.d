@@ -2877,6 +2877,9 @@ initial search query."
              flyspell-mode
              flyspell-prog-mode
              flyspell-buffer)
+  :bind
+  (("C-," . nil)
+   ("C-M-," . flyspell-goto-next-error))
   :config
   (ispell-change-dictionary "english")
 
@@ -2889,6 +2892,7 @@ initial search query."
 
 (use-package flyspell-correct
   :ensure t
+  :after flyspell
   :bind (("C-," . flyspell-correct-at-point))
   :commands flyspell-correct-at-point)
 
