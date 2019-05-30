@@ -2324,10 +2324,10 @@ title and duration."
    (org-mode . diff-hl-mode)
    (dired-mode . diff-hl-dired-mode))
   :config
+  (setq diff-hl-dired-extra-indicators t)
+  (setq diff-hl-draw-borders nil)
+
   (defun jens/diff-hl-refresh ()
-    "Refresh diff-hl-mode."
-    (interactive)
-    (diff-hl-mode nil)
     (diff-hl-mode +1))
 
   (defhydra jens/diff-hl-hydra ()
@@ -2335,7 +2335,22 @@ title and duration."
     ("n" #'diff-hl-next-hunk "next")
     ("p" #'diff-hl-previous-hunk "previous"))
 
-  (global-diff-hl-mode +1))
+  (global-diff-hl-mode +1)
+  :custom-face
+  (diff-hl-dired-unknown ((t (:inherit diff-hl-dired-insert))))
+  (diff-hl-dired-ignored ((t (:background "#2b2b2b")))))
+
+(use-package diff-hl-dired
+  :after diff-hl
+  :config
+  (defun jens/empty-fringe-bmp (_type _pos) 'diff-hl-bmp-empty)
+
+  ;; don't show fringe bitmaps
+  (setq diff-hl-fringe-bmp-function #'jens/empty-fringe-bmp)
+  (advice-patch #'diff-hl-dired-highlight-items
+                'jens/empty-fringe-bmp
+                'diff-hl-fringe-bmp-from-type))
+
 
 (use-package hl-todo
   :ensure t
