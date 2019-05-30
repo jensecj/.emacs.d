@@ -3336,6 +3336,8 @@ times."
 
 (bind-key* "M-r" #'jens/goto-repo)
 
+(bind-key "t" #'jens/tail-message-buffer messages-buffer-mode-map)
+
 (global-set-key (kbd "<f12>") #'jens/inspect-variable-at-point)
 
 ;; Completion that uses many different methods to find options.
