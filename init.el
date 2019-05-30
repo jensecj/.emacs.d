@@ -2354,9 +2354,11 @@ title and duration."
 
 (use-package shackle
   :ensure t
+  :demand t
   :config
   (setq shackle-rules
-        '(("\\`\\*xref\\*\\'" :regexp t :same t :inhibit-window-quit t))))
+        '(((regexp-quote "*xref*") :regexp t :same t :inhibit-window-quit t)))
+  (shackle-mode +1))
 
 (use-package elisp-demos
   :straight t
