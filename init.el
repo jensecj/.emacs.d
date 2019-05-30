@@ -36,13 +36,15 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-(require 'use-package)
 
 ;; need to enable imenu support before requiring `use-package'
 (setq use-package-enable-imenu-support t)
 ;; make use-package tell us what its doing
 (setq use-package-verbose t)
 (setq use-package-compute-statistics t)
+
+;; needs to be required after its settings are set
+(require 'use-package)
 
 ;;; make sure straight.el is installed
 (defvar bootstrap-version)
