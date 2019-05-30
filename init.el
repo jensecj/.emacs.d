@@ -1029,7 +1029,7 @@ current line."
 (use-package paren
   :config
   (setq show-paren-delay 0.1)
-  (setq show-paren-style 'paren)
+  (setq show-paren-style 'expression)
   (setq show-paren-when-point-inside-paren t)
 
   (show-paren-mode +1)
@@ -1139,7 +1139,7 @@ current line."
   (("C-c r" . jens/replace)
    ("C-c q" . jens/query-replace))
   :config
-  (defun jens--replace (fn)
+  (defun jens/--replace (fn)
     "Get replace arguments and delegate to replace FN."
     (let ((from (if (use-region-p)
                     (buffer-substring (region-beginning) (region-end))
@@ -1150,14 +1150,14 @@ current line."
         (funcall fn from to nil (point-min) (point-max)))))
 
   (defun jens/replace ()
-    "Replace occurance of regexp in the entire buffer."
+    "Replace occurrence of regexp in the entire buffer."
     (interactive)
-    (jens--replace #'replace-regexp))
+    (jens/--replace #'replace-regexp))
 
   (defun jens/query-replace ()
     "Interactively replace occurance of regexp in the entire buffer."
     (interactive)
-    (jens--replace #'query-replace-regexp)))
+    (jens/--replace #'query-replace-regexp)))
 
 ;; semantic analysis in supported modes (cpp, java, etc.)
 (use-package semantic
@@ -1789,7 +1789,7 @@ number input"
   :diminish highlight-thing-mode
   :config
   (setq highlight-thing-ignore-list '("nil" "t"))
-  (setq highlight-thing-delay-seconds 0.5)
+  (setq highlight-thing-delay-seconds 0.2)
   (setq highlight-thing-case-sensitive-p nil)
   (setq highlight-thing-exclude-thing-under-point nil)
   (global-highlight-thing-mode +1)
@@ -2015,9 +2015,7 @@ of (command . word) to be used by `flyspell-do-correct'."
 
   ;; Remove newline checks, since they would trigger an immediate check
   ;; when we want the idle-change-delay to be in effect while editing.
-  (setq-default flycheck-check-syntax-automatically '(save
-                                                      idle-change
-                                                      mode-enabled)))
+  (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled)))
 
 (use-package fill-column-indicator
   :ensure t
@@ -2482,10 +2480,10 @@ reenable afterwards."
 (use-package magit-todos
   :ensure t
   :after magit
+  :hook (magit-status-mode . magit-todos-mode)
   :commands magit-todos-mode
   :config
-  (setq magit-todos-exclude-globs '("var/*"))
-  (magit-todos-mode +1))
+  (setq magit-todos-exclude-globs '("var/*")))
 
 (use-package undo-tree
   :ensure t
@@ -2918,6 +2916,7 @@ initial search query."
              flyspell-buffer)
   :bind
   (("C-," . nil)
+   ("C-;" . nil)
    ("C-M-," . flyspell-goto-next-error))
   :config
   (ispell-change-dictionary "english")
@@ -2944,7 +2943,8 @@ initial search query."
   (so-long-enable))
 
 (use-package treemacs
-  :straight t
+  :ensure t
+  :defer t
   :config
   (treemacs-resize-icons 15))
 
