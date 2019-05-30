@@ -81,6 +81,14 @@
   :straight (ht :host github :repo "Wilfred/ht.el"
                 :fork (:host github :repo "jensecj/ht.el")))
 
+;; easy way to patch packages
+(use-package advice-patch
+  :init
+  (let ((advice-patch-file (concat user-emacs-elpa-dir "advice-patch.el"))
+        (url "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"))
+    (unless (file-exists-p advice-patch-file)
+      (url-copy-file url advice-patch-file))))
+
 (defun jens/init-fonts ()
   "Setup font configuration for new frames."
   (let ((my-font "Source Code Pro Semibold 10"))
