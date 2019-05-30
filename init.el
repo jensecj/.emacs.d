@@ -2038,6 +2038,7 @@ of (command . word) to be used by `flyspell-do-correct'."
 
 (use-package fill-column-indicator
   :ensure t
+  :hook ((text-mode prog-mode) . fci-mode)
   :config
   (setq fci-rule-color "#555555")
   (fci-mode +1))
@@ -2400,7 +2401,7 @@ title and duration."
 
 (use-package iedit
   :straight t
-  :bind ("C-;" . iedit-mode))
+  :bind* ("C-;" . iedit-mode))
 
 (use-package smartscan
   :straight t
@@ -2809,7 +2810,7 @@ paste for multi-term mode."
    ("C-c C-r" . ivy-resume)
    :map ivy-minibuffer-map
    ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
-   ("C-S-<return>" . ivy-immediate-done)
+   ("C-<return>" . ivy-immediate-done)
    :map ivy-occur-grep-mode-map
    ("d" . ivy-occur-delete-candidate))
   :config
@@ -3374,6 +3375,10 @@ times."
 
 ;; Completion that uses many different methods to find options.
 (global-set-key (kbd "C-.") 'hippie-expand)
+
+;;;;;;;;;;;;;;
+;; epilogue ;;
+;;;;;;;;;;;;;;
 
 (msg-success (format "Emacs initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
 
