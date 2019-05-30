@@ -972,6 +972,9 @@ current line."
         (tail-message-buffer-mode +1)
       (tail-message-buffer-mode -1))))
 
+;; auto-tail the *Messages* buffer by default
+(jens/tail-message-buffer)
+
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
