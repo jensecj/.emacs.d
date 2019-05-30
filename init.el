@@ -757,6 +757,10 @@ not in the overlay-map"
   "Add a FUNC to multiple HOOKS."
   (dolist (hook hooks) (add-hook hook func)))
 
+(defun advice-nuke (sym)
+  "Remove all advices from symbol SYM."
+  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
+
 (defun add-one-shot-hook (hook fun &optional append local)
   (let ((sym (gensym "one-shot-hook-")))
     (fset sym
