@@ -1325,6 +1325,7 @@ number input"
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
   (setq dired-listing-switches "-agholXN")
   (setq dired-create-destination-dirs 'always)
+  (setq dired-hide-details-hide-symlink-targets nil)
 
   ;; always delete and copy recursively
   (setq dired-recursive-deletes 'always)
@@ -1345,6 +1346,9 @@ number input"
       (set-buffer-modified-p nil)))
 
   (advice-add 'dired-readin :after #'jens/dired-sort)
+
+  ;; use bigger fringes in dired-mode
+  (add-hook 'dired-mode-hook (lambda () (setq left-fringe-width 10)))
 
   (defun jens/dired-toggle-mark (arg)
     "Toggle mark on the current line."
