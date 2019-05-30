@@ -2403,6 +2403,17 @@ title and duration."
    ("C-'" . avy-goto-line))
   :config
   (setq avy-background 't)
+
+  (defun jens/avy-disable-highlight-thing (fn &rest args)
+    "Disable `highlight-thing-mode' when avy-goto mode is active,
+reenable afterwards."
+    (let ((toggle (bound-and-true-p highlight-thing-mode)))
+      (when toggle (highlight-thing-mode -1))
+      (unwind-protect
+          (apply fn args)
+        (when toggle (highlight-thing-mode +1)))))
+
+  (advice-add #'avy-goto-char :around #'jens/avy-disable-highlight-thing)
   :custom-face
   (avy-background-face ((t (:background "#2B2B2B"))))
   (avy-lead-face ((t (:background "#2B2B2B"))))
