@@ -1691,16 +1691,18 @@ number input"
 (use-package dired+
   :straight (dired+ :type git :host github :repo "emacsmirror/dired-plus")
   :after dired
-  :commands (toggle-diredp-find-file-reuse-dir
-             diredp-up-directory-reuse-dir-buffer)
+  :demand t
   :bind
   (:map dired-mode-map
-        ("<backspace>" . diredp-up-directory-reuse-dir-buffer))
+        ("<backspace>" . diredp-up-directory-reuse-dir-buffer)
+        ("C-<up>" . nil)
+        ("C-<down>" . nil))
   :config
-  (unbind-key "C-<up>" dired-mode-map)
-  (unbind-key "C-<down>" dired-mode-map)
   (toggle-diredp-find-file-reuse-dir +1)
+  (global-dired-hide-details-mode +1)
   :custom-face
+  (diredp-omit-file-name ((t (:foreground "#afafaf" :inherit diredp-ignored-file-name :strike-through nil))))
+  (diredp-dir-heading ((t (:background "#4f4f4f"))))
   (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
   (diredp-file-name ((t (:foreground "#DCDCCC"))))
   (diredp-dir-name ((t (:foreground "#8CD0D3")))))
