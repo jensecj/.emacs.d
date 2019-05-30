@@ -937,8 +937,30 @@ current line."
   (interactive)
   (setq show-trailing-whitespace t))
 
-(add-hooks #'jens/show-trailing-whitespace
-           'text-mode-hook 'prog-mode-hook)
+(add-hooks #'jens/show-trailing-whitespace 'text-mode-hook 'prog-mode-hook)
+
+(defun jens/tail-message-buffer ()
+  "Toggle tailing the *Message* buffer every time something is written to it."
+  (interactive)
+  (unless (fboundp 'tmb/message-buffer-goto-end)
+    (defun tmb/message-buffer-goto-end (res)
+      (dolist (w (get-buffer-window-list "*Messages*"))
+        (with-selected-window w
+          (set-window-point w (point-max))))
+      res))
+
+  (unless (boundp 'tail-message-buffer-mode)
+    (define-minor-mode tail-message-buffer-mode
+      "Tail the *Messages* buffer every time something calls `message'."
+      nil " tail" '(())
+      (if (bound-and-true-p tail-message-buffer-mode)
+          (advice-add #'message :filter-args #'tmb/message-buffer-goto-end)
+        (advice-remove #'message #'tmb/message-buffer-goto-end))))
+
+  (with-current-buffer (get-buffer "*Messages*")
+    (if (not (bound-and-true-p tail-message-buffer-mode))
+        (tail-message-buffer-mode +1)
+      (tail-message-buffer-mode -1))))
 
 ;;;;;;;;;;;;;;
 ;; packages ;;
