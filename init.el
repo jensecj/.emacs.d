@@ -1031,6 +1031,16 @@ current line."
     (message "%s" lines-of-code)
     lines-of-code))
 
+(defun jens/download-file (url &optional dir overwrite)
+  "Download a file from URL to DIR, optionally OVERWRITE an existing file.
+If DIR is nil, download to current directory."
+  (let* ((dir (or dir default-directory))
+         (file (url-unhex-string (f-filename url)))
+         (path (f-join dir file)))
+    (condition-case ex
+        (url-copy-file url path overwrite)
+      (error 'file-already-exists))))
+
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
@@ -2175,10 +2185,9 @@ title and duration."
 
 (use-package help-fns+
   :init
-  (let ((help-fns-plus-file (concat user-emacs-elpa-dir "help-fns+.el"))
-        (url "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"))
-    (unless (file-exists-p help-fns-plus-file)
-      (url-copy-file url help-fns-plus-file))))
+  (jens/download-file
+   "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
+   user-emacs-elpa-dir))
 
 (use-package hydra
   :ensure t
