@@ -1005,6 +1005,32 @@ current line."
           (set-window-margins (selected-window) margin margin))
       (set-window-margins (selected-window) 0 0))))
 
+(defun jens/emacs-init-loc ()
+  "Total lines of emacs-lisp code in my emacs configuration."
+  (interactive)
+  (let* ((locs '("init.el"
+                 "early-init.el"
+                 "experimental.el"
+                 "repos.el"
+                 "lisp/*.el"
+                 "modes/*.el"
+                 "straight/repos/doc-at-point.el/*.el"
+                 "straight/repos/etmux.el/*.el"
+                 "straight/repos/lowkey-mode-line.el/*.el"
+                 "straight/repos/today.el/*.el"
+                 "straight/repos/views.el/*.el"
+                 "straight/repos/sane-windows.el/*.el"
+                 "straight/repos/replace-at-point.el/*.el"))
+         (full-paths (-map (lambda (l) (f-full (concat user-emacs-directory l))) locs))
+         (all-files (-flatten (-map (lambda (p) (f-glob p)) full-paths)))
+         (all-files (s-join " " all-files))
+         (cloc-cmd "tokei -o json")
+         (format-cmd "jq '.inner.Elisp.code'")
+         (final-cmd (format "%s %s | %s" cloc-cmd all-files format-cmd))
+         (lines-of-code (s-trim (shell-command-to-string final-cmd))))
+    (message "%s" lines-of-code)
+    lines-of-code))
+
 ;;;;;;;;;;;;;;
 ;; packages ;;
 ;;;;;;;;;;;;;;
@@ -3398,7 +3424,8 @@ times."
 ;; epilogue ;;
 ;;;;;;;;;;;;;;
 
-(msg-success (format "Emacs initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
+(msg-success (format "Configuration is %s lines of emacs-lisp. (excluding 3rd-parties)" (jens/emacs-init-loc)))
+(msg-success (format "Initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
 
 (defun jens/show-initial-important-messages ()
   "Show all lines in *Messages* matching a regex for important messages."
