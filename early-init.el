@@ -1,5 +1,4 @@
 ;;; -*- lexical-binding: t -*-
-(setq-default lexical-binding t)
 
 ;; precompute one big autoloads file, makes loading them faster
 (setq package-quickstart t)

@@ -36,20 +36,19 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-
 ;; need to enable imenu support before requiring `use-package'
 (setq use-package-enable-imenu-support t)
 ;; make use-package tell us what its doing
 (setq use-package-verbose t)
 (setq use-package-compute-statistics t)
+(setq use-package-minimum-reported-time 0.01)
 
 ;; needs to be required after its settings are set
 (require 'use-package)
 
 ;;; make sure straight.el is installed
 (defvar bootstrap-version)
-(let ((bootstrap-file
-       (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
+(let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (msg-warning "straight.el was not found, installing.")
@@ -339,7 +338,7 @@ seconds."
               (kill-buffer buffer)
               (incf buffers-killed))))))
     (unless (zerop buffers-killed)
-      (message "%s .gpg buffers have been saved and killed" buffers-killed))))
+      (message "%s .gpg buffer(s) saved and killed" buffers-killed))))
 
 (setq jens/kill-idle-gpg-buffers-timer (run-with-idle-timer 60 t 'jens/kill-idle-gpg-buffers))
 
@@ -635,6 +634,7 @@ buffer."
 (defun jens/inspect-variable-at-point (&optional arg)
   "Inspect variable at point."
   (interactive "P")
+  (require 'doc-at-point)
   (let* ((sym (symbol-at-point))
          (value (cond
                  ((fboundp sym) (symbol-function sym))
@@ -677,12 +677,11 @@ not in the overlay-map"
      map) t))
 
 ;; example:
-;; (does not work yet, use explicit interactive lambda form)
 ;; (jens/one-shot-keymap
-;;  '(("a" . (xi (message "a")))
-;;    ("b" . (xi (message "b")))
-;;    ("c" . (xi (message "c")))
-;;    ("d" . (xi (message "d")))))
+;;  `(("a" . ,(xi (message "a")))
+;;    ("b" . ,(xi (message "b")))
+;;    ("c" . ,(xi (message "c")))
+;;    ("d" . ,(xi (message "d")))))
 
 (defun jens/try-require (feature)
   "Try to require FEATURE, if an exception is thrown, log it."
@@ -1740,11 +1739,11 @@ number input"
     "Show the result of evaluating the last-sexp in an overlay."
     (interactive)
     (slime-eval-async `(swank:eval-and-grab-output ,(slime-last-expression))
-      (lambda (result)
-        (cl-destructuring-bind (output value) result
-          (let ((string (s-replace "\n" " " (concat output value))))
-            (message string)
-            (eros--eval-overlay string (point))))))
+                      (lambda (result)
+                        (cl-destructuring-bind (output value) result
+                          (let ((string (s-replace "\n" " " (concat output value))))
+                            (message string)
+                            (eros--eval-overlay string (point))))))
     (slime-sync))
 
   (defun jens/qlot-slime (directory)
@@ -2408,7 +2407,7 @@ title and duration."
   :demand t
   :config
   (setq shackle-rules
-        '(((regexp-quote "*xref*") :regexp t :same t :inhibit-window-quit t)))
+        '(((rx "*xref*") :regexp t :same t :inhibit-window-quit t)))
   (shackle-mode +1))
 
 (use-package elisp-demos
@@ -2466,7 +2465,7 @@ reenable afterwards."
 
   (advice-add #'avy-goto-char :around #'jens/avy-disable-highlight-thing)
   :custom-face
-  (avy-background-face ((t (:background "#2B2B2B"))))
+  (avy-background-face ((t (:foreground "gray50" :background "#313131"))))
   (avy-lead-face ((t (:background "#2B2B2B"))))
   (avy-lead-face-0 ((t (:background "#2B2B2B"))))
   (avy-lead-face-1 ((t (:background "#2B2B2B"))))
@@ -3288,7 +3287,7 @@ times."
 (define-key key-translation-map [dead-diaeresis] "¨")
 
 ;; Insert tilde with a single keystroke
-(global-set-key (kbd "<menu>") (lambda () (interactive) (insert "~")))
+(global-set-key (kbd "<menu>") (xi (insert "~")))
 
 ;; Easily mark the entire buffer
 (bind-key* "C-x a" 'mark-whole-buffer)
