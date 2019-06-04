@@ -1920,6 +1920,9 @@ number input"
   :init
   (add-hook 'sh-mode-hook #'flymake-shellcheck-load))
 
+(use-package rmsbolt
+  :ensure t)
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; auto completion ;;
 ;;;;;;;;;;;;;;;;;;;;;
