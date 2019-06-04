@@ -759,13 +759,32 @@ not in the overlay-map"
       (forward-sexp 1)
     (error (forward-char))))
 
-(defun add-hook* (hook &rest fns)
-  "Add multiple FNS to HOOK."
-  (dolist (fn fns) (add-hook hook fn)))
 
-(defun add-hooks (func &rest hooks)
-  "Add a FUNC to multiple HOOKS."
-  (dolist (hook hooks) (add-hook hook func)))
+(defun twin-dispatch (fn A B)
+  ""
+  (cond
+   ((listp A)
+    (dolist (a A) (twin-dispatch fn a B)))
+   ((listp B)
+    (dolist (b B) (twin-dispatch fn A b)))
+   ((and (atom A) (atom B))
+    (funcall fn A B))))
+
+(defun add-hook* (hooks fns)
+  "Add FNS to HOOKS."
+  (twin-dispatch #'add-hook hooks fns))
+
+(defun remove-hook* (hooks fns)
+  "Remove FNS from HOOKs."
+  (twin-dispatch #'remove-hook hooks fns))
+
+(defun advice-add* (syms where fns)
+  "Advice FNS to SYMS."
+  (twin-dispatch (lambda (sym fn) (advice-add sym where fn)) syms fns))
+
+(defun advice-remove* (syms fns)
+  "Remove FNS from SYMS."
+  (twin-dispatch (lambda (sym fn) (advice-remove sym fn)) syms fns))
 
 (defun advice-nuke (sym)
   "Remove all advices from symbol SYM."
@@ -947,7 +966,7 @@ current line."
   (interactive)
   (setq show-trailing-whitespace t))
 
-(add-hooks #'jens/show-trailing-whitespace 'text-mode-hook 'prog-mode-hook)
+(add-hook* '(text-mode-hook prog-mode-hook) #'jens/show-trailing-whitespace)
 
 (defun jens/tail-message-buffer ()
   "Toggle tailing the *Message* buffer every time something is written to it."
@@ -1266,8 +1285,7 @@ number input"
       (when (re-search-forward "^<<<<<<< " nil t)
         (smerge-mode 1))))
 
-  (add-hooks #'jens/enable-smerge-if-diff-buffer
-             'find-file-hook 'after-revert-hook))
+  (add-hook* '(find-file-hook after-revert-hook) #'jens/enable-smerge-if-diff-buffer))
 
 (use-package elisp-mode
   :delight (emacs-lisp-mode "Elisp" :major)
@@ -1555,7 +1573,7 @@ number input"
          ("\\.zprofile\\'" . shell-script-mode)
          ("\\.PKGBUILD\\'" . shell-script-mode))
   :config
-  (add-hook* 'sh-mode-hook #'flymake-mode #'flycheck-mode))
+  (add-hook* 'sh-mode-hook '(flymake-mode flycheck-mode)))
 
 (use-package scheme
   :defer t
@@ -3059,11 +3077,10 @@ initial search query."
   :demand t
   :commands highlight-bookmarks-in-this-buffer
   :config
-  (add-hooks #'highlight-bookmarks-in-this-buffer
-             'find-file-hook 'after-save-hook)
-  (advice-add #'bookmark-jump :after #'highlight-bookmarks-in-this-buffer)
-  (advice-add #'bookmark-set :after #'highlight-bookmarks-in-this-buffer)
-  (advice-add #'bookmark-delete :after #'highlight-bookmarks-in-this-buffer))
+  (add-hook* '(find-file-hook after-save-hook) #'highlight-bookmarks-in-this-buffer)
+  (advice-add* '(bookmark-jump bookmark-set bookmark-delete)
+               :after
+               #'highlight-bookmarks-in-this-buffer))
 
 (use-package today
   :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
