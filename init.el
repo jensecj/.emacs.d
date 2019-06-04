@@ -627,7 +627,7 @@ buffer."
 (defmacro comment (&rest _args))
 
 ;; easy interactive lambda forms
-(defmacro xi (body)
+(defmacro xi (&rest body)
   `(lambda ()
      (interactive)
      ,body))
