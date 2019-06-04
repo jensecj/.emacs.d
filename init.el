@@ -279,7 +279,8 @@
 (setq initial-scratch-message "")
 
 ;; don't show trailing whitespace by default
-(setq show-trailing-whitespace nil)
+(setq-default show-trailing-whitespace nil)
+(setq whitespace-style '(face trailing))
 
 ;; timestamp messages in the *Warnings* buffer
 (setq warning-prefix-function
@@ -963,7 +964,8 @@ current line."
 (defun jens/show-trailing-whitespace ()
   "Show trailing whitespace in buffer."
   (interactive)
-  (setq show-trailing-whitespace t))
+  (setq show-trailing-whitespace t)
+  (whitespace-mode +1))
 
 (add-hook* '(text-mode-hook prog-mode-hook) #'jens/show-trailing-whitespace)
 
