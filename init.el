@@ -33,6 +33,21 @@
         ("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")))
 
+;; setup font, a bit convoluted because we also want the first frame
+;; spawned by the daemon to use the face.
+(defun jens/init-fonts ()
+  "Setup font configuration for new frames."
+  (let ((my-font "Source Code Pro Semibold 10"))
+    (if (not (find-font (font-spec :name my-font)))
+        (log-warning (format "could not find font: %s" my-font))
+      (add-to-list 'default-frame-alist `(font . ,my-font))
+      (set-frame-font my-font)
+
+      ;; only setup fonts once
+      (remove-hook 'server-after-make-frame-hook #'jens/init-fonts))))
+
+(add-hook 'server-after-make-frame-hook #'jens/init-fonts)
+
 ;;;; fundamental third-party packages
 
 ;; make sure use-package is installed
@@ -93,18 +108,11 @@
     (unless (file-exists-p advice-patch-file)
       (url-copy-file url advice-patch-file))))
 
-(defun jens/init-fonts ()
-  "Setup font configuration for new frames."
-  (let ((my-font "Source Code Pro Semibold 10"))
-    (if (not (find-font (font-spec :name my-font)))
-        (msg-warning (format "could not find font: %s" my-font))
-      (add-to-list 'default-frame-alist `(font . ,my-font))
-      (set-frame-font my-font)
-
-      ;; only setup fonts once
-      (remove-hook 'server-after-make-frame-hook #'jens/init-fonts))))
-
-(add-hook 'server-after-make-frame-hook #'jens/init-fonts)
+;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
+;; extensions of `use-package', so we need to have those packages.
+(use-package bind-key :ensure t)
+(use-package diminish :ensure t :commands diminish)
+(use-package delight :ensure t)
 
 ;;;; cache, temp files, etc.
 
@@ -134,9 +142,6 @@
 
 ;; hide the splash screen
 (setq inhibit-startup-message t)
-
-;; set the paranoia level to medium, warns if connections are insecure
-(setq network-security-level 'medium)
 
 ;; don't disable function because they're confusing to beginners
 (setq disabled-command-function nil)
@@ -291,6 +296,8 @@
 
 ;;;; authentication and security
 
+;; set the paranoia level to medium, warns if connections are insecure
+(setq network-security-level 'medium)
 
 (setq auth-sources '("~/vault/authinfo.gpg" "~/.netrc"))
 
@@ -954,14 +961,6 @@ current line."
 
 (global-set-key (kbd "C-M-s") #'jens/shortcut/body)
 
-(defun jens/show-trailing-whitespace ()
-  "Show trailing whitespace in buffer."
-  (interactive)
-  (setq show-trailing-whitespace t)
-  (whitespace-mode +1))
-
-(add-hook* '(text-mode-hook prog-mode-hook) #'jens/show-trailing-whitespace)
-
 (defun jens/tail-message-buffer ()
   "Toggle tailing the *Message* buffer every time something is written to it."
   (interactive)
@@ -1033,12 +1032,6 @@ If DIR is nil, download to current directory."
     (condition-case ex
         (url-copy-file url path overwrite)
       (error 'file-already-exists))))
-
-;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
-;; extensions of `use-package', so we need to have those packages.
-(use-package bind-key :ensure t)
-(use-package diminish :ensure t :commands diminish)
-(use-package delight :ensure t)
 
 ;;; built-in packages
 
