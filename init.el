@@ -434,41 +434,67 @@ seconds."
   ;; TODO: fix indentation
   )
 
+(use-package dired
+  :defer t
+  :commands (dired jens/dired-toggle-mark)
+  :bind
+  (("C-x C-d" . dired-jump)
+   :map dired-mode-map
+   ("C-." . dired-omit-mode)
+   ("SPC" . jens/dired-toggle-mark)
+   ("T" . dired-create-empty-file))
+  :config
+  ;; pull in extra functionality for dired
+  (load-library "dired-x")
+  (load-library "dired-aux")
+
+  (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
+  (setq dired-listing-switches "-agholXN")
+  (setq dired-create-destination-dirs 'always)
+  (setq dired-hide-details-hide-symlink-targets nil)
+
+  ;; always delete and copy recursively
+  (setq dired-recursive-deletes 'always)
+  (setq dired-recursive-copies 'always)
+
+  (setq ibuffer-formats
+        '((mark modified read-only " "
+                (name 60 -1 :left) " "
+                (filename-and-process 70 -1))
+          (mark " " (name 16 -1) " " filename)))
+
+  (defun jens/dired-sort ()
+    "Sort dired listings with directories first."
+    (save-excursion
+      (let (buffer-read-only)
+        (forward-line 2) ;; beyond dir. header
+        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+      (set-buffer-modified-p nil)))
+
+  (advice-add 'dired-readin :after #'jens/dired-sort)
+
+  ;; use bigger fringes in dired-mode
+  (add-hook 'dired-mode-hook (lambda () (setq left-fringe-width 10)))
+
+  (defun jens/dired-toggle-mark (arg)
+    "Toggle mark on the current line."
+    (interactive "P")
+    (let ((this-line (buffer-substring (line-beginning-position) (line-end-position))))
+      (if (s-matches-p (dired-marker-regexp) this-line)
+          (dired-unmark arg)
+        (dired-mark arg)))))
+
+(use-package elisp-mode
+  :delight (emacs-lisp-mode "Elisp" :major)
+  :config
+  (setq-local cleanup-buffer-fns
+              '((indent-region (point-min) (point-max))
+                (whitespace-cleanup))))
+
 ;;;;; minor modes
 
-(use-package package
-  :config
-  (defun jens/package-menu-show-updates (&rest args)
-    "Show a list of the packages marked as upgrading."
-    (let* ((packages (->>
-                      (package-menu--find-upgrades)
-                      (-map #'car)
-                      (-map #'symbol-name)
-                      (s-join "\n")))
-           (this-buffer (current-buffer)))
-      (unless (s-blank-p packages)
-        (with-current-buffer (get-buffer-create "*Package Menu Updates*")
-          (let ((inhibit-read-only t))
-            (erase-buffer)
-            (insert packages)
-            (goto-char (point-min))
-            (view-buffer (current-buffer))))
-        (view-buffer-other-window (get-buffer "*Messages*"))
-        (set-buffer this-buffer))))
-
-  (advice-add #'package-menu-execute :before #'jens/package-menu-show-updates))
-
-(use-package simple
-  :defines auto-fill-mode
-  :diminish auto-fill-mode
-  :commands (region-active-p
-             use-region-p
-             upcase-dwim
-             downcase-dwim
-             capitalize-dwim
-             deactivate-mark
-             current-kill)
-  :hook (org-mode . auto-fill-mode))
+(use-package hi-lock :diminish hi-lock-mode)
+(use-package outline :diminish outline-minor-mode)
 
 (use-package whitespace
   :demand t
@@ -481,9 +507,6 @@ seconds."
     (whitespace-mode +1))
 
   (add-hook* '(text-mode-hook prog-mode-hook) #'jens/show-trailing-whitespace))
-
-(use-package outline
-  :diminish outline-minor-mode)
 
 ;; insert parens-type things in pairs
 (use-package elec-pair
@@ -528,19 +551,6 @@ seconds."
   :commands global-subword-mode
   :config (global-subword-mode 1))
 
-;; give buffers unique names
-(use-package uniquify
-  :config (setq uniquify-buffer-name-style 'forward))
-
-;; easily access and edit files on remote machines
-(use-package tramp
-  :defer t
-  :config
-  (setq tramp-default-method "ssh")
-  (setq tramp-persistency-file-name (no-littering-expand-var-file-name "tramp"))
-  (setq tramp-terminal-type "tramp")
-  (setq tramp-verbose 6))
-
 ;; save point position between sessions
 (use-package saveplace
   :config
@@ -563,6 +573,154 @@ seconds."
   (setq history-length t)
   (setq history-delete-duplicates t)
   (savehist-mode 1))
+
+;; always show the version of a file as it appears on disk
+(use-package autorevert
+  :diminish auto-revert-mode
+  :commands global-auto-revert-mode
+  :config
+  ;; also auto refresh dired, but be quiet about it
+  (setq global-auto-revert-non-file-buffers t)
+  (setq auto-revert-verbose nil)
+
+  ;; just revert pdf files without asking
+  (setq revert-without-query '("\\.pdf"))
+
+  ;; auto refresh buffers
+  (global-auto-revert-mode 1))
+
+(use-package display-line-numbers
+  :defer t
+  :commands display-line-numbers-mode
+  :bind ("M-g M-g" . jens/goto-line-with-feedback)
+  :config
+  (defun jens/goto-line-with-feedback ()
+    "Show line numbers temporarily, while prompting for the line
+number input"
+    (interactive)
+    (unwind-protect
+        (progn
+          (display-line-numbers-mode 1)
+          (call-interactively 'goto-line))
+      (display-line-numbers-mode -1))))
+
+;; easily handle merge conflicts
+(use-package smerge-mode
+  :bind (:map smerge-mode-map ("C-c ^" . jens/smerge/body))
+  :config
+  (defhydra jens/smerge ()
+    "Move between buffers."
+    ("n" #'smerge-next "next")
+    ("p" #'smerge-prev "previous")
+    ("u" #'smerge-keep-upper "keep upper")
+    ("l" #'smerge-keep-lower "keep lower"))
+
+  (defun jens/enable-smerge-if-diff-buffer ()
+    "Enable SMerge-mode if the current buffer is showing a diff."
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "^<<<<<<< " nil t)
+        (smerge-mode 1))))
+
+  (add-hook* '(find-file-hook after-revert-hook) #'jens/enable-smerge-if-diff-buffer))
+
+;; show useful contextual information in the minibuffer
+(use-package eldoc
+  :diminish
+  :config
+  (setq eldoc-idle-delay 0.2)
+
+  (defface eldoc-highlight-&s-face '((t ())) "")
+
+  (defun jens/eldoc-highlight-&s (doc)
+    "Highlight &keywords in elisp eldoc arglists."
+    (condition-case nil
+        (with-temp-buffer
+          (insert doc)
+          (goto-char (point-min))
+
+          (while (re-search-forward "&optional\\|&rest\\|&key" nil 't)
+            (set-text-properties (match-beginning 0) (match-end 0) (list 'face 'eldoc-highlight-&s-face)))
+
+          (buffer-string))
+      (error doc)))
+  (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
+
+  (require 'smartparens)
+
+  (defun jens/lispify-eldoc-message (eldoc-msg)
+    "Change the format of eldoc messages for functions to `(fn args)'."
+    (if (and eldoc-msg
+             (member major-mode sp-lisp-modes))
+        (let* ((parts (s-split ": " eldoc-msg))
+               (sym (car parts))
+               (args (cadr parts)))
+          (cond
+           ((string= args "()") (format "(%s)" sym))
+           (t (format "(%s %s)" sym (substring args 1 (- (length args) 1))))))
+      eldoc-msg))
+  (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message)
+
+  (global-eldoc-mode +1)
+  :custom-face
+  (eldoc-highlight-function-argument ((t (:inherit font-lock-warning-face))))
+  (eldoc-highlight-&s-face ((t (:inherit font-lock-preprocessor-face)))))
+
+(use-package fringe
+  :commands fringe-mode
+  :config
+  (set-fringe-mode '(5 . 5))
+  :custom-face
+  (fringe ((t (:background "#3f3f3f")))))
+
+;;;;; misc packages
+
+(use-package package
+  :config
+  (defun jens/package-menu-show-updates (&rest args)
+    "Show a list of the packages marked as upgrading."
+    (let* ((packages (->>
+                      (package-menu--find-upgrades)
+                      (-map #'car)
+                      (-map #'symbol-name)
+                      (s-join "\n")))
+           (this-buffer (current-buffer)))
+      (unless (s-blank-p packages)
+        (with-current-buffer (get-buffer-create "*Package Menu Updates*")
+          (let ((inhibit-read-only t))
+            (erase-buffer)
+            (insert packages)
+            (goto-char (point-min))
+            (view-buffer (current-buffer))))
+        (view-buffer-other-window (get-buffer "*Messages*"))
+        (set-buffer this-buffer))))
+
+  (advice-add #'package-menu-execute :before #'jens/package-menu-show-updates))
+
+(use-package simple
+  :defines auto-fill-mode
+  :diminish auto-fill-mode
+  :commands (region-active-p
+             use-region-p
+             upcase-dwim
+             downcase-dwim
+             capitalize-dwim
+             deactivate-mark
+             current-kill)
+  :hook (org-mode . auto-fill-mode))
+
+;; give buffers unique names
+(use-package uniquify
+  :config (setq uniquify-buffer-name-style 'forward))
+
+;; easily access and edit files on remote machines
+(use-package tramp
+  :defer t
+  :config
+  (setq tramp-default-method "ssh")
+  (setq tramp-persistency-file-name (no-littering-expand-var-file-name "tramp"))
+  (setq tramp-terminal-type "tramp")
+  (setq tramp-verbose 6))
 
 ;; save a list of recently visited files.
 (use-package recentf
@@ -593,21 +751,6 @@ seconds."
   (advice-add 'recentf-cleanup :around #'jens/recentf-cleanup)
 
   (recentf-mode +1))
-
-;; always show the version of a file as it appears on disk
-(use-package autorevert
-  :diminish auto-revert-mode
-  :commands global-auto-revert-mode
-  :config
-  ;; also auto refresh dired, but be quiet about it
-  (setq global-auto-revert-non-file-buffers t)
-  (setq auto-revert-verbose nil)
-
-  ;; just revert pdf files without asking
-  (setq revert-without-query '("\\.pdf"))
-
-  ;; auto refresh buffers
-  (global-auto-revert-mode 1))
 
 (use-package replace
   :bind
@@ -682,156 +825,9 @@ seconds."
     (previous-error)
     (jens/goto-error-hydra/body)))
 
-(use-package display-line-numbers
-  :defer t
-  :commands display-line-numbers-mode
-  :bind ("M-g M-g" . jens/goto-line-with-feedback)
-  :config
-  (defun jens/goto-line-with-feedback ()
-    "Show line numbers temporarily, while prompting for the line
-number input"
-    (interactive)
-    (unwind-protect
-        (progn
-          (display-line-numbers-mode 1)
-          (call-interactively 'goto-line))
-      (display-line-numbers-mode -1))))
-
-(use-package hi-lock
-  :diminish hi-lock-mode)
-
-;; easily handle merge conflicts
-(use-package smerge-mode
-  :bind (:map smerge-mode-map ("C-c ^" . jens/smerge/body))
-  :config
-  (defhydra jens/smerge ()
-    "Move between buffers."
-    ("n" #'smerge-next "next")
-    ("p" #'smerge-prev "previous")
-    ("u" #'smerge-keep-upper "keep upper")
-    ("l" #'smerge-keep-lower "keep lower"))
-
-  (defun jens/enable-smerge-if-diff-buffer ()
-    "Enable SMerge-mode if the current buffer is showing a diff."
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward "^<<<<<<< " nil t)
-        (smerge-mode 1))))
-
-  (add-hook* '(find-file-hook after-revert-hook) #'jens/enable-smerge-if-diff-buffer))
-
-(use-package elisp-mode
-  :delight (emacs-lisp-mode "Elisp" :major)
-  :config
-  (setq-local cleanup-buffer-fns
-              '((indent-region (point-min) (point-max))
-                (whitespace-cleanup))))
-
-;; show useful contextual information in the minibuffer
-(use-package eldoc
-  :diminish
-  :config
-  (setq eldoc-idle-delay 0.2)
-
-  (defface eldoc-highlight-&s-face '((t ())) "")
-
-  (defun jens/eldoc-highlight-&s (doc)
-    "Highlight &keywords in elisp eldoc arglists."
-    (condition-case nil
-        (with-temp-buffer
-          (insert doc)
-          (goto-char (point-min))
-
-          (while (re-search-forward "&optional\\|&rest\\|&key" nil 't)
-            (set-text-properties (match-beginning 0) (match-end 0) (list 'face 'eldoc-highlight-&s-face)))
-
-          (buffer-string))
-      (error doc)))
-  (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
-
-  (require 'smartparens)
-
-  (defun jens/lispify-eldoc-message (eldoc-msg)
-    "Change the format of eldoc messages for functions to `(fn args)'."
-    (if (and eldoc-msg
-             (member major-mode sp-lisp-modes))
-        (let* ((parts (s-split ": " eldoc-msg))
-               (sym (car parts))
-               (args (cadr parts)))
-          (cond
-           ((string= args "()") (format "(%s)" sym))
-           (t (format "(%s %s)" sym (substring args 1 (- (length args) 1))))))
-      eldoc-msg))
-  (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message)
-
-  (global-eldoc-mode +1)
-  :custom-face
-  (eldoc-highlight-function-argument ((t (:inherit font-lock-warning-face))))
-  (eldoc-highlight-&s-face ((t (:inherit font-lock-preprocessor-face)))))
-
-(use-package dired
-  :defer t
-  :commands (dired jens/dired-toggle-mark)
-  :bind
-  (("C-x C-d" . dired-jump)
-   :map dired-mode-map
-   ("C-." . dired-omit-mode)
-   ("SPC" . jens/dired-toggle-mark)
-   ("T" . dired-create-empty-file))
-  :config
-  ;; pull in extra functionality for dired
-  (load-library "dired-x")
-  (load-library "dired-aux")
-
-  (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
-  (setq dired-listing-switches "-agholXN")
-  (setq dired-create-destination-dirs 'always)
-  (setq dired-hide-details-hide-symlink-targets nil)
-
-  ;; always delete and copy recursively
-  (setq dired-recursive-deletes 'always)
-  (setq dired-recursive-copies 'always)
-
-  (setq ibuffer-formats
-        '((mark modified read-only " "
-                (name 60 -1 :left) " "
-                (filename-and-process 70 -1))
-          (mark " " (name 16 -1) " " filename)))
-
-  (defun jens/dired-sort ()
-    "Sort dired listings with directories first."
-    (save-excursion
-      (let (buffer-read-only)
-        (forward-line 2) ;; beyond dir. header
-        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
-      (set-buffer-modified-p nil)))
-
-  (advice-add 'dired-readin :after #'jens/dired-sort)
-
-  ;; use bigger fringes in dired-mode
-  (add-hook 'dired-mode-hook (lambda () (setq left-fringe-width 10)))
-
-  (defun jens/dired-toggle-mark (arg)
-    "Toggle mark on the current line."
-    (interactive "P")
-    (let ((this-line (buffer-substring (line-beginning-position) (line-end-position))))
-      (if (s-matches-p (dired-marker-regexp) this-line)
-          (dired-unmark arg)
-        (dired-mark arg)))))
-
 (use-package browse-url
   :defer t
   :config (setq browse-url-firefox-program "firefox"))
-
-(use-package fringe
-  :commands fringe-mode
-  :config
-  (set-fringe-mode '(5 . 5))
-  :custom-face
-  (fringe ((t (:background "#3f3f3f")))))
-
-;;;;; misc packages
-
 
 ;;;;; org-mode
 
