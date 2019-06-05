@@ -646,6 +646,7 @@ number input"
       (error doc)))
   (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
 
+  ;; FIXME: remove the requirement on `sp-lisp-modes'
   (require 'smartparens)
 
   (defun jens/lispify-eldoc-message (eldoc-msg)
