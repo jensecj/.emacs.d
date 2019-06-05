@@ -2199,7 +2199,16 @@ _k_: go to tracking file
   (outshine-level-4 ((t (:inherit outline-4 :background "#393939" :weight bold))))
   (outshine-level-5 ((t (:inherit outline-5 :background "#393939" :weight bold)))))
 
-(use-package outline-minor-faces :ensure t) ;; required by `backline'
+;; required by `backline'
+(use-package outline-minor-faces
+  :ensure t
+  :custom-face
+  (outline-minor-1 ((t (:inherit outshine-level-1))))
+  (outline-minor-2 ((t (:inherit outshine-level-2))))
+  (outline-minor-3 ((t (:inherit outshine-level-3))))
+  (outline-minor-4 ((t (:inherit outshine-level-4))))
+  (outline-minor-5 ((t (:inherit outshine-level-5)))))
+
 (use-package backline
   :ensure t
   :after outshine
