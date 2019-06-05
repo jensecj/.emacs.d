@@ -1,5 +1,5 @@
 ;;; -*- lexical-binding: t -*-
-;;; preamble
+;;; prelude
 ;;;; early setup
 
 ;; use lexical binding for initialization code
@@ -132,7 +132,46 @@
 (if (file-exists-p custom-file)
     (load custom-file))
 
-;;; built-in settings
+;;;; fundamental defuns
+
+(defun twin-dispatch (fn A B)
+  "Dispatch FN on each of the args in A and B."
+  (cond
+   ((listp A)
+    (dolist (a A) (twin-dispatch fn a B)))
+   ((listp B)
+    (dolist (b B) (twin-dispatch fn A b)))
+   ((and (atom A) (atom B))
+    (funcall fn A B))))
+
+(defun add-hook* (hooks fns)
+  "Add FNS to HOOKS."
+  (twin-dispatch #'add-hook hooks fns))
+
+(defun remove-hook* (hooks fns)
+  "Remove FNS from HOOKs."
+  (twin-dispatch #'remove-hook hooks fns))
+
+(defun advice-add* (syms where fns)
+  "Advice FNS to SYMS."
+  (twin-dispatch (lambda (sym fn) (advice-add sym where fn)) syms fns))
+
+(defun advice-remove* (syms fns)
+  "Remove FNS from SYMS."
+  (twin-dispatch (lambda (sym fn) (advice-remove sym fn)) syms fns))
+
+(defun advice-nuke (sym)
+  "Remove all advices from symbol SYM."
+  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
+
+(defun add-to-list* (list-var elements &optional append compare-fn)
+  "Add multiple ELEMENTS to a LIST-VAR."
+  (dolist (e elements)
+    (add-to-list list-var e append compare-fn)))
+
+
+;;; built-in
+;;;; settings
 
 ;; location of emacs source files
 (let ((src-dir "/home/jens/.aur/emacs-git-src/"))
@@ -294,7 +333,7 @@
         (insert (format-time-string "[%H:%M:%S] "))
         entry))
 
-;;;; authentication and security
+;;;;; authentication and security
 
 ;; set the paranoia level to medium, warns if connections are insecure
 (setq network-security-level 'medium)
@@ -350,690 +389,52 @@ seconds."
 
 (setq jens/kill-idle-gpg-buffers-timer (run-with-idle-timer 60 t 'jens/kill-idle-gpg-buffers))
 
-;;; defuns
-;;;; editing defuns
-
-(defun jens/new-scratch-buffer ()
-  "Return a newly created scratch buffer."
-  (let ((n 0)
-        bufname)
-    (while (progn
-             (setq bufname
-                   (concat "*scratch"
-                           (if (= n 0) "" (format "-%s" (int-to-string n)))
-                           "*"))
-             (setq n (1+ n))
-             (get-buffer bufname)))
-    (get-buffer-create bufname)))
-
-(defun jens/create-scratch-buffer ()
-  "Create a new scratch buffer to work in.  (named *scratch* -
-*scratch<n>*)."
-  (interactive)
-  (let ((scratch-buf (jens/new-scratch-buffer))
-        (initial-content (if (use-region-p)
-                             (buffer-substring (region-beginning) (region-end)))))
-    (xref-push-marker-stack)
-    (switch-to-buffer scratch-buf)
-    (when initial-content (insert initial-content))
-    (goto-char (point-min))
-    (emacs-lisp-mode)))
-
-(defun jens/clean-view ()
-  "Create a scratch buffer, and make it the only buffer visible."
-  (interactive)
-  (jens/create-scratch-buffer)
-  (delete-other-windows))
-
-(defun jens/clone-buffer ()
-  "Open a clone of the current buffer."
-  (interactive)
-  (let ((newbuf (jens/new-scratch-buffer))
-        (content (buffer-string))
-        (oldpoint (point)))
-    (with-current-buffer newbuf
-      (insert content))
-    (switch-to-buffer newbuf)
-    (goto-char oldpoint)))
-
-(defun jens/sudo-find-file (filename)
-  "Open FILENAME with superuser permissions."
-  (let ((remote-method (file-remote-p default-directory 'method))
-        (remote-user (file-remote-p default-directory 'user))
-        (remote-host (file-remote-p default-directory 'host))
-        (remote-localname (file-remote-p filename 'localname)))
-    (find-file (format "/%s:root@%s:%s"
-                       (or remote-method "sudo")
-                       (or remote-host "localhost")
-                       (or remote-localname filename)))))
-
-(defun jens/sudo-edit (&optional arg)
-  "Re-open current buffer file with superuser permissions.
-With prefix ARG, ask for file to open."
-  (interactive "P")
-  (if (or arg (not buffer-file-name))
-      (read-file-name "Find file:"))
-
-  (let ((place (point)))
-    (jens/sudo-find-file buffer-file-name)
-    (goto-char place)))
-
-(defun jens/open-line-below ()
-  "Insert a line below the current line, indent it, and move to
-the beginning of that line."
-  (interactive)
-  (end-of-line)
-  (newline)
-  (indent-for-tab-command))
-
-(defun jens/open-line-above ()
-  "Insert a line above the current line, indent it, and move to
-the beginning of that line."
-  (interactive)
-  (beginning-of-line)
-  (newline)
-  (forward-line -1)
-  (indent-for-tab-command))
-
-(defun jens/smart-beginning-of-line ()
-  "Move point to the beginning of line or beginning of text."
-  (interactive)
-  (let ((pt (point)))
-    (beginning-of-line-text)
-    (when (eq pt (point))
-      (beginning-of-line))))
-
-(defun jens/kill-to-beginning-of-line ()
-  "Kill from <point> to the beginning of the current line."
-  (interactive)
-  (kill-region (save-excursion (beginning-of-line) (point))
-               (point)))
-
-(defun jens/save-region-or-current-line (_arg)
-  "If a region is active then it is saved to the `kill-ring',
-otherwise the current line is saved."
-  (interactive "P")
-  (save-mark-and-excursion
-    (if (region-active-p)
-        (kill-ring-save (region-beginning) (region-end))
-      (kill-ring-save (line-beginning-position) (+ 1 (line-end-position))))))
-
-(defun jens/kill-region-or-current-line (arg)
-  "If a region is active then it is killed, otherwise the current
-line is killed."
-  (interactive "P")
-  (if (region-active-p)
-      (kill-region (region-beginning) (region-end))
-    (save-excursion
-      (kill-whole-line arg))))
-
-(defun jens/clean-current-line ()
-  "Delete the contents of the current line."
-  (interactive)
-  (delete-region (line-beginning-position) (line-end-position)))
-
-(defun jens/join-region ()
-  "Join all lines in a region into a single line."
-  (interactive)
-  (save-excursion
-    (let ((beg (region-beginning))
-          (end (copy-marker (region-end))))
-      (goto-char beg)
-      (while (< (point) end)
-        (progn
-          (join-line 1)
-          (end-of-line))))))
-
-(defun jens/join-region-or-line ()
-  "If region is active, join all lines in region to a single
-line.  Otherwise join the line below the current line, with the
-current line, placing it after."
-  (interactive)
-  (if (region-active-p)
-      (jens/join-region)
-    (join-line -1)))
-
-(defun jens/join-line-down ()
-  "Pull the line above down to the end of this line."
-  (interactive)
-  (save-excursion
-    (let ((cp (point)))
-      (forward-line -1)
-      (when (not (= (point) cp))
-        (call-interactively #'jens/kill-region-or-current-line)
-        (end-of-line)
-        (save-excursion (insert " " (s-chomp (current-kill 0))))
-        (just-one-space)))))
-
-(defun jens/wrap-region (b e text-begin text-end)
-  "Wrap region from B to E with TEXT-BEGIN and TEXT-END."
-  (interactive "r\nsStart text: \nsEnd text: ")
-  (if (use-region-p)
-      (save-restriction
-        (narrow-to-region b e)
-        (goto-char (point-max))
-        (insert text-end)
-        (goto-char (point-min))
-        (insert text-begin))
-    (message "wrap-region: Error! invalid region!")))
-
-(defun jens/comment-uncomment-region-or-line ()
-  "If region is active, comment or uncomment it (based on what it
-currently is), otherwise comment or uncomment the current line."
-  (interactive)
-  (if (region-active-p)
-      (comment-or-uncomment-region (region-beginning) (region-end))
-    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
-
-;;;; file defuns
-
-(defun jens/byte-compile-this-file ()
-  "Byte compile the current buffer."
-  (interactive)
-  (if (f-exists? (concat (f-no-ext (buffer-file-name)) ".elc"))
-      (byte-recompile-file (buffer-file-name))
-    (byte-compile-file (buffer-file-name))))
-
-(defun jens/get-buffer-file-name+ext ()
-  "Get the file name and extension of the file belonging to the
-current buffer."
-  (file-name-nondirectory buffer-file-name))
-
-(defun jens/get-buffer-file-name ()
-  "Get the file name of the file belonging to the current
-buffer."
-  (file-name-sans-extension (jens/get-buffer-file-name+ext)))
-
-(defun jens/get-buffer-file-directory ()
-  "Get the directory of the file belonging to the current
-buffer."
-  (file-name-directory (buffer-file-name)))
-
-(defun jens/file-age (file)
-  "Return the number of seconds since FILE was last modified."
-  (float-time
-   (time-subtract (current-time)
-                  (nth 5 (file-attributes (file-truename file))))))
-
-(defun jens/rename-current-buffer-file ()
-  "Renames current buffer and file it is visiting."
-  (interactive)
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not (and filename (file-exists-p filename)))
-        (error "Buffer '%s' is not visiting a file!" name)
-      (let ((new-name (read-file-name "New name: " filename)))
-        (if (get-buffer new-name)
-            (error "A buffer named '%s' already exists!" new-name)
-          (rename-file filename new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil)
-          (message "File '%s' successfully renamed to '%s'"
-                   name (file-name-nondirectory new-name)))))))
-
-(defun jens/delete-current-buffer-file ()
-  "Remove the file of the current buffer and kill the buffer."
-  (interactive)
-  (let ((filename (buffer-file-name))
-        (buffer (current-buffer)))
-    (if (not (and filename (file-exists-p filename)))
-        (message "no such file exists")
-      (when (yes-or-no-p (format "really delete '%s'?" filename))
-        (delete-file filename)
-        (kill-buffer buffer)
-        (message "deleted '%s'" filename)))))
-
-(defun jens/touch-buffer-file ()
-  "Touches the current buffer, marking it as dirty."
-  (interactive)
-  (insert " ")
-  (backward-delete-char 1)
-  (save-buffer))
-
-(defun jens/new-package ()
-  "Create a skeleton for a elisp package."
-  (interactive)
-  (let* ((path (read-file-name "package name: "))
-         (file (f-filename path))
-         (name (f-no-ext file))
-         (p))
-    (with-current-buffer (find-file-noselect path)
-      (insert (format ";;; %s. --- -*- lexical-binding: t; -*-\n\n" file))
-      (insert (format ";; Copyright (C) %s %s\n\n"
-                      (format-time-string "%Y")
-                      user-full-name))
-
-      (insert (format ";; Author: %s <%s>\n" user-full-name user-mail-address))
-      (insert ";; Keywords:\n")
-      (insert (format ";; Package-Version: %s\n" (format-time-string "%Y%m%d")))
-      (insert ";; Version: 0.1\n\n")
-
-      (insert ";; This file is NOT part of GNU Emacs.\n\n")
-
-      (insert ";;; Commentary:\n\n")
-      (insert ";;; Code:\n\n")
-
-      (setq p (point))
-
-      (insert "\n\n")
-
-      (insert (format "(provide '%s)" name))
-
-      (goto-char p)
-      (switch-to-buffer (current-buffer)))))
-
-;;;; lisp defuns
-
-;; easy 'commenting out' of sexps
-(defmacro comment (&rest _args))
-
-;; easy interactive lambda forms
-(defmacro xi (&rest body)
-  `(lambda ()
-     (interactive)
-     ,body))
-
-(defun jens/inspect-variable-at-point (&optional arg)
-  "Inspect variable at point."
-  (interactive "P")
-  (require 'doc-at-point)
-  (let* ((sym (symbol-at-point))
-         (value (cond
-                 ((fboundp sym) (symbol-function sym))
-                 ((boundp sym) (symbol-value sym)))))
-    (if arg
-        (with-current-buffer (get-buffer-create "*Inspect*")
-          (let ((inhibit-read-only t))
-            (erase-buffer)
-            (pp value (current-buffer))
-            (emacs-lisp-mode)
-            (goto-char 0))
-          (view-buffer-other-window (current-buffer)))
-
-      ;; TODO: create a posframe for all-purpose emacs things
-
-      (funcall doc-at-point-display-fn
-               (doc-at-point-elisp--fontify-as-code
-                (with-output-to-string
-                  (pp value)))))))
-
-(defun jens/one-shot-keybinding (key command)
-  "Set a keybinding that disappear once you press a key that is
-not in the overlay-map"
-  (set-transient-map
-   (let ((map (make-sparse-keymap)))
-     (define-key map (kbd key) command)
-     map) t))
-;; example
-;; (jens/one-shot-keybinding "a" (xi (previous-line)))
-
-(defun jens/one-shot-keymap (key-command-pairs)
-  "Set a keybinding that disappear once you press a key that is
-not in the overlay-map"
-  (set-transient-map
-   (let ((map (make-sparse-keymap)))
-     (dolist (kvp key-command-pairs)
-       (let ((key (car kvp))
-             (cmd (cdr kvp)))
-         (define-key map (kbd key) cmd)))
-     map) t))
-
-;; example:
-;; (jens/one-shot-keymap
-;;  `(("a" . ,(xi (message "a")))
-;;    ("b" . ,(xi (message "b")))
-;;    ("c" . ,(xi (message "c")))
-;;    ("d" . ,(xi (message "d")))))
-
-(defun jens/try-require (feature)
-  "Try to require FEATURE, if an exception is thrown, log it."
-  (condition-case ex
-      (progn
-        (log-info (format "= Requiring \"%s\" " (symbol-name feature)))
-        (require feature))
-    ('error (log-warning (format "@ Error requiring \"%s\": %s" (symbol-name feature) ex)))))
-
-(defun jens/eval-and-replace ()
-  "Replace the preceding sexp with its value."
-  (interactive)
-  (backward-kill-sexp)
-  (condition-case nil
-      (prin1 (eval (read (current-kill 0)))
-             (current-buffer))
-    (error (message "Invalid expression")
-           (insert (current-kill 0)))))
-
-(defun jens/remove-text-properties-region (beg end)
-  "Remove text properties from text in region between BEG and END."
-  (set-text-properties beg end nil))
-
-(defun jens/remove-text-propertiex-in-region ()
-  "Remove text propertiex from all text in active region."
-  (interactive)
-  (when (region-active-p)
-    (jens/remove-text-properties-region
-     (region-beginning) (region-end))))
-
-(defun jens/space-to-dash-in-region ()
-  "Replace all spaces in region with dashes."
-  (interactive)
-  (when (region-active-p)
-    (let* ((p (point))
-           (str (buffer-substring (region-beginning) (region-end)))
-           (dashed (s-replace " " "-" str)))
-      (delete-region (region-beginning) (region-end))
-      (insert dashed)
-      (goto-char p))))
-
-(defun jens/foreach-line-in-region (fn &optional beg end)
-  "Call FN on each line in region (BEG END)."
-  (let ((beg (or beg (region-beginning)))
-        (end (or end (region-end))))
-    (goto-char beg)
-    (beginning-of-line)
-    (while (< (point) end)
-      (funcall fn)
-      (forward-line))))
-
-(defun jens/save-to-file (data filename)
-  "Save lisp object DATA to FILENAME."
-  (with-temp-file filename
-    (prin1 data (current-buffer))))
-
-(defun jens/load-from-file (filename)
-  "Load lisp object from FILENAME."
-  (when (file-exists-p filename)
-    (with-temp-buffer
-      (insert-file-contents filename)
-      (cl-assert (eq (point) (point-min)))
-      (read (current-buffer)))))
-
-(defun jens/sexp-up ()
-  (interactive)
-  (condition-case nil
-      (forward-sexp -1)
-    (error (backward-char))))
-
-(defun jens/sexp-down ()
-  (interactive)
-  (condition-case nil
-      (forward-sexp 1)
-    (error (forward-char))))
-
-
-(defun twin-dispatch (fn A B)
-  ""
-  (cond
-   ((listp A)
-    (dolist (a A) (twin-dispatch fn a B)))
-   ((listp B)
-    (dolist (b B) (twin-dispatch fn A b)))
-   ((and (atom A) (atom B))
-    (funcall fn A B))))
-
-(defun add-hook* (hooks fns)
-  "Add FNS to HOOKS."
-  (twin-dispatch #'add-hook hooks fns))
-
-(defun remove-hook* (hooks fns)
-  "Remove FNS from HOOKs."
-  (twin-dispatch #'remove-hook hooks fns))
-
-(defun advice-add* (syms where fns)
-  "Advice FNS to SYMS."
-  (twin-dispatch (lambda (sym fn) (advice-add sym where fn)) syms fns))
-
-(defun advice-remove* (syms fns)
-  "Remove FNS from SYMS."
-  (twin-dispatch (lambda (sym fn) (advice-remove sym fn)) syms fns))
-
-(defun advice-nuke (sym)
-  "Remove all advices from symbol SYM."
-  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
-
-(defun add-one-shot-hook (hook fun &optional append local)
-  (let ((sym (gensym "one-shot-hook-")))
-    (fset sym
-          (lambda ()
-            (remove-hook hook sym local)
-            (funcall fun)))
-    (add-hook hook sym append local)))
-
-(defmacro before-next-command (&rest body)
-  "Execute BODY before the next command is run.
-
-Inside BODY `this-command' is bound to the command that is about
-to run and `this-command-keys' returns the key pressed."
-  `(add-one-shot-hook 'pre-command-hook
-                      (lambda () ,@body)))
-
-(defun add-to-list* (list-var elements &optional append compare-fn)
-  "Add multiple ELEMENTS to a LIST-VAR."
-  (dolist (e elements)
-    (add-to-list list-var e append compare-fn)))
-
-;;;; misc defuns
-
-(defun jens/insert-todays-date ()
-  "Insert the current date at point."
-  (interactive)
-  (insert (format-time-string "%Y-%m-%d")))
-
-(defun jens/insert-todays-date-compact ()
-  "Insert the current date at point, in a compact format."
-  (interactive)
-  (insert (format-time-string "%Y%m%d")))
-
-(defun jens/goto-msg-buffer ()
-  "View the *Messages* buffer, return to previous buffer when
-done."
-  (interactive)
-  (with-current-buffer (get-buffer "*Messages*")
-    (goto-char (point-max))
-    (view-buffer (current-buffer))))
-
-(defun jens/goto-next-line-with-same-indentation ()
-  "Jump to the next line with the same indentation level as the
-current line."
-  (interactive)
-  (back-to-indentation)
-  (re-search-forward
-   (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]")
-   nil nil (if (= 0 (current-column)) 2 1))
-  (back-to-indentation))
-
-(defun jens/goto-prev-line-with-same-indentation ()
-  "Jump to a previous line with the same indentation level as the
-current line."
-  (interactive)
-  (back-to-indentation)
-  (re-search-backward
-   (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
-  (back-to-indentation))
-
-(defun jens/function-def-string (fnsym)
-  "Return function definition of FNSYM as a string."
-  (let* ((buffer-point (condition-case nil (find-definition-noselect fnsym nil) (error nil)))
-         (new-buf (car buffer-point))
-         (new-point (cdr buffer-point)))
-    (cond (buffer-point
-           ;; try to get original definition
-           (with-current-buffer new-buf
-             (save-excursion
-               (goto-char new-point)
-               (buffer-substring-no-properties (point) (save-excursion (end-of-defun) (point))))))
-          ;; fallback: just print the functions definition
-          (t (concat (prin1-to-string (symbol-function fnsym)) "\n")))))
-
-(defun jens/function-def-org-code-block (fnsym)
-  "Return function definitoin of FNSYM as an org code-block."
-  (concat "#+begin_src emacs-lisp\n"
-          (jens/function-def-string fnsym)
-          "#+end_src"))
-
-(defun jens/copy-symbol-at-point ()
-  "Save the `symbol-at-point' to the `kill-ring'."
-  (interactive)
-  (let ((sym (symbol-at-point)))
-    (kill-new (symbol-name sym))))
-
-(defun jens/copy-buffer-file-path ()
-  "Copy the current buffers file path to the clipboard."
-  (interactive)
-  (let ((path (buffer-file-name)))
-    (with-temp-buffer
-      (insert path)
-      (clipboard-kill-ring-save (point-min) (point-max)))
-    path))
-
-(defun jens/goto-repo ()
-  "Quickly jump to a repository, defined in repos.el"
-  (interactive)
-  (let* ((repos (jens/load-from-file (locate-user-emacs-file "repos.el")))
-         (repos-propped
-          (-map (lambda (r)
-                  (let ((last-part (-last-item (f-split (car r)))))
-                    (replace-regexp-in-string
-                     last-part
-                     (lambda (s) (propertize s 'face 'font-lock-keyword-face))
-                     (car r))))
-                repos))
-         (pick (completing-read "Repo: " repos-propped nil t)))
-    (cond
-     ((f-directory? pick) (dired pick))
-     ((f-file? pick) (find-file pick))
-     (t (message "unknown repo: %s" pick)))))
-
-(defun jens/load-secrets ()
-  "Eval everything in secrets.el.gpg."
-  (interactive)
-  (with-current-buffer
-      (find-file-noselect (locate-user-emacs-file "secrets.el.gpg"))
-    (eval-buffer)
-    (kill-current-buffer)))
-
-(defun jens/--headings-org-level-1 ()
-  "Return list of level 1 heading in an org-buffer."
-  (require 'org-ql)
-  (let* ((level-1-entries (org-ql (buffer-file-name) (level 1)))
-         (cleaned-entries (-map (lambda (e) (cadr e)) level-1-entries))
-         (headings (-map (lambda (h)
-                           (cons (plist-get h ':raw-value)
-                                 (plist-get h ':begin)))
-                         cleaned-entries)))
-    headings))
-
-(defun jens/--headings-comment-boxes ()
-  "Return list of comment-boxes in the current file."
-  ;; TODO: use comment-box syntax to collect comment boxes from different modes,
-  ;; not just emacs-lisp syntax
-  (let* ((semi-line '((1+ ";") "\n"))
-         (desc-line '(";;" (1+ (or alnum whitespace)) ";;" "\n"))
-         (box (eval `(rx (and line-start ,@desc-line))))
-         (content (buffer-substring-no-properties (point-min) (point-max)))
-         (boxes (s-match-strings-all box content))
-         (boxes (-map #'car boxes))
-         (boxes (-map #'s-trim boxes))
-         (positions (s-matched-positions-all box content))
-         (positions (-map #'cdr positions))
-         (headings (-zip boxes positions)))
-    headings))
-
-(defun jens/headings ()
-  "Jump to a heading in the current file."
-  (interactive)
-  (let* ((headings (-remove #'null
-                            (-flatten
-                             (-cons*
-                              (jens/--headings-comment-boxes)
-                              (when (derived-mode-p 'org-mode)
-                                (jens/--headings-org-level-1))))))
-         (_ (sort headings (lambda (a b) (< (cdr a) (cdr b)))))
-         (ivy-sort-functions-alist nil)
-         (pick (completing-read "jump to heading: " headings nil t)))
-    (goto-char (cdr (assoc pick headings)))))
-
-(defhydra jens/shortcut (:exit t)
-  "Shortcuts for common commands."
-  ("m" #'jens/goto-msg-buffer "goto msg buffer")
-  ("c" #'jens/create-scratch-buffer "create scratch buffer"))
-
-(global-set-key (kbd "C-M-s") #'jens/shortcut/body)
-
-(defun jens/tail-message-buffer ()
-  "Toggle tailing the *Message* buffer every time something is written to it."
-  (interactive)
-  (unless (fboundp 'tmb/message-buffer-goto-end)
-    (defun tmb/message-buffer-goto-end (res)
-      (dolist (w (get-buffer-window-list "*Messages*"))
-        (with-selected-window w
-          (set-window-point w (point-max))))
-      res))
-
-  (unless (boundp 'tail-message-buffer-mode)
-    (define-minor-mode tail-message-buffer-mode
-      "Tail the *Messages* buffer every time something calls `message'."
-      nil " tail" '(())
-      (if (bound-and-true-p tail-message-buffer-mode)
-          (advice-add #'message :filter-args #'tmb/message-buffer-goto-end)
-        (advice-remove #'message #'tmb/message-buffer-goto-end))))
-
-  (with-current-buffer (get-buffer "*Messages*")
-    (if (not (bound-and-true-p tail-message-buffer-mode))
-        (tail-message-buffer-mode +1)
-      (tail-message-buffer-mode -1))))
-
-;; auto-tail the *Messages* buffer by default
-(jens/tail-message-buffer)
-
-(defun jens/toggle-window-margins ()
-  "Toggle left and right window margins, centering `fill-column' lines."
-  (interactive)
-  (let ((margins (window-margins)))
-    (if (and (null (car margins)) (null (cdr margins)))
-        (let* ((win-width (window-width (selected-window)))
-               (margin (/ (- win-width fill-column) 2)))
-          (set-window-margins (selected-window) margin margin))
-      (set-window-margins (selected-window) 0 0))))
-
-(defun jens/emacs-init-loc ()
-  "Total lines of emacs-lisp code in my emacs configuration."
-  (interactive)
-  (let* ((locs '("init.el"
-                 "early-init.el"
-                 "experimental.el"
-                 "repos.el"
-                 "lisp/*.el"
-                 "modes/*.el"
-                 "straight/repos/doc-at-point.el/*.el"
-                 "straight/repos/etmux.el/*.el"
-                 "straight/repos/lowkey-mode-line.el/*.el"
-                 "straight/repos/today.el/*.el"
-                 "straight/repos/views.el/*.el"
-                 "straight/repos/sane-windows.el/*.el"
-                 "straight/repos/replace-at-point.el/*.el"))
-         (full-paths (-map (lambda (l) (f-full (concat user-emacs-directory l))) locs))
-         (all-files (-flatten (-map (lambda (p) (f-glob p)) full-paths)))
-         (all-files (s-join " " all-files))
-         (cloc-cmd "tokei -o json")
-         (format-cmd "jq '.inner.Elisp.code'")
-         (final-cmd (format "%s %s | %s" cloc-cmd all-files format-cmd))
-         (lines-of-code (s-trim (shell-command-to-string final-cmd))))
-    (message "%s" lines-of-code)
-    lines-of-code))
-
-(defun jens/download-file (url &optional dir overwrite)
-  "Download a file from URL to DIR, optionally OVERWRITE an existing file.
-If DIR is nil, download to current directory."
-  (let* ((dir (or dir default-directory))
-         (file (url-unhex-string (f-filename url)))
-         (path (f-join dir file)))
-    (condition-case ex
-        (url-copy-file url path overwrite)
-      (error 'file-already-exists))))
-
-;;; built-in packages
+;;;; packages
+;;;;; major-modes
+
+(use-package octave :mode ("\\.m\\'" . octave-mode))
+
+(use-package sh-script
+  :mode (("\\.sh\\'" . shell-script-mode)
+         ("\\.zsh\\'" . shell-script-mode)
+         ("\\.zshrc\\'" . shell-script-mode)
+         ("\\.zshenv\\'" . shell-script-mode)
+         ("\\.zprofile\\'" . shell-script-mode)
+         ("\\.PKGBUILD\\'" . shell-script-mode))
+  :config
+  (add-hook* 'sh-mode-hook '(flymake-mode flycheck-mode)))
+
+(use-package scheme
+  :defer t
+  :mode ("\\.scm\\'" . scheme-mode)
+  :config (setq scheme-program-name "csi -:c"))
+
+(use-package python
+  :defer t
+  :bind
+  (:map python-mode-map
+        ("C-c C-c" . projectile-compile-project)
+        ("M-," . nil)
+        ("M-." . nil)
+        ("M--" . nil)))
+
+(use-package cc-mode
+  :bind*
+  (:map java-mode-map
+        ("C-c C-c" . projectile-compile-project))
+  (:map c++-mode-map
+        ("C-c C-c" . projectile-compile-project)
+        ("C-c n" . clang-format-buffer))
+  :config
+  (dolist (k '("\M-," "\M-." "\M--"))
+    (bind-key k nil c-mode-base-map)))
+
+(use-package make-mode
+  :config
+  ;; TODO: fix indentation
+  )
+
+;;;;; minor modes
 
 (use-package package
   :config
@@ -1322,9 +723,9 @@ number input"
 (use-package elisp-mode
   :delight (emacs-lisp-mode "Elisp" :major)
   :config
-  (setq cleanup-buffer-fns
-        '((indent-region (point-min) (point-max))
-          (whitespace-cleanup))))
+  (setq-local cleanup-buffer-fns
+              '((indent-region (point-min) (point-max))
+                (whitespace-cleanup))))
 
 ;; show useful contextual information in the minibuffer
 (use-package eldoc
@@ -1429,8 +830,10 @@ number input"
   :custom-face
   (fringe ((t (:background "#3f3f3f")))))
 
+;;;;; misc packages
 
-;;;; org-mode
+
+;;;;; org-mode
 
 ;; I want to use the version of org-mode from upstream.
 ;; remove the built-in org-mode from the load path, so it does not get loaded
@@ -1520,9 +923,9 @@ number input"
   (setq org-refile-use-outline-path t)
   (setq org-refile-targets '( (nil . (:maxlevel . 1))))
 
-  ;;;;;;;;;;;;;
-  ;; advices ;;
-  ;;;;;;;;;;;;;
+  ;;;;;;;;;;;;
+  ;; advice ;;
+  ;;;;;;;;;;;;
 
   (defun jens/org-summary-todo (n-done n-not-done)
     "Switch entry to DONE when all subentries are done, to TODO otherwise."
@@ -1570,6 +973,654 @@ number input"
   ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   )
 
+;;; homemade
+;;;; defuns
+;;;;; editing
+
+(defun jens/new-scratch-buffer ()
+  "Return a newly created scratch buffer."
+  (let ((n 0)
+        bufname)
+    (while (progn
+             (setq bufname
+                   (concat "*scratch"
+                           (if (= n 0) "" (format "-%s" (int-to-string n)))
+                           "*"))
+             (setq n (1+ n))
+             (get-buffer bufname)))
+    (get-buffer-create bufname)))
+
+(defun jens/create-scratch-buffer ()
+  "Create a new scratch buffer to work in.  (named *scratch* -
+*scratch<n>*)."
+  (interactive)
+  (let ((scratch-buf (jens/new-scratch-buffer))
+        (initial-content (if (use-region-p)
+                             (buffer-substring (region-beginning) (region-end)))))
+    (xref-push-marker-stack)
+    (switch-to-buffer scratch-buf)
+    (when initial-content (insert initial-content))
+    (goto-char (point-min))
+    (emacs-lisp-mode)))
+
+(defun jens/clean-view ()
+  "Create a scratch buffer, and make it the only buffer visible."
+  (interactive)
+  (jens/create-scratch-buffer)
+  (delete-other-windows))
+
+(defun jens/clone-buffer ()
+  "Open a clone of the current buffer."
+  (interactive)
+  (let ((newbuf (jens/new-scratch-buffer))
+        (content (buffer-string))
+        (oldpoint (point)))
+    (with-current-buffer newbuf
+      (insert content))
+    (switch-to-buffer newbuf)
+    (goto-char oldpoint)))
+
+(defun jens/sudo-find-file (filename)
+  "Open FILENAME with superuser permissions."
+  (let ((remote-method (file-remote-p default-directory 'method))
+        (remote-user (file-remote-p default-directory 'user))
+        (remote-host (file-remote-p default-directory 'host))
+        (remote-localname (file-remote-p filename 'localname)))
+    (find-file (format "/%s:root@%s:%s"
+                       (or remote-method "sudo")
+                       (or remote-host "localhost")
+                       (or remote-localname filename)))))
+
+(defun jens/sudo-edit (&optional arg)
+  "Re-open current buffer file with superuser permissions.
+With prefix ARG, ask for file to open."
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (read-file-name "Find file:"))
+
+  (let ((place (point)))
+    (jens/sudo-find-file buffer-file-name)
+    (goto-char place)))
+
+(defun jens/open-line-below ()
+  "Insert a line below the current line, indent it, and move to
+the beginning of that line."
+  (interactive)
+  (end-of-line)
+  (newline)
+  (indent-for-tab-command))
+
+(defun jens/open-line-above ()
+  "Insert a line above the current line, indent it, and move to
+the beginning of that line."
+  (interactive)
+  (beginning-of-line)
+  (newline)
+  (forward-line -1)
+  (indent-for-tab-command))
+
+(defun jens/smart-beginning-of-line ()
+  "Move point to the beginning of line or beginning of text."
+  (interactive)
+  (let ((pt (point)))
+    (beginning-of-line-text)
+    (when (eq pt (point))
+      (beginning-of-line))))
+
+(defun jens/kill-to-beginning-of-line ()
+  "Kill from <point> to the beginning of the current line."
+  (interactive)
+  (kill-region (save-excursion (beginning-of-line) (point))
+               (point)))
+
+(defun jens/save-region-or-current-line (_arg)
+  "If a region is active then it is saved to the `kill-ring',
+otherwise the current line is saved."
+  (interactive "P")
+  (save-mark-and-excursion
+    (if (region-active-p)
+        (kill-ring-save (region-beginning) (region-end))
+      (kill-ring-save (line-beginning-position) (+ 1 (line-end-position))))))
+
+(defun jens/kill-region-or-current-line (arg)
+  "If a region is active then it is killed, otherwise the current
+line is killed."
+  (interactive "P")
+  (if (region-active-p)
+      (kill-region (region-beginning) (region-end))
+    (save-excursion
+      (kill-whole-line arg))))
+
+(defun jens/clean-current-line ()
+  "Delete the contents of the current line."
+  (interactive)
+  (delete-region (line-beginning-position) (line-end-position)))
+
+(defun jens/join-region ()
+  "Join all lines in a region into a single line."
+  (interactive)
+  (save-excursion
+    (let ((beg (region-beginning))
+          (end (copy-marker (region-end))))
+      (goto-char beg)
+      (while (< (point) end)
+        (progn
+          (join-line 1)
+          (end-of-line))))))
+
+(defun jens/join-region-or-line ()
+  "If region is active, join all lines in region to a single
+line.  Otherwise join the line below the current line, with the
+current line, placing it after."
+  (interactive)
+  (if (region-active-p)
+      (jens/join-region)
+    (join-line -1)))
+
+(defun jens/join-line-down ()
+  "Pull the line above down to the end of this line."
+  (interactive)
+  (save-excursion
+    (let ((cp (point)))
+      (forward-line -1)
+      (when (not (= (point) cp))
+        (call-interactively #'jens/kill-region-or-current-line)
+        (end-of-line)
+        (save-excursion (insert " " (s-chomp (current-kill 0))))
+        (just-one-space)))))
+
+(defun jens/wrap-region (b e text-begin text-end)
+  "Wrap region from B to E with TEXT-BEGIN and TEXT-END."
+  (interactive "r\nsStart text: \nsEnd text: ")
+  (if (use-region-p)
+      (save-restriction
+        (narrow-to-region b e)
+        (goto-char (point-max))
+        (insert text-end)
+        (goto-char (point-min))
+        (insert text-begin))
+    (message "wrap-region: Error! invalid region!")))
+
+(defun jens/comment-uncomment-region-or-line ()
+  "If region is active, comment or uncomment it (based on what it
+currently is), otherwise comment or uncomment the current line."
+  (interactive)
+  (if (region-active-p)
+      (comment-or-uncomment-region (region-beginning) (region-end))
+    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+
+;;;;; file
+
+(defun jens/byte-compile-this-file ()
+  "Byte compile the current buffer."
+  (interactive)
+  (if (f-exists? (concat (f-no-ext (buffer-file-name)) ".elc"))
+      (byte-recompile-file (buffer-file-name))
+    (byte-compile-file (buffer-file-name))))
+
+(defun jens/get-buffer-file-name+ext ()
+  "Get the file name and extension of the file belonging to the
+current buffer."
+  (file-name-nondirectory buffer-file-name))
+
+(defun jens/get-buffer-file-name ()
+  "Get the file name of the file belonging to the current
+buffer."
+  (file-name-sans-extension (jens/get-buffer-file-name+ext)))
+
+(defun jens/get-buffer-file-directory ()
+  "Get the directory of the file belonging to the current
+buffer."
+  (file-name-directory (buffer-file-name)))
+
+(defun jens/file-age (file)
+  "Return the number of seconds since FILE was last modified."
+  (float-time
+   (time-subtract (current-time)
+                  (nth 5 (file-attributes (file-truename file))))))
+
+(defun jens/rename-current-buffer-file ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" name)
+      (let ((new-name (read-file-name "New name: " filename)))
+        (if (get-buffer new-name)
+            (error "A buffer named '%s' already exists!" new-name)
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil)
+          (message "File '%s' successfully renamed to '%s'"
+                   name (file-name-nondirectory new-name)))))))
+
+(defun jens/delete-current-buffer-file ()
+  "Remove the file of the current buffer and kill the buffer."
+  (interactive)
+  (let ((filename (buffer-file-name))
+        (buffer (current-buffer)))
+    (if (not (and filename (file-exists-p filename)))
+        (message "no such file exists")
+      (when (yes-or-no-p (format "really delete '%s'?" filename))
+        (delete-file filename)
+        (kill-buffer buffer)
+        (message "deleted '%s'" filename)))))
+
+(defun jens/touch-buffer-file ()
+  "Touches the current buffer, marking it as dirty."
+  (interactive)
+  (insert " ")
+  (backward-delete-char 1)
+  (save-buffer))
+
+(defun jens/new-package ()
+  "Create a skeleton for a elisp package."
+  (interactive)
+  (let* ((path (read-file-name "package name: "))
+         (file (f-filename path))
+         (name (f-no-ext file))
+         (p))
+    (with-current-buffer (find-file-noselect path)
+      (insert (format ";;; %s. --- -*- lexical-binding: t; -*-\n\n" file))
+      (insert (format ";; Copyright (C) %s %s\n\n"
+                      (format-time-string "%Y")
+                      user-full-name))
+
+      (insert (format ";; Author: %s <%s>\n" user-full-name user-mail-address))
+      (insert ";; Keywords:\n")
+      (insert (format ";; Package-Version: %s\n" (format-time-string "%Y%m%d")))
+      (insert ";; Version: 0.1\n\n")
+
+      (insert ";; This file is NOT part of GNU Emacs.\n\n")
+
+      (insert ";;; Commentary:\n\n")
+      (insert ";;; Code:\n\n")
+
+      (setq p (point))
+
+      (insert "\n\n")
+
+      (insert (format "(provide '%s)" name))
+
+      (goto-char p)
+      (switch-to-buffer (current-buffer)))))
+
+;;;;; lisp
+
+;; easy 'commenting out' of sexps
+(defmacro comment (&rest _args))
+
+;; easy interactive lambda forms
+(defmacro xi (&rest body)
+  `(lambda ()
+     (interactive)
+     ,body))
+
+(defun jens/inspect-variable-at-point (&optional arg)
+  "Inspect variable at point."
+  (interactive "P")
+  (require 'doc-at-point)
+  (let* ((sym (symbol-at-point))
+         (value (cond
+                 ((fboundp sym) (symbol-function sym))
+                 ((boundp sym) (symbol-value sym)))))
+    (if arg
+        (with-current-buffer (get-buffer-create "*Inspect*")
+          (let ((inhibit-read-only t))
+            (erase-buffer)
+            (pp value (current-buffer))
+            (emacs-lisp-mode)
+            (goto-char 0))
+          (view-buffer-other-window (current-buffer)))
+
+      ;; TODO: create a posframe for all-purpose emacs things
+
+      (funcall doc-at-point-display-fn
+               (doc-at-point-elisp--fontify-as-code
+                (with-output-to-string
+                  (pp value)))))))
+
+(defun jens/one-shot-keybinding (key command)
+  "Set a keybinding that disappear once you press a key that is
+not in the overlay-map"
+  (set-transient-map
+   (let ((map (make-sparse-keymap)))
+     (define-key map (kbd key) command)
+     map) t))
+;; example
+;; (jens/one-shot-keybinding "a" (xi (previous-line)))
+
+(defun jens/one-shot-keymap (key-command-pairs)
+  "Set a keybinding that disappear once you press a key that is
+not in the overlay-map"
+  (set-transient-map
+   (let ((map (make-sparse-keymap)))
+     (dolist (kvp key-command-pairs)
+       (let ((key (car kvp))
+             (cmd (cdr kvp)))
+         (define-key map (kbd key) cmd)))
+     map) t))
+
+;; example:
+;; (jens/one-shot-keymap
+;;  `(("a" . ,(xi (message "a")))
+;;    ("b" . ,(xi (message "b")))
+;;    ("c" . ,(xi (message "c")))
+;;    ("d" . ,(xi (message "d")))))
+
+(defun jens/try-require (feature)
+  "Try to require FEATURE, if an exception is thrown, log it."
+  (condition-case ex
+      (progn
+        (log-info (format "= Requiring \"%s\" " (symbol-name feature)))
+        (require feature))
+    ('error (log-warning (format "@ Error requiring \"%s\": %s" (symbol-name feature) ex)))))
+
+(defun jens/eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+
+(defun jens/remove-text-properties-region (beg end)
+  "Remove text properties from text in region between BEG and END."
+  (set-text-properties beg end nil))
+
+(defun jens/remove-text-propertiex-in-region ()
+  "Remove text propertiex from all text in active region."
+  (interactive)
+  (when (region-active-p)
+    (jens/remove-text-properties-region
+     (region-beginning) (region-end))))
+
+(defun jens/space-to-dash-in-region ()
+  "Replace all spaces in region with dashes."
+  (interactive)
+  (when (region-active-p)
+    (let* ((p (point))
+           (str (buffer-substring (region-beginning) (region-end)))
+           (dashed (s-replace " " "-" str)))
+      (delete-region (region-beginning) (region-end))
+      (insert dashed)
+      (goto-char p))))
+
+(defun jens/foreach-line-in-region (fn &optional beg end)
+  "Call FN on each line in region (BEG END)."
+  (let ((beg (or beg (region-beginning)))
+        (end (or end (region-end))))
+    (goto-char beg)
+    (beginning-of-line)
+    (while (< (point) end)
+      (funcall fn)
+      (forward-line))))
+
+(defun jens/save-to-file (data filename)
+  "Save lisp object DATA to FILENAME."
+  (with-temp-file filename
+    (prin1 data (current-buffer))))
+
+(defun jens/load-from-file (filename)
+  "Load lisp object from FILENAME."
+  (when (file-exists-p filename)
+    (with-temp-buffer
+      (insert-file-contents filename)
+      (cl-assert (eq (point) (point-min)))
+      (read (current-buffer)))))
+
+(defun jens/sexp-up ()
+  (interactive)
+  (condition-case nil
+      (forward-sexp -1)
+    (error (backward-char))))
+
+(defun jens/sexp-down ()
+  (interactive)
+  (condition-case nil
+      (forward-sexp 1)
+    (error (forward-char))))
+
+(defun add-one-shot-hook (hook fun &optional append local)
+  (let ((sym (gensym "one-shot-hook-")))
+    (fset sym
+          (lambda ()
+            (remove-hook hook sym local)
+            (funcall fun)))
+    (add-hook hook sym append local)))
+
+(defmacro before-next-command (&rest body)
+  "Execute BODY before the next command is run.
+
+Inside BODY `this-command' is bound to the command that is about
+to run and `this-command-keys' returns the key pressed."
+  `(add-one-shot-hook 'pre-command-hook
+                      (lambda () ,@body)))
+
+;;;;; misc
+
+(defun jens/insert-todays-date ()
+  "Insert the current date at point."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d")))
+
+(defun jens/insert-todays-date-compact ()
+  "Insert the current date at point, in a compact format."
+  (interactive)
+  (insert (format-time-string "%Y%m%d")))
+
+(defun jens/goto-msg-buffer ()
+  "View the *Messages* buffer, return to previous buffer when
+done."
+  (interactive)
+  (with-current-buffer (get-buffer "*Messages*")
+    (goto-char (point-max))
+    (view-buffer (current-buffer))))
+
+(defun jens/goto-next-line-with-same-indentation ()
+  "Jump to the next line with the same indentation level as the
+current line."
+  (interactive)
+  (back-to-indentation)
+  (re-search-forward
+   (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]")
+   nil nil (if (= 0 (current-column)) 2 1))
+  (back-to-indentation))
+
+(defun jens/goto-prev-line-with-same-indentation ()
+  "Jump to a previous line with the same indentation level as the
+current line."
+  (interactive)
+  (back-to-indentation)
+  (re-search-backward
+   (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
+  (back-to-indentation))
+
+(defun jens/function-def-string (fnsym)
+  "Return function definition of FNSYM as a string."
+  (let* ((buffer-point (condition-case nil (find-definition-noselect fnsym nil) (error nil)))
+         (new-buf (car buffer-point))
+         (new-point (cdr buffer-point)))
+    (cond (buffer-point
+           ;; try to get original definition
+           (with-current-buffer new-buf
+             (save-excursion
+               (goto-char new-point)
+               (buffer-substring-no-properties (point) (save-excursion (end-of-defun) (point))))))
+          ;; fallback: just print the functions definition
+          (t (concat (prin1-to-string (symbol-function fnsym)) "\n")))))
+
+(defun jens/function-def-org-code-block (fnsym)
+  "Return function definitoin of FNSYM as an org code-block."
+  (concat "#+begin_src emacs-lisp\n"
+          (jens/function-def-string fnsym)
+          "#+end_src"))
+
+(defun jens/copy-symbol-at-point ()
+  "Save the `symbol-at-point' to the `kill-ring'."
+  (interactive)
+  (let ((sym (symbol-at-point)))
+    (kill-new (symbol-name sym))))
+
+(defun jens/copy-buffer-file-path ()
+  "Copy the current buffers file path to the clipboard."
+  (interactive)
+  (let ((path (buffer-file-name)))
+    (with-temp-buffer
+      (insert path)
+      (clipboard-kill-ring-save (point-min) (point-max)))
+    path))
+
+(defun jens/goto-repo ()
+  "Quickly jump to a repository, defined in repos.el"
+  (interactive)
+  (let* ((repos (jens/load-from-file (locate-user-emacs-file "repos.el")))
+         (repos-propped
+          (-map (lambda (r)
+                  (let ((last-part (-last-item (f-split (car r)))))
+                    (replace-regexp-in-string
+                     last-part
+                     (lambda (s) (propertize s 'face 'font-lock-keyword-face))
+                     (car r))))
+                repos))
+         (pick (completing-read "Repo: " repos-propped nil t)))
+    (cond
+     ((f-directory? pick) (dired pick))
+     ((f-file? pick) (find-file pick))
+     (t (message "unknown repo: %s" pick)))))
+
+(defun jens/load-secrets ()
+  "Eval everything in secrets.el.gpg."
+  (interactive)
+  (with-current-buffer
+      (find-file-noselect (locate-user-emacs-file "secrets.el.gpg"))
+    (eval-buffer)
+    (kill-current-buffer)))
+
+(defun jens/--headings-org-level-1 ()
+  "Return list of level 1 heading in an org-buffer."
+  (require 'org-ql)
+  (let* ((level-1-entries (org-ql (buffer-file-name) (level 1)))
+         (cleaned-entries (-map (lambda (e) (cadr e)) level-1-entries))
+         (headings (-map (lambda (h)
+                           (cons (plist-get h ':raw-value)
+                                 (plist-get h ':begin)))
+                         cleaned-entries)))
+    headings))
+
+(defun jens/--headings-comment-boxes ()
+  "Return list of comment-boxes in the current file."
+  ;; TODO: use comment-box syntax to collect comment boxes from different modes,
+  ;; not just emacs-lisp syntax
+  (let* ((semi-line '((1+ ";") "\n"))
+         (desc-line '(";;" (1+ (or alnum whitespace)) ";;" "\n"))
+         (box (eval `(rx (and line-start ,@desc-line))))
+         (content (buffer-substring-no-properties (point-min) (point-max)))
+         (boxes (s-match-strings-all box content))
+         (boxes (-map #'car boxes))
+         (boxes (-map #'s-trim boxes))
+         (positions (s-matched-positions-all box content))
+         (positions (-map #'cdr positions))
+         (headings (-zip boxes positions)))
+    headings))
+
+(defun jens/headings ()
+  "Jump to a heading in the current file."
+  (interactive)
+  (let* ((headings (-remove #'null
+                            (-flatten
+                             (-cons*
+                              (jens/--headings-comment-boxes)
+                              (when (derived-mode-p 'org-mode)
+                                (jens/--headings-org-level-1))))))
+         (_ (sort headings (lambda (a b) (< (cdr a) (cdr b)))))
+         (ivy-sort-functions-alist nil)
+         (pick (completing-read "jump to heading: " headings nil t)))
+    (goto-char (cdr (assoc pick headings)))))
+
+(defhydra jens/shortcut (:exit t)
+  "Shortcuts for common commands."
+  ("m" #'jens/goto-msg-buffer "goto msg buffer")
+  ("c" #'jens/create-scratch-buffer "create scratch buffer"))
+
+(global-set-key (kbd "C-M-s") #'jens/shortcut/body)
+
+(defun jens/tail-message-buffer ()
+  "Toggle tailing the *Message* buffer every time something is written to it."
+  (interactive)
+  (unless (fboundp 'tmb/message-buffer-goto-end)
+    (defun tmb/message-buffer-goto-end (res)
+      (dolist (w (get-buffer-window-list "*Messages*"))
+        (with-selected-window w
+          (set-window-point w (point-max))))
+      res))
+
+  (unless (boundp 'tail-message-buffer-mode)
+    (define-minor-mode tail-message-buffer-mode
+      "Tail the *Messages* buffer every time something calls `message'."
+      nil " tail" '(())
+      (if (bound-and-true-p tail-message-buffer-mode)
+          (advice-add #'message :filter-args #'tmb/message-buffer-goto-end)
+        (advice-remove #'message #'tmb/message-buffer-goto-end))))
+
+  (with-current-buffer (get-buffer "*Messages*")
+    (if (not (bound-and-true-p tail-message-buffer-mode))
+        (tail-message-buffer-mode +1)
+      (tail-message-buffer-mode -1))))
+
+;; auto-tail the *Messages* buffer by default
+(jens/tail-message-buffer)
+
+(defun jens/toggle-window-margins ()
+  "Toggle left and right window margins, centering `fill-column' lines."
+  (interactive)
+  (let ((margins (window-margins)))
+    (if (and (null (car margins)) (null (cdr margins)))
+        (let* ((win-width (window-width (selected-window)))
+               (margin (/ (- win-width fill-column) 2)))
+          (set-window-margins (selected-window) margin margin))
+      (set-window-margins (selected-window) 0 0))))
+
+(defun jens/emacs-init-loc ()
+  "Total lines of emacs-lisp code in my emacs configuration."
+  (interactive)
+  (let* ((locs '("init.el"
+                 "early-init.el"
+                 "experimental.el"
+                 "repos.el"
+                 "lisp/*.el"
+                 "modes/*.el"
+                 "straight/repos/doc-at-point.el/*.el"
+                 "straight/repos/etmux.el/*.el"
+                 "straight/repos/lowkey-mode-line.el/*.el"
+                 "straight/repos/today.el/*.el"
+                 "straight/repos/views.el/*.el"
+                 "straight/repos/sane-windows.el/*.el"
+                 "straight/repos/replace-at-point.el/*.el"))
+         (full-paths (-map (lambda (l) (f-full (concat user-emacs-directory l))) locs))
+         (all-files (-flatten (-map (lambda (p) (f-glob p)) full-paths)))
+         (all-files (s-join " " all-files))
+         (cloc-cmd "tokei -o json")
+         (format-cmd "jq '.inner.Elisp.code'")
+         (final-cmd (format "%s %s | %s" cloc-cmd all-files format-cmd))
+         (lines-of-code (s-trim (shell-command-to-string final-cmd))))
+    (message "%s" lines-of-code)
+    lines-of-code))
+
+(defun jens/download-file (url &optional dir overwrite)
+  "Download a file from URL to DIR, optionally OVERWRITE an existing file.
+If DIR is nil, download to current directory."
+  (let* ((dir (or dir default-directory))
+         (file (url-unhex-string (f-filename url)))
+         (path (f-join dir file)))
+    (condition-case ex
+        (url-copy-file url path overwrite)
+      (error 'file-already-exists))))
+
 (use-package ob-async
   :disabled
   :ensure t
@@ -1589,52 +1640,231 @@ number input"
   :ensure t
   :defer t)
 
-;;; major modes
-;;;; built-in major modes
+;;;; packages
 
-(use-package octave :mode ("\\.m\\'" . octave-mode))
+(use-package org-extra)
+(use-package dev-extra)
 
-(use-package sh-script
-  :mode (("\\.sh\\'" . shell-script-mode)
-         ("\\.zsh\\'" . shell-script-mode)
-         ("\\.zshrc\\'" . shell-script-mode)
-         ("\\.zshenv\\'" . shell-script-mode)
-         ("\\.zprofile\\'" . shell-script-mode)
-         ("\\.PKGBUILD\\'" . shell-script-mode))
-  :config
-  (add-hook* 'sh-mode-hook '(flymake-mode flycheck-mode)))
-
-(use-package scheme
+(use-package blog
+  :load-path "~/vault/blog/src/"
   :defer t
-  :mode ("\\.scm\\'" . scheme-mode)
-  :config (setq scheme-program-name "csi -:c"))
+  :commands (blog-publish
+             blog-find-posts-file))
 
-(use-package python
+(use-package struere
+  :bind (("C-c n" . struere-buffer))
+  :config
+  (struere-add 'org-mode #'jens/org-indent)
+  (struere-add 'python-mode #'blacken-buffer))
+
+(use-package views
+  :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
+  :bind
+  (("M-p p" . views-push)
+   ("M-p k" . views-pop)
+   ("M-v" . views-switch)))
+
+(use-package sane-windows
+  :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
+  :demand t
+  :bind (("C-x 0" . nil)
+         ("C-x 1" . nil)
+         ("C-x o" . delete-other-windows)
+         ("C-x p" . delete-window)
+         ("M-C-<tab>" . sw/toggle-window-split)
+         ("M-S-<iso-lefttab>" . sw/rotate-windows)
+         ("M-S-<left>" . sw/move-border-left)
+         ("M-S-<right>" . sw/move-border-right)
+         ("M-S-<up>" . sw/move-border-up)
+         ("M-S-<down>" . sw/move-border-down)))
+
+(use-package fullscreen
+  :bind ("M-f" . fullscreen-toggle))
+
+(use-package etmux
+  :straight (etmux :repo "git@github.com:jensecj/etmux.el.git")
+  :defer t
+  :commands (etmux-jackin etmux-spawn-here)
+  :bind (("C-S-Z" . etmux-spawn-here)))
+
+(use-package highlight-bookmarks
+  :demand t
+  :commands highlight-bookmarks-in-this-buffer
+  :config
+  (add-hook* '(find-file-hook after-save-hook) #'highlight-bookmarks-in-this-buffer)
+  (advice-add* '(bookmark-jump bookmark-set bookmark-delete)
+               :after
+               #'highlight-bookmarks-in-this-buffer))
+
+(use-package today
+  :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
+  :defer t
+  :commands (today-hydra/body)
+  :bind
+  (("C-x t" . today-hydra/body)
+   :map org-mode-map
+   ("M-o" . today-track-hydra/body))
+  :config
+  (setq today-directory "~/vault/git/org/archive/")
+  (setq today-file "~/vault/git/org/today.org")
+  (setq today-inbox-file "~/vault/git/org/inbox.org")
+
+  (defhydra today-refile-pl-hydra (:foreign-keys run)
+    "
+^Bindings^        ^ ^
+^^^^^^^^-------------------
+_r_: Rust        _g_: Git
+_c_: C/C++       _l_: Lisp
+_C_: Clojure     _m_: ML
+_p_: Python      ^ ^
+_j_: Java        ^ ^
+"
+    ("c" (today-refile "today.org" "C/C++"))
+    ("C" (today-refile "today.org" "Clojure"))
+    ("g" (today-refile "today.org" "Git"))
+    ("j" (today-refile "today.org" "Java"))
+    ("l" (today-refile "today.org" "Lisp"))
+    ("m" (today-refile "today.org" "ML"))
+    ("p" (today-refile "today.org" "Python"))
+    ("r" (today-refile "today.org" "Rust"))
+
+    ("x" today-refile-hydra/body "Refile entries" :exit t)
+    ("z" org-refile-goto-last-stored "Jump to last refile")
+    ("q" nil "quit"))
+
+  (defhydra today-refile-hydra (:foreign-keys run)
+    "
+^Bindings^         ^ ^                     ^ ^                         ^ ^                   ^ ^
+^^^^^^^^-------------------------------------------------------------------------------------------------
+ _a_: AI            _d_: DevOps            _n_: Next                    _S_: Statistics     _x_: PL-Hydra
+ _A_: Algorithms    _e_: Emacs             _o_: Other Talks             _t_: Tech Talks
+ _b_: Business      _l_: Linux             _p_: Programming             _T_: TED Talks
+ _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Work
+ _C_: Courses       _M_: Math              _s_: Computer Science        _W_: Web
+"
+    ("a" (today-refile "today.org" "AI"))
+    ("A" (today-refile "today.org" "Algorithms"))
+    ("b" (today-refile "today.org" "Business"))
+    ("c" (today-refile "today.org" "Climate"))
+    ("C" (today-refile "today.org" "Courses"))
+    ("d" (today-refile "today.org" "DevOps"))
+    ("e" (today-refile "today.org" "Emacs"))
+    ("l" (today-refile "today.org" "Linux"))
+    ("m" (today-refile "today.org" "Machine Learning"))
+    ("M" (today-refile "today.org" "Math"))
+    ("n" (today-refile "today.org" "Next"))
+    ("o" (today-refile "today.org" "Other Talks"))
+    ("p" (today-refile "today.org" "Programming"))
+    ("P" (today-refile "today.org" "Programming Languages"))
+    ("s" (today-refile "today.org" "Computer Science"))
+    ("S" (today-refile "today.org" "Statistics"))
+    ("t" (today-refile "today.org" "Tech Talks"))
+    ("T" (today-refile "today.org" "TED Talks"))
+    ("w" (today-refile "today.org" "Work"))
+    ("W" (today-refile "today.org" "Web"))
+
+    ("x" today-refile-pl-hydra/body "Refile programming languages" :exit t)
+    ("z" org-refile-goto-last-stored "Jump to last refile")
+    ("q" nil "quit"))
+
+  (defhydra today-capture-hydra (:foreign-keys run)
+    "
+^Capture^
+^^^^^^^^------------------------------
+_r_: capture read task
+_R_: capture read task from clipboard
+_w_: capture watch task
+_W_: capture watch task from clipboard
+_H_: capture task from clipboard to this buffer
+"
+    ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
+    ("R" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'read)))
+    ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
+    ("W" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'watch)))
+
+    ("H" #'today-capture-here-from-clipboard)
+
+    ("q" nil "quit"))
+
+  (defhydra today-hydra (:foreign-keys run)
+    "
+^Today^
+^^^^^^^^------------------------------
+_c_: Capture
+_a_: Archive completed todos
+_l_: list all archived files
+_f_: refile hydra
+_g_: move entry to today-file
+
+_t_: go to today-file
+_i_: go to inbox file
+_m_: go to roadmap file
+_k_: go to tracking file
+"
+    ("c" #'today-capture-hydra/body :exit t)
+
+    ("a" #'today-archive-done-todos :exit t)
+
+    ("t" #'today :exit t)
+    ("T" #'today-visit-todays-file :exit t)
+    ("l" #'today-list :exit t)
+    ("f" #'today-refile-hydra/body :exit t)
+
+    ("g" #'today-move-to-today)
+
+    ("m" (lambda () (interactive) (find-file "~/vault/git/org/roadmap.org")) :exit t)
+    ("k" (lambda () (interactive) (find-file "~/vault/git/org/tracking.org")) :exit t)
+    ("i" (lambda () (interactive) (find-file "~/vault/git/org/inbox.org")) :exit t)
+
+    ("q" nil "quit")))
+
+(use-package doc-at-point
+  :straight (doc-at-point :repo "git@github.com:jensecj/doc-at-point.el.git")
   :defer t
   :bind
-  (:map python-mode-map
-        ("C-c C-c" . projectile-compile-project)
-        ("M-," . nil)
-        ("M-." . nil)
-        ("M--" . nil)))
-
-(use-package cc-mode
-  :bind*
-  (:map java-mode-map
-        ("C-c C-c" . projectile-compile-project))
-  (:map c++-mode-map
-        ("C-c C-c" . projectile-compile-project)
-        ("C-c n" . clang-format-buffer))
+  (("C-+" . doc-at-point)
+   :map company-active-map
+   ("C-+" . doc-at-point-company-menu-selection-quickhelp))
+  :commands (doc-at-point
+             doc-at-point-company-menu-selection-quickhelp
+             doc-at-point-setup-defaults)
   :config
-  (dolist (k '("\M-," "\M-." "\M--"))
-    (bind-key k nil c-mode-base-map)))
+  (setq doc-at-point--posframe-font "Source Code Pro Semibold")
+  (doc-at-point-setup-defaults)
+  :custom-face
+  (internal-border ((t (:background "#777777")))))
 
-(use-package make-mode
+(use-package replace-at-point
+  :straight (replace-at-point :repo "git@github.com:jensecj/replace-at-point.el.git")
+  :bind ("C-M-SPC" . replace-at-point)
   :config
-  ;; TODO: fix indentation
-  )
+  (replace-at-point-setup-defaults))
 
-;;;; third-party major modes
+(use-package lowkey-mode-line
+  :straight
+  (lowkey-mode-line
+   :repo "git@github.com:jensecj/lowkey-mode-line.el.git")
+  :demand t
+  :commands lowkey-mode-line-enable
+  :config
+  (lowkey-mode-line-enable)
+  :custom-face
+  (lml-buffer-face ((t (:background "grey20"))))
+  (lml-buffer-face-inactive ((t (:background "grey20"))))
+  (lml-position-face ((t (:background "grey25"))))
+  (lml-position-face-inactive ((t (:background "grey20"))))
+  (lml-major-mode-face ((t (:background "grey30"))))
+  (lml-major-mode-face-inactive ((t (:background "grey20"))))
+  (lml-minor-modes-face ((t (:background "grey30"))))
+  (lml-minor-modes-face-inactive ((t (:background "grey20"))))
+  (lml-filler-face ((t (:background "grey30"))))
+  (lml-filler-face-inactive ((t (:background "grey20"))))
+  (lml-vc-face ((t (:background "grey20"))))
+  (lml-vc-face-inactive ((t (:background "grey20")))))
+
+;;; third-party
+;;;; major modes
+;;;;; third-party
 
 (use-package lsp-mode :defer t :ensure t)
 (use-package cmake-mode :ensure t :mode "\\CmakeLists.txt\\'")
@@ -1685,7 +1915,7 @@ number input"
   ;;        (figwheel-sidecar.repl-api/cljs-repl))")
   )
 
-;;;; extensions to major modes
+;;;;; extensions
 
 (use-package dired-filter
   :ensure t
@@ -1911,106 +2141,7 @@ number input"
   :init
   (add-hook 'sh-mode-hook #'flymake-shellcheck-load))
 
-(use-package rmsbolt
-  :ensure t)
-
-;;; auto completion
-
-(use-package company
-  :ensure t
-  :defer t
-  :diminish company-mode
-  :hook (emacs-lisp-mode . company-mode)
-  :bind
-  (("<backtab>" . #'completion-at-point)
-   ("M-<tab>" . #'jens/complete)
-   ("C-<tab>" . #'company-complete))
-  :config
-  (setq company-search-regexp-function 'company-search-flex-regexp)
-  (setq company-require-match nil)
-
-  (setq company-backends
-        '(company-elisp
-          company-semantic
-          company-clang
-          company-cmake
-          company-capf
-          company-files
-          (company-dabbrev-code company-gtags company-etags company-keywords)
-          company-dabbrev))
-
-  ;; don't show the company menu automatically
-  (setq company-begin-commands nil)
-
-  (defun jens/complete ()
-    "Show company completions using ivy."
-    (interactive)
-    (unless company-candidates
-      (let ((company-frontends nil))
-        (company-complete)))
-
-    (when-let ((prefix (symbol-name (symbol-at-point)))
-               (bounds (bounds-of-thing-at-point 'symbol)))
-      (when company-candidates
-        (when-let ((pick
-                    (ivy-read "complete: " company-candidates
-                              :initial-input prefix)))
-
-          ;; replace the candidate with the pick
-          (delete-region (car bounds) (cdr bounds))
-          (insert pick))))))
-
-(use-package company-box
-  :ensure t
-  :demand t
-  :after company
-  :config
-  (setq company-box-enable-icon t)
-  (setq company-box-show-single-candidate t)
-
-  (defun jens/company-box-icon-elisp (sym)
-    (when (derived-mode-p 'emacs-lisp-mode)
-      (let ((sym (if (stringp sym) (intern sym))))
-        (cond
-         ((functionp sym) (propertize "f" 'face font-lock-function-name-face))
-         ((macrop sym) (propertize "m" 'face font-lock-keyword-face))
-         ((boundp sym) (propertize "v" 'face font-lock-variable-name-face))
-         (t "")))))
-
-  (delete 'company-box-icons--elisp company-box-icons-functions)
-  (add-to-list 'company-box-icons-functions #'jens/company-box-icon-elisp)
-
-  (setf (map-elt company-box-frame-parameters 'side) 0.2)
-  (setf (map-elt company-box-frame-parameters 'min-width) 40)
-
-  (company-box-mode +1)
-
-  :custom-face
-  (company-box-selection ((t (:foreground nil :background "black")))))
-
-(use-package company-lsp
-  :ensure t
-  :config
-  (push 'company-lsp company-backends))
-
-(use-package company-flx
-  :ensure t
-  :hook (company-mode . company-flx-mode))
-
-(use-package company-c-headers
-  :ensure t
-  :config
-  (setq c++-include-files
-        '("/usr/include/"
-          "/usr/include/c++/8.2.1/"
-          "/usr/lib/clang/7.0.1/include/"
-          "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include/"
-          "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed/"))
-
-  (setq company-c-headers-path-system
-        (-uniq (-concat c++-include-files company-c-headers-path-system)))
-
-  (add-to-list 'company-backends 'company-c-headers))
+(use-package rmsbolt :ensure t :defer t)
 
 ;;; misc packages
 
@@ -3105,227 +3236,106 @@ initial search query."
   (highlight ((t (:background nil :foreground nil))))
   (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
 
-;;; homemade things
+;;; auto completion
 
-(use-package org-extra)
-(use-package dev-extra)
-
-(use-package blog
-  :load-path "~/vault/blog/src/"
+(use-package company
+  :ensure t
   :defer t
-  :commands (blog-publish
-             blog-find-posts-file))
-
-(use-package struere
-  :bind (("C-c n" . struere-buffer))
-  :config
-  (struere-add 'org-mode #'jens/org-indent)
-  (struere-add 'python-mode #'blacken-buffer))
-
-(use-package views
-  :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
+  :diminish company-mode
+  :hook (emacs-lisp-mode . company-mode)
   :bind
-  (("M-p p" . views-push)
-   ("M-p k" . views-pop)
-   ("M-v" . views-switch)))
+  (("<backtab>" . #'completion-at-point)
+   ("M-<tab>" . #'jens/complete)
+   ("C-<tab>" . #'company-complete))
+  :config
+  (setq company-search-regexp-function 'company-search-flex-regexp)
+  (setq company-require-match nil)
 
-(use-package sane-windows
-  :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
+  (setq company-backends
+        '(company-elisp
+          company-semantic
+          company-clang
+          company-cmake
+          company-capf
+          company-files
+          (company-dabbrev-code company-gtags company-etags company-keywords)
+          company-dabbrev))
+
+  ;; don't show the company menu automatically
+  (setq company-begin-commands nil)
+
+  (defun jens/complete ()
+    "Show company completions using ivy."
+    (interactive)
+    (unless company-candidates
+      (let ((company-frontends nil))
+        (company-complete)))
+
+    (when-let ((prefix (symbol-name (symbol-at-point)))
+               (bounds (bounds-of-thing-at-point 'symbol)))
+      (when company-candidates
+        (when-let ((pick
+                    (ivy-read "complete: " company-candidates
+                              :initial-input prefix)))
+
+          ;; replace the candidate with the pick
+          (delete-region (car bounds) (cdr bounds))
+          (insert pick))))))
+
+(use-package company-box
+  :disabled t
+  :ensure t
   :demand t
-  :bind (("C-x 0" . nil)
-         ("C-x 1" . nil)
-         ("C-x o" . delete-other-windows)
-         ("C-x p" . delete-window)
-         ("M-C-<tab>" . sw/toggle-window-split)
-         ("M-S-<iso-lefttab>" . sw/rotate-windows)
-         ("M-S-<left>" . sw/move-border-left)
-         ("M-S-<right>" . sw/move-border-right)
-         ("M-S-<up>" . sw/move-border-up)
-         ("M-S-<down>" . sw/move-border-down)))
-
-(use-package fullscreen
-  :bind ("M-f" . fullscreen-toggle))
-
-(use-package etmux
-  :straight (etmux :repo "git@github.com:jensecj/etmux.el.git")
-  :defer t
-  :commands (etmux-jackin etmux-spawn-here)
-  :bind (("C-S-Z" . etmux-spawn-here)))
-
-(use-package highlight-bookmarks
-  :demand t
-  :commands highlight-bookmarks-in-this-buffer
+  :after company
   :config
-  (add-hook* '(find-file-hook after-save-hook) #'highlight-bookmarks-in-this-buffer)
-  (advice-add* '(bookmark-jump bookmark-set bookmark-delete)
-               :after
-               #'highlight-bookmarks-in-this-buffer))
+  (setq company-box-enable-icon t)
+  (setq company-box-show-single-candidate t)
 
-(use-package today
-  :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
-  :defer t
-  :commands (today-hydra/body)
-  :bind
-  (("C-x t" . today-hydra/body)
-   :map org-mode-map
-   ("M-o" . today-track-hydra/body))
-  :config
-  (setq today-directory "~/vault/git/org/archive/")
-  (setq today-file "~/vault/git/org/today.org")
-  (setq today-inbox-file "~/vault/git/org/inbox.org")
+  (defun jens/company-box-icon-elisp (sym)
+    (when (derived-mode-p 'emacs-lisp-mode)
+      (let ((sym (if (stringp sym) (intern sym))))
+        (cond
+         ((functionp sym) (propertize "f" 'face font-lock-function-name-face))
+         ((macrop sym) (propertize "m" 'face font-lock-keyword-face))
+         ((boundp sym) (propertize "v" 'face font-lock-variable-name-face))
+         (t "")))))
 
-  (defhydra today-refile-pl-hydra (:foreign-keys run)
-    "
-^Bindings^        ^ ^
-^^^^^^^^-------------------
-_r_: Rust        _g_: Git
-_c_: C/C++       _l_: Lisp
-_C_: Clojure     _m_: ML
-_p_: Python      ^ ^
-_j_: Java        ^ ^
-"
-    ("c" (today-refile "today.org" "C/C++"))
-    ("C" (today-refile "today.org" "Clojure"))
-    ("g" (today-refile "today.org" "Git"))
-    ("j" (today-refile "today.org" "Java"))
-    ("l" (today-refile "today.org" "Lisp"))
-    ("m" (today-refile "today.org" "ML"))
-    ("p" (today-refile "today.org" "Python"))
-    ("r" (today-refile "today.org" "Rust"))
+  (delete 'company-box-icons--elisp company-box-icons-functions)
+  (add-to-list 'company-box-icons-functions #'jens/company-box-icon-elisp)
 
-    ("x" today-refile-hydra/body "Refile entries" :exit t)
-    ("z" org-refile-goto-last-stored "Jump to last refile")
-    ("q" nil "quit"))
+  (setf (map-elt company-box-frame-parameters 'side) 0.2)
+  (setf (map-elt company-box-frame-parameters 'min-width) 40)
 
-  (defhydra today-refile-hydra (:foreign-keys run)
-    "
-^Bindings^         ^ ^                     ^ ^                         ^ ^                   ^ ^
-^^^^^^^^-------------------------------------------------------------------------------------------------
- _a_: AI            _d_: DevOps            _n_: Next                    _S_: Statistics     _x_: PL-Hydra
- _A_: Algorithms    _e_: Emacs             _o_: Other Talks             _t_: Tech Talks
- _b_: Business      _l_: Linux             _p_: Programming             _T_: TED Talks
- _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Work
- _C_: Courses       _M_: Math              _s_: Computer Science        _W_: Web
-"
-    ("a" (today-refile "today.org" "AI"))
-    ("A" (today-refile "today.org" "Algorithms"))
-    ("b" (today-refile "today.org" "Business"))
-    ("c" (today-refile "today.org" "Climate"))
-    ("C" (today-refile "today.org" "Courses"))
-    ("d" (today-refile "today.org" "DevOps"))
-    ("e" (today-refile "today.org" "Emacs"))
-    ("l" (today-refile "today.org" "Linux"))
-    ("m" (today-refile "today.org" "Machine Learning"))
-    ("M" (today-refile "today.org" "Math"))
-    ("n" (today-refile "today.org" "Next"))
-    ("o" (today-refile "today.org" "Other Talks"))
-    ("p" (today-refile "today.org" "Programming"))
-    ("P" (today-refile "today.org" "Programming Languages"))
-    ("s" (today-refile "today.org" "Computer Science"))
-    ("S" (today-refile "today.org" "Statistics"))
-    ("t" (today-refile "today.org" "Tech Talks"))
-    ("T" (today-refile "today.org" "TED Talks"))
-    ("w" (today-refile "today.org" "Work"))
-    ("W" (today-refile "today.org" "Web"))
+  (company-box-mode +1)
 
-    ("x" today-refile-pl-hydra/body "Refile programming languages" :exit t)
-    ("z" org-refile-goto-last-stored "Jump to last refile")
-    ("q" nil "quit"))
-
-  (defhydra today-capture-hydra (:foreign-keys run)
-    "
-^Capture^
-^^^^^^^^------------------------------
-_r_: capture read task
-_R_: capture read task from clipboard
-_w_: capture watch task
-_W_: capture watch task from clipboard
-_H_: capture task from clipboard to this buffer
-"
-    ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
-    ("R" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'read)))
-    ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
-    ("W" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'watch)))
-
-    ("H" #'today-capture-here-from-clipboard)
-
-    ("q" nil "quit"))
-
-  (defhydra today-hydra (:foreign-keys run)
-    "
-^Today^
-^^^^^^^^------------------------------
-_c_: Capture
-_a_: Archive completed todos
-_l_: list all archived files
-_f_: refile hydra
-_g_: move entry to today-file
-
-_t_: go to today-file
-_i_: go to inbox file
-_m_: go to roadmap file
-_k_: go to tracking file
-"
-    ("c" #'today-capture-hydra/body :exit t)
-
-    ("a" #'today-archive-done-todos :exit t)
-
-    ("t" #'today :exit t)
-    ("T" #'today-visit-todays-file :exit t)
-    ("l" #'today-list :exit t)
-    ("f" #'today-refile-hydra/body :exit t)
-
-    ("g" #'today-move-to-today)
-
-    ("m" (lambda () (interactive) (find-file "~/vault/git/org/roadmap.org")) :exit t)
-    ("k" (lambda () (interactive) (find-file "~/vault/git/org/tracking.org")) :exit t)
-    ("i" (lambda () (interactive) (find-file "~/vault/git/org/inbox.org")) :exit t)
-
-    ("q" nil "quit")))
-
-(use-package doc-at-point
-  :straight (doc-at-point :repo "git@github.com:jensecj/doc-at-point.el.git")
-  :defer t
-  :bind
-  (("C-+" . doc-at-point)
-   :map company-active-map
-   ("C-+" . doc-at-point-company-menu-selection-quickhelp))
-  :commands (doc-at-point
-             doc-at-point-company-menu-selection-quickhelp
-             doc-at-point-setup-defaults)
-  :config
-  (setq doc-at-point--posframe-font "Source Code Pro Semibold")
-  (doc-at-point-setup-defaults)
   :custom-face
-  (internal-border ((t (:background "#777777")))))
+  (company-box-selection ((t (:foreground nil :background "black")))))
 
-(use-package replace-at-point
-  :straight (replace-at-point :repo "git@github.com:jensecj/replace-at-point.el.git")
-  :bind ("C-M-SPC" . replace-at-point)
+(use-package company-lsp
+  :ensure t
+  :defer t
   :config
-  (replace-at-point-setup-defaults))
+  (push 'company-lsp company-backends))
 
-(use-package lowkey-mode-line
-  :straight
-  (lowkey-mode-line
-   :repo "git@github.com:jensecj/lowkey-mode-line.el.git")
-  :demand t
-  :commands lowkey-mode-line-enable
+(use-package company-flx
+  :ensure t
+  :hook (company-mode . company-flx-mode))
+
+(use-package company-c-headers
+  :ensure t
+  :defer t
   :config
-  (lowkey-mode-line-enable)
-  :custom-face
-  (lml-buffer-face ((t (:background "grey20"))))
-  (lml-buffer-face-inactive ((t (:background "grey20"))))
-  (lml-position-face ((t (:background "grey25"))))
-  (lml-position-face-inactive ((t (:background "grey20"))))
-  (lml-major-mode-face ((t (:background "grey30"))))
-  (lml-major-mode-face-inactive ((t (:background "grey20"))))
-  (lml-minor-modes-face ((t (:background "grey30"))))
-  (lml-minor-modes-face-inactive ((t (:background "grey20"))))
-  (lml-filler-face ((t (:background "grey30"))))
-  (lml-filler-face-inactive ((t (:background "grey20"))))
-  (lml-vc-face ((t (:background "grey20"))))
-  (lml-vc-face-inactive ((t (:background "grey20")))))
+  (setq c++-include-files
+        '("/usr/include/"
+          "/usr/include/c++/8.2.1/"
+          "/usr/lib/clang/7.0.1/include/"
+          "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include/"
+          "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed/"))
+
+  (setq company-c-headers-path-system
+        (-uniq (-concat c++-include-files company-c-headers-path-system)))
+
+  (add-to-list 'company-backends 'company-c-headers))
 
 ;;; advice and hooks
 
