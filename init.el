@@ -2273,7 +2273,7 @@ of (command . word) to be used by `flyspell-do-correct'."
   :ensure t
   :hook ((text-mode prog-mode) . fci-mode)
   :config
-  (setq fci-rule-color "#555555")
+  (setq-default fci-rule-color "#555555")
   (fci-mode +1))
 
 (use-package spinner
