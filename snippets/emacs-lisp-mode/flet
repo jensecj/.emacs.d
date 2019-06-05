@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: flet
+# key: flet
+# --
+(flet (($1 ($2) $3))
+  $0
+  )

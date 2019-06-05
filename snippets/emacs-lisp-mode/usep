@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: usep
+# key: usep
+# --
+(use-package $0)
