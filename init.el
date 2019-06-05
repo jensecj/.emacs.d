@@ -1873,7 +1873,7 @@ _k_: go to tracking file
 (use-package markdown-mode :ensure t :mode ("\\.md\\'" "\\.card\\'"))
 (use-package scss-mode :ensure t :mode "\\.scss\\'")
 (use-package tuareg :ensure t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
-(use-package restclient :ensure t)
+(use-package restclient :ensure t :defer t)
 
 (use-package rust-mode
   :ensure t
@@ -2575,6 +2575,7 @@ title and duration."
 
 (use-package diff-hl-dired
   :after diff-hl
+  :defer t
   :config
   (defun jens/empty-fringe-bmp (_type _pos) 'diff-hl-bmp-empty)
 
