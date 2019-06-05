@@ -1,4 +1,7 @@
 ;;; -*- lexical-binding: t -*-
+;;; preamble
+;;;; early setup
+
 ;; use lexical binding for initialization code
 (setq-default lexical-binding t)
 
@@ -30,6 +33,8 @@
         ("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")))
 
+;;;; fundamental third-party packages
+
 ;; make sure use-package is installed
 (unless (package-installed-p 'use-package)
   (log-warning "use-package.el was not found. installing...")
@@ -46,7 +51,7 @@
 ;; needs to be required after its settings are set
 (require 'use-package)
 
-;;; make sure straight.el is installed
+;; make sure straight.el is installed
 (defvar bootstrap-version)
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
@@ -101,9 +106,7 @@
 
 (add-hook 'server-after-make-frame-hook #'jens/init-fonts)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; cache, temp files, etc. ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; cache, temp files, etc.
 
 ;; contain extra files in etc/ and var/.
 ;; load early, and overwrite locations in configs if needed.
@@ -121,9 +124,7 @@
 (if (file-exists-p custom-file)
     (load custom-file))
 
-;;;;;;;;;;;;;;
-;; settings ;;
-;;;;;;;;;;;;;;
+;;; built-in settings
 
 ;; location of emacs source files
 (let ((src-dir "/home/jens/.aur/emacs-git-src/"))
@@ -288,9 +289,8 @@
         (insert (format-time-string "[%H:%M:%S] "))
         entry))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; authentication and security ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; authentication and security
+
 
 (setq auth-sources '("~/vault/authinfo.gpg" "~/.netrc"))
 
@@ -343,9 +343,8 @@ seconds."
 
 (setq jens/kill-idle-gpg-buffers-timer (run-with-idle-timer 60 t 'jens/kill-idle-gpg-buffers))
 
-;;;;;;;;;;;;;;;;;;;;
-;; editing defuns ;;
-;;;;;;;;;;;;;;;;;;;;
+;;; defuns
+;;;; editing defuns
 
 (defun jens/new-scratch-buffer ()
   "Return a newly created scratch buffer."
@@ -519,9 +518,7 @@ currently is), otherwise comment or uncomment the current line."
       (comment-or-uncomment-region (region-beginning) (region-end))
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
 
-;;;;;;;;;;;;;;;;;
-;; file defuns ;;
-;;;;;;;;;;;;;;;;;
+;;;; file defuns
 
 (defun jens/byte-compile-this-file ()
   "Byte compile the current buffer."
@@ -619,9 +616,7 @@ buffer."
       (goto-char p)
       (switch-to-buffer (current-buffer)))))
 
-;;;;;;;;;;;;;;;;;
-;; lisp defuns ;;
-;;;;;;;;;;;;;;;;;
+;;;; lisp defuns
 
 ;; easy 'commenting out' of sexps
 (defmacro comment (&rest _args))
@@ -811,9 +806,7 @@ to run and `this-command-keys' returns the key pressed."
   (dolist (e elements)
     (add-to-list list-var e append compare-fn)))
 
-;;;;;;;;;;;;;;;;;
-;; misc defuns ;;
-;;;;;;;;;;;;;;;;;
+;;;; misc defuns
 
 (defun jens/insert-todays-date ()
   "Insert the current date at point."
@@ -1041,19 +1034,13 @@ If DIR is nil, download to current directory."
         (url-copy-file url path overwrite)
       (error 'file-already-exists))))
 
-;;;;;;;;;;;;;;
-;; packages ;;
-;;;;;;;;;;;;;;
-
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
 ;; extensions of `use-package', so we need to have those packages.
 (use-package bind-key :ensure t)
 (use-package diminish :ensure t :commands diminish)
 (use-package delight :ensure t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; some built-in packages ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; built-in packages
 
 (use-package package
   :config
@@ -1434,9 +1421,8 @@ number input"
   :custom-face
   (fringe ((t (:background "#3f3f3f")))))
 
-;;;;;;;;;
-;; Org ;;
-;;;;;;;;;
+
+;;;; org-mode
 
 ;; I want to use the version of org-mode from upstream.
 ;; remove the built-in org-mode from the load path, so it does not get loaded
@@ -1595,11 +1581,9 @@ number input"
   :ensure t
   :defer t)
 
-;;;;;;;;;;;;;;;;;
-;; major modes ;;
-;;;;;;;;;;;;;;;;;
+;;; major modes
+;;;; built-in major modes
 
-;; built-ins
 (use-package octave :mode ("\\.m\\'" . octave-mode))
 
 (use-package sh-script
@@ -1642,7 +1626,8 @@ number input"
   ;; TODO: fix indentation
   )
 
-;; from repos
+;;;; third-party major modes
+
 (use-package lsp-mode :defer t :ensure t)
 (use-package cmake-mode :ensure t :mode "\\CmakeLists.txt\\'")
 (use-package dockerfile-mode :ensure t :mode "\\Dockerfile\\'")
@@ -1692,9 +1677,7 @@ number input"
   ;;        (figwheel-sidecar.repl-api/cljs-repl))")
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; extensions to major modes ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; extensions to major modes
 
 (use-package dired-filter
   :ensure t
@@ -1923,9 +1906,7 @@ number input"
 (use-package rmsbolt
   :ensure t)
 
-;;;;;;;;;;;;;;;;;;;;;
-;; auto completion ;;
-;;;;;;;;;;;;;;;;;;;;;
+;;; auto completion
 
 (use-package company
   :ensure t
@@ -2023,9 +2004,7 @@ number input"
 
   (add-to-list 'company-backends 'company-c-headers))
 
-;;;;;;;;;;;;;;;;;;;
-;; misc packages ;;
-;;;;;;;;;;;;;;;;;;;
+;;; misc packages
 
 (use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
 (use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
@@ -3063,9 +3042,7 @@ initial search query."
   (highlight ((t (:background nil :foreground nil))))
   (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
 
-;;;;;;;;;;;;;;;;;;;;;;
-;; homemade things ;;
-;;;;;;;;;;;;;;;;;;;;;;
+;;; homemade things
 
 (use-package org-extra)
 (use-package dev-extra)
@@ -3287,9 +3264,7 @@ _k_: go to tracking file
   (lml-vc-face ((t (:background "grey20"))))
   (lml-vc-face-inactive ((t (:background "grey20")))))
 
-;;;;;;;;;;;;;;;;;;;;;;;
-;; advice and hooks ;;
-;;;;;;;;;;;;;;;;;;;;;;;
+;;; advice and hooks
 
 ;; When popping the mark, continue popping until the cursor actually
 ;; moves. also, if the last command was a copy - skip past all the
@@ -3315,9 +3290,7 @@ times."
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; keybindings for built-in things ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; keybindings for built-in things
 
 ;; handle special keys
 (define-key key-translation-map [S-dead-circumflex] "^")
@@ -3389,9 +3362,7 @@ times."
 (bind-key* "<home>" 'beginning-of-buffer)
 (bind-key* "<end>" 'end-of-buffer)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; keybindings for defuns ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; keybindings for defuns
 
 ;; Better C-a
 (bind-key* "C-a" 'jens/smart-beginning-of-line)
@@ -3432,9 +3403,7 @@ times."
 ;; Completion that uses many different methods to find options.
 (global-set-key (kbd "C-.") 'hippie-expand)
 
-;;;;;;;;;;;;;;
-;; epilogue ;;
-;;;;;;;;;;;;;;
+;;; epilogue
 
 (log-success (format "Configuration is %s lines of emacs-lisp. (excluding 3rd-parties)" (jens/emacs-init-loc)))
 (log-success (format "Initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
