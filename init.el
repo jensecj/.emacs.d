@@ -2286,30 +2286,6 @@ clipboard."
   :defer t
   :hook (emacs-lisp-mode . fontify-face-mode))
 
-(use-package highlight-blocks
-  :ensure t
-  :config
-  (setq highlight-blocks-max-innermost-block-count 1)
-  :custom-face
-  (highlight-blocks-depth-1-face ((t (:foreground nil :background "#353535")))))
-
-(use-package emr
-  :ensure t
-  :bind
-  (:map emacs-lisp-mode-map
-        ("M-<return>" . jens/emr-show-refactor-menu))
-  :config
-  (defun jens/emr-show-refactor-menu ()
-    "Alternative emr refactoring menu."
-    (interactive)
-    (when-let* ((candidates (->> emr:refactor-commands
-                                 (emr:hash-values)
-                                 (-map 'emr:make-popup)
-                                 (-remove 'null)))
-                (pick (ivy-completing-read "" candidates))
-                (fn (get-text-property 0 'value pick)))
-      (call-interactively fn))))
-
 (use-package package-lint :ensure t :defer t :commands (package-lint-current-buffer))
 (use-package flycheck-package :ensure t :defer t :commands (flycheck-package-setup))
 
@@ -2835,11 +2811,6 @@ title and duration."
 (use-package iedit
   :straight t
   :bind* ("C-;" . iedit-mode))
-
-(use-package smartscan
-  :straight t
-  :bind (("C->" . smartscan-symbol-go-forward)
-         ("C-<" . smartscan-symbol-go-backward)))
 
 (use-package multiple-cursors
   :ensure t
