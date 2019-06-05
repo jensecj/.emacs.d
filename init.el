@@ -11,6 +11,7 @@
 (defun log-success (txt) (message "@ %s" txt))
 
 (log-info "Started initializing emacs!")
+(log-info "Doing early initialization")
 
 ;; turn off excess interface early in startup to avoid momentary display
 (menu-bar-mode -1)
@@ -49,6 +50,8 @@
 (add-hook 'server-after-make-frame-hook #'jens/init-fonts)
 
 ;;;; fundamental third-party packages
+
+(log-info "Loading fundamental third-party packages")
 
 ;; make sure use-package is installed
 (unless (package-installed-p 'use-package)
@@ -116,6 +119,8 @@
 
 ;;;; cache, temp files, etc.
 
+(log-info "Setting up cache / temp-files / etc.")
+
 ;; contain extra files in etc/ and var/.
 ;; load early, and overwrite locations in configs if needed.
 (use-package no-littering :ensure t :demand t)
@@ -133,6 +138,8 @@
     (load custom-file))
 
 ;;;; fundamental defuns
+
+(log-info "Defining fundamental defuns")
 
 (defun twin-dispatch (fn A B)
   "Dispatch FN on each of the args in A and B."
@@ -171,6 +178,8 @@
 
 ;;; built-in
 ;;;; settings
+
+(log-info "Redefining built-in defaults")
 
 ;; location of emacs source files
 (let ((src-dir "/home/jens/.aur/emacs-git-src/"))
@@ -413,6 +422,9 @@ seconds."
 (setq jens/kill-idle-gpg-buffers-timer (run-with-idle-timer 60 t 'jens/kill-idle-gpg-buffers))
 
 ;;;; packages
+
+(log-info "Configuring built-in packages")
+
 ;;;;; major-modes
 
 (use-package octave :mode ("\\.m\\'" . octave-mode))
@@ -995,6 +1007,9 @@ number input"
 
 ;;; homemade
 ;;;; defuns
+
+(log-info "Defining homemade defuns")
+
 ;;;;; convenience
 
 (defun jens/new-scratch-buffer ()
@@ -1662,6 +1677,8 @@ If DIR is nil, download to current directory."
 
 ;;;; packages
 
+(log-info "Loading homemade packages")
+
 (use-package org-extra)
 (use-package dev-extra)
 
@@ -1883,6 +1900,9 @@ _k_: go to tracking file
   (lml-vc-face-inactive ((t (:background "grey20")))))
 
 ;;; third-party packages
+
+(log-info "Loading third-party packages")
+
 ;;;; major modes and extentions
 
 (use-package lsp-mode :defer t :ensure t)
@@ -3335,6 +3355,9 @@ initial search query."
   (add-to-list 'company-backends 'company-c-headers))
 
 ;;; keybindings
+
+(log-info "Setting keybindings")
+
 ;;;; for built-in things
 
 ;; handle special keys
