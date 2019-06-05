@@ -3,11 +3,11 @@
 (setq-default lexical-binding t)
 
 ;; some functions for logging
-(defun msg-info (txt) (message "# %s" txt))
-(defun msg-warning (txt) (message "! %s" txt))
-(defun msg-success (txt) (message "@ %s" txt))
+(defun log-info (txt) (message "# %s" txt))
+(defun log-warning (txt) (message "! %s" txt))
+(defun log-success (txt) (message "@ %s" txt))
 
-(msg-info "Started initializing emacs!")
+(log-info "Started initializing emacs!")
 
 ;; turn off excess interface early in startup to avoid momentary display
 (menu-bar-mode -1)
@@ -16,12 +16,12 @@
 (tooltip-mode -1)
 
 ;; directories for elisp things
-(defconst user-emacs-elpa-dir (locate-user-emacs-file "elpa/"))
-(defconst user-emacs-lisp-dir (locate-user-emacs-file "lisp/"))
+(defconst user-elpa-directory (locate-user-emacs-file "elpa/"))
+(defconst user-lisp-directory (locate-user-emacs-file "lisp/"))
 
 ;; add user directories to the load-path
-(add-to-list 'load-path user-emacs-lisp-dir)
-(add-to-list 'load-path user-emacs-elpa-dir)
+(add-to-list 'load-path user-lisp-directory)
+(add-to-list 'load-path user-elpa-directory)
 
 ;; setup package archives
 (setq package-archives
@@ -32,7 +32,7 @@
 
 ;; make sure use-package is installed
 (unless (package-installed-p 'use-package)
-  (msg-warning "use-package.el was not found. installing...")
+  (log-warning "use-package.el was not found. installing...")
   (package-refresh-contents)
   (package-install 'use-package))
 
@@ -51,7 +51,7 @@
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
-    (msg-warning "straight.el was not found, installing.")
+    (log-warning "straight.el was not found, installing.")
     (with-current-buffer
         (url-retrieve-synchronously
          "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
@@ -83,7 +83,7 @@
 ;; easy way to patch packages
 (use-package advice-patch
   :init
-  (let ((advice-patch-file (concat user-emacs-elpa-dir "advice-patch.el"))
+  (let ((advice-patch-file (concat user-elpa-directory "advice-patch.el"))
         (url "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"))
     (unless (file-exists-p advice-patch-file)
       (url-copy-file url advice-patch-file))))
@@ -129,7 +129,7 @@
 (let ((src-dir "/home/jens/.aur/emacs-git-src/"))
   (if (f-exists-p src-dir)
       (setq source-directory src-dir)
-    (msg-warning "Unable to locate emacs source directory.")))
+    (log-warning "Unable to locate emacs source directory.")))
 
 ;; hide the splash screen
 (setq inhibit-startup-message t)
@@ -688,9 +688,9 @@ not in the overlay-map"
   "Try to require FEATURE, if an exception is thrown, log it."
   (condition-case ex
       (progn
-        (msg-info (format "= Requiring \"%s\" " (symbol-name feature)))
+        (log-info (format "= Requiring \"%s\" " (symbol-name feature)))
         (require feature))
-    ('error (msg-warning (format "@ Error requiring \"%s\": %s" (symbol-name feature) ex)))))
+    ('error (log-warning (format "@ Error requiring \"%s\": %s" (symbol-name feature) ex)))))
 
 (defun jens/eval-and-replace ()
   "Replace the preceding sexp with its value."
@@ -2190,7 +2190,7 @@ title and duration."
   :init
   (jens/download-file
    "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
-   user-emacs-elpa-dir))
+   user-elpa-directory))
 
 (use-package hydra
   :ensure t
@@ -3436,8 +3436,8 @@ times."
 ;; epilogue ;;
 ;;;;;;;;;;;;;;
 
-(msg-success (format "Configuration is %s lines of emacs-lisp. (excluding 3rd-parties)" (jens/emacs-init-loc)))
-(msg-success (format "Initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
+(log-success (format "Configuration is %s lines of emacs-lisp. (excluding 3rd-parties)" (jens/emacs-init-loc)))
+(log-success (format "Initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
 
 (defun jens/show-initial-important-messages ()
   "Show all lines in *Messages* matching a regex for important messages."
