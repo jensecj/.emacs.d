@@ -3095,7 +3095,7 @@ paste for multi-term mode."
    :map help-map
    ("l" . counsel-find-library))
   :config
-  (setq counsel-outline-display-style 'headline)
+  (setq counsel-outline-display-style 'path)
   (setq counsel-outline-face-style 'verbatim)
 
   (setq
