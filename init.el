@@ -1859,9 +1859,8 @@ _k_: go to tracking file
   (lml-vc-face ((t (:background "grey20"))))
   (lml-vc-face-inactive ((t (:background "grey20")))))
 
-;;; third-party
-;;;; major modes
-;;;;; third-party
+;;; third-party packages
+;;;; major modes and extentions
 
 (use-package lsp-mode :defer t :ensure t)
 (use-package cmake-mode :ensure t :mode "\\CmakeLists.txt\\'")
@@ -1886,6 +1885,13 @@ _k_: go to tracking file
   (unbind-key "M-," rust-mode-map)
   (unbind-key "M-." rust-mode-map)
   (unbind-key "M--" rust-mode-map))
+
+(use-package racer
+  :ensure t
+  :defer t
+  :after rust-mode
+  :hook ((rust-mode . racer-mode)
+         (racer-mode . eldoc-mode)))
 
 (use-package clojure-mode
   :ensure t
@@ -1912,7 +1918,221 @@ _k_: go to tracking file
   ;;        (figwheel-sidecar.repl-api/cljs-repl))")
   )
 
-;;;;; extensions
+(use-package cider
+  :ensure t
+  :defer t
+  :hook (clojure-mode . cider-mode)
+  :config
+  (setq cider-repl-use-pretty-printing t
+        cider-prompt-for-symbol nil
+        cider-pprint-fn 'pprint
+        cider-repl-pop-to-buffer-on-connect nil
+        cider-default-cljs-repl nil
+        cider-check-cljs-repl-requirements nil))
+
+(use-package clj-refactor
+  :ensure t
+  :defer t
+  :hook (clojure-mode . clj-refactor-mode)
+  :config
+  ;; don't warn on refactor evals
+  (setq cljr-warn-on-eval nil))
+
+(use-package magit
+  :ensure t
+  :defer t
+  :bind
+  (("C-x m" . magit-status)
+   :map magit-file-mode-map
+   ("C-x g" . nil)
+   :map magit-mode-map
+   ("C-c C-a" . magit-commit-amend)
+   ("<tab>" . magit-section-cycle))
+  :config
+  (setq magit-auto-revert-mode nil)
+  (setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
+  (setq magit-merge-arguments '("--no-ff"))
+  (setq magit-section-visibility-indicator '("…", t)))
+
+(use-package magithub
+  ;; TODO: replace with forge.el?
+  :ensure t
+  :after magit
+  :config
+  (magithub-feature-autoinject t))
+
+(use-package magit-todos
+  :ensure t
+  :after magit
+  :hook (magit-status-mode . magit-todos-mode)
+  :commands magit-todos-mode
+  :config
+  (setq magit-todos-exclude-globs '("var/*")))
+
+(use-package auctex
+  :ensure t
+  :defer t
+  :hook (LaTeX-mode-hook . reftex-mode)
+  :defines (TeX-view-program-selection
+            TeX-view-program-list)
+  :functions (TeX-PDF-mode TeX-source-correlate-mode)
+  :config
+  (setq TeX-PDF-mode t) ;; default to pdf
+  (setq TeX-global-PDF-mode t) ;; default to pdf
+  (setq TeX-parse-self t) ;; parse on load
+  (setq TeX-auto-save t) ;; parse on save
+  (setq TeX-save-query nil) ;; save before compiling
+  (setq TeX-master nil) ;; try to figure out which file is the master
+  (setq reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
+  (setq doc-view-resolution 300)
+
+  ;; (setq TeX-view-program-selection (quote ((output-pdf "zathura") (output-dvi "xdvi"))))
+  (TeX-source-correlate-mode)        ; activate forward/reverse search
+  (TeX-PDF-mode)
+  ;; (add-to-list 'TeX-view-program-list
+  ;;              '("Zathura" "zathura " (mode-io-correlate "--synctex-forward %n:1:%b") " %o"))
+  ;; (add-to-list 'TeX-view-program-selection
+  ;;              '(output-pdf "Zathura"))
+
+  (add-to-list
+   'TeX-view-program-list
+   '("Zathura"
+     ("zathura "
+      (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
+      " %o")
+     "zathura"))
+
+  (add-to-list
+   'TeX-view-program-selection
+   '(output-pdf "Zathura")))
+
+(use-package elfeed
+  :ensure t
+  :defer t
+  :after today
+  :commands (elfeed elfeed-search-selected)
+  :functions jens/elfeed-copy-link-at-point
+  :bind
+  (:map elfeed-search-mode-map
+        ("t" . today-capture-elfeed-at-point)
+        ("c" . jens/elfeed-copy-link-at-point))
+  :config
+  (setq elfeed-search-filter "@1-month-ago +unread ")
+
+  (defface youtube-elfeed-face '((t :foreground "#E0CF9F"))
+    "face for youtube.com entries"
+    :group 'elfeed-faces)
+  (push '(youtube youtube-elfeed-face) elfeed-search-face-alist)
+  (defface reddit-elfeed-face '((t :foreground "#9FC59F"))
+    "face for reddit.com entries"
+    :group 'elfeed-faces)
+  (push '(reddit reddit-elfeed-face) elfeed-search-face-alist)
+  (defface blog-elfeed-face '((t :foreground "#DCA3A3"))
+    "face for blog entries"
+    :group 'elfeed-faces)
+  (push '(blog blog-elfeed-face) elfeed-search-face-alist)
+  (defface emacs-elfeed-face '((t :foreground "#94BFF3"))
+    "face for emacs entries"
+    :group 'elfeed-faces)
+  (push '(emacs emacs-elfeed-face) elfeed-search-face-alist)
+  (defface aggregate-elfeed-face '((t :foreground "#948FF3"))
+    "face for aggregate entries"
+    :group 'elfeed-faces)
+  (push '(aggregate aggregate-elfeed-face) elfeed-search-face-alist)
+
+  (setq elfeed-feeds (jens/load-from-file (locate-user-emacs-file "elfeeds.el")))
+
+  (defun jens/elfeed-select-emacs-after-browse-url (fn &rest args)
+    "Activate the emacs-window"
+    (let* ((emacs-window (shell-command-to-string "xdotool getactivewindow"))
+           (active-window "")
+           (counter 0))
+      (apply fn args)
+      (sleep-for 0.5)
+      (while (and (not (string= active-window emacs-window))
+                  (< counter 5))
+        (sleep-for 0.2)
+        (incf counter)
+        (setq active-window (shell-command-to-string "xdotool getactivewindow"))
+        (shell-command-to-string (format "xdotool windowactivate %s" emacs-window)))))
+
+  (advice-add #'elfeed-search-browse-url :around #'jens/elfeed-select-emacs-after-browse-url)
+
+  (defun jens/elfeed-copy-link-at-point ()
+    "Copy the link of the elfeed entry at point to the
+clipboard."
+    (interactive)
+    (letrec ((entry (car (elfeed-search-selected)))
+             (link (elfeed-entry-link entry)))
+      (with-temp-buffer
+        (insert link)
+        (clipboard-kill-ring-save (point-min) (point-max))
+        (message (format "copied %s to clipboard" link))))))
+
+(use-package pdf-tools
+  :straight t
+  :defer t
+  :commands pdf-tools-install
+  :hook (doc-view-mode . pdf-tools-install)
+  :bind
+  ;; need to use plain isearch, pdf-tools hooks into it to handle searching
+  (:map pdf-view-mode-map ("C-s" . isearch-forward))
+  :config
+  ;; TODO: figure out how to disable epdf asking to rebuild when starting
+  ;; emacsclient, it does not work.
+
+  ;; (pdf-tools-install)
+  )
+
+(use-package helpful
+  :straight t
+  :demand t
+  :commands (helpful-key
+             helpful-callable
+             helpful-variable
+             helpful-symbol
+             helpful-key
+             helpful-mode)
+  :bind
+  (:map help-map
+        ("M-a" . helpful-at-point))
+  :config
+  (defalias #'describe-key #'helpful-key)
+  (defalias #'describe-function #'helpful-callable)
+  (defalias #'describe-variable #'helpful-variable)
+  (defalias #'describe-symbol #'helpful-symbol)
+  (defalias #'describe-key #'helpful-key))
+
+(use-package erc
+  :defer t
+  :after auth-source-pass
+  :functions ercgo
+  :commands erc-tls
+  :config
+  (setq erc-rename-buffers t
+        erc-interpret-mirc-color t
+        erc-prompt ">"
+        erc-insert-timestamp-function 'erc-insert-timestamp-left
+        erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
+
+  (setq erc-user-full-name user-full-name)
+  (erc-hl-nicks-enable)
+
+  (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs" "##java")))
+
+  (defun ercgo ()
+    (interactive)
+    (erc-tls :server "irc.freenode.net"
+             :port 6697
+             :nick "jensecj"
+             :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
+
+(use-package erc-hl-nicks
+  :ensure t
+  :defer t
+  :commands erc-hl-nicks-enable)
+
+;;;; extensions to built-in packages
 
 (use-package dired-filter
   :ensure t
@@ -2016,39 +2236,12 @@ _k_: go to tracking file
                 (concat "QUICKLISP_HOME="
                         (file-name-as-directory directory) "quicklisp/")))))
 
-(use-package cider
-  :ensure t
-  :defer t
-  :hook (clojure-mode . cider-mode)
-  :config
-  (setq cider-repl-use-pretty-printing t
-        cider-prompt-for-symbol nil
-        cider-pprint-fn 'pprint
-        cider-repl-pop-to-buffer-on-connect nil
-        cider-default-cljs-repl nil
-        cider-check-cljs-repl-requirements nil))
-
-(use-package clj-refactor
-  :ensure t
-  :defer t
-  :hook (clojure-mode . clj-refactor-mode)
-  :config
-  ;; don't warn on refactor evals
-  (setq cljr-warn-on-eval nil))
-
 (use-package geiser
   :ensure t
   :defer t
   :hook (scheme-mode . geiser-mode)
   :config
   (setq geiser-active-implementations '(chicken)))
-
-(use-package racer
-  :ensure t
-  :defer t
-  :after rust-mode
-  :hook ((rust-mode . racer-mode)
-         (racer-mode . eldoc-mode)))
 
 (use-package elpy
   :ensure t
@@ -2087,6 +2280,11 @@ _k_: go to tracking file
   (global-highlight-thing-mode +1)
   :custom-face
   (highlight-thing ((t (:background "#5f5f5f" :weight bold)))))
+
+(use-package fontify-face
+  :ensure t
+  :defer t
+  :hook (emacs-lisp-mode . fontify-face-mode))
 
 (use-package highlight-blocks
   :ensure t
@@ -2140,21 +2338,11 @@ _k_: go to tracking file
 
 (use-package rmsbolt :ensure t :defer t)
 
-;;; misc packages
+;;;; minor modes
 
-(use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
-(use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
 (use-package git-timemachine :ensure t :defer t)
-(use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
-(use-package dumb-jump :ensure t :defer t)
-(use-package counsel-tramp :ensure t :defer t)
 (use-package centered-cursor-mode :ensure t :defer t)
-(use-package with-editor :ensure t) ;; run commands in `emacsclient'
-(use-package gist :ensure t :defer t) ;; work with github gists
 (use-package rainbow-mode :ensure t :defer t :diminish) ;; highlight color-strings (hex, etc.)
-(use-package ov :ensure t) ;; easy overlays
-(use-package popup :ensure t)
-(use-package shut-up :ensure t)
 
 (use-package outshine
   :ensure t
@@ -2199,8 +2387,8 @@ _k_: go to tracking file
   (outshine-level-4 ((t (:inherit outline-4 :background "#393939" :weight bold))))
   (outshine-level-5 ((t (:inherit outline-5 :background "#393939" :weight bold)))))
 
-;; required by `backline'
 (use-package outline-minor-faces
+  ;; required by `backline'
   :ensure t
   :custom-face
   (outline-minor-1 ((t (:inherit outshine-level-1))))
@@ -2215,6 +2403,172 @@ _k_: go to tracking file
   :config
   ;; highlight the entire line with outline-level face, even if collapsed.
   (advice-add 'outline-flag-region :after 'backline-update))
+
+(use-package flycheck
+  :ensure t
+  :defer t
+  :config
+  (defun magnars/adjust-flycheck-automatic-syntax-eagerness ()
+    "Adjust how often we check for errors based on if there are any.
+  This lets us fix any errors as quickly as possible, but in a
+  clean buffer we're an order of magnitude laxer about checking."
+    (setq flycheck-idle-change-delay
+          (if flycheck-current-errors 0.3 3.0)))
+
+  ;; Each buffer gets its own idle-change-delay because of the
+  ;; buffer-sensitive adjustment above.
+  (make-variable-buffer-local 'flycheck-idle-change-delay)
+
+  (add-hook 'flycheck-after-syntax-check-hook
+            #'magnars/adjust-flycheck-automatic-syntax-eagerness)
+
+  ;; Remove newline checks, since they would trigger an immediate check
+  ;; when we want the idle-change-delay to be in effect while editing.
+  (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled)))
+
+(use-package fill-column-indicator
+  :ensure t
+  :hook ((text-mode prog-mode) . fci-mode)
+  :config
+  (setq-default fci-rule-color "#555555")
+  (fci-mode +1))
+
+(use-package yasnippet
+  :ensure t
+  :defer t
+  :diminish yas-minor-mode
+  :bind ("C-<return>" . yas-expand)
+  :config
+  (setq yas-snippet-dirs (list (locate-user-emacs-file "snippets")))
+  (setq yas-indent-line 'fixed)
+  (setq yas-also-auto-indent-first-line t)
+  (setq yas-also-indent-empty-lines t)
+  (yas-reload-all)
+  (yas-global-mode +1))
+
+(use-package smartparens
+  :ensure t
+  :defer t
+  :bind (("M-<up>" .  sp-backward-barf-sexp)
+         ("M-<down>" . sp-forward-barf-sexp)
+         ("M-<left>" . sp-backward-slurp-sexp)
+         ("M-<right>" . sp-forward-slurp-sexp)
+         ("C-S-a" . sp-beginning-of-sexp)
+         ("C-S-e" . sp-end-of-sexp)
+         ("S-<next>" . sp-split-sexp)
+         ("S-<prior>" . sp-join-sexp)))
+
+(use-package diff-hl
+  :ensure t
+  :demand t
+  :diminish diff-hl-mode
+  :commands (global-diff-hl-mode
+             diff-hl-mode
+             diff-hl-next-hunk
+             diff-hl-previous-hunk)
+  :functions (jens/diff-hl-hydra/body jens/diff-hl-refresh)
+  :bind ("C-c C-v" . jens/diff-hl-hydra/body)
+  :hook
+  ((magit-post-refresh . diff-hl-magit-post-refresh)
+   (prog-mode . diff-hl-mode)
+   (org-mode . diff-hl-mode)
+   (dired-mode . diff-hl-dired-mode))
+  :config
+  (setq diff-hl-dired-extra-indicators t)
+  (setq diff-hl-draw-borders nil)
+
+  (defun jens/diff-hl-refresh ()
+    (diff-hl-mode +1))
+
+  (defhydra jens/diff-hl-hydra ()
+    "Move to changed VC hunks."
+    ("n" #'diff-hl-next-hunk "next")
+    ("p" #'diff-hl-previous-hunk "previous"))
+
+  (global-diff-hl-mode +1)
+  :custom-face
+  (diff-hl-dired-unknown ((t (:inherit diff-hl-dired-insert))))
+  (diff-hl-dired-ignored ((t (:background "#2b2b2b")))))
+
+(use-package diff-hl-dired
+  :after diff-hl
+  :defer t
+  :config
+  (defun jens/empty-fringe-bmp (_type _pos) 'diff-hl-bmp-empty)
+
+  ;; don't show fringe bitmaps
+  (setq diff-hl-fringe-bmp-function #'jens/empty-fringe-bmp)
+  (advice-patch #'diff-hl-dired-highlight-items
+                'jens/empty-fringe-bmp
+                'diff-hl-fringe-bmp-from-type))
+
+(use-package hl-todo
+  :ensure t
+  :demand t
+  :diminish hl-todo-mode
+  :commands global-hl-todo-mode
+  :config
+  (global-hl-todo-mode +1))
+
+(use-package hl-fill-column
+  :ensure t
+  :custom-face
+  (hl-fill-column-face ((t (:background "#4d0000")))))
+
+(use-package shackle
+  :ensure t
+  :demand t
+  :config
+  (setq shackle-rules
+        '(((rx "*xref*") :regexp t :same t :inhibit-window-quit t)))
+  (shackle-mode +1))
+
+(use-package projectile
+  :ensure t
+  :defer t
+  :diminish projectile-mode
+  :bind
+  (("M-p c" . projectile-compile-project)
+   ("M-p t" . projectile-test-project)
+   ("M-p r" . projectile-run-project))
+  :config
+  (setq projectile-completion-system 'ivy)
+  (setq projectile-enable-caching t)
+
+  (projectile-register-project-type
+   'ant
+   '("build.xml")
+   :compile "ant build"
+   :test "ant test"
+   :run "ant run")
+
+  (projectile-mode +1))
+
+(use-package counsel-projectile
+  :ensure t
+  :defer t
+  :after (counsel projectile)
+  :commands counsel-projectile-mode
+  :config (counsel-projectile-mode))
+
+(use-package keyfreq
+  :commands (keyfreq-mode keyfreq-autosave-mode)
+  :config
+  (keyfreq-mode +1)
+  (keyfreq-autosave-mode +1))
+
+;;;; misc packages
+
+(use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
+(use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
+(use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
+(use-package dumb-jump :ensure t :defer t)
+(use-package counsel-tramp :ensure t :defer t)
+(use-package with-editor :ensure t :defer t) ;; run commands in `emacsclient'
+(use-package gist :ensure t :defer t) ;; work with github gists
+(use-package ov :ensure t) ;; easy overlays
+(use-package popup :ensure t)
+(use-package shut-up :ensure t)
 
 (use-package frog-menu
   :ensure t
@@ -2247,35 +2601,6 @@ of (command . word) to be used by `flyspell-do-correct'."
 
   (setq flyspell-correct-interface #'frog-menu-flyspell-correct))
 
-(use-package flycheck
-  :ensure t
-  :defer t
-  :config
-  (defun magnars/adjust-flycheck-automatic-syntax-eagerness ()
-    "Adjust how often we check for errors based on if there are any.
-  This lets us fix any errors as quickly as possible, but in a
-  clean buffer we're an order of magnitude laxer about checking."
-    (setq flycheck-idle-change-delay
-          (if flycheck-current-errors 0.3 3.0)))
-
-  ;; Each buffer gets its own idle-change-delay because of the
-  ;; buffer-sensitive adjustment above.
-  (make-variable-buffer-local 'flycheck-idle-change-delay)
-
-  (add-hook 'flycheck-after-syntax-check-hook
-            #'magnars/adjust-flycheck-automatic-syntax-eagerness)
-
-  ;; Remove newline checks, since they would trigger an immediate check
-  ;; when we want the idle-change-delay to be in effect while editing.
-  (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled)))
-
-(use-package fill-column-indicator
-  :ensure t
-  :hook ((text-mode prog-mode) . fci-mode)
-  :config
-  (setq-default fci-rule-color "#555555")
-  (fci-mode +1))
-
 (use-package spinner
   :ensure t
   :config
@@ -2298,19 +2623,6 @@ of (command . word) to be used by `flyspell-do-correct'."
   ;; create a spinner when updating packages using `U x'
   (advice-add #'package-menu--perform-transaction :before #'jens/package-spinner-start)
   (advice-add #'package-menu--perform-transaction :after #'jens/package-spinner-stop))
-
-(use-package yasnippet
-  :ensure t
-  :defer t
-  :diminish yas-minor-mode
-  :bind ("C-<return>" . yas-expand)
-  :config
-  (setq yas-snippet-dirs (list (locate-user-emacs-file "snippets")))
-  (setq yas-indent-line 'fixed)
-  (setq yas-also-auto-indent-first-line t)
-  (setq yas-also-indent-empty-lines t)
-  (yas-reload-all)
-  (yas-global-mode +1))
 
 (use-package org-web-tools
   :ensure t
@@ -2382,38 +2694,11 @@ title and duration."
     ("<left>" #'previous-buffer "previous")
     ("<right>" #'next-buffer "next")))
 
-(use-package pdf-tools
-  :straight t
-  :defer t
-  :commands pdf-tools-install
-  :hook (doc-view-mode . pdf-tools-install)
-  :bind
-  ;; need to use plain isearch, pdf-tools hooks into it to handle searching
-  (:map pdf-view-mode-map ("C-s" . isearch-forward))
-  :config
-  ;; TODO: figure out how to disable epdf asking to rebuild when starting
-  ;; emacsclient, it does not work.
-
-  ;; (pdf-tools-install)
-  )
-
 (use-package amx
   :ensure t
   :commands amx-mode
   :config
   (amx-mode))
-
-(use-package smartparens
-  :ensure t
-  :defer t
-  :bind (("M-<up>" .  sp-backward-barf-sexp)
-         ("M-<down>" . sp-forward-barf-sexp)
-         ("M-<left>" . sp-backward-slurp-sexp)
-         ("M-<right>" . sp-forward-slurp-sexp)
-         ("C-S-a" . sp-beginning-of-sexp)
-         ("C-S-e" . sp-end-of-sexp)
-         ("S-<next>" . sp-split-sexp)
-         ("S-<prior>" . sp-join-sexp)))
 
 (use-package smart-jump
   :straight t
@@ -2541,91 +2826,6 @@ title and duration."
     ("f" #'paxedit-transpose-forward "forward")
     ("b" #'paxedit-transpose-backward "backward")))
 
-(use-package diff-hl
-  :ensure t
-  :demand t
-  :diminish diff-hl-mode
-  :commands (global-diff-hl-mode
-             diff-hl-mode
-             diff-hl-next-hunk
-             diff-hl-previous-hunk)
-  :functions (jens/diff-hl-hydra/body jens/diff-hl-refresh)
-  :bind ("C-c C-v" . jens/diff-hl-hydra/body)
-  :hook
-  ((magit-post-refresh . diff-hl-magit-post-refresh)
-   (prog-mode . diff-hl-mode)
-   (org-mode . diff-hl-mode)
-   (dired-mode . diff-hl-dired-mode))
-  :config
-  (setq diff-hl-dired-extra-indicators t)
-  (setq diff-hl-draw-borders nil)
-
-  (defun jens/diff-hl-refresh ()
-    (diff-hl-mode +1))
-
-  (defhydra jens/diff-hl-hydra ()
-    "Move to changed VC hunks."
-    ("n" #'diff-hl-next-hunk "next")
-    ("p" #'diff-hl-previous-hunk "previous"))
-
-  (global-diff-hl-mode +1)
-  :custom-face
-  (diff-hl-dired-unknown ((t (:inherit diff-hl-dired-insert))))
-  (diff-hl-dired-ignored ((t (:background "#2b2b2b")))))
-
-(use-package diff-hl-dired
-  :after diff-hl
-  :defer t
-  :config
-  (defun jens/empty-fringe-bmp (_type _pos) 'diff-hl-bmp-empty)
-
-  ;; don't show fringe bitmaps
-  (setq diff-hl-fringe-bmp-function #'jens/empty-fringe-bmp)
-  (advice-patch #'diff-hl-dired-highlight-items
-                'jens/empty-fringe-bmp
-                'diff-hl-fringe-bmp-from-type))
-
-
-(use-package hl-todo
-  :ensure t
-  :demand t
-  :diminish hl-todo-mode
-  :commands global-hl-todo-mode
-  :config
-  (global-hl-todo-mode +1))
-
-(use-package hl-fill-column
-  :ensure t
-  :custom-face
-  (hl-fill-column-face ((t (:background "#4d0000")))))
-
-(use-package helpful
-  :straight t
-  :demand t
-  :commands (helpful-key
-             helpful-callable
-             helpful-variable
-             helpful-symbol
-             helpful-key
-             helpful-mode)
-  :bind
-  (:map help-map
-        ("M-a" . helpful-at-point))
-  :config
-  (defalias #'describe-key #'helpful-key)
-  (defalias #'describe-function #'helpful-callable)
-  (defalias #'describe-variable #'helpful-variable)
-  (defalias #'describe-symbol #'helpful-symbol)
-  (defalias #'describe-key #'helpful-key))
-
-(use-package shackle
-  :ensure t
-  :demand t
-  :config
-  (setq shackle-rules
-        '(((rx "*xref*") :regexp t :same t :inhibit-window-quit t)))
-  (shackle-mode +1))
-
 (use-package elisp-demos
   :straight t
   :after helpful
@@ -2722,37 +2922,6 @@ reenable afterwards."
   (fullframe magit-status magit-mode-quit-window)
   (fullframe list-packages quit-window))
 
-(use-package magit
-  :ensure t
-  :defer t
-  :bind
-  (("C-x m" . magit-status)
-   :map magit-file-mode-map
-   ("C-x g" . nil)
-   :map magit-mode-map
-   ("C-c C-a" . magit-commit-amend)
-   ("<tab>" . magit-section-cycle))
-  :config
-  (setq magit-auto-revert-mode nil)
-  (setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
-  (setq magit-merge-arguments '("--no-ff"))
-  (setq magit-section-visibility-indicator '("…", t)))
-
-(use-package magithub
-  ;; TODO: replace with forge.el?
-  :ensure t
-  :after magit
-  :config
-  (magithub-feature-autoinject t))
-
-(use-package magit-todos
-  :ensure t
-  :after magit
-  :hook (magit-status-mode . magit-todos-mode)
-  :commands magit-todos-mode
-  :config
-  (setq magit-todos-exclude-globs '("var/*")))
-
 (use-package undo-tree
   :ensure t
   :defer t
@@ -2819,105 +2988,6 @@ reenable afterwards."
   :config
   (setq wgrep-auto-save-buffer t))
 
-(use-package auctex
-  :ensure t
-  :defer t
-  :hook (LaTeX-mode-hook . reftex-mode)
-  :defines (TeX-view-program-selection
-            TeX-view-program-list)
-  :functions (TeX-PDF-mode TeX-source-correlate-mode)
-  :config
-  (setq TeX-PDF-mode t) ;; default to pdf
-  (setq TeX-global-PDF-mode t) ;; default to pdf
-  (setq TeX-parse-self t) ;; parse on load
-  (setq TeX-auto-save t) ;; parse on save
-  (setq TeX-save-query nil) ;; save before compiling
-  (setq TeX-master nil) ;; try to figure out which file is the master
-  (setq reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
-  (setq doc-view-resolution 300)
-
-  ;; (setq TeX-view-program-selection (quote ((output-pdf "zathura") (output-dvi "xdvi"))))
-  (TeX-source-correlate-mode)        ; activate forward/reverse search
-  (TeX-PDF-mode)
-  ;; (add-to-list 'TeX-view-program-list
-  ;;              '("Zathura" "zathura " (mode-io-correlate "--synctex-forward %n:1:%b") " %o"))
-  ;; (add-to-list 'TeX-view-program-selection
-  ;;              '(output-pdf "Zathura"))
-
-  (add-to-list
-   'TeX-view-program-list
-   '("Zathura"
-     ("zathura "
-      (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
-      " %o")
-     "zathura"))
-
-  (add-to-list
-   'TeX-view-program-selection
-   '(output-pdf "Zathura")))
-
-(use-package elfeed
-  :ensure t
-  :defer t
-  :after today
-  :commands (elfeed elfeed-search-selected)
-  :functions jens/elfeed-copy-link-at-point
-  :bind
-  (:map elfeed-search-mode-map
-        ("t" . today-capture-elfeed-at-point)
-        ("c" . jens/elfeed-copy-link-at-point))
-  :config
-  (setq elfeed-search-filter "@1-month-ago +unread ")
-
-  (defface youtube-elfeed-face '((t :foreground "#E0CF9F"))
-    "face for youtube.com entries"
-    :group 'elfeed-faces)
-  (push '(youtube youtube-elfeed-face) elfeed-search-face-alist)
-  (defface reddit-elfeed-face '((t :foreground "#9FC59F"))
-    "face for reddit.com entries"
-    :group 'elfeed-faces)
-  (push '(reddit reddit-elfeed-face) elfeed-search-face-alist)
-  (defface blog-elfeed-face '((t :foreground "#DCA3A3"))
-    "face for blog entries"
-    :group 'elfeed-faces)
-  (push '(blog blog-elfeed-face) elfeed-search-face-alist)
-  (defface emacs-elfeed-face '((t :foreground "#94BFF3"))
-    "face for emacs entries"
-    :group 'elfeed-faces)
-  (push '(emacs emacs-elfeed-face) elfeed-search-face-alist)
-  (defface aggregate-elfeed-face '((t :foreground "#948FF3"))
-    "face for aggregate entries"
-    :group 'elfeed-faces)
-  (push '(aggregate aggregate-elfeed-face) elfeed-search-face-alist)
-
-  (setq elfeed-feeds (jens/load-from-file (locate-user-emacs-file "elfeeds.el")))
-
-  (defun jens/elfeed-select-emacs-after-browse-url (fn &rest args)
-    "Activate the emacs-window"
-    (let* ((emacs-window (shell-command-to-string "xdotool getactivewindow"))
-           (active-window "")
-           (counter 0))
-      (apply fn args)
-      (sleep-for 0.5)
-      (while (and (not (string= active-window emacs-window))
-                  (< counter 5))
-        (sleep-for 0.2)
-        (incf counter)
-        (setq active-window (shell-command-to-string "xdotool getactivewindow"))
-        (shell-command-to-string (format "xdotool windowactivate %s" emacs-window)))))
-
-  (advice-add #'elfeed-search-browse-url :around #'jens/elfeed-select-emacs-after-browse-url)
-
-  (defun jens/elfeed-copy-link-at-point ()
-    "Copy the link of the elfeed entry at point to the
-clipboard."
-    (interactive)
-    (letrec ((entry (car (elfeed-search-selected)))
-             (link (elfeed-entry-link entry)))
-      (with-temp-buffer
-        (insert link)
-        (clipboard-kill-ring-save (point-min) (point-max))
-        (message (format "copied %s to clipboard" link))))))
 
 (use-package auth-source-pass
   :commands (auth-source-pass-enable auth-source-pass-get)
@@ -2932,46 +3002,6 @@ clipboard."
   ;; using password-store
   ;; (auth-source-pass-get 'secret "irc/freenode/nickserv")
   )
-
-(use-package erc-hl-nicks
-  :ensure t
-  :defer t
-  :commands erc-hl-nicks-enable)
-
-(use-package erc
-  :defer t
-  :after auth-source-pass
-  :functions ercgo
-  :commands erc-tls
-  :config
-  (setq erc-rename-buffers t
-        erc-interpret-mirc-color t
-        erc-prompt ">"
-        erc-insert-timestamp-function 'erc-insert-timestamp-left
-        erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
-
-  (setq erc-user-full-name user-full-name)
-  (erc-hl-nicks-enable)
-
-  (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs" "##java")))
-
-  (defun ercgo ()
-    (interactive)
-    (erc-tls :server "irc.freenode.net"
-             :port 6697
-             :nick "jensecj"
-             :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
-
-(use-package fontify-face
-  :ensure t
-  :defer t
-  :hook (emacs-lisp-mode . fontify-face-mode))
-
-(use-package unicode-fonts
-  :disabled
-  :ensure t
-  :defer t
-  :config (unicode-fonts-setup))
 
 (use-package exec-path-from-shell
   :defer 3
@@ -3145,40 +3175,6 @@ initial search query."
                   (apply fn args)
                   (xref-push-marker-stack pm)))))
 
-(use-package projectile
-  :ensure t
-  :defer t
-  :diminish projectile-mode
-  :bind
-  (("M-p c" . projectile-compile-project)
-   ("M-p t" . projectile-test-project)
-   ("M-p r" . projectile-run-project))
-  :config
-  (setq projectile-completion-system 'ivy)
-  (setq projectile-enable-caching t)
-
-  (projectile-register-project-type
-   'ant
-   '("build.xml")
-   :compile "ant build"
-   :test "ant test"
-   :run "ant run")
-
-  (projectile-mode +1))
-
-(use-package counsel-projectile
-  :ensure t
-  :defer t
-  :after (counsel projectile)
-  :commands counsel-projectile-mode
-  :config (counsel-projectile-mode))
-
-(use-package keyfreq
-  :commands (keyfreq-mode keyfreq-autosave-mode)
-  :config
-  (keyfreq-mode +1)
-  (keyfreq-autosave-mode +1))
-
 (use-package flyspell
   :ensure t
   :defer t
@@ -3243,7 +3239,7 @@ initial search query."
   (highlight ((t (:background nil :foreground nil))))
   (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
 
-;;; auto completion
+;;;; auto completion
 
 (use-package company
   :ensure t
