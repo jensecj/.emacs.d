@@ -1069,6 +1069,21 @@ If DIR is nil, download to current directory."
              current-kill)
   :hook (org-mode . auto-fill-mode))
 
+(use-package whitespace
+  :demand t
+  :diminish
+  :config
+  (defun jens/show-trailing-whitespace ()
+    "Show trailing whitespace in buffer."
+    (interactive)
+    (setq show-trailing-whitespace t)
+    (whitespace-mode +1))
+
+  (add-hook* '(text-mode-hook prog-mode-hook) #'jens/show-trailing-whitespace))
+
+(use-package outline
+  :diminish outline-minor-mode)
+
 ;; insert parens-type things in pairs
 (use-package elec-pair
   :config
