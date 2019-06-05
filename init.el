@@ -1664,16 +1664,16 @@ If DIR is nil, download to current directory."
 (use-package sane-windows
   :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
   :demand t
-  :bind (("C-x 0" . nil)
-         ("C-x 1" . nil)
-         ("C-x o" . delete-other-windows)
-         ("C-x p" . delete-window)
-         ("M-C-<tab>" . sw/toggle-window-split)
-         ("M-S-<iso-lefttab>" . sw/rotate-windows)
-         ("M-S-<left>" . sw/move-border-left)
-         ("M-S-<right>" . sw/move-border-right)
-         ("M-S-<up>" . sw/move-border-up)
-         ("M-S-<down>" . sw/move-border-down)))
+  :bind* (("C-x 0" . nil)
+          ("C-x 1" . nil)
+          ("C-x o" . delete-other-windows)
+          ("C-x p" . delete-window)
+          ("M-C-<tab>" . sw/toggle-window-split)
+          ("M-S-<iso-lefttab>" . sw/rotate-windows)
+          ("M-S-<left>" . sw/move-border-left)
+          ("M-S-<right>" . sw/move-border-right)
+          ("M-S-<up>" . sw/move-border-up)
+          ("M-S-<down>" . sw/move-border-down)))
 
 (use-package fullscreen
   :bind ("M-f" . fullscreen-toggle))
