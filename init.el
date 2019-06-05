@@ -2028,6 +2028,57 @@ number input"
 (use-package popup :ensure t)
 (use-package shut-up :ensure t)
 
+(use-package outshine
+  :ensure t
+  :diminish
+  :hook ((text-mode prog-mode) . outshine-mode)
+  :bind
+  (:map outshine-mode-map
+        ("M-<up>" . nil)
+        ("M-<down>" . nil))
+  :config
+  (setq outshine-fontify-whole-heading-line t)
+  (setq outshine-use-speed-commands t)
+  (setq outshine-preserve-delimiter-whitespace nil)
+
+  (setq outshine-speed-commands-user '(("g" . counsel-outline)))
+
+  ;; fontify the entire outshine-heading, including the comment
+  ;; characters (;;;)
+  (advice-patch #'outshine-fontify-headlines
+                '(font-lock-new-keywords
+                  `((,heading-1-regexp 0 'outshine-level-1 t)
+                    (,heading-2-regexp 0 'outshine-level-2 t)
+                    (,heading-3-regexp 0 'outshine-level-3 t)
+                    (,heading-4-regexp 0 'outshine-level-4 t)
+                    (,heading-5-regexp 0 'outshine-level-5 t)
+                    (,heading-6-regexp 0 'outshine-level-6 t)
+                    (,heading-7-regexp 0 'outshine-level-7 t)
+                    (,heading-8-regexp 0 'outshine-level-8 t)))
+                '(font-lock-new-keywords
+                  `((,heading-1-regexp 1 'outshine-level-1 t)
+                    (,heading-2-regexp 1 'outshine-level-2 t)
+                    (,heading-3-regexp 1 'outshine-level-3 t)
+                    (,heading-4-regexp 1 'outshine-level-4 t)
+                    (,heading-5-regexp 1 'outshine-level-5 t)
+                    (,heading-6-regexp 1 'outshine-level-6 t)
+                    (,heading-7-regexp 1 'outshine-level-7 t)
+                    (,heading-8-regexp 1 'outshine-level-8 t))))
+  :custom-face
+  (outshine-level-1 ((t (:inherit outline-1 :background "#393939" :weight bold :foreground "#DFAF8F"))))
+  (outshine-level-2 ((t (:inherit outline-2 :background "#393939" :weight bold))))
+  (outshine-level-3 ((t (:inherit outline-3 :background "#393939" :weight bold))))
+  (outshine-level-4 ((t (:inherit outline-4 :background "#393939" :weight bold))))
+  (outshine-level-5 ((t (:inherit outline-5 :background "#393939" :weight bold)))))
+
+(use-package outline-minor-faces :ensure t) ;; required by `backline'
+(use-package backline
+  :ensure t
+  :after outshine
+  :config
+  ;; highlight the entire line with outline-level face, even if collapsed.
+  (advice-add 'outline-flag-region :after 'backline-update))
+
 (use-package frog-menu
   :ensure t
   :config
