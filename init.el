@@ -2900,12 +2900,16 @@ paste for multi-term mode."
    ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
    ("C-x C-i" . counsel-imenu)
+   ("C-x i" . counsel-outline)
    ("M-æ" . counsel-mark-ring)
    ("M-x" . counsel-M-x)
    ("M-b" . counsel-bookmark)
    :map help-map
    ("l" . counsel-find-library))
   :config
+  (setq counsel-outline-display-style 'headline)
+  (setq counsel-outline-face-style 'verbatim)
+
   (setq
    counsel-grep-base-command
    "rg -i -M 250 --no-heading --line-number --color never '%s' %s")
