@@ -169,7 +169,6 @@
   (dolist (e elements)
     (add-to-list list-var e append compare-fn)))
 
-
 ;;; built-in
 ;;;; settings
 
@@ -332,6 +331,30 @@
       (lambda (_level entry)
         (insert (format-time-string "[%H:%M:%S] "))
         entry))
+
+;; When popping the mark, continue popping until the cursor actually
+;; moves. also, if the last command was a copy - skip past all the
+;; expand-region cruft.
+(defun jens/pop-to-mark-command (orig-fun &rest args)
+  "Call ORIG-FUN until the cursor moves.  Try popping up to 10
+times."
+  (let ((p (point)))
+    (dotimes (_ 10)
+      (when (= p (point))
+        (apply orig-fun args)))))
+(advice-add 'pop-to-mark-command :around #'jens/pop-to-mark-command)
+
+;; allows us to type 'C-u C-SPC C-SPC...' instead of having to re-type 'C-u'
+;; every time.
+(setq set-mark-command-repeat-pop t)
+
+;; Create nonexistent directories when saving a file
+(add-hook 'before-save-hook
+          (lambda ()
+            (when buffer-file-name
+              (let ((dir (file-name-directory buffer-file-name)))
+                (when (not (file-exists-p dir))
+                  (make-directory dir t))))))
 
 ;;;;; authentication and security
 
@@ -972,7 +995,7 @@ number input"
 
 ;;; homemade
 ;;;; defuns
-;;;;; editing
+;;;;; convenience
 
 (defun jens/new-scratch-buffer ()
   "Return a newly created scratch buffer."
@@ -1146,7 +1169,7 @@ currently is), otherwise comment or uncomment the current line."
       (comment-or-uncomment-region (region-beginning) (region-end))
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
 
-;;;;; file
+;;;;; files
 
 (defun jens/byte-compile-this-file ()
   "Byte compile the current buffer."
@@ -3311,33 +3334,8 @@ initial search query."
 
   (add-to-list 'company-backends 'company-c-headers))
 
-;;; advice and hooks
-
-;; When popping the mark, continue popping until the cursor actually
-;; moves. also, if the last command was a copy - skip past all the
-;; expand-region cruft.
-(defun jens/pop-to-mark-command (orig-fun &rest args)
-  "Call ORIG-FUN until the cursor moves.  Try popping up to 10
-times."
-  (let ((p (point)))
-    (dotimes (_ 10)
-      (when (= p (point))
-        (apply orig-fun args)))))
-(advice-add 'pop-to-mark-command :around #'jens/pop-to-mark-command)
-
-;; allows us to type 'C-u C-SPC C-SPC...' instead of having to re-type 'C-u'
-;; every time.
-(setq set-mark-command-repeat-pop t)
-
-;; Create nonexistent directories when saving a file
-(add-hook 'before-save-hook
-          (lambda ()
-            (when buffer-file-name
-              (let ((dir (file-name-directory buffer-file-name)))
-                (when (not (file-exists-p dir))
-                  (make-directory dir t))))))
-
-;;; keybindings for built-in things
+;;; keybindings
+;;;; for built-in things
 
 ;; handle special keys
 (define-key key-translation-map [S-dead-circumflex] "^")
@@ -3409,7 +3407,7 @@ times."
 (bind-key* "<home>" 'beginning-of-buffer)
 (bind-key* "<end>" 'end-of-buffer)
 
-;;; keybindings for defuns
+;;;; for homemade things
 
 ;; Better C-a
 (bind-key* "C-a" 'jens/smart-beginning-of-line)
