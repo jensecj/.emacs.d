@@ -2159,7 +2159,7 @@ _k_: go to tracking file
 (use-package outshine
   :ensure t
   :diminish
-  :hook ((text-mode prog-mode) . outshine-mode)
+  :hook ((emacs-lisp-mode) . outshine-mode)
   :bind
   (:map outshine-mode-map
         ("M-<up>" . nil)
