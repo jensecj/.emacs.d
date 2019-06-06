@@ -3014,6 +3014,16 @@ reenable afterwards."
   :config
   (setq wgrep-auto-save-buffer t))
 
+(use-package grep-context
+  :bind (:map compilation-mode-map
+              ("+" . grep-context-more-around-point)
+              ("-" . grep-context-less-around-point)
+              :map grep-mode-map
+              ("+" . grep-context-more-around-point)
+              ("-" . grep-context-less-around-point)
+              :map ivy-occur-grep-mode-map
+              ("+" . grep-context-more-around-point)
+              ("-" . grep-context-less-around-point)))
 
 (use-package auth-source-pass
   :commands (auth-source-pass-enable auth-source-pass-get)
