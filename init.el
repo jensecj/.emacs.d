@@ -525,6 +525,12 @@ seconds."
 (use-package hi-lock :diminish hi-lock-mode)
 (use-package outline :diminish outline-minor-mode)
 
+(use-package ispell
+  :config
+  (setq ispell-program-name (executable-find "aspell"))
+  (setq ispell-grep-command "rg")
+  (setq ispell-silently-savep t))
+
 (use-package whitespace
   :demand t
   :diminish
@@ -3209,9 +3215,7 @@ initial search query."
              flyspell-prog-mode
              flyspell-buffer)
   :bind
-  (("C-," . nil)
-   ("C-;" . nil)
-   ("C-M-," . flyspell-goto-next-error))
+  (("C-M-," . flyspell-goto-next-error))
   :config
   (ispell-change-dictionary "english")
 
@@ -3229,6 +3233,21 @@ initial search query."
   (:map flyspell-mode-map
         ("C-," . flyspell-correct-at-point))
   :commands flyspell-correct-at-point)
+
+(use-package synosaurus
+  :ensure t
+  :config
+  (setq synosaurus-backend #'synosaurus-backend-wordnet)
+
+  (defun jens/synosaurus-word-at-point ()
+    "Suggest synonyms for the word at point, using `wordnet' as a thesaurus."
+    (interactive)
+    (let* ((word (thing-at-point 'word))
+           (synonyms (when word (-uniq (-flatten (funcall synosaurus-backend word))))))
+      (cond
+       ((not word) (message "No word at point"))
+       ((not synonyms) (message "No synonyms found for '%s'" word))
+       (t (completing-read "Synonyms: " synonyms))))))
 
 (use-package so-long
   :straight (so-long :type git :repo "https://git.savannah.gnu.org/git/so-long.git/")
