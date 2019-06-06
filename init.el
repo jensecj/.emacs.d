@@ -3225,7 +3225,9 @@ initial search query."
 (use-package flyspell-correct
   :ensure t
   :after flyspell
-  :bind (("C-," . flyspell-correct-at-point))
+  :bind
+  (:map flyspell-mode-map
+        ("C-," . flyspell-correct-at-point))
   :commands flyspell-correct-at-point)
 
 (use-package so-long
