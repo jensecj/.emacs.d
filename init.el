@@ -2697,9 +2697,19 @@ title and duration."
              hydra-show-hint
              hydra--call-interactively-remap-maybe
              hydra-set-transient-map)
-  :bind (("C-x <left>" . buffer-carousel-hydra/body)
-         (("C-x <right>" . buffer-carousel-hydra/body)))
+  :bind (("C-x <left>" . buffer-carousel-previous)
+         (("C-x <right>" . buffer-carousel-next)))
   :config
+  (defun buffer-carousel-previous ()
+    (interactive)
+    (previous-buffer)
+    (buffer-carousel-hydra/body))
+
+  (defun buffer-carousel-next ()
+    (interactive)
+    (next-buffer)
+    (buffer-carousel-hydra/body))
+
   (defhydra buffer-carousel-hydra ()
     "Move between buffers."
     ("<left>" #'previous-buffer "previous")
