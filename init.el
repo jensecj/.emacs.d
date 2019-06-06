@@ -1055,6 +1055,38 @@ number input"
     (switch-to-buffer newbuf)
     (goto-char oldpoint)))
 
+(defun jens/new-package ()
+  "Create a skeleton for a elisp package."
+  (interactive)
+  (let* ((path (read-file-name "package name: "))
+         (file (f-filename path))
+         (name (f-no-ext file))
+         (p))
+    (with-current-buffer (find-file-noselect path)
+      (insert (format ";;; %s. --- -*- lexical-binding: t; -*-\n\n" file))
+      (insert (format ";; Copyright (C) %s %s\n\n"
+                      (format-time-string "%Y")
+                      user-full-name))
+
+      (insert (format ";; Author: %s <%s>\n" user-full-name user-mail-address))
+      (insert ";; Keywords:\n")
+      (insert (format ";; Package-Version: %s\n" (format-time-string "%Y%m%d")))
+      (insert ";; Version: 0.1\n\n")
+
+      (insert ";; This file is NOT part of GNU Emacs.\n\n")
+
+      (insert ";;; Commentary:\n\n")
+      (insert ";;; Code:\n\n")
+
+      (setq p (point))
+
+      (insert "\n\n")
+
+      (insert (format "(provide '%s)" name))
+
+      (goto-char p)
+      (switch-to-buffer (current-buffer)))))
+
 (defun jens/sudo-find-file (filename)
   "Open FILENAME with superuser permissions."
   (let ((remote-method (file-remote-p default-directory 'method))
@@ -1077,112 +1109,29 @@ With prefix ARG, ask for file to open."
     (jens/sudo-find-file buffer-file-name)
     (goto-char place)))
 
-(defun jens/open-line-below ()
-  "Insert a line below the current line, indent it, and move to
-the beginning of that line."
-  (interactive)
-  (end-of-line)
-  (newline)
-  (indent-for-tab-command))
-
-(defun jens/open-line-above ()
-  "Insert a line above the current line, indent it, and move to
-the beginning of that line."
-  (interactive)
-  (beginning-of-line)
-  (newline)
-  (forward-line -1)
-  (indent-for-tab-command))
-
-(defun jens/smart-beginning-of-line ()
-  "Move point to the beginning of line or beginning of text."
-  (interactive)
-  (let ((pt (point)))
-    (beginning-of-line-text)
-    (when (eq pt (point))
-      (beginning-of-line))))
-
-(defun jens/kill-to-beginning-of-line ()
-  "Kill from <point> to the beginning of the current line."
-  (interactive)
-  (kill-region (save-excursion (beginning-of-line) (point))
-               (point)))
-
-(defun jens/save-region-or-current-line (_arg)
-  "If a region is active then it is saved to the `kill-ring',
-otherwise the current line is saved."
+(defun jens/inspect-variable-at-point (&optional arg)
+  "Inspect variable at point."
   (interactive "P")
-  (save-mark-and-excursion
-    (if (region-active-p)
-        (kill-ring-save (region-beginning) (region-end))
-      (kill-ring-save (line-beginning-position) (+ 1 (line-end-position))))))
+  (require 'doc-at-point)
+  (let* ((sym (symbol-at-point))
+         (value (cond
+                 ((fboundp sym) (symbol-function sym))
+                 ((boundp sym) (symbol-value sym)))))
+    (if arg
+        (with-current-buffer (get-buffer-create "*Inspect*")
+          (let ((inhibit-read-only t))
+            (erase-buffer)
+            (pp value (current-buffer))
+            (emacs-lisp-mode)
+            (goto-char 0))
+          (view-buffer-other-window (current-buffer)))
 
-(defun jens/kill-region-or-current-line (arg)
-  "If a region is active then it is killed, otherwise the current
-line is killed."
-  (interactive "P")
-  (if (region-active-p)
-      (kill-region (region-beginning) (region-end))
-    (save-excursion
-      (kill-whole-line arg))))
+      ;; TODO: don't use `dap' posframe, create a posframe for all-purpose emacs things
 
-(defun jens/clean-current-line ()
-  "Delete the contents of the current line."
-  (interactive)
-  (delete-region (line-beginning-position) (line-end-position)))
-
-(defun jens/join-region ()
-  "Join all lines in a region into a single line."
-  (interactive)
-  (save-excursion
-    (let ((beg (region-beginning))
-          (end (copy-marker (region-end))))
-      (goto-char beg)
-      (while (< (point) end)
-        (progn
-          (join-line 1)
-          (end-of-line))))))
-
-(defun jens/join-region-or-line ()
-  "If region is active, join all lines in region to a single
-line.  Otherwise join the line below the current line, with the
-current line, placing it after."
-  (interactive)
-  (if (region-active-p)
-      (jens/join-region)
-    (join-line -1)))
-
-(defun jens/join-line-down ()
-  "Pull the line above down to the end of this line."
-  (interactive)
-  (save-excursion
-    (let ((cp (point)))
-      (forward-line -1)
-      (when (not (= (point) cp))
-        (call-interactively #'jens/kill-region-or-current-line)
-        (end-of-line)
-        (save-excursion (insert " " (s-chomp (current-kill 0))))
-        (just-one-space)))))
-
-(defun jens/wrap-region (b e text-begin text-end)
-  "Wrap region from B to E with TEXT-BEGIN and TEXT-END."
-  (interactive "r\nsStart text: \nsEnd text: ")
-  (if (use-region-p)
-      (save-restriction
-        (narrow-to-region b e)
-        (goto-char (point-max))
-        (insert text-end)
-        (goto-char (point-min))
-        (insert text-begin))
-    (message "wrap-region: Error! invalid region!")))
-
-(defun jens/comment-uncomment-region-or-line ()
-  "If region is active, comment or uncomment it (based on what it
-currently is), otherwise comment or uncomment the current line."
-  (interactive)
-  (if (region-active-p)
-      (comment-or-uncomment-region (region-beginning) (region-end))
-    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+      (funcall doc-at-point-display-fn
+               (doc-at-point-elisp--fontify-as-code
+                (with-output-to-string
+                  (pp value)))))))
 
 ;;;;; files
 
@@ -1250,38 +1199,6 @@ buffer."
   (backward-delete-char 1)
   (save-buffer))
 
-(defun jens/new-package ()
-  "Create a skeleton for a elisp package."
-  (interactive)
-  (let* ((path (read-file-name "package name: "))
-         (file (f-filename path))
-         (name (f-no-ext file))
-         (p))
-    (with-current-buffer (find-file-noselect path)
-      (insert (format ";;; %s. --- -*- lexical-binding: t; -*-\n\n" file))
-      (insert (format ";; Copyright (C) %s %s\n\n"
-                      (format-time-string "%Y")
-                      user-full-name))
-
-      (insert (format ";; Author: %s <%s>\n" user-full-name user-mail-address))
-      (insert ";; Keywords:\n")
-      (insert (format ";; Package-Version: %s\n" (format-time-string "%Y%m%d")))
-      (insert ";; Version: 0.1\n\n")
-
-      (insert ";; This file is NOT part of GNU Emacs.\n\n")
-
-      (insert ";;; Commentary:\n\n")
-      (insert ";;; Code:\n\n")
-
-      (setq p (point))
-
-      (insert "\n\n")
-
-      (insert (format "(provide '%s)" name))
-
-      (goto-char p)
-      (switch-to-buffer (current-buffer)))))
-
 ;;;;; lisp
 
 ;; easy 'commenting out' of sexps
@@ -1292,30 +1209,6 @@ buffer."
   `(lambda ()
      (interactive)
      ,body))
-
-(defun jens/inspect-variable-at-point (&optional arg)
-  "Inspect variable at point."
-  (interactive "P")
-  (require 'doc-at-point)
-  (let* ((sym (symbol-at-point))
-         (value (cond
-                 ((fboundp sym) (symbol-function sym))
-                 ((boundp sym) (symbol-value sym)))))
-    (if arg
-        (with-current-buffer (get-buffer-create "*Inspect*")
-          (let ((inhibit-read-only t))
-            (erase-buffer)
-            (pp value (current-buffer))
-            (emacs-lisp-mode)
-            (goto-char 0))
-          (view-buffer-other-window (current-buffer)))
-
-      ;; TODO: create a posframe for all-purpose emacs things
-
-      (funcall doc-at-point-display-fn
-               (doc-at-point-elisp--fontify-as-code
-                (with-output-to-string
-                  (pp value)))))))
 
 (defun jens/one-shot-keybinding (key command)
   "Set a keybinding that disappear once you press a key that is
@@ -1435,6 +1328,114 @@ Inside BODY `this-command' is bound to the command that is about
 to run and `this-command-keys' returns the key pressed."
   `(add-one-shot-hook 'pre-command-hook
                       (lambda () ,@body)))
+
+(defun jens/open-line-below ()
+  "Insert a line below the current line, indent it, and move to
+the beginning of that line."
+  (interactive)
+  (end-of-line)
+  (newline)
+  (indent-for-tab-command))
+
+(defun jens/open-line-above ()
+  "Insert a line above the current line, indent it, and move to
+the beginning of that line."
+  (interactive)
+  (beginning-of-line)
+  (newline)
+  (forward-line -1)
+  (indent-for-tab-command))
+
+(defun jens/smart-beginning-of-line ()
+  "Move point to the beginning of line or beginning of text."
+  (interactive)
+  (let ((pt (point)))
+    (beginning-of-line-text)
+    (when (eq pt (point))
+      (beginning-of-line))))
+
+(defun jens/kill-to-beginning-of-line ()
+  "Kill from <point> to the beginning of the current line."
+  (interactive)
+  (kill-region (save-excursion (beginning-of-line) (point))
+               (point)))
+
+(defun jens/save-region-or-current-line (_arg)
+  "If a region is active then it is saved to the `kill-ring',
+otherwise the current line is saved."
+  (interactive "P")
+  (save-mark-and-excursion
+    (if (region-active-p)
+        (kill-ring-save (region-beginning) (region-end))
+      (kill-ring-save (line-beginning-position) (+ 1 (line-end-position))))))
+
+(defun jens/kill-region-or-current-line (arg)
+  "If a region is active then it is killed, otherwise the current
+line is killed."
+  (interactive "P")
+  (if (region-active-p)
+      (kill-region (region-beginning) (region-end))
+    (save-excursion
+      (kill-whole-line arg))))
+
+(defun jens/clean-current-line ()
+  "Delete the contents of the current line."
+  (interactive)
+  (delete-region (line-beginning-position) (line-end-position)))
+
+(defun jens/join-region ()
+  "Join all lines in a region into a single line."
+  (interactive)
+  (save-excursion
+    (let ((beg (region-beginning))
+          (end (copy-marker (region-end))))
+      (goto-char beg)
+      (while (< (point) end)
+        (progn
+          (join-line 1)
+          (end-of-line))))))
+
+(defun jens/join-region-or-line ()
+  "If region is active, join all lines in region to a single
+line.  Otherwise join the line below the current line, with the
+current line, placing it after."
+  (interactive)
+  (if (region-active-p)
+      (jens/join-region)
+    (join-line -1)))
+
+(defun jens/join-line-down ()
+  "Pull the line above down to the end of this line."
+  (interactive)
+  (save-excursion
+    (let ((cp (point)))
+      (forward-line -1)
+      (when (not (= (point) cp))
+        (call-interactively #'jens/kill-region-or-current-line)
+        (end-of-line)
+        (save-excursion (insert " " (s-chomp (current-kill 0))))
+        (just-one-space)))))
+
+(defun jens/wrap-region (b e text-begin text-end)
+  "Wrap region from B to E with TEXT-BEGIN and TEXT-END."
+  (interactive "r\nsStart text: \nsEnd text: ")
+  (if (use-region-p)
+      (save-restriction
+        (narrow-to-region b e)
+        (goto-char (point-max))
+        (insert text-end)
+        (goto-char (point-min))
+        (insert text-begin))
+    (message "wrap-region: Error! invalid region!")))
+
+(defun jens/comment-uncomment-region-or-line ()
+  "If region is active, comment or uncomment it (based on what it
+currently is), otherwise comment or uncomment the current line."
+  (interactive)
+  (if (region-active-p)
+      (comment-or-uncomment-region (region-beginning) (region-end))
+    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+
 
 ;;;;; misc
 
@@ -1655,25 +1656,6 @@ If DIR is nil, download to current directory."
     (condition-case ex
         (url-copy-file url path overwrite)
       (error 'file-already-exists))))
-
-(use-package ob-async
-  :disabled
-  :ensure t
-  :defer t)
-
-(use-package ob-clojure
-  :disabled
-  :requires cider
-  :config
-  (setq org-babel-clojure-backend 'cider))
-
-(use-package ox-pandoc
-  :ensure t
-  :defer t)
-
-(use-package org-ref
-  :ensure t
-  :defer t)
 
 ;;;; packages
 
@@ -2356,6 +2338,20 @@ clipboard."
   (add-hook 'sh-mode-hook #'flymake-shellcheck-load))
 
 (use-package rmsbolt :ensure t :defer t)
+
+(use-package ob-async
+  :disabled
+  :ensure t
+  :defer t)
+
+(use-package ob-clojure
+  :disabled
+  :requires cider
+  :config
+  (setq org-babel-clojure-backend 'cider))
+
+(use-package ox-pandoc :ensure t :defer t)
+(use-package org-ref :ensure t :defer t)
 
 ;;;; minor modes
 
