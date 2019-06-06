@@ -1012,7 +1012,7 @@ number input"
 
 ;;;;; convenience
 
-(defun jens/new-scratch-buffer ()
+(defun jens/-new-scratch-buffer ()
   "Return a newly created scratch buffer."
   (let ((n 0)
         bufname)
@@ -1029,7 +1029,7 @@ number input"
   "Create a new scratch buffer to work in.  (named *scratch* -
 *scratch<n>*)."
   (interactive)
-  (let ((scratch-buf (jens/new-scratch-buffer))
+  (let ((scratch-buf (jens/-new-scratch-buffer))
         (initial-content (if (use-region-p)
                              (buffer-substring (region-beginning) (region-end)))))
     (xref-push-marker-stack)
@@ -1047,13 +1047,13 @@ number input"
 (defun jens/clone-buffer ()
   "Open a clone of the current buffer."
   (interactive)
-  (let ((newbuf (jens/new-scratch-buffer))
+  (let ((newbuf (jens/-new-scratch-buffer))
         (content (buffer-string))
-        (oldpoint (point)))
+        (p (point)))
     (with-current-buffer newbuf
       (insert content))
     (switch-to-buffer newbuf)
-    (goto-char oldpoint)))
+    (goto-char p)))
 
 (defun jens/new-package ()
   "Create a skeleton for a elisp package."
@@ -1644,7 +1644,6 @@ current line."
          (format-cmd "jq '.inner.Elisp.code'")
          (final-cmd (format "%s %s | %s" cloc-cmd all-files format-cmd))
          (lines-of-code (s-trim (shell-command-to-string final-cmd))))
-    (message "%s" lines-of-code)
     lines-of-code))
 
 (defun jens/download-file (url &optional dir overwrite)
@@ -2373,6 +2372,23 @@ clipboard."
   (setq outshine-preserve-delimiter-whitespace nil)
 
   (setq outshine-speed-commands-user '(("g" . counsel-outline)))
+
+  (defun jens/outshine-refile-region ()
+    "Refile the contents of the active region to another heading
+in the same file."
+    (interactive)
+    (if (not (use-region-p))
+        (message "No active region to refile")
+      (let ((content (buffer-substring (region-beginning) (region-end)))
+            (settings (cdr (assq major-mode counsel-outline-settings))))
+        (ivy-read "refile to: " (counsel-outline-candidates settings)
+                  :action (lambda (x)
+                            (save-excursion
+                              (kill-region (region-beginning) (region-end))
+                              (goto-char (cdr x))
+                              (forward-line)
+                              (insert content)
+                              (newline)))))))
 
   ;; fontify the entire outshine-heading, including the comment
   ;; characters (;;;)
