@@ -1192,7 +1192,7 @@ buffer."
 (defmacro xi (&rest body)
   `(lambda ()
      (interactive)
-     ,body))
+     ,@body))
 
 (defun jens/one-shot-keybinding (key command)
   "Set a keybinding that disappear once you press a key that is
