@@ -3515,5 +3515,13 @@ initial search query."
 
 (add-hook #'server-after-make-frame-hook #'jens/show-initial-important-messages)
 
+;; TODO: get buffer string without `with-current-buffer', to speed things up?
+;; TODO: use `el-patch'/`advice-patch' to monkey-patch packages, look at ivy in particular.
+;; TODO: replace `magithub' with `forge'
+;; TODO: colorize message/compile buffer
+;; TODO: add seperator in compile mode
+;; TODO: replace `amx' with `prescient'
+;; TODO: test with ert?
+
 (provide 'init)
 ;;; init.el ends here
