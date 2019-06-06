@@ -163,7 +163,7 @@
   (twin-dispatch (lambda (sym fn) (advice-remove sym fn)) syms fns))
 
 (defun advice-nuke (sym)
-  "Remove all advices from symbol SYM."
+  "Remove all advice from symbol SYM."
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
 (defun add-to-list* (list-var elements &optional append compare-fn)
@@ -374,7 +374,7 @@ times."
   (setq epg-pinentry-mode 'loopback)
   (epa-file-enable))
 
-(use-package pinentry ;; enable gpg pinentry through the minibuffer
+(use-package pinentry ;; enable GPG pinentry through the minibuffer
   :ensure t
   :demand t
   :commands (pinentry-start pinentry-stop)
@@ -638,7 +638,7 @@ number input"
     ("l" #'smerge-keep-lower "keep lower"))
 
   (defun jens/enable-smerge-if-diff-buffer ()
-    "Enable SMerge-mode if the current buffer is showing a diff."
+    "Enable Smerge-mode if the current buffer is showing a diff."
     (save-excursion
       (goto-char (point-min))
       (when (re-search-forward "^<<<<<<< " nil t)
@@ -793,7 +793,7 @@ number input"
     (jens/--replace #'replace-regexp))
 
   (defun jens/query-replace ()
-    "Interactively replace occurance of regexp in the entire buffer."
+    "Interactively replace occurrence of regexp in the entire buffer."
     (interactive)
     (jens/--replace #'query-replace-regexp)))
 
@@ -944,7 +944,7 @@ number input"
   ;;;;;;;;;;;;
 
   (defun jens/org-summary-todo (n-done n-not-done)
-    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    "Switch entry to DONE when all sub-entries are done, to TODO otherwise."
     (let (org-log-done org-log-states)   ; turn off logging
       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
@@ -1245,7 +1245,7 @@ not in the overlay-map"
   (set-text-properties beg end nil))
 
 (defun jens/remove-text-propertiex-in-region ()
-  "Remove text propertiex from all text in active region."
+  "Remove text properties from all text in active region."
   (interactive)
   (when (region-active-p)
     (jens/remove-text-properties-region
@@ -1475,7 +1475,7 @@ current line."
           (t (concat (prin1-to-string (symbol-function fnsym)) "\n")))))
 
 (defun jens/function-def-org-code-block (fnsym)
-  "Return function definitoin of FNSYM as an org code-block."
+  "Return function definition of FNSYM as an org code-block."
   (concat "#+begin_src emacs-lisp\n"
           (jens/function-def-string fnsym)
           "#+end_src"))
@@ -1939,7 +1939,7 @@ _k_: go to tracking file
   :defer t
   :hook (clojure-mode . clj-refactor-mode)
   :config
-  ;; don't warn on refactor evals
+  ;; don't warn on refactor eval
   (setq cljr-warn-on-eval nil))
 
 (use-package magit
@@ -2888,7 +2888,7 @@ title and duration."
 
   (defun jens/avy-disable-highlight-thing (fn &rest args)
     "Disable `highlight-thing-mode' when avy-goto mode is active,
-reenable afterwards."
+re-enable afterwards."
     (let ((toggle (bound-and-true-p highlight-thing-mode)))
       (when toggle (highlight-thing-mode -1))
       (unwind-protect
@@ -3502,7 +3502,7 @@ initial search query."
           (rx (or
                ;; show info about loaded files with auto-save data
                "recover-this-file"
-               ;; show warning messages that occured during init
+               ;; show warning messages that occurred during init
                (group bol "!")
                ;; lines containing the word `warning'
                (group bol (0+ any) "warning" (0+ any) eol))))
@@ -3527,7 +3527,7 @@ initial search query."
 ;; TODO: use `el-patch'/`advice-patch' to monkey-patch packages, look at ivy in particular.
 ;; TODO: replace `magithub' with `forge'
 ;; TODO: colorize message/compile buffer
-;; TODO: add seperator in compile mode
+;; TODO: add separator in compile mode
 ;; TODO: replace `amx' with `prescient'
 ;; TODO: test with ert?
 
