@@ -1814,10 +1814,6 @@ _k_: go to tracking file
 
     ("g" #'today-move-to-today)
 
-    ("m" (lambda () (interactive) (find-file "~/vault/git/org/roadmap.org")) :exit t)
-    ("k" (lambda () (interactive) (find-file "~/vault/git/org/tracking.org")) :exit t)
-    ("i" (lambda () (interactive) (find-file "~/vault/git/org/inbox.org")) :exit t)
-
     ("q" nil "quit")))
 
 (use-package doc-at-point
@@ -3363,6 +3359,14 @@ initial search query."
 ;;; keybindings
 
 (log-info "Setting keybindings")
+
+;; keys for quickly going to common files
+(bind-key* "\e\ei" (xi (find-file "~/vault/git/org/inbox.org")))
+(bind-key* "\e\ek" (xi (find-file "~/vault/git/org/tracking.org")))
+(bind-key* "\e\em" (xi (find-file "~/vault/git/org/roadmap.org")))
+(bind-key* "\e\et" (xi (find-file "~/vault/git/org/today.org")))
+(bind-key* "\e\ec" (xi (find-file "~/.emacs.d/init.el")))
+
 
 ;;;; for built-in things
 
