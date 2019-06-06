@@ -83,28 +83,23 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; functional things, -map, -concat, etc
-(use-package dash
+(use-package dash ;; functional things, -map, -concat, etc
   :straight (dash :host github :repo "magnars/dash.el"
                   :fork (:host github :repo "jensecj/dash.el")))
 
-;; string things, s-trim, s-replace, etc.
-(use-package s
+(use-package s ;; string things, s-trim, s-replace, etc.
   :straight (s :host github :repo "magnars/s.el"
                :fork (:host github :repo "jensecj/s.el")))
 
-;; file-system things, f-exists-p, f-base, etc.
-(use-package f
+(use-package f ;; file-system things, f-exists-p, f-base, etc.
   :straight (f :host github :repo "rejeep/f.el"
                :fork (:host github :repo "jensecj/f.el")))
 
-;; a great hash-table wrapper.
-(use-package ht
+(use-package ht ;; a great hash-table wrapper.
   :straight (ht :host github :repo "Wilfred/ht.el"
                 :fork (:host github :repo "jensecj/ht.el")))
 
-;; easy way to patch packages
-(use-package advice-patch
+(use-package advice-patch ;; easy way to patch packages
   :init
   (let ((advice-patch-file (concat user-elpa-directory "advice-patch.el"))
         (url "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"))
@@ -372,7 +367,6 @@ times."
 
 (setq auth-sources '("~/vault/authinfo.gpg" "~/.netrc"))
 
-;; gpg and auth
 (use-package epa-file
   :demand t
   :commands epa-file-enable
@@ -380,8 +374,7 @@ times."
   (setq epg-pinentry-mode 'loopback)
   (epa-file-enable))
 
-;; enable gpg pinentry through the minibuffer
-(use-package pinentry
+(use-package pinentry ;; enable gpg pinentry through the minibuffer
   :ensure t
   :demand t
   :commands (pinentry-start pinentry-stop)
@@ -396,6 +389,7 @@ times."
 
   (jens/pinentry-reset)
 
+  ;; need to reset the pinentry from time to time, otherwise it stops working?
   (setq jens/gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset))
   ;; (cancel-timer gpg-reset-timer)
   )
@@ -543,8 +537,7 @@ seconds."
 
   (add-hook* '(text-mode-hook prog-mode-hook) #'jens/show-trailing-whitespace))
 
-;; insert parens-type things in pairs
-(use-package elec-pair
+(use-package elec-pair ;; insert parens-type things in pairs
   :config
   (setq electric-pair-pairs
         '((?\( . ?\))
@@ -558,8 +551,7 @@ seconds."
 
   (electric-pair-mode +1))
 
-;; show matching parens
-(use-package paren
+(use-package paren ;; highlight matching parens
   :config
   (setq show-paren-delay 0.1)
   (setq show-paren-style 'expression)
@@ -569,8 +561,7 @@ seconds."
   :custom-face
   (show-paren-match-expression ((t (:foreground nil :background "#353535")))))
 
-;; auto-replace common abbreviations
-(use-package abbrev
+(use-package abbrev ;; auto-replace common abbreviations
   :demand t
   :diminish abbrev-mode
   :hook (org-mode . abbrev-mode)
@@ -580,20 +571,17 @@ seconds."
   (read-abbrev-file)
   (abbrev-mode +1))
 
-;; easily navigate silly cased words
-(use-package subword
+(use-package subword ;; easily navigate silly cased words
   :diminish subword-mode
   :commands global-subword-mode
   :config (global-subword-mode 1))
 
-;; save point position between sessions
-(use-package saveplace
+(use-package saveplace ;; save point position between sessions
   :config
   (setq save-place-file (no-littering-expand-var-file-name "saveplaces"))
   (save-place-mode +1))
 
-;; persist some variables between sessions
-(use-package savehist
+(use-package savehist ;; persist some variables between sessions
   :defer 2
   :commands savehist-mode
   :config
@@ -609,8 +597,8 @@ seconds."
   (setq history-delete-duplicates t)
   (savehist-mode 1))
 
-;; always show the version of a file as it appears on disk
 (use-package autorevert
+  ;; always show the version of a file as it appears on disk
   :diminish auto-revert-mode
   :commands global-auto-revert-mode
   :config
@@ -639,8 +627,7 @@ number input"
           (call-interactively 'goto-line))
       (display-line-numbers-mode -1))))
 
-;; easily handle merge conflicts
-(use-package smerge-mode
+(use-package smerge-mode ;; easily handle merge conflicts
   :bind (:map smerge-mode-map ("C-c ^" . jens/smerge/body))
   :config
   (defhydra jens/smerge ()
@@ -659,8 +646,8 @@ number input"
 
   (add-hook* '(find-file-hook after-revert-hook) #'jens/enable-smerge-if-diff-buffer))
 
-;; show useful contextual information in the minibuffer
 (use-package eldoc
+  ;; show useful contextual information in the echo-area
   :diminish
   :config
   (setq eldoc-idle-delay 0.2)
@@ -745,12 +732,10 @@ number input"
              current-kill)
   :hook (org-mode . auto-fill-mode))
 
-;; give buffers unique names
-(use-package uniquify
+(use-package uniquify ;; give buffers unique names
   :config (setq uniquify-buffer-name-style 'forward))
 
-;; easily access and edit files on remote machines
-(use-package tramp
+(use-package tramp ;; easily access and edit files on remote machines
   :defer t
   :config
   (setq tramp-default-method "ssh")
@@ -758,8 +743,7 @@ number input"
   (setq tramp-terminal-type "tramp")
   (setq tramp-verbose 6))
 
-;; save a list of recently visited files.
-(use-package recentf
+(use-package recentf ;; save a list of recently visited files.
   :commands recentf-mode
   :config
   ;; TODO: maybe move to var directory?
@@ -813,8 +797,8 @@ number input"
     (interactive)
     (jens/--replace #'query-replace-regexp)))
 
-;; semantic analysis in supported modes (cpp, java, etc.)
 (use-package semantic
+  ;; semantic analysis in supported modes (cpp, java, etc.)
   :disabled t
   :defer t
   :config
