@@ -368,6 +368,21 @@ times."
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
 
+;; create read-only directory class
+(dir-locals-set-class-variables
+ 'read-only
+ '((nil . ((buffer-read-only . t)))))
+
+;; start some files in read-only buffers by default
+(dolist (dir (list user-elpa-directory))
+  (dir-locals-set-directory-class (file-truename dir) 'read-only))
+
+;; package.el should ignore elpa/ files being read-only
+(advice-add #'package-install :around
+            (lambda (fn &rest args)
+              (let ((inhibit-read-only t))
+                (apply fn args))))
+
 ;;;;; authentication and security
 
 ;; set the paranoia level to medium, warns if connections are insecure
