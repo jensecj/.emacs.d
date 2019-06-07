@@ -53,6 +53,8 @@
 
 (log-info "Loading fundamental third-party packages")
 
+(require 'package)
+
 ;; make sure use-package is installed
 (unless (package-installed-p 'use-package)
   (log-warning "use-package.el was not found. installing...")
@@ -111,6 +113,8 @@
 (use-package bind-key :ensure t)
 (use-package diminish :ensure t :commands diminish)
 (use-package delight :ensure t)
+(use-package hydra :ensure t)
+
 
 ;;;; cache, temp files, etc.
 
@@ -170,6 +174,9 @@
   "Add multiple ELEMENTS to a LIST-VAR."
   (dolist (e elements)
     (add-to-list list-var e append compare-fn)))
+
+;; easy 'commenting out' of sexps
+(defmacro comment (&rest _args))
 
 ;;; built-in
 ;;;; settings
@@ -1191,9 +1198,6 @@ buffer."
 
 ;;;;; lisp
 
-;; easy 'commenting out' of sexps
-(defmacro comment (&rest _args))
-
 ;; easy interactive lambda forms
 (defmacro xi (&rest body)
   `(lambda ()
@@ -1425,7 +1429,6 @@ currently is), otherwise comment or uncomment the current line."
   (if (region-active-p)
       (comment-or-uncomment-region (region-beginning) (region-end))
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
-
 
 ;;;;; misc
 
@@ -2695,31 +2698,6 @@ title and duration."
   (jens/download-file
    "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
    user-elpa-directory))
-
-(use-package hydra
-  :ensure t
-  :commands (hydra-default-pre
-             hydra-keyboard-quit
-             hydra-show-hint
-             hydra--call-interactively-remap-maybe
-             hydra-set-transient-map)
-  :bind (("C-x <left>" . buffer-carousel-previous)
-         (("C-x <right>" . buffer-carousel-next)))
-  :config
-  (defun buffer-carousel-previous ()
-    (interactive)
-    (previous-buffer)
-    (buffer-carousel-hydra/body))
-
-  (defun buffer-carousel-next ()
-    (interactive)
-    (next-buffer)
-    (buffer-carousel-hydra/body))
-
-  (defhydra buffer-carousel-hydra ()
-    "Move between buffers."
-    ("<left>" #'previous-buffer "previous")
-    ("<right>" #'next-buffer "next")))
 
 (use-package amx
   :ensure t
