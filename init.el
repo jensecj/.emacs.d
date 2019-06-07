@@ -1576,7 +1576,20 @@ current line."
   ("m" #'jens/goto-msg-buffer "goto msg buffer")
   ("c" #'jens/create-scratch-buffer "create scratch buffer"))
 
-(global-set-key (kbd "C-M-s") #'jens/shortcut/body)
+(defun jens/buffer-carousel-previous ()
+  (interactive)
+  (previous-buffer)
+  (jens/buffer-carousel-hydra/body))
+
+(defun jens/buffer-carousel-next ()
+  (interactive)
+  (next-buffer)
+  (jens/buffer-carousel-hydra/body))
+
+(defhydra jens/buffer-carousel-hydra ()
+  "Move between buffers."
+  ("<left>" #'previous-buffer "previous")
+  ("<right>" #'next-buffer "next"))
 
 (defun jens/tail-message-buffer ()
   "Toggle tailing the *Message* buffer every time something is written to it."
@@ -1808,9 +1821,6 @@ _f_: refile hydra
 _g_: move entry to today-file
 
 _t_: go to today-file
-_i_: go to inbox file
-_m_: go to roadmap file
-_k_: go to tracking file
 "
     ("c" #'today-capture-hydra/body :exit t)
 
@@ -2529,11 +2539,6 @@ in the same file."
   :commands global-hl-todo-mode
   :config
   (global-hl-todo-mode +1))
-
-(use-package hl-fill-column
-  :ensure t
-  :custom-face
-  (hl-fill-column-face ((t (:background "#4d0000")))))
 
 (use-package shackle
   :ensure t
@@ -3487,8 +3492,10 @@ initial search query."
 
 (global-set-key (kbd "<f12>") #'jens/inspect-variable-at-point)
 
-;; Completion that uses many different methods to find options.
-(global-set-key (kbd "C-.") 'hippie-expand)
+(global-set-key (kbd "C-M-s") #'jens/shortcut/body)
+
+(bind-key "C-x <left>" #'jens/buffer-carousel-previous)
+(bind-key "C-x <right>" #'jens/buffer-carousel-next)
 
 ;;; epilogue
 
