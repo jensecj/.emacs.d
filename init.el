@@ -140,31 +140,28 @@
 
 (log-info "Defining fundamental defuns")
 
-(defun twin-dispatch (fn A B)
-  "Dispatch FN on each of the args in A and B."
   (cond
-   ((listp A)
-    (dolist (a A) (twin-dispatch fn a B)))
-   ((listp B)
-    (dolist (b B) (twin-dispatch fn A b)))
-   ((and (atom A) (atom B))
-    (funcall fn A B))))
+(defun broadcast (fn &rest args)
+  (let* ((args (-map-when #'atom #'list args))
+         (combinations (apply #'-table-flat #'list args)))
+    (dolist (c combinations)
+      (apply fn c))))
 
 (defun add-hook* (hooks fns)
   "Add FNS to HOOKS."
-  (twin-dispatch #'add-hook hooks fns))
+  (broadcast #'add-hook hooks fns))
 
 (defun remove-hook* (hooks fns)
   "Remove FNS from HOOKs."
-  (twin-dispatch #'remove-hook hooks fns))
+  (broadcast #'remove-hook hooks fns))
 
 (defun advice-add* (syms where fns)
   "Advice FNS to SYMS."
-  (twin-dispatch (lambda (sym fn) (advice-add sym where fn)) syms fns))
+  (broadcast (-cut advice-add <> where <>) syms fns))
 
 (defun advice-remove* (syms fns)
   "Remove FNS from SYMS."
-  (twin-dispatch (lambda (sym fn) (advice-remove sym fn)) syms fns))
+  (broadcast #'advice-remove syms fns))
 
 (defun advice-nuke (sym)
   "Remove all advice from symbol SYM."
