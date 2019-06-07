@@ -2501,6 +2501,10 @@ in the same file."
          ("S-<next>" . sp-split-sexp)
          ("S-<prior>" . sp-join-sexp)))
 
+(use-package macrostep
+  :ensure t
+  :bind ("C-c e" . macrostep-expand))
+
 (use-package diff-hl
   :ensure t
   :demand t
