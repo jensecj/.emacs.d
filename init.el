@@ -205,6 +205,7 @@
 (blink-cursor-mode -1)
 
 ;; always highlight current line
+(setq global-hl-line-sticky-flag t)
 (global-hl-line-mode +1)
 
 ;; allow pasting selection outside of Emacs
@@ -3454,6 +3455,9 @@ initial search query."
 (bind-key* "<home>" 'beginning-of-buffer)
 (bind-key* "<end>" 'end-of-buffer)
 
+;; Completion that uses many different methods to find options.
+(global-set-key (kbd "C-.") 'hippie-expand)
+
 ;;;; for homemade things
 
 ;; Better C-a
@@ -3511,7 +3515,8 @@ initial search query."
                ;; show warning messages that occurred during init
                (group bol "!")
                ;; lines containing the word `warning'
-               (group bol (0+ any) "warning" (0+ any) eol))))
+               (group bol (0+ any) "warning" (0+ any) eol)
+               (group bol (0+ any) "error" (0+ any) eol))))
          (messages (with-current-buffer "*Messages*" (buffer-string)))
          (important
           (with-temp-buffer
