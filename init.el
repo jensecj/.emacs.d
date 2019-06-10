@@ -128,11 +128,10 @@
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
 ;; extensions of `use-package', so we need to have those packages.
-(use-package bind-key :ensure t)
-(use-package diminish :ensure t :commands diminish)
-(use-package delight :ensure t)
-(use-package hydra :ensure t)
-
+(use-package bind-key :straight t)
+(use-package diminish :straight t)
+(use-package delight :straight t)
+(use-package hydra :straight t)
 
 ;;;; cache, temp files, etc.
 
@@ -140,7 +139,7 @@
 
 ;; contain extra files in etc/ and var/.
 ;; load early, and overwrite locations in configs if needed.
-(use-package no-littering :ensure t :demand t)
+(use-package no-littering :straight t :demand t)
 
 (setq temporary-file-directory (no-littering-expand-var-file-name "temp/"))
 (setq bookmark-default-file (no-littering-expand-etc-file-name "bookmarks.el"))
@@ -453,7 +452,7 @@ times."
   (epa-file-enable))
 
 (use-package pinentry ;; enable GPG pinentry through the minibuffer
-  :ensure t
+  :straight t
   :demand t
   :commands (pinentry-start pinentry-stop)
   :config
@@ -1933,9 +1932,7 @@ _t_: go to today-file
   (replace-at-point-setup-defaults))
 
 (use-package lowkey-mode-line
-  :straight
-  (lowkey-mode-line
-   :repo "git@github.com:jensecj/lowkey-mode-line.el.git")
+  :straight (lowkey-mode-line :repo "git@github.com:jensecj/lowkey-mode-line.el.git")
   :demand t
   :commands lowkey-mode-line-enable
   :config
@@ -3334,13 +3331,13 @@ initial search query."
   (setq posframe-mouse-banish nil))
 
 (use-package eros
-  :ensure t
+  :straight t
   :hook (emacs-lisp-mode . eros-mode)
   :config
   (eros-mode +1))
 
 (use-package zenburn-theme
-  :ensure t
+  :straight t
   :demand t
   :config
   (load-theme 'zenburn t)
