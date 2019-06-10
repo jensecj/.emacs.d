@@ -605,6 +605,24 @@ seconds."
   (setq ispell-grep-command "rg")
   (setq ispell-silently-savep t))
 
+(use-package flyspell
+  :defer t
+  :commands (enable-spellchecking
+             flyspell-mode
+             flyspell-prog-mode
+             flyspell-buffer)
+  :bind
+  (("C-M-," . flyspell-goto-next-error))
+  :config
+  (ispell-change-dictionary "english")
+
+  (defun enable-spellchecking ()
+    "Enable spellchecking in the current buffer."
+    (interactive)
+    (ispell-change-dictionary "english")
+    (flyspell-prog-mode)
+    (flyspell-buffer)))
+
 (use-package whitespace
   :demand t
   :diminish
@@ -3269,25 +3287,6 @@ initial search query."
                 (let ((pm (point-marker)))
                   (apply fn args)
                   (xref-push-marker-stack pm)))))
-
-(use-package flyspell
-  :ensure t
-  :defer t
-  :commands (enable-spellchecking
-             flyspell-mode
-             flyspell-prog-mode
-             flyspell-buffer)
-  :bind
-  (("C-M-," . flyspell-goto-next-error))
-  :config
-  (ispell-change-dictionary "english")
-
-  (defun enable-spellchecking ()
-    "Enable spellchecking in the current buffer."
-    (interactive)
-    (ispell-change-dictionary "english")
-    (flyspell-prog-mode)
-    (flyspell-buffer)))
 
 (use-package flyspell-correct
   :ensure t
