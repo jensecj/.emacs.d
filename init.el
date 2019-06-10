@@ -95,13 +95,17 @@
 
 (defun use-package-handler/:download (name _keyword url rest state)
   (let* ((file (url-unhex-string (f-filename url)))
-         (path (f-join user-elpa-directory file)))
+         (dir (f-join user-emacs-directory "third-party/"))
+         (path (f-join dir file)))
+    (if (f-exists-p path)
+        (message "%s already exists, skipping download." file)
+      (message "%s does not exist, downloading %s to %s" file url path)
+      (when (not (f-exists-p dir))
+        (f-mkdir dir))
+      (condition-case ex
+          (url-copy-file url path)
+        (error '())))
     (use-package-concat
-     (when (not (f-exists-p path))
-       (message "%s does not exist, DOWNLOADING %s to %s" file url path)
-       (condition-case ex
-           (url-copy-file url path)
-         (error 'file-already-exists)))
      (use-package-process-keywords name rest state))))
 
 (add-to-list 'use-package-keywords :download)
@@ -125,7 +129,8 @@
                 :fork (:host github :repo "jensecj/ht.el")))
 
 (use-package advice-patch ;; easy way to patch packages
-  :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el")
+  :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"
+  :load-path "third-party/")
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
 ;; extensions of `use-package', so we need to have those packages.
@@ -2800,7 +2805,8 @@ title and duration."
         (error "No url at point")))))
 
 (use-package help-fns+
-  :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el")
+  :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
+  :load-path "third-party")
 
 (use-package amx
   :straight t
