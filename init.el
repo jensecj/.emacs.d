@@ -57,7 +57,7 @@
 (defvar bootstrap-version)
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
-  (message "bootstrapping `straight'")
+  (message "bootstrapping straight...")
   (unless (file-exists-p bootstrap-file)
     (log-warning "straight.el was not found, installing.")
     (with-current-buffer
@@ -68,7 +68,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(message "bootstrapping `use-package'")
+(message "bootstrapping use-package...")
 (straight-use-package 'use-package)
 
 ;; need to enable imenu support before requiring `use-package'
@@ -772,20 +772,19 @@ number input"
   (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
 
   ;; FIXME: remove the requirement on `sp-lisp-modes'
-  (require 'smartparens)
-
-  (defun jens/lispify-eldoc-message (eldoc-msg)
-    "Change the format of eldoc messages for functions to `(fn args)'."
-    (if (and eldoc-msg
-             (member major-mode sp-lisp-modes))
-        (let* ((parts (s-split ": " eldoc-msg))
-               (sym (car parts))
-               (args (cadr parts)))
-          (cond
-           ((string= args "()") (format "(%s)" sym))
-           (t (format "(%s %s)" sym (substring args 1 (- (length args) 1))))))
-      eldoc-msg))
-  (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message)
+  (with-eval-after-load 'smartparens
+    (defun jens/lispify-eldoc-message (eldoc-msg)
+      "Change the format of eldoc messages for functions to `(fn args)'."
+      (if (and eldoc-msg
+               (member major-mode sp-lisp-modes))
+          (let* ((parts (s-split ": " eldoc-msg))
+                 (sym (car parts))
+                 (args (cadr parts)))
+            (cond
+             ((string= args "()") (format "(%s)" sym))
+             (t (format "(%s %s)" sym (substring args 1 (- (length args) 1))))))
+        eldoc-msg))
+    (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message))
 
   (global-eldoc-mode +1)
   :custom-face
@@ -2303,7 +2302,6 @@ clipboard."
 (use-package dired+
   :straight (dired+ :type git :host github :repo "emacsmirror/dired-plus")
   :after dired
-  :demand t
   :bind
   (:map dired-mode-map
         ("<backspace>" . diredp-up-directory-reuse-dir-buffer)
