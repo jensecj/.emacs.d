@@ -2664,6 +2664,12 @@ in the same file."
 (use-package popup :ensure t)
 (use-package shut-up :ensure t)
 
+(use-package auto-compile
+  :straight t
+  :config
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode))
+
 (use-package frog-menu
   :ensure t
   :config
