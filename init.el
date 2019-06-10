@@ -71,6 +71,28 @@
 ;; needs to be required after its settings are set
 (require 'use-package)
 
+;; add :download keyword to `use-package'
+(defun use-package-normalize/:download (name-symbol keyword args)
+  (use-package-only-one (symbol-name keyword) args
+    (lambda (label arg)
+      (cond
+       ((stringp arg) arg)
+       ((symbolp arg) (symbol-name arg))
+       (t
+        (use-package-error
+         ":download wants a url (a string)"))))))
+
+(defun use-package-handler/:download (name _keyword url rest state)
+  (let* ((file (url-unhex-string (f-filename url)))
+         (path (f-join user-elpa-directory file)))
+    (use-package-concat
+     (when (not (f-exists-p path))
+       (message "%s does not exist, DOWNLOADING %s to %s" file url path)
+       (condition-case ex
+           (url-copy-file url path)
+         (error 'file-already-exists)))
+     (use-package-process-keywords name rest state))))
+
 ;; make sure straight.el is installed
 (defvar bootstrap-version)
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
@@ -102,11 +124,7 @@
                 :fork (:host github :repo "jensecj/ht.el")))
 
 (use-package advice-patch ;; easy way to patch packages
-  :init
-  (let ((advice-patch-file (concat user-elpa-directory "advice-patch.el"))
-        (url "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"))
-    (unless (file-exists-p advice-patch-file)
-      (url-copy-file url advice-patch-file))))
+  :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el")
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
 ;; extensions of `use-package', so we need to have those packages.
@@ -2716,10 +2734,7 @@ title and duration."
         (error "No url at point")))))
 
 (use-package help-fns+
-  :init
-  (jens/download-file
-   "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
-   user-elpa-directory))
+  :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el")
 
 (use-package amx
   :ensure t
