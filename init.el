@@ -133,6 +133,8 @@
 (use-package diminish :straight t)
 (use-package delight :straight t)
 (use-package hydra :straight t)
+(use-package shut-up :straight t)
+(use-package ov :straight t)
 
 ;;;; cache, temp files, etc.
 
@@ -389,6 +391,10 @@
 ;; just give me a clean scratch buffer
 (setq initial-scratch-message "")
 
+;; default regexp for files to hide in dired-omit-mode
+;; FIXME: this needs to be toplevel, otherwise dired+ fails to load...
+(setq-default dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\..+$\\|^\\..+$")
+
 ;; don't show trailing whitespace by default
 (setq-default show-trailing-whitespace nil)
 (setq whitespace-style '(face trailing))
@@ -555,7 +561,6 @@ seconds."
   (load-library "dired-x")
   (load-library "dired-aux")
 
-  (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$"))
   (setq dired-listing-switches "-agholXN")
   (setq dired-create-destination-dirs 'always)
   (setq dired-hide-details-hide-symlink-targets nil)
@@ -1976,17 +1981,16 @@ _t_: go to today-file
 
 ;;;; major modes and extentions
 
-(use-package lsp-mode :defer t :ensure t)
-(use-package cmake-mode :ensure t :mode "\\CmakeLists.txt\\'")
-(use-package dockerfile-mode :ensure t :mode "\\Dockerfile\\'")
-(use-package gitconfig-mode :ensure t :mode "\\.gitconfig\\'")
-(use-package gitignore-mode :ensure t :mode "\\.gitignore\\'")
-(use-package haskell-mode :ensure t :mode "\\.hs\\'")
-(use-package lua-mode :ensure t :mode "\\.lua\\'")
-(use-package markdown-mode :ensure t :mode ("\\.md\\'" "\\.card\\'"))
-(use-package scss-mode :ensure t :mode "\\.scss\\'")
-(use-package tuareg :ensure t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
-(use-package restclient :ensure t :defer t)
+(use-package lsp-mode :defer t :straight t)
+(use-package cmake-mode :straight t :mode "\\CmakeLists.txt\\'")
+(use-package dockerfile-mode :straight t :mode "\\Dockerfile\\'")
+(use-package gitconfig-mode :straight t :mode "\\.gitconfig\\'")
+(use-package gitignore-mode :straight t :mode "\\.gitignore\\'")
+(use-package lua-mode :straight t :mode "\\.lua\\'")
+(use-package markdown-mode :straight t :mode ("\\.md\\'" "\\.card\\'"))
+(use-package scss-mode :straight t :mode "\\.scss\\'")
+(use-package tuareg :straight t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
+(use-package restclient :straight t :defer t)
 
 (use-package rust-mode
   :ensure t
@@ -2053,7 +2057,7 @@ _t_: go to today-file
   (setq cljr-warn-on-eval nil))
 
 (use-package magit
-  :ensure t
+  :straight t
   :defer t
   :bind
   (("C-x m" . magit-status)
@@ -2070,13 +2074,13 @@ _t_: go to today-file
 
 (use-package magithub
   ;; TODO: replace with forge.el?
-  :ensure t
+  :straight t
   :after magit
   :config
   (magithub-feature-autoinject t))
 
 (use-package magit-todos
-  :ensure t
+  :straight t
   :after magit
   :hook (magit-status-mode . magit-todos-mode)
   :commands magit-todos-mode
@@ -2249,21 +2253,22 @@ clipboard."
 ;;;; extensions to built-in packages
 
 (use-package dired-filter
-  :ensure t
+  :straight t
   :after dired)
 
 (use-package dired-subtree
-  :ensure t
+  :straight t
   :after dired
-  :bind (:map dired-mode-map
-              ("<tab>" . dired-subtree-toggle)))
+  :bind
+  (:map dired-mode-map
+        ("<tab>" . dired-subtree-toggle)))
 
 (use-package dired-collapse
-  :ensure t
+  :straight t
   :after dired)
 
 (use-package dired-rainbow
-  :ensure t
+  :straight t
   :after dired
   :config
   (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
@@ -2288,7 +2293,7 @@ clipboard."
   (dired-rainbow-define-chmod executable-unix "#8FB28F" "-.*x.*"))
 
 (use-package dired-ranger
-  :ensure t
+  :straight t
   :after dired
   :bind
   (:map dired-mode-map
@@ -2429,12 +2434,12 @@ clipboard."
 (use-package rmsbolt :ensure t :defer t)
 
 (use-package ob-async
-  :disabled
+  :disabled t
   :ensure t
   :defer t)
 
 (use-package ob-clojure
-  :disabled
+  :disabled t
   :requires cider
   :config
   (setq org-babel-clojure-backend 'cider))
@@ -2568,7 +2573,7 @@ in the same file."
   (yas-global-mode +1))
 
 (use-package smartparens
-  :ensure t
+  :straight t
   :defer t
   :bind (("M-<up>" .  sp-backward-barf-sexp)
          ("M-<down>" . sp-forward-barf-sexp)
@@ -2628,7 +2633,7 @@ in the same file."
                 'diff-hl-fringe-bmp-from-type))
 
 (use-package hl-todo
-  :ensure t
+  :straight t
   :demand t
   :diminish hl-todo-mode
   :commands global-hl-todo-mode
@@ -2636,7 +2641,7 @@ in the same file."
   (global-hl-todo-mode +1))
 
 (use-package shackle
-  :ensure t
+  :straight t
   :demand t
   :config
   (setq shackle-rules
@@ -2644,7 +2649,7 @@ in the same file."
   (shackle-mode +1))
 
 (use-package projectile
-  :ensure t
+  :straight t
   :defer t
   :diminish projectile-mode
   :bind
@@ -2665,13 +2670,14 @@ in the same file."
   (projectile-mode +1))
 
 (use-package counsel-projectile
-  :ensure t
+  :straight t
   :defer t
   :after (counsel projectile)
   :commands counsel-projectile-mode
   :config (counsel-projectile-mode))
 
 (use-package keyfreq
+  :straight t
   :commands (keyfreq-mode keyfreq-autosave-mode)
   :config
   (keyfreq-mode +1)
@@ -2679,16 +2685,13 @@ in the same file."
 
 ;;;; misc packages
 
-(use-package flx :ensure t) ;; fuzzy searching for ivy, etc.
-(use-package rg :ensure t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
+(use-package flx :straight t) ;; fuzzy searching for ivy, etc.
+(use-package rg :straight t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
-(use-package dumb-jump :ensure t :defer t)
-(use-package counsel-tramp :ensure t :defer t)
-(use-package with-editor :ensure t :defer t) ;; run commands in `emacsclient'
-(use-package gist :ensure t :defer t) ;; work with github gists
-(use-package ov :ensure t) ;; easy overlays
-(use-package popup :ensure t)
-(use-package shut-up :ensure t)
+(use-package dumb-jump :straight t :defer t)
+(use-package with-editor :straight t :defer t) ;; run commands in `emacsclient'
+(use-package gist :straight t :defer t) ;; work with github gists
+(use-package popup :straight t)
 
 (use-package auto-compile
   :straight t
@@ -2728,7 +2731,7 @@ of (command . word) to be used by `flyspell-do-correct'."
   (setq flyspell-correct-interface #'frog-menu-flyspell-correct))
 
 (use-package spinner
-  :ensure t
+  :straight t
   :config
   (defun jens/package-spinner-start (&rest _arg)
     "Create and start package-spinner."
@@ -2962,7 +2965,7 @@ title and duration."
   :bind ("C-x C-y" . browse-kill-ring)
   :config (setq browse-kill-ring-quit-action 'save-and-restore))
 
-(use-package browse-at-remote :ensure t)
+(use-package browse-at-remote :straight t)
 
 (use-package avy
   :ensure t
@@ -3173,7 +3176,7 @@ paste for multi-term mode."
       (rename-buffer buffer-new-name))))
 
 (use-package ivy
-  :ensure t
+  :straight t
   :demand t
   :diminish ivy-mode
   :commands (ivy-read
@@ -3200,28 +3203,8 @@ paste for multi-term mode."
   :custom-face
   (ivy-current-match ((t (:foreground nil :background "#292929" :height 110 :box nil :underline nil)))))
 
-(use-package ivy-rich
-  :ensure t
-  :commands ivy-rich-mode
-  :config
-  (defun ivy-rich-bookmark-context-string (candidate)
-    "Transformer for pretty bookmarks in `counsel-bookmark'.n"
-    (let ((front (cdr (assoc 'front-context-string (cdr (assoc candidate bookmark-alist))))))
-      (s-replace "\n" ""  (concat  "" front))))
-
-  (add-to-list 'ivy-rich--display-transformers-list
-               '(:columns
-                 ((ivy-rich-candidate (:width 35 :face font-lock-builtin-face))
-                  (ivy-rich-bookmark-context-string (:width 20 :face font-lock-string-face))
-                  (ivy-rich-bookmark-filename (:face font-lock-doc-face)))))
-
-  (add-to-list 'ivy-rich--display-transformers-list 'counsel-bookmark)
-
-  (ivy-rich-mode -1)
-  (ivy-rich-mode +1))
-
 (use-package counsel
-  :ensure t
+  :straight t
   :after ivy
   :defer 1
   :diminish counsel-mode
@@ -3264,8 +3247,27 @@ paste for multi-term mode."
       (counsel-ag initial-input default-directory)))
 
   (counsel-mode))
+(use-package counsel-tramp :straight t :defer t)
+
+(use-package ivy-rich
+  :straight t
+  :config
+  (defun ivy-rich-bookmark-context-string (candidate)
+    "Transformer for pretty bookmarks in `counsel-bookmark'.n"
+    (let ((front (cdr (assoc 'front-context-string (cdr (assoc candidate bookmark-alist))))))
+      (s-replace "\n" ""  (concat  "" front))))
+
+  (add-to-list 'ivy-rich--display-transformers-list
+               '(:columns
+                 ((ivy-rich-candidate (:width 35 :face font-lock-builtin-face))
+                  (ivy-rich-bookmark-filename (:face font-lock-doc-face)))))
+
+  (add-to-list 'ivy-rich--display-transformers-list 'counsel-bookmark)
+
+  (ivy-rich-mode +1))
 
 (use-package swiper
+  :straight t
   :bind ("C-s" . jens/swiper)
   :config
   (defun jens/swiper ()
@@ -3289,7 +3291,7 @@ initial search query."
                   (xref-push-marker-stack pm)))))
 
 (use-package flyspell-correct
-  :ensure t
+  :straight t
   :after flyspell
   :bind
   (:map flyspell-mode-map
@@ -3297,7 +3299,7 @@ initial search query."
   :commands flyspell-correct-at-point)
 
 (use-package synosaurus
-  :ensure t
+  :straight t
   :config
   (setq synosaurus-backend #'synosaurus-backend-wordnet)
 
@@ -3320,7 +3322,7 @@ initial search query."
   (so-long-enable))
 
 (use-package treemacs
-  :ensure t
+  :straight t
   :defer t
   :config
   (treemacs-resize-icons 15))
