@@ -1493,6 +1493,20 @@ currently is), otherwise comment or uncomment the current line."
 
 ;;;;; misc
 
+(defun jens/get-package-reqs (package)
+  (when-let* ((desc (assq 'cider package-alist))
+              (desc (cadr desc)))
+    (package-desc-reqs desc)))
+
+(defun jens/required-by (package)
+  (let ((descs (-map #'cdr package-alist))
+        (res '()))
+    (dolist (d descs res)
+      (let ((pkg-name (package-desc-name (car d)))
+            (reqs (-map #'car (package-desc-reqs (car d)))))
+        (when (-contains-p reqs package)
+          (push pkg-name res))))))
+
 (defun jens/insert-todays-date ()
   "Insert the current date at point."
   (interactive)
