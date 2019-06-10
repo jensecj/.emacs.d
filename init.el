@@ -596,11 +596,7 @@ seconds."
         (dired-mark arg)))))
 
 (use-package elisp-mode
-  :delight (emacs-lisp-mode "Elisp" :major)
-  :config
-  (setq-local cleanup-buffer-fns
-              '((indent-region (point-min) (point-max))
-                (whitespace-cleanup))))
+  :delight (emacs-lisp-mode "Elisp" :major))
 
 ;;;;; minor modes
 
