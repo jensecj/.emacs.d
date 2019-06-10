@@ -53,13 +53,23 @@
 
 (log-info "Loading fundamental third-party packages")
 
-(require 'package)
+;; make sure straight.el is installed
+(defvar bootstrap-version)
+(let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
+      (bootstrap-version 5))
+  (message "bootstrapping `straight'")
+  (unless (file-exists-p bootstrap-file)
+    (log-warning "straight.el was not found, installing.")
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-;; make sure use-package is installed
-(unless (package-installed-p 'use-package)
-  (log-warning "use-package.el was not found. installing...")
-  (package-refresh-contents)
-  (package-install 'use-package))
+(message "bootstrapping `use-package'")
+(straight-use-package 'use-package)
 
 ;; need to enable imenu support before requiring `use-package'
 (setq use-package-enable-imenu-support t)
@@ -94,20 +104,6 @@
      (use-package-process-keywords name rest state))))
 
 (add-to-list 'use-package-keywords :download)
-
-;; make sure straight.el is installed
-(defvar bootstrap-version)
-(let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (log-warning "straight.el was not found, installing.")
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
 
 (use-package dash ;; functional things, -map, -concat, etc
   :straight (dash :host github :repo "magnars/dash.el"
