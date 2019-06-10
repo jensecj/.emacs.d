@@ -1992,7 +1992,7 @@ _t_: go to today-file
 (use-package restclient :straight t :defer t)
 
 (use-package rust-mode
-  :ensure t
+  :straight t
   :defer t
   :bind
   (:map rust-mode-map
@@ -2004,14 +2004,14 @@ _t_: go to today-file
   (unbind-key "M--" rust-mode-map))
 
 (use-package racer
-  :ensure t
+  :straight t
   :defer t
   :after rust-mode
   :hook ((rust-mode . racer-mode)
          (racer-mode . eldoc-mode)))
 
 (use-package clojure-mode
-  :ensure t
+  :straight t
   :defer t
   :after (company-mode cider clj-refactor)
   :functions jens/company-clojure-quickhelp-at-point
@@ -2036,7 +2036,7 @@ _t_: go to today-file
   )
 
 (use-package cider
-  :ensure t
+  :straight t
   :defer t
   :hook (clojure-mode . cider-mode)
   :config
@@ -2048,7 +2048,7 @@ _t_: go to today-file
         cider-check-cljs-repl-requirements nil))
 
 (use-package clj-refactor
-  :ensure t
+  :straight t
   :defer t
   :hook (clojure-mode . clj-refactor-mode)
   :config
@@ -2354,16 +2354,16 @@ clipboard."
                         (file-name-as-directory directory) "quicklisp/")))))
 
 (use-package geiser
-  :ensure t
+  :straight t
   :defer t
   :hook (scheme-mode . geiser-mode)
   :config
   (setq geiser-active-implementations '(chicken)))
 
 (use-package elpy
-  :ensure t
+  :straight t
   :defer t
-  :delight " elpy "
+  :delight " elpy"
   :commands (elpy-goto-definition)
   :hook (python-mode . elpy-mode)
   :bind (:map elpy-mode-map ("C-c C-c" . nil))
@@ -2375,11 +2375,11 @@ clipboard."
      elpy-module-pyvenv)))
 
 (use-package blacken
-  :ensure t
-  :demand t)
+  :straight t
+  :after python-mode)
 
 (use-package highlight-defined
-  :ensure t
+  :straight t
   :diminish highlight-defined-mode
   :hook (emacs-lisp-mode . highlight-defined-mode)
   :custom-face
@@ -2387,7 +2387,7 @@ clipboard."
   (highlight-defined-builtin-function-name-face ((t (:foreground "#BFBFBF")))))
 
 (use-package highlight-thing
-  :ensure t
+  :straight t
   :diminish highlight-thing-mode
   :config
   (setq highlight-thing-ignore-list '("nil" "t"))
@@ -2399,12 +2399,12 @@ clipboard."
   (highlight-thing ((t (:background "#5f5f5f" :weight bold)))))
 
 (use-package fontify-face
-  :ensure t
+  :straight t
   :defer t
   :hook (emacs-lisp-mode . fontify-face-mode))
 
-(use-package package-lint :ensure t :defer t :commands (package-lint-current-buffer))
-(use-package flycheck-package :ensure t :defer t :commands (flycheck-package-setup))
+(use-package package-lint :straight t :defer t :commands (package-lint-current-buffer))
+(use-package flycheck-package :straight t :defer t :commands (flycheck-package-setup))
 
 (use-package ggtags
   :ensure t
@@ -2583,7 +2583,7 @@ in the same file."
          ("S-<prior>" . sp-join-sexp)))
 
 (use-package macrostep
-  :ensure t
+  :straight t
   :bind ("C-c e" . macrostep-expand))
 
 (use-package diff-hl
@@ -3044,12 +3044,12 @@ re-enable afterwards."
   (global-undo-tree-mode))
 
 (use-package goto-chg
-  :ensure t
+  :straight t
   :defer t
   :bind ("M-ø" . goto-last-change))
 
 (use-package beginend
-  :ensure t
+  :straight t
   :defer t
   :diminish beginend-global-mode
   :commands beginend-global-mode
