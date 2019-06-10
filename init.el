@@ -2124,9 +2124,8 @@ _t_: go to today-file
    '(output-pdf "Zathura")))
 
 (use-package elfeed
-  :ensure t
+  :straight t
   :defer t
-  :after today
   :commands (elfeed elfeed-search-selected)
   :functions jens/elfeed-copy-link-at-point
   :bind
@@ -2319,7 +2318,7 @@ clipboard."
 
 (use-package slime
   :defer t
-  :ensure t
+  :straight t
   :after eros
   :commands (jens/qlot-slime slime-start)
   :bind (:map slime-mode-map
@@ -2407,7 +2406,7 @@ clipboard."
 (use-package flycheck-package :straight t :defer t :commands (flycheck-package-setup))
 
 (use-package ggtags
-  :ensure t
+  :straight t
   :defer t
   :delight " ggtags "
   :hook (c++-mode . ggtags-mode)
@@ -2421,19 +2420,19 @@ clipboard."
   :commands (lsp))
 
 (use-package rtags :ensure t :defer t :disabled t)
-(use-package clang-format :ensure t :defer t)
+(use-package clang-format :straight t :defer t)
 
 (use-package flymake-shellcheck
-  :ensure t
+  :straight t
   :commands flymake-shellcheck-load
   :init
   (add-hook 'sh-mode-hook #'flymake-shellcheck-load))
 
-(use-package rmsbolt :ensure t :defer t)
+(use-package rmsbolt :straight t :defer t)
 
 (use-package ob-async
   :disabled t
-  :ensure t
+  :straight t
   :defer t)
 
 (use-package ob-clojure
@@ -2442,17 +2441,17 @@ clipboard."
   :config
   (setq org-babel-clojure-backend 'cider))
 
-(use-package ox-pandoc :ensure t :defer t)
-(use-package org-ref :ensure t :defer t)
+(use-package ox-pandoc :straight t :defer t)
+(use-package org-ref :straight t :defer t)
 
 ;;;; minor modes
 
-(use-package git-timemachine :ensure t :defer t)
-(use-package centered-cursor-mode :ensure t :defer t)
-(use-package rainbow-mode :ensure t :defer t :diminish) ;; highlight color-strings (hex, etc.)
+(use-package git-timemachine :straight t :defer t)
+(use-package centered-cursor-mode :straight t :defer t)
+(use-package rainbow-mode :straight t :defer t :diminish) ;; highlight color-strings (hex, etc.)
 
 (use-package outshine
-  :ensure t
+  :straight t
   :diminish
   :hook ((emacs-lisp-mode) . outshine-mode)
   :bind
@@ -2513,7 +2512,7 @@ in the same file."
 
 (use-package outline-minor-faces
   ;; required by `backline'
-  :ensure t
+  :straight t
   :custom-face
   (outline-minor-1 ((t (:inherit outshine-level-1))))
   (outline-minor-2 ((t (:inherit outshine-level-2))))
@@ -2522,14 +2521,14 @@ in the same file."
   (outline-minor-5 ((t (:inherit outshine-level-5)))))
 
 (use-package backline
-  :ensure t
+  :straight t
   :after outshine
   :config
   ;; highlight the entire line with outline-level face, even if collapsed.
   (advice-add 'outline-flag-region :after 'backline-update))
 
 (use-package flycheck
-  :ensure t
+  :straight t
   :defer t
   :config
   (defun magnars/adjust-flycheck-automatic-syntax-eagerness ()
@@ -2551,14 +2550,14 @@ in the same file."
   (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled)))
 
 (use-package fill-column-indicator
-  :ensure t
+  :straight t
   :hook ((text-mode prog-mode) . fci-mode)
   :config
   (setq-default fci-rule-color "#555555")
   (fci-mode +1))
 
 (use-package yasnippet
-  :ensure t
+  :straight t
   :defer t
   :diminish yas-minor-mode
   :bind ("C-<return>" . yas-expand)
@@ -2587,7 +2586,7 @@ in the same file."
   :bind ("C-c e" . macrostep-expand))
 
 (use-package diff-hl
-  :ensure t
+  :straight t
   :demand t
   :diminish diff-hl-mode
   :commands (global-diff-hl-mode
@@ -2698,7 +2697,7 @@ in the same file."
   (auto-compile-on-save-mode))
 
 (use-package frog-menu
-  :ensure t
+  :straight t
   :config
   (setq frog-menu-avy-padding t)
   (setq frog-menu-min-col-padding 4)
@@ -2752,7 +2751,7 @@ of (command . word) to be used by `flyspell-do-correct'."
   (advice-add #'package-menu--perform-transaction :after #'jens/package-spinner-stop))
 
 (use-package org-web-tools
-  :ensure t
+  :straight t
   :defer t
   :after s
   :config
@@ -2804,8 +2803,7 @@ title and duration."
   :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el")
 
 (use-package amx
-  :ensure t
-  :commands amx-mode
+  :straight t
   :config
   (amx-mode))
 
@@ -2914,7 +2912,7 @@ title and duration."
    :order 1))
 
 (use-package paxedit
-  :ensure t
+  :straight t
   :defer t
   :delight " paxedit "
   :hook ((lisp-mode . paxedit-mode)
@@ -2946,7 +2944,7 @@ title and duration."
   :bind* ("C-;" . iedit-mode))
 
 (use-package multiple-cursors
-  :ensure t
+  :straight t
   :bind
   (("C-d" . mc/mark-next-like-this)
    ("C-S-d" . mc/mark-previous-like-this))
@@ -2954,11 +2952,11 @@ title and duration."
   (setq mc/list-file (no-littering-expand-etc-file-name "mc-lists.el")))
 
 (use-package ace-mc
-  :ensure t
+  :straight t
   :bind ("C-M-<return>" . ace-mc-add-multiple-cursors))
 
 (use-package browse-kill-ring
-  :ensure t
+  :straight t
   :defer t
   :bind ("C-x C-y" . browse-kill-ring)
   :config (setq browse-kill-ring-quit-action 'save-and-restore))
@@ -2966,7 +2964,7 @@ title and duration."
 (use-package browse-at-remote :straight t)
 
 (use-package avy
-  :ensure t
+  :straight t
   :defer t
   :bind
   (("C-ø" . avy-goto-char)
@@ -2992,20 +2990,17 @@ re-enable afterwards."
   (avy-lead-face-2 ((t (:background "#2B2B2B")))))
 
 (use-package avy-zap
-  :ensure t
-  :defer t
+  :straight t
   :bind ("C-å" . avy-zap-to-char))
 
 (use-package expand-region
-  :ensure t
-  :defer t
+  :straight t
   :bind
   (("M-e" . er/expand-region)
    ("C-M-e" . er/contract-region)))
 
 (use-package change-inner
-  :ensure t
-  :defer t
+  :straight t
   :bind
   (("M-i" . copy-inner)
    ("M-o" . copy-outer)
@@ -3013,21 +3008,19 @@ re-enable afterwards."
    ("M-O" . change-outer)))
 
 (use-package move-text
-  :ensure t
-  :defer t
+  :straight t
   :bind
   (("C-S-<up>" . move-text-up)
    ("C-S-<down>" . move-text-down)))
 
 (use-package fullframe
-  :ensure t
-  :commands fullframe/maybe-restore-configuration
+  :straight t
   :config
   (fullframe magit-status magit-mode-quit-window)
   (fullframe list-packages quit-window))
 
 (use-package undo-tree
-  :ensure t
+  :straight t
   :defer t
   :diminish undo-tree-mode
   :commands global-undo-tree-mode
@@ -3061,7 +3054,7 @@ re-enable afterwards."
   (beginend-global-mode))
 
 (use-package fold-this
-  :ensure t
+  :straight t
   :bind
   (([(meta shift h)] . fold-this-unfold-all)
    ("M-h" . fold-this)
@@ -3070,7 +3063,7 @@ re-enable afterwards."
   (fold-this-overlay ((t (:foreground nil :background "#5f5f5f")))))
 
 (use-package which-key
-  :ensure t
+  :straight t
   :diminish which-key-mode
   :commands (which-key-mode
              which-key-setup-side-window-right)
@@ -3080,7 +3073,7 @@ re-enable afterwards."
   (which-key-mode))
 
 (use-package wgrep
-  :ensure t
+  :straight t
   :defer t
   :after grep
   :bind
@@ -3093,6 +3086,7 @@ re-enable afterwards."
   (setq wgrep-auto-save-buffer t))
 
 (use-package grep-context
+  :straight t
   :bind (:map compilation-mode-map
               ("+" . grep-context-more-around-point)
               ("-" . grep-context-less-around-point)
@@ -3104,6 +3098,7 @@ re-enable afterwards."
               ("-" . grep-context-less-around-point)))
 
 (use-package auth-source-pass
+  :straight t
   :commands (auth-source-pass-enable auth-source-pass-get)
   :config
   (auth-source-pass-enable)
@@ -3118,11 +3113,8 @@ re-enable afterwards."
   )
 
 (use-package exec-path-from-shell
+  :straight t
   :defer 3
-  :ensure t
-  :demand t
-  :commands (exec-path-from-shell-copy-env
-             exec-path-from-shell-initialize)
   :config
   (exec-path-from-shell-initialize)
   ;; try to grab the ssh-agent if it is running
@@ -3130,7 +3122,7 @@ re-enable afterwards."
   (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
 
 (use-package multi-term
-  :ensure t
+  :straight t
   :defer t
   :commands (multi-term-get-buffer
              multi-term-internal)
