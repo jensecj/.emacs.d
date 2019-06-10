@@ -111,6 +111,8 @@
   :straight (dash :host github :repo "magnars/dash.el"
                   :fork (:host github :repo "jensecj/dash.el")))
 
+(use-package dash-functional :commands (-cut))
+
 (use-package s ;; string things, s-trim, s-replace, etc.
   :straight (s :host github :repo "magnars/s.el"
                :fork (:host github :repo "jensecj/s.el")))
