@@ -2624,12 +2624,15 @@ in the same file."
   (diff-hl-dired-ignored ((t (:background "#2b2b2b")))))
 
 (use-package diff-hl-dired
+  ;; git highlighting for dired-mode, installed as part of `diff-hl'
   :after diff-hl
   :defer t
   :config
-  (defun jens/empty-fringe-bmp (_type _pos) 'diff-hl-bmp-empty)
+  (defun jens/empty-fringe-bmp (_type _pos)
+    "Always use the clean empty BMP for fringe display"
+    'diff-hl-bmp-empty)
 
-  ;; don't show fringe bitmaps
+  ;; Use clean fringe style for highlighting
   (setq diff-hl-fringe-bmp-function #'jens/empty-fringe-bmp)
   (advice-patch #'diff-hl-dired-highlight-items
                 'jens/empty-fringe-bmp
