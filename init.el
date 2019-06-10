@@ -229,6 +229,12 @@
 ;; easy 'commenting out' of sexps
 (defmacro comment (&rest _args))
 
+;; easy interactive lambda forms
+(defmacro xi (&rest body)
+  `(lambda ()
+     (interactive)
+     ,@body))
+
 ;;; built-in
 ;;;; settings
 
@@ -1264,12 +1270,6 @@ buffer."
   (save-buffer))
 
 ;;;;; lisp
-
-;; easy interactive lambda forms
-(defmacro xi (&rest body)
-  `(lambda ()
-     (interactive)
-     ,@body))
 
 (defun jens/one-shot-keybinding (key command)
   "Set a keybinding that disappear once you press a key that is
