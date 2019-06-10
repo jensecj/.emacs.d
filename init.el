@@ -3392,35 +3392,6 @@ initial search query."
           (delete-region (car bounds) (cdr bounds))
           (insert pick))))))
 
-(use-package company-box
-  :disabled t
-  :ensure t
-  :demand t
-  :after company
-  :config
-  (setq company-box-enable-icon t)
-  (setq company-box-show-single-candidate t)
-
-  (defun jens/company-box-icon-elisp (sym)
-    (when (derived-mode-p 'emacs-lisp-mode)
-      (let ((sym (if (stringp sym) (intern sym))))
-        (cond
-         ((functionp sym) (propertize "f" 'face font-lock-function-name-face))
-         ((macrop sym) (propertize "m" 'face font-lock-keyword-face))
-         ((boundp sym) (propertize "v" 'face font-lock-variable-name-face))
-         (t "")))))
-
-  (delete 'company-box-icons--elisp company-box-icons-functions)
-  (add-to-list 'company-box-icons-functions #'jens/company-box-icon-elisp)
-
-  (setf (map-elt company-box-frame-parameters 'side) 0.2)
-  (setf (map-elt company-box-frame-parameters 'min-width) 40)
-
-  (company-box-mode +1)
-
-  :custom-face
-  (company-box-selection ((t (:foreground nil :background "black")))))
-
 (use-package company-lsp
   :straight t
   :defer t
