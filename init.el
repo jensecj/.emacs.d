@@ -2087,7 +2087,7 @@ _t_: go to today-file
   (setq magit-todos-exclude-globs '("var/*")))
 
 (use-package auctex
-  :ensure t
+  :straight t
   :defer t
   :hook (LaTeX-mode-hook . reftex-mode)
   :defines (TeX-view-program-selection
@@ -2683,7 +2683,7 @@ in the same file."
 ;;;; misc packages
 
 (use-package flx :straight t) ;; fuzzy searching for ivy, etc.
-(use-package rg :straight t :commands (rg-read-pattern rg-project-root rg-default-alias rg-run)) ;; ripgrep in emacs
+(use-package rg :straight t :after wgrep) ;; ripgrep in emacs
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
 (use-package dumb-jump :straight t :defer t)
 (use-package with-editor :straight t :defer t) ;; run commands in `emacsclient'
@@ -3343,7 +3343,7 @@ initial search query."
 ;;;; auto completion
 
 (use-package company
-  :ensure t
+  :straight t
   :defer t
   :diminish company-mode
   :hook (emacs-lisp-mode . company-mode)
@@ -3416,17 +3416,17 @@ initial search query."
   (company-box-selection ((t (:foreground nil :background "black")))))
 
 (use-package company-lsp
-  :ensure t
+  :straight t
   :defer t
   :config
   (push 'company-lsp company-backends))
 
 (use-package company-flx
-  :ensure t
+  :straight t
   :hook (company-mode . company-flx-mode))
 
 (use-package company-c-headers
-  :ensure t
+  :straight t
   :defer t
   :config
   (setq c++-include-files
