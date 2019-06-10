@@ -1824,7 +1824,7 @@ If DIR is nil, download to current directory."
 
 (use-package today
   :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
-  :defer t
+  :after elfeed
   :commands (today-hydra/body)
   :bind
   (("C-x t" . today-hydra/body)
@@ -1962,6 +1962,7 @@ _t_: go to today-file
 (use-package lowkey-mode-line
   :straight (lowkey-mode-line :repo "git@github.com:jensecj/lowkey-mode-line.el.git")
   :demand t
+  :after pdf-tools
   :commands lowkey-mode-line-enable
   :config
   (lowkey-mode-line-enable)
@@ -2192,7 +2193,7 @@ clipboard."
 
 (use-package pdf-tools
   :straight t
-  :defer t
+  :demand t
   :commands pdf-tools-install
   :hook (doc-view-mode . pdf-tools-install)
   :bind
@@ -2324,7 +2325,7 @@ clipboard."
 (use-package slime
   :defer t
   :straight t
-  :after eros
+  :after macrostep
   :commands (jens/qlot-slime slime-start)
   :bind (:map slime-mode-map
               ("C-x C-e" . jens/slime-eval-last-sexp))
@@ -2673,7 +2674,6 @@ in the same file."
 
 (use-package counsel-projectile
   :straight t
-  :defer t
   :after (counsel projectile)
   :commands counsel-projectile-mode
   :config (counsel-projectile-mode))
@@ -2758,7 +2758,7 @@ of (command . word) to be used by `flyspell-do-correct'."
 (use-package org-web-tools
   :straight t
   :defer t
-  :after s
+  :after (org s)
   :config
   (require 'subr-x)
 
@@ -2815,7 +2815,7 @@ title and duration."
 
 (use-package smart-jump
   :straight t
-  :demand t
+  :defer t
   :commands (smart-jump-register
              smart-jump-simple-find-references)
   :functions (jens/smart-jump-find-references-with-rg
