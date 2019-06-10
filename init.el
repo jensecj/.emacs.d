@@ -81,7 +81,8 @@
 ;; needs to be required after its settings are set
 (require 'use-package)
 
-;; add :download keyword to `use-package'
+;; add :download keyword to `use-package' to easily download files
+;; from the web
 (defun use-package-normalize/:download (name-symbol keyword args)
   (use-package-only-one (symbol-name keyword) args
     (lambda (label arg)
@@ -525,7 +526,7 @@ seconds."
         ("M--" . nil)))
 
 (use-package cc-mode
-  :bind*
+  :bind
   (:map java-mode-map
         ("C-c C-c" . projectile-compile-project))
   (:map c++-mode-map
@@ -661,7 +662,6 @@ seconds."
   (save-place-mode +1))
 
 (use-package savehist ;; persist some variables between sessions
-  :defer 2
   :commands savehist-mode
   :config
   (setq savehist-file (no-littering-expand-var-file-name "savehist"))
@@ -707,7 +707,8 @@ number input"
       (display-line-numbers-mode -1))))
 
 (use-package smerge-mode ;; easily handle merge conflicts
-  :bind (:map smerge-mode-map ("C-c ^" . jens/smerge/body))
+  :bind
+  (:map smerge-mode-map ("C-c ^" . jens/smerge/body))
   :config
   (defhydra jens/smerge ()
     "Move between buffers."
@@ -3480,6 +3481,8 @@ initial search query."
 (bind-key* "C-x r q" 'save-buffers-kill-terminal)
 ;; Kill emacs, mnemonic is C-x REALLY KILL
 (bind-key* "C-x r k" 'save-buffers-kill-emacs)
+
+(bind-key* "C-c C-SPC" #'pop-to-mark-command)
 
 ;; don't close emacs
 (unbind-key "C-x C-c")
