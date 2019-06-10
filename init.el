@@ -160,8 +160,42 @@
 
 (log-info "Defining fundamental defuns")
 
+(defun longest-list (&rest lists)
+  (-max-by
+   (lambda (a b)
+     (if (and (seqp a) (seqp b))
+         (> (length a) (length b))
+       1))
+   lists))
+
+;; (longest-list 'i '(1 2 3) 'z '(a b c) '(æ ø å))
+
+(defun broadcast (&rest args)
+  (let ((max-width (length (apply #'longest-list args))))
+    (-map-when
+     (lambda (a) (atom a))
+     (lambda (a) (-repeat max-width a))
+     args)))
+
+;; (broadcast 'a '(1 2 3) 'z '(a b c) '(æ ø å))
+
+(defun -mapcar (fn &rest lists)
+  "Map FN to the car of each list in LISTS."
   (cond
-(defun broadcast (fn &rest args)
+   ((null lists) nil)
+   ((null (car lists)) nil)
+   ((listp lists)
+    (cons
+     (apply fn (-map #'car lists))
+     (apply #'-mapcar fn (-map #'cdr lists))))))
+
+(defun transpose (&rest lists)
+  (apply #'-mapcar #'-list lists))
+
+;; (transpose '(1 2 3) '(a b c))
+
+(defun apply* (fn &rest args)
+  "Apply FN to all combinations of ARGS."
   (let* ((args (-map-when #'atom #'list args))
          (combinations (apply #'-table-flat #'list args)))
     (dolist (c combinations)
@@ -169,19 +203,19 @@
 
 (defun add-hook* (hooks fns)
   "Add FNS to HOOKS."
-  (broadcast #'add-hook hooks fns))
+  (apply* #'add-hook hooks fns))
 
 (defun remove-hook* (hooks fns)
   "Remove FNS from HOOKs."
-  (broadcast #'remove-hook hooks fns))
+  (apply* #'remove-hook hooks fns))
 
 (defun advice-add* (syms where fns)
   "Advice FNS to SYMS."
-  (broadcast (-cut advice-add <> where <>) syms fns))
+  (apply* (-cut advice-add <> where <>) syms fns))
 
 (defun advice-remove* (syms fns)
-  "Remove FNS from SYMS."
-  (broadcast #'advice-remove syms fns))
+  "Remove advice FNS from SYMS."
+  (apply* #'advice-remove syms fns))
 
 (defun advice-nuke (sym)
   "Remove all advice from symbol SYM."
