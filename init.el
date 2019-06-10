@@ -93,6 +93,8 @@
          (error 'file-already-exists)))
      (use-package-process-keywords name rest state))))
 
+(add-to-list 'use-package-keywords :download)
+
 ;; make sure straight.el is installed
 (defvar bootstrap-version)
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
