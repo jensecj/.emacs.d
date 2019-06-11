@@ -99,7 +99,7 @@
 
 (defun use-package-handler/:download (name _keyword url rest state)
   (let* ((file (url-unhex-string (f-filename url)))
-         (dir (f-join user-emacs-directory "third-party/"))
+         (dir user-vendor-directory)
          (path (f-join dir file)))
     (if (f-exists-p path)
         (message "%s already exists, skipping download." file)
@@ -134,7 +134,7 @@
 
 (use-package advice-patch ;; easy way to patch packages
   :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"
-  :load-path "third-party/")
+  :load-path "vendor/")
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
 ;; extensions of `use-package', so we need to have those packages.
@@ -2817,7 +2817,7 @@ title and duration."
 
 (use-package help-fns+
   :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
-  :load-path "third-party")
+  :load-path "vendor")
 
 (use-package amx
   :straight t
