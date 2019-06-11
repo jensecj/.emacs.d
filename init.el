@@ -21,7 +21,9 @@
 
 ;; directories for elisp things
 (defconst user-elpa-directory (locate-user-emacs-file "elpa/"))
+(defconst user-straight-directory (locate-user-emacs-file "straight/"))
 (defconst user-lisp-directory (locate-user-emacs-file "lisp/"))
+(defconst user-vendor-directory (locate-user-emacs-file "vendor/"))
 
 ;; add user directories to the load-path
 (add-to-list 'load-path user-lisp-directory)
@@ -440,7 +442,9 @@ times."
  '((nil . ((buffer-read-only . t)))))
 
 ;; start some files in read-only buffers by default
-(dolist (dir (list user-elpa-directory))
+(dolist (dir (list user-elpa-directory
+                   user-vendor-directory
+                   user-straight-directory))
   (dir-locals-set-directory-class (file-truename dir) 'read-only))
 
 ;; package.el should ignore elpa/ files being read-only
