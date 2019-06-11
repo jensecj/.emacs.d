@@ -257,10 +257,11 @@ to run and `this-command-keys' returns the key pressed."
     (add-to-list list-var e append compare-fn)))
 
 ;; easy 'commenting out' of sexps
-(defmacro comment (&rest _args))
+(defmacro comment (&rest _args) "Ignore everything inside this sexp.")
 
 ;; easy interactive lambda forms
 (defmacro xi (&rest body)
+  "Convenience macro for creating interactive lambdas."
   `(lambda ()
      (interactive)
      ,@body))
