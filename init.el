@@ -1203,7 +1203,7 @@ With prefix ARG, ask for file to open."
 (defun jens/inspect-variable-at-point (&optional arg)
   "Inspect variable at point."
   (interactive "P")
-  (require 'doc-at-point)
+  (require 'dokumat)
   (let* ((sym (symbol-at-point))
          (value (cond
                  ((fboundp sym) (symbol-function sym))
@@ -1219,8 +1219,8 @@ With prefix ARG, ask for file to open."
 
       ;; TODO: don't use `dap' posframe, create a posframe for all-purpose emacs things
 
-      (funcall doc-at-point-display-fn
-               (doc-at-point-elisp--fontify-as-code
+      (funcall dokumat-display-fn
+               (dokumat-elisp--fontify-as-code
                 (with-output-to-string
                   (pp value)))))))
 
@@ -1738,7 +1738,7 @@ current line."
                  "repos.el"
                  "lisp/*.el"
                  "modes/*.el"
-                 "straight/repos/doc-at-point.el/*.el"
+                 "straight/repos/dokumat.el/*.el"
                  "straight/repos/etmux.el/*.el"
                  "straight/repos/lowkey-mode-line.el/*.el"
                  "straight/repos/today.el/*.el"
@@ -1937,19 +1937,20 @@ _t_: go to today-file
 
     ("q" nil "quit")))
 
-(use-package doc-at-point
-  :straight (doc-at-point :repo "git@github.com:jensecj/doc-at-point.el.git")
+(use-package dokumat
+  :straight (dokumat :repo "git@github.com:jensecj/dokumat.el.git")
   :defer t
   :bind
-  (("C-+" . doc-at-point)
-   :map company-active-map
-   ("C-+" . doc-at-point-company-menu-selection-quickhelp))
-  :commands (doc-at-point
-             doc-at-point-company-menu-selection-quickhelp
-             doc-at-point-setup-defaults)
+  (("C-+" . dokumat))
+  :commands (dokumat
+             dokumat-company-menu-selection-quickhelp
+             dokumat-setup-defaults)
   :config
-  (setq doc-at-point--posframe-font "Source Code Pro Semibold")
-  (doc-at-point-setup-defaults)
+  (setq dokumat--posframe-font "Source Code Pro Semibold")
+  (dokumat-setup-defaults)
+
+  (with-eval-after-load 'company
+    (bind-key "C-+" #'dokumat-company-menu-selection-quickhelp company-active-map))
   :custom-face
   (internal-border ((t (:background "#777777")))))
 
