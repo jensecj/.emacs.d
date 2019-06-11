@@ -4,8 +4,8 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: library, maintenance
-;; Package-Version: 20190526
-;; Version: 0.1
+;; Package-Version: 20190610
+;; Version: 0.1.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -49,12 +49,9 @@
       (setq ver (-snoc ver 0)))
 
     (cond
-     ((equal loc 'patch)
-      (message (format "%s.%s.%s" (nth 0 ver) (nth 1 ver) (1+ (nth 2 ver)))))
-     ((equal loc 'minor)
-      (message (format "%s.%s.%s" (nth 0 ver) (1+ (nth 1 ver)) 0)))
-     ((equal loc 'major)
-      (message (format "%s.%s.%s" (1+ (nth 0 ver)) 0 0))))))
+     ((equal loc 'patch) (format "%s.%s.%s" (nth 0 ver) (nth 1 ver) (1+ (nth 2 ver))))
+     ((equal loc 'minor) (format "%s.%s.%s" (nth 0 ver) (1+ (nth 1 ver)) 0))
+     ((equal loc 'major) (format "%s.%s.%s" (1+ (nth 0 ver)) 0 0)))))
 
 (defun dev--update-version (ver)
   "Update the package version to VER."
