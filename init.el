@@ -3214,7 +3214,7 @@ paste for multi-term mode."
    ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
    ("C-<return>" . ivy-immediate-done)
    :map ivy-occur-grep-mode-map
-   ("d" . ivy-occur-delete-candidate))
+   ("D" . ivy-occur-delete-candidate))
   :config
   (setq ivy-height 15)
   (setq ivy-count-format "")
