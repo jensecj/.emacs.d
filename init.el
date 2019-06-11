@@ -83,9 +83,9 @@
 
 ;; add :download keyword to `use-package' to easily download files
 ;; from the web
-(defun use-package-normalize/:download (name-symbol keyword args)
+(defun use-package-normalize/:download (_name-symbol keyword args)
   (use-package-only-one (symbol-name keyword) args
-    (lambda (label arg)
+    (lambda (_label arg)
       (cond
        ((stringp arg) arg)
        ((symbolp arg) (symbol-name arg))
@@ -102,7 +102,7 @@
       (message "%s does not exist, downloading %s to %s" file url path)
       (when (not (f-exists-p dir))
         (f-mkdir dir))
-      (condition-case ex
+      (condition-case _ex
           (url-copy-file url path)
         (error '())))
     (use-package-concat
@@ -1760,7 +1760,7 @@ If DIR is nil, download to current directory."
   (let* ((dir (or dir default-directory))
          (file (url-unhex-string (f-filename url)))
          (path (f-join dir file)))
-    (condition-case ex
+    (condition-case _ex
         (url-copy-file url path overwrite)
       (error 'file-already-exists))))
 
@@ -1824,7 +1824,6 @@ If DIR is nil, download to current directory."
 
 (use-package today
   :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
-  :after elfeed
   :commands (today-hydra/body)
   :bind
   (("C-x t" . today-hydra/body)
@@ -2049,7 +2048,7 @@ _t_: go to today-file
   :config
   (setq cider-repl-use-pretty-printing t
         cider-prompt-for-symbol nil
-        cider-pprint-fn 'pprint
+        cider-print-fn 'pprint
         cider-repl-pop-to-buffer-on-connect nil
         cider-default-cljs-repl nil
         cider-check-cljs-repl-requirements nil))
