@@ -1946,10 +1946,11 @@ _t_: go to today-file
              dokumat-setup-defaults)
   :config
   (setq dokumat--posframe-font "Source Code Pro Semibold")
-  (dokumat-setup-defaults)
 
   (with-eval-after-load 'company
     (bind-key "C-+" #'dokumat-company-menu-selection-quickhelp company-active-map))
+
+  (dokumat-setup-defaults)
   :custom-face
   (internal-border ((t (:background "#777777")))))
 
