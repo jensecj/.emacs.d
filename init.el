@@ -56,6 +56,7 @@
 (log-info "Loading fundamental third-party packages")
 
 ;; make sure straight.el is installed
+;; TODO: replace find(1) with fd to make init faster?
 (defvar bootstrap-version)
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
@@ -85,6 +86,7 @@
 
 ;; add :download keyword to `use-package' to easily download files
 ;; from the web
+;; TODO: make work with list of strings, see :load-path?
 (defun use-package-normalize/:download (_name-symbol keyword args)
   (use-package-only-one (symbol-name keyword) args
     (lambda (_label arg)
@@ -1697,6 +1699,7 @@ current line."
   ("<left>" #'previous-buffer "previous")
   ("<right>" #'next-buffer "next"))
 
+;; TODO: make tail-buffer work for the buffer its called in, not just *Messages*
 (defun jens/tail-message-buffer ()
   "Toggle tailing the *Message* buffer every time something is written to it."
   (interactive)
