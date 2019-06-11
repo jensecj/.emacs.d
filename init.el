@@ -210,13 +210,34 @@
     (dolist (c combinations)
       (apply fn c))))
 
-(defun add-hook* (hooks fns)
+(defun add-hook* (hooks fns &optional append local)
   "Add FNS to HOOKS."
-  (apply* #'add-hook hooks fns))
+  (apply* (-cut add-hook <> <> append local) hooks fns))
 
-(defun remove-hook* (hooks fns)
+(defun add-one-shot-hook (hook fn &optional append local)
+  "Add FN to HOOK, and remove it after is has triggered once."
+  (let ((sym (gensym "one-shot-hook-")))
+    (fset sym
+          (lambda ()
+            (remove-hook hook sym local)
+            (funcall fn)))
+    (add-hook hook sym append local)))
+
+(defun add-one-shot-hook* (hooks fns &optional append local)
+  "Add FNS to HOOKS, and remove them after triggering once."
+  (apply* (-cut add-one-shot-hook <> <> append local) hooks fns))
+
+(defmacro before-next-command (&rest body)
+  "Execute BODY before the next command is run.
+
+Inside BODY `this-command' is bound to the command that is about
+to run and `this-command-keys' returns the key pressed."
+  `(add-one-shot-hook 'pre-command-hook
+                      (lambda () ,@body)))
+
+(defun remove-hook* (hooks fns &optional local)
   "Remove FNS from HOOKs."
-  (apply* #'remove-hook hooks fns))
+  (apply* (-cut remove-hook <> <> local) hooks fns))
 
 (defun advice-add* (syms where fns)
   "Advice FNS to SYMS."
@@ -1400,22 +1421,6 @@ not in the overlay-map"
   (condition-case nil
       (forward-sexp 1)
     (error (forward-char))))
-
-(defun add-one-shot-hook (hook fun &optional append local)
-  (let ((sym (gensym "one-shot-hook-")))
-    (fset sym
-          (lambda ()
-            (remove-hook hook sym local)
-            (funcall fun)))
-    (add-hook hook sym append local)))
-
-(defmacro before-next-command (&rest body)
-  "Execute BODY before the next command is run.
-
-Inside BODY `this-command' is bound to the command that is about
-to run and `this-command-keys' returns the key pressed."
-  `(add-one-shot-hook 'pre-command-hook
-                      (lambda () ,@body)))
 
 (defun jens/open-line-below ()
   "Insert a line below the current line, indent it, and move to
