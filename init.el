@@ -3558,6 +3558,8 @@ initial search query."
 ;; Completion that uses many different methods to find options.
 (global-set-key (kbd "C-.") 'hippie-expand)
 
+(bind-key "C-c C-o" #'browse-url-at-point)
+
 ;;;; for homemade things
 
 ;; Better C-a
