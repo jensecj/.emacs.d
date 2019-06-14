@@ -2850,6 +2850,20 @@ title and duration."
   :config
   (amx-mode))
 
+(use-package prescient :straight t)
+
+(use-package ivy-prescient
+  :after (prescient ivy)
+  :straight t
+  :config
+  (ivy-prescient-mode +1))
+
+(use-package company-prescient
+  :straigxht t
+  :after (prescient company)
+  :config
+  (company-prescient-mode +1))
+
 (use-package smart-jump
   :straight t
   :defer t
