@@ -10,6 +10,8 @@
 (defun log-warning (txt) (message "! %s" txt))
 (defun log-success (txt) (message "@ %s" txt))
 
+(setq debug-on-error t)
+
 (log-info "Started initializing emacs!")
 (log-info "Doing early initialization")
 
@@ -160,14 +162,25 @@
   (setq auto-save-file-name-transforms `((".*" ,auto-save-dir t)))
   (setq auto-save-list-file-prefix auto-save-dir))
 
-;; keep emacs custom settings in a separate file, and load it if it exists.
-(setq custom-file (locate-user-emacs-file "custom.el"))
-(if (file-exists-p custom-file)
-    (load custom-file))
+;; don't use the customize system, all settings are keps in this file
+(setq custom-file null-device)
+
+;; don't load default.el
+(setq inhibit-default-init t)
 
 ;;;; fundamental defuns
 
 (log-info "Defining fundamental defuns")
+
+;; easy 'commenting out' of sexps
+(defmacro comment (&rest _args) "Ignore everything inside this sexp.")
+
+;; easy interactive lambda forms
+(defmacro xi (&rest body)
+  "Convenience macro for creating interactive lambdas."
+  `(lambda ()
+     (interactive)
+     ,@body))
 
 (defun longest-list (&rest lists)
   (-max-by
@@ -255,16 +268,6 @@ to run and `this-command-keys' returns the key pressed."
   "Add multiple ELEMENTS to a LIST-VAR."
   (dolist (e elements)
     (add-to-list list-var e append compare-fn)))
-
-;; easy 'commenting out' of sexps
-(defmacro comment (&rest _args) "Ignore everything inside this sexp.")
-
-;; easy interactive lambda forms
-(defmacro xi (&rest body)
-  "Convenience macro for creating interactive lambdas."
-  `(lambda ()
-     (interactive)
-     ,@body))
 
 ;;; built-in
 ;;;; settings
