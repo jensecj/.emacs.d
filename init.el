@@ -3641,7 +3641,6 @@ initial search query."
 ;; TODO: replace `magithub' with `forge'
 ;; TODO: colorize message/compile buffer
 ;; TODO: add separator in compile mode
-;; TODO: replace `amx' with `prescient'
 ;; TODO: test with ert?
 
 (provide 'init)
