@@ -1790,6 +1790,13 @@ With `prefix-arg', insert the UUID at point in the current buffer."
       (insert id))
     (message "%s" id)))
 
+(defun jens/list-active-minor-modes ()
+  "List all active minor modes."
+  (interactive)
+  (let ((modes (--filter (and (boundp it) (symbol-value it)) minor-mode-list)))
+    (ivy-read "Active Minor Modes: " modes
+              :action (lambda (m) (dokumat-other-buffer m)))))
+
 ;;;; packages
 
 (log-info "Loading homemade packages")
