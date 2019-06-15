@@ -1029,9 +1029,6 @@ number input"
   ;; general settings ;;
   ;;;;;;;;;;;;;;;;;;;;;;
 
-  ;; `$ $' is a pair for latex-math in org-mode
-  (setq org-extra-electric-pairs '((?\$ . ?\$)))
-
   (setq org-catch-invisible-edits 'show-and-error)
   (setq org-log-done 'time)
 
@@ -1041,6 +1038,8 @@ number input"
 
   ;; keep #+BEGIN_SRC blocks aligned with their contents
   (setq org-edit-src-content-indentation 0)
+
+  (setq org-use-speed-commands t)
 
   ;; don't indent things
   (setq org-adapt-indentation nil)
@@ -1089,6 +1088,9 @@ number input"
       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
   (add-hook 'org-after-todo-statistics-hook #'jens/org-summary-todo)
+
+  ;; `$ $' is a pair for latex-math in org-mode
+  (setq org-extra-electric-pairs '((?\$ . ?\$)))
 
   (defun jens/org-add-electric-pairs ()
     (setq-local electric-pair-pairs (-concat org-extra-electric-pairs electric-pair-pairs)))
