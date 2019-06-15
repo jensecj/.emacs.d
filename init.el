@@ -472,7 +472,7 @@ times."
 ;; start some files in read-only buffers by default
 (dolist (dir (list user-elpa-directory
                    user-vendor-directory
-                   user-straight-directory))
+                   source-directory))
   (dir-locals-set-directory-class (file-truename dir) 'read-only))
 
 ;; package.el should ignore elpa/ files being read-only
@@ -592,7 +592,7 @@ seconds."
    :map dired-mode-map
    ("C-." . dired-omit-mode)
    ("SPC" . jens/dired-toggle-mark)
-   ("T" . dired-create-empty-file))
+   ("C-+" . dired-create-empty-file))
   :config
   ;; pull in extra functionality for dired
   (load-library "dired-x")
@@ -3250,7 +3250,7 @@ paste for multi-term mode."
 
   (ivy-mode)
   :custom-face
-  (ivy-current-match ((t (:foreground nil :background "#292929" :height 110 :box nil :underline nil)))))
+  (ivy-current-match ((t (:foreground nil :background "#292929" :height 110)))))
 
 (use-package counsel
   :straight t
@@ -3326,8 +3326,10 @@ initial search query."
     (if (region-active-p)
         (let ((query (buffer-substring-no-properties (region-beginning) (region-end))))
           (deactivate-mark)
-          (swiper query))
-      (call-interactively #'swiper))))
+          (swiper-isearch query))
+      (call-interactively #'swiper-isearch)))
+  :custom-face
+  (swiper-line-face ((t (:foreground nil :background "#292929" :height 110)))))
 
 (use-package bookmark+
   :straight (bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus")
