@@ -2285,12 +2285,12 @@ clipboard."
              :nick "jensecj"
              :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
 
+;;;; extensions to built-in packages
+
 (use-package erc-hl-nicks
-  :ensure t
+  :straight t
   :defer t
   :commands erc-hl-nicks-enable)
-
-;;;; extensions to built-in packages
 
 (use-package dired-filter
   :straight t
