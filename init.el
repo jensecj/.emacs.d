@@ -6,7 +6,7 @@
 (setq-default lexical-binding t)
 
 ;; some functions for logging
-(defun log-info (txt) (message "# %s" txt))
+(defun log-info (txt) (message "\n# %s" txt))
 (defun log-warning (txt) (message "! %s" txt))
 (defun log-success (txt) (message "@ %s" txt))
 
@@ -65,7 +65,7 @@
       (bootstrap-version 5))
   (message "bootstrapping straight...")
   (unless (file-exists-p bootstrap-file)
-    (log-warning "straight.el was not found, installing.")
+    (log-info "straight.el was not found, installing.")
     (with-current-buffer
         (url-retrieve-synchronously
          "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
@@ -450,7 +450,7 @@ times."
     (dotimes (_ 10)
       (when (= p (point))
         (apply orig-fun args)))))
-(advice-add 'pop-to-mark-command :around #'jens/pop-to-mark-command)
+(advice-add #'pop-to-mark-command :around #'jens/pop-to-mark-command)
 
 ;; allows us to type 'C-u C-SPC C-SPC...' instead of having to re-type 'C-u'
 ;; every time.
@@ -620,7 +620,7 @@ seconds."
         (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
       (set-buffer-modified-p nil)))
 
-  (advice-add 'dired-readin :after #'jens/dired-sort)
+  (advice-add #'dired-readin :after #'jens/dired-sort)
 
   ;; use bigger fringes in dired-mode
   (add-hook 'dired-mode-hook (lambda () (setq left-fringe-width 10)))
@@ -908,7 +908,7 @@ number input"
   (defun jens/recentf-cleanup (orig-fun &rest args)
     "Silence `recentf-auto-cleanup'."
     (shut-up (apply orig-fun args)))
-  (advice-add 'recentf-cleanup :around #'jens/recentf-cleanup)
+  (advice-add #'recentf-cleanup :around #'jens/recentf-cleanup)
 
   (recentf-mode +1))
 
@@ -2646,7 +2646,7 @@ in the same file."
   :after outshine
   :config
   ;; highlight the entire line with outline-level face, even if collapsed.
-  (advice-add 'outline-flag-region :after 'backline-update))
+  (advice-add #'outline-flag-region :after 'backline-update))
 
 (use-package flycheck
   :straight t
@@ -3075,7 +3075,7 @@ title and duration."
   :straight t
   :after helpful
   :config
-  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+  (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 (use-package iedit
   :straight t
