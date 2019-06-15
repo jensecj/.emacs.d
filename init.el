@@ -989,6 +989,10 @@ number input"
   :defer t
   :config (setq browse-url-firefox-program "firefox"))
 
+(use-package shr
+  :config
+  (setq shr-use-colors nil))
+
 (use-package mu4e
   :straight t
   :defer t
@@ -997,7 +1001,10 @@ number input"
   (jens/load-secrets)
 
   (setq mu4e-get-mail-command "mbsync -a")
-  (setq mu4e-html2text-command "w3m -dump -T text/html")
+
+  (require 'mu4e-contrib)
+  (setq mu4e-html2text-command 'mu4e-shr2text)
+
   (setq mu4e-maildir user-mail-directory)
   (setq mu4e-attachment-dir (f-join user-mail-directory "attachments"))
 
@@ -1034,6 +1041,9 @@ number input"
 
   (add-hook 'mu4e-headers-mode-hook #'my/mu4e-change-headers)
   (advice-add #'mu4e-headers-rerun-search :before #'my/mu4e-change-headers)
+
+  (defun jens/prompt-gpg (&rest _args) (jens/load-secrets))
+  (advice-add #'mu4e-update-mail-and-index :before #'jens/prompt-gpg)
 
   (require 'org-mu4e)
   (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
