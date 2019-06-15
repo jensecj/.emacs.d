@@ -989,6 +989,83 @@ number input"
   :defer t
   :config (setq browse-url-firefox-program "firefox"))
 
+(use-package mu4e
+  :straight t
+  :defer t
+  :commands mu4e
+  :config
+  (jens/load-secrets)
+
+  (setq mu4e-get-mail-command "mbsync -a")
+  (setq mu4e-html2text-command "w3m -dump -T text/html")
+  (setq mu4e-maildir user-mail-directory)
+  (setq mu4e-attachment-dir (f-join user-mail-directory "attachments"))
+
+  (setq mu4e-completing-read-function #'ivy-completing-read)
+
+  (setq mu4e-change-filenames-when-moving t)
+  (setq mu4e-view-show-addresses 't)
+  (setq mu4e-compose-signature nil)
+  (setq mu4e-compose-signature-auto-include nil)
+  (setq mu4e-confirm-quit nil)
+  (setq mu4e-headers-show-threads t)
+  (setq mu4e-headers-include-related t)
+
+  (setq mu4e-bookmarks
+        '(("flag:unread AND NOT flag:trashed" "Unread"         ?u)
+          ("date:today..now"                  "Today"          ?t)
+          ("date:7d..now"                     "Last 7 days"    ?w)
+          ("date:31d..now"                    "Last 31 days"   ?m)
+          ("NOT flag:trashed"                 "All mail"       ?a)))
+
+  (setq mu4e-maildir-shortcuts '(("/archive" . ?r)
+                                 ("/drafts" . ?d)
+                                 ("/sent" . ?s)
+                                 ("/trash" . ?t)))
+
+  (defun my/mu4e-change-headers (&rest _args)
+    (interactive)
+    (setq mu4e-headers-fields
+          `((:human-date . 12)
+            (:flags . 4)
+            (:from-or-to . 15)
+            (:subject . ,(- (window-body-width) 47))
+            (:size . 7))))
+
+  (add-hook 'mu4e-headers-mode-hook #'my/mu4e-change-headers)
+  (advice-add #'mu4e-headers-rerun-search :before #'my/mu4e-change-headers)
+
+  (require 'org-mu4e)
+  (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
+
+  (require 'smtpmail)
+  (setq sendmail-program "msmtp")
+  (setq message-sendmail-extra-arguments '("--read-envelope-from"))
+  (setq message-send-mail-function 'message-send-mail-with-sendmail)
+
+  (setq mail-specify-envelope-from t)
+  (setq mail-envelope-from 'header)
+  (setq message-sendmail-envelope-from 'header)
+  (setq message-sendmail-f-is-evil t)
+
+  (defun jens/mu4e ()
+    "Jump to mu4e maildir using completing-read."
+    (interactive)
+    (when-let ((maildirs (mu4e-get-maildirs))
+               (pick (completing-read "maildir: " maildirs)))
+      (mu4e~headers-jump-to-maildir pick)))
+  :custom-face
+  ;; TODO: change unread-face?
+  (mu4e-header-highlight-face ((t (:inherit region :underline nil)))))
+
+(use-package mu4e-maildirs-extension
+  :straight t
+  :after mu4e
+  :config
+  (setq mu4e-maildirs-extension-maildir-default-prefix "*")
+  (setq mu4e-maildirs-extension-maildir-indent 4)
+  (mu4e-maildirs-extension))
+
 ;;;;; org-mode
 
 ;; I want to use the version of org-mode from upstream.
