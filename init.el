@@ -26,6 +26,7 @@
 (defconst user-straight-directory (locate-user-emacs-file "straight/"))
 (defconst user-lisp-directory (locate-user-emacs-file "lisp/"))
 (defconst user-vendor-directory (locate-user-emacs-file "vendor/"))
+(defconst user-mail-directory (f-full "~/private/mail"))
 
 ;; add user directories to the load-path
 (add-to-list 'load-path user-lisp-directory)
@@ -890,7 +891,8 @@ number input"
   (setq recentf-exclude
         `(,(regexp-quote
             (locate-user-emacs-file no-littering-var-directory))
-          "COMMIT_EDITMSG"))
+          "COMMIT_EDITMSG"
+          (f-join user-mail-directory "*")))
 
   ;; save a bunch of recent items
   (setq recentf-max-saved-items 1000)
