@@ -3095,7 +3095,8 @@ title and duration."
   :straight t
   :bind
   (("C-d" . mc/mark-next-like-this)
-   ("C-S-d" . mc/mark-previous-like-this))
+   ("C-S-d" . mc/mark-previous-like-this)
+   ("C-M-a" . mc/mark-all-like-this))
   :init
   (setq mc/list-file (no-littering-expand-etc-file-name "mc-lists.el")))
 
