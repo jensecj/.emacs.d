@@ -3484,7 +3484,11 @@ initial search query."
 (use-package zenburn-theme
   :straight t
   :demand t
+  :functions zenburn-get
   :config
+  (defmacro zenburn-get (color)
+    (cdr (assoc color zenburn-default-colors-alist)))
+
   (load-theme 'zenburn t)
   :custom-face
   (mode-line ((t (:box nil))))
