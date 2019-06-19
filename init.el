@@ -3579,8 +3579,8 @@ initial search query."
     (if (region-active-p)
         (let ((query (buffer-substring-no-properties (region-beginning) (region-end))))
           (deactivate-mark)
-          (swiper-isearch query))
-      (call-interactively #'swiper-isearch)))
+          (swiper query))
+      (call-interactively #'swiper)))
   :custom-face
   (swiper-line-face ((t (:foreground nil :background "#292929" :height 110)))))
 
