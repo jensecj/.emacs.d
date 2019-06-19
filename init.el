@@ -829,11 +829,17 @@ number input"
       (if (and eldoc-msg
                (member major-mode sp-lisp-modes))
           (let* ((parts (s-split ": " eldoc-msg))
-                 (sym (car parts))
-                 (args (cadr parts)))
+                 (sym-name (car parts))
+                 (sym (intern sym-name))
+                 (args (cadr parts))
+                 (doc (and (fboundp sym) (documentation sym 'raw)))
+                 (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
+                 (short-doc (when short-doc (dokumat-elisp--fontify-as-doc short-doc))))
             (cond
-             ((string= args "()") (format "(%s)" sym))
-             (t (format "(%s %s)" sym (substring args 1 (- (length args) 1))))))
+             ((string= args "()") (format "(%s)" sym-name))
+             (t (format "(%s %s)\t%s" sym-name
+                        (substring args 1 (- (length args) 1))
+                        short-doc))))
         eldoc-msg))
     (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message))
 
