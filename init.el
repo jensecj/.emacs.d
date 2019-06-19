@@ -834,7 +834,7 @@ number input"
                  (args (cadr parts))
                  (doc (and (fboundp sym) (documentation sym 'raw)))
                  (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
-                 (short-doc (when short-doc (dokumat-elisp--fontify-as-doc short-doc))))
+                 (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
             (cond
              ((string= args "()") (format "(%s)" sym-name))
              (t (format "(%s %s)\t%s" sym-name
@@ -1372,7 +1372,7 @@ With prefix ARG, ask for file to open."
 (defun jens/inspect-variable-at-point (&optional arg)
   "Inspect variable at point."
   (interactive "P")
-  (require 'dokumat)
+  (require 'dokument)
   (let* ((sym (symbol-at-point))
          (value (cond
                  ((fboundp sym) (symbol-function sym))
@@ -1388,8 +1388,8 @@ With prefix ARG, ask for file to open."
 
       ;; TODO: don't use `dap' posframe, create a posframe for all-purpose emacs things
 
-      (funcall dokumat-display-fn
-               (dokumat-elisp--fontify-as-code
+      (funcall dokument-display-fn
+               (dokument-elisp--fontify-as-code
                 (with-output-to-string
                   (pp value)))))))
 
@@ -1893,7 +1893,7 @@ current line."
                  "repos.el"
                  "lisp/*.el"
                  "modes/*.el"
-                 "straight/repos/dokumat.el/*.el"
+                 "straight/repos/dokument.el/*.el"
                  "straight/repos/etmux.el/*.el"
                  "straight/repos/lowkey-mode-line.el/*.el"
                  "straight/repos/today.el/*.el"
@@ -1934,7 +1934,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   (interactive)
   (let ((modes (--filter (and (boundp it) (symbol-value it)) minor-mode-list)))
     (ivy-read "Active Minor Modes: " modes
-              :action (lambda (m) (dokumat-other-buffer m)))))
+              :action (lambda (m) (dokument-other-buffer m)))))
 
 ;;;; packages
 
@@ -2112,21 +2112,21 @@ _t_: go to today-file
 
     ("q" nil "quit")))
 
-(use-package dokumat
-  :straight (dokumat :repo "git@github.com:jensecj/dokumat.el.git")
+(use-package dokument
+  :straight (dokument :repo "git@github.com:jensecj/dokument.el.git")
   :defer t
   :bind
-  (("C-+" . dokumat))
-  :commands (dokumat
-             dokumat-company-menu-selection-quickhelp
-             dokumat-setup-defaults)
+  (("C-+" . dokument))
+  :commands (dokument
+             dokument-company-menu-selection-quickhelp
+             dokument-setup-defaults)
   :config
-  (setq dokumat--posframe-font "Source Code Pro Semibold")
+  (setq dokument--posframe-font "Source Code Pro Semibold")
 
   (with-eval-after-load 'company
-    (bind-key "C-+" #'dokumat-company-menu-selection-quickhelp company-active-map))
+    (bind-key "C-+" #'dokument-company-menu-selection-quickhelp company-active-map))
 
-  (dokumat-use-defaults)
+  (dokument-use-defaults)
   :custom-face
   (internal-border ((t (:background "#777777")))))
 
