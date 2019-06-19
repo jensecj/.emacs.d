@@ -26,7 +26,7 @@
 (defconst user-straight-directory (locate-user-emacs-file "straight/"))
 (defconst user-lisp-directory (locate-user-emacs-file "lisp/"))
 (defconst user-vendor-directory (locate-user-emacs-file "vendor/"))
-(defconst user-mail-directory (f-full "~/private/mail"))
+(defconst user-mail-directory "~/private/mail")
 
 ;; add user directories to the load-path
 (add-to-list 'load-path user-lisp-directory)
@@ -990,8 +990,10 @@ number input"
   :config (setq browse-url-firefox-program "firefox"))
 
 (use-package shr
+  :defer t
   :config
-  (setq shr-use-colors nil))
+  (setq shr-use-colors nil)
+  (setq shr-width 100))
 
 (use-package mu4e
   :straight t
@@ -1000,23 +1002,16 @@ number input"
   :config
   (jens/load-secrets)
 
+  ;;;;;;;;;;;;;;;;;;;;;;
+  ;; general settings ;;
+  ;;;;;;;;;;;;;;;;;;;;;;
+
   (setq mu4e-get-mail-command "mbsync -a")
-
-  (require 'mu4e-contrib)
-  (setq mu4e-html2text-command 'mu4e-shr2text)
-
   (setq mu4e-maildir user-mail-directory)
   (setq mu4e-attachment-dir (f-join user-mail-directory "attachments"))
-
   (setq mu4e-completing-read-function #'ivy-completing-read)
-
-  (setq mu4e-change-filenames-when-moving t)
-  (setq mu4e-view-show-addresses 't)
-  (setq mu4e-compose-signature nil)
-  (setq mu4e-compose-signature-auto-include nil)
   (setq mu4e-confirm-quit nil)
-  (setq mu4e-headers-show-threads t)
-  (setq mu4e-headers-include-related t)
+  (setq mu4e-change-filenames-when-moving t)
 
   (setq mu4e-bookmarks
         '(("flag:unread AND NOT flag:trashed" "Unread"         ?u)
@@ -1030,20 +1025,49 @@ number input"
                                  ("/sent" . ?s)
                                  ("/trash" . ?t)))
 
+  ;; prmopt for pinentry when attempting to fetch new mail
+  (defun jens/prompt-gpg (&rest _args) (jens/load-secrets))
+  (advice-add #'mu4e-update-mail-and-index :before #'jens/prompt-gpg)
+
+  ;;;;;;;;;;;;;
+  ;; headers ;;
+  ;;;;;;;;;;;;;
+
+  (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+  (setq mu4e-headers-show-threads t)
+  (setq mu4e-headers-include-related t)
+
   (defun my/mu4e-change-headers (&rest _args)
     (interactive)
     (setq mu4e-headers-fields
-          `((:human-date . 12)
-            (:flags . 4)
-            (:from-or-to . 15)
-            (:subject . ,(- (window-body-width) 47))
-            (:size . 7))))
+          `((:human-date . 18)
+            (:from-or-to . 20)
+            (:subject . ,(- (window-body-width) 45))
+            (:size . 10))))
 
   (add-hook 'mu4e-headers-mode-hook #'my/mu4e-change-headers)
   (advice-add #'mu4e-headers-rerun-search :before #'my/mu4e-change-headers)
 
-  (defun jens/prompt-gpg (&rest _args) (jens/load-secrets))
-  (advice-add #'mu4e-update-mail-and-index :before #'jens/prompt-gpg)
+  ;;;;;;;;;;
+  ;; view ;;
+  ;;;;;;;;;;
+
+  (setq mu4e-view-show-addresses 't)
+  (setq mu4e-view-date-format "%Y-%m-%d %H:%M")
+
+  ;;;;;;;;;;;;;
+  ;; compose ;;
+  ;;;;;;;;;;;;;
+
+  (setq mu4e-compose-signature nil)
+  (setq mu4e-compose-signature-auto-include nil)
+
+  ;;;;;;;;;;;;
+  ;; extras ;;
+  ;;;;;;;;;;;;
+
+  (require 'mu4e-contrib)
+  (setq mu4e-html2text-command #'mu4e-shr2text)
 
   (require 'org-mu4e)
   (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
