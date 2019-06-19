@@ -2832,7 +2832,8 @@ in the same file."
   :demand t
   :config
   (setq shackle-rules
-        '(((rx "*xref*") :regexp t :same t :inhibit-window-quit t)))
+        '(((rx "*undo-tree*") :regexp t :select t :align right :inhibit-window-quit t)
+          ((rx "*xref*") :regexp t :same t :inhibit-window-quit t)))
   (shackle-mode +1))
 
 (use-package projectile
