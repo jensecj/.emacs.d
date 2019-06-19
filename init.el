@@ -653,6 +653,7 @@ seconds."
 (use-package ispell
   :defer t
   :config
+  (ispell-change-dictionary "english")
   (setq ispell-program-name (executable-find "aspell"))
   (setq ispell-grep-command "rg")
   (setq ispell-silently-savep t))
@@ -666,12 +667,10 @@ seconds."
   :bind
   (("C-M-," . flyspell-goto-next-error))
   :config
-  (ispell-change-dictionary "english")
 
   (defun enable-spellchecking ()
     "Enable spellchecking in the current buffer."
     (interactive)
-    (ispell-change-dictionary "english")
     (flyspell-prog-mode)
     (flyspell-buffer)))
 
