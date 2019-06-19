@@ -325,6 +325,7 @@ to run and `this-command-keys' returns the key pressed."
 
 ;; fold characters in searches (e.g. 'a' matches 'â')
 (setq search-default-mode 'char-fold-to-regexp)
+(setq replace-char-fold t)
 
 ;; transparently open compressed files
 (auto-compression-mode t)
@@ -650,6 +651,7 @@ seconds."
 (use-package outline :diminish outline-minor-mode)
 
 (use-package ispell
+  :defer t
   :config
   (setq ispell-program-name (executable-find "aspell"))
   (setq ispell-grep-command "rg")
@@ -686,6 +688,7 @@ seconds."
   (add-hook* '(text-mode-hook prog-mode-hook) #'jens/show-trailing-whitespace))
 
 (use-package elec-pair ;; insert parens-type things in pairs
+  :demand t
   :config
   (setq electric-pair-pairs
         '((?\( . ?\))
@@ -700,6 +703,7 @@ seconds."
   (electric-pair-mode +1))
 
 (use-package paren ;; highlight matching parens
+  :demand t
   :config
   (setq show-paren-delay 0.1)
   (setq show-paren-style 'expression)
@@ -720,17 +724,19 @@ seconds."
   (abbrev-mode +1))
 
 (use-package subword ;; easily navigate silly cased words
+  :demand t
   :diminish subword-mode
-  :commands global-subword-mode
-  :config (global-subword-mode 1))
+  :config
+  (global-subword-mode 1))
 
 (use-package saveplace ;; save point position between sessions
+  :demand t
   :config
   (setq save-place-file (no-littering-expand-var-file-name "saveplaces"))
   (save-place-mode +1))
 
 (use-package savehist ;; persist some variables between sessions
-  :commands savehist-mode
+  :demand t
   :config
   (setq savehist-file (no-littering-expand-var-file-name "savehist"))
   ;; save every minute
@@ -746,8 +752,8 @@ seconds."
 
 (use-package autorevert
   ;; always show the version of a file as it appears on disk
+  :demand t
   :diminish auto-revert-mode
-  :commands global-auto-revert-mode
   :config
   ;; also auto refresh dired, but be quiet about it
   (setq global-auto-revert-non-file-buffers t)
@@ -880,6 +886,7 @@ number input"
   :hook (org-mode . auto-fill-mode))
 
 (use-package uniquify ;; give buffers unique names
+  :demand t
   :config (setq uniquify-buffer-name-style 'forward))
 
 (use-package tramp ;; easily access and edit files on remote machines
@@ -891,6 +898,7 @@ number input"
   (setq tramp-verbose 6))
 
 (use-package recentf ;; save a list of recently visited files.
+  :demand t
   :commands recentf-mode
   :config
   ;; TODO: maybe move to var directory?
@@ -921,6 +929,7 @@ number input"
   (recentf-mode +1))
 
 (use-package replace
+  :defer t
   :bind
   (("C-c r" . jens/replace)
    ("C-c q" . jens/query-replace))
@@ -1925,8 +1934,8 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
 (log-info "Loading homemade packages")
 
-(use-package org-extra)
-(use-package dev-extra)
+(use-package org-extra :after org :demand t)
+(use-package dev-extra :demand t)
 
 (use-package blog
   :load-path "~/vault/blog/src/"
@@ -1935,6 +1944,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
              blog-find-posts-file))
 
 (use-package struere
+  :defer t
   :bind (("C-c n" . struere-buffer))
   :config
   (struere-add 'org-mode #'jens/org-indent)
@@ -1942,6 +1952,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
 (use-package views
   :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
+  :defer t
   :bind
   (("M-p p" . views-push)
    ("M-p k" . views-pop)
@@ -1949,7 +1960,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
 (use-package sane-windows
   :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
-  :demand t
+  :defer t
   :bind* (("C-x 0" . nil)
           ("C-x 1" . nil)
           ("C-x o" . delete-other-windows)
@@ -1962,6 +1973,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
           ("M-S-<down>" . sw/move-border-down)))
 
 (use-package fullscreen
+  :defer t
   :bind ("M-f" . fullscreen-toggle))
 
 (use-package etmux
@@ -1981,6 +1993,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
 (use-package today
   :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
+  :defer t
   :commands (today-hydra/body)
   :bind
   (("C-x t" . today-hydra/body)
@@ -2113,6 +2126,7 @@ _t_: go to today-file
 
 (use-package replace-at-point
   :straight (replace-at-point :repo "git@github.com:jensecj/replace-at-point.el.git")
+  :defer t
   :bind ("C-M-SPC" . replace-at-point)
   :config
   (replace-at-point-setup-defaults))
@@ -2144,7 +2158,7 @@ _t_: go to today-file
 
 ;;;; major modes and extentions
 
-(use-package lsp-mode :defer t :straight t)
+(use-package lsp-mode :straight t)
 (use-package cmake-mode :straight t :mode "\\CmakeLists.txt\\'")
 (use-package dockerfile-mode :straight t :mode "\\Dockerfile\\'")
 (use-package gitconfig-mode :straight t :mode "\\.gitconfig\\'")
@@ -2153,7 +2167,7 @@ _t_: go to today-file
 (use-package markdown-mode :straight t :mode ("\\.md\\'" "\\.card\\'"))
 (use-package scss-mode :straight t :mode "\\.scss\\'")
 (use-package tuareg :straight t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
-(use-package restclient :straight t :defer t)
+(use-package restclient :straight t)
 
 (use-package rust-mode
   :straight t
@@ -2970,7 +2984,8 @@ title and duration."
 
 (use-package help-fns+
   :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
-  :load-path "vendor")
+  :load-path "vendor"
+  :demand t)
 
 (use-package amx
   :straight t
@@ -2986,7 +3001,7 @@ title and duration."
   (ivy-prescient-mode +1))
 
 (use-package company-prescient
-  :straigxht t
+  :straight t
   :after (prescient company)
   :config
   (company-prescient-mode +1))
@@ -3507,11 +3522,13 @@ initial search query."
 
 (use-package posframe
   :straight t
+  :demand t
   :config
   (setq posframe-mouse-banish nil))
 
 (use-package eros
   :straight t
+  :demand t
   :hook (emacs-lisp-mode . eros-mode)
   :config
   (eros-mode +1))
