@@ -1122,7 +1122,112 @@ number input"
   (setq mu4e-maildirs-extension-maildir-indent 4)
   (mu4e-maildirs-extension))
 
+(use-package notmuch
+  :straight t
+  :config
+  (define-key notmuch-show-mode-map "d"
+    (lambda ()
+      "toggle deleted tag for message"
+      (interactive)
+      (if (member "deleted" (notmuch-show-get-tags))
+          (notmuch-show-tag (list "-deleted"))
+        (notmuch-show-tag (list "+deleted")))))
+
+  (setq notmuch-show-logo nil)
+
+  (setq notmuch-column-control 1000)
+
+  (setq notmuch-hello-sections
+        (list
+         #'notmuch-hello-insert-saved-searches
+	       #'notmuch-hello-insert-search
+	       #'notmuch-hello-insert-alltags
+	       #'notmuch-hello-insert-recent-searches
+         ))
+
+  (setq notmuch-saved-searches
+        '(
+          (:name "today" :query "date:today" :key "t" :sort-order newest-first)
+          (:name "7 days" :query "date:7d..today" :key "w" :sort-order newest-first)
+          (:name "31 days" :query "date:31d..today" :key "m" :sort-order newest-first)
+          (:name "unread" :query "tag:unread" :key "u")
+          (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
+          (:name "sent" :query "tag:sent" :key "s" :sort-order newest-first)
+          (:name "drafts" :query "tag:draft" :key "d")
+          (:name "all mail" :query "*" :key "a" :sort-order newest-first)
+          (:name "trash" :query "tag:deleted" :key "a" :sort-order newest-first)
+          )
+        )
+
+  (define-key notmuch-show-mode-map "d"
+    (lambda ()
+      "toggle deleted tag for message"
+      (interactive)
+      (if (member "deleted" (notmuch-show-get-tags))
+          (notmuch-show-tag (list "-deleted"))
+        (notmuch-show-tag (list "+deleted" "-inbox")))))
+  (define-key notmuch-search-mode-map "d"
+    (lambda (&optional beg end)
+      "delete thread"
+      (interactive (notmuch-interactive-region))
+      (notmuch-search-tag (list "+deleted" "-inbox") beg end)))
+
+  (defun jens/notmuch ()
+    "Jump to a saved search."
+    (interactive)
+    (let* ((data (notmuch-hello-query-counts
+                  notmuch-saved-searches
+                  :show-empty-searches notmuch-show-empty-saved-searches)))
+      (ivy-read "search: "
+                (-map (lambda (m) (map-elt m :name)) data)
+                :require-match t
+                :action (lambda (query) (notmuch-search query)))))
+  )
+
 ;;;;; org-mode
+
+(progn ;; the straight.el org-mode hack
+  (require 'subr-x)
+  (straight-use-package 'git)
+
+  (defun org-git-version ()
+    "The Git version of org-mode.
+  Inserted by installing org-mode or when a release is made."
+    (require 'git)
+    (let ((git-repo (expand-file-name
+                     "straight/repos/org/" user-emacs-directory)))
+      (string-trim
+       (git-run "describe"
+                "--match=release\*"
+                "--abbrev=6"
+                "HEAD"))))
+
+  (defun org-release ()
+    "The release version of org-mode.
+  Inserted by installing org-mode or when a release is made."
+    (require 'git)
+    (let ((git-repo (expand-file-name
+                     "straight/repos/org/" user-emacs-directory)))
+      (string-trim
+       (string-remove-prefix
+        "release_"
+        (git-run "describe"
+                 "--match=release\*"
+                 "--abbrev=0"
+                 "HEAD")))))
+
+  (provide 'org-version)
+
+  (comment
+   (straight-use-package
+    '(org-plus-contrib
+      :repo "https://code.orgmode.org/bzg/org-mode.git"
+      :local-repo "org"
+      :files (:defaults "contrib/lisp/*.el")
+      :includes (org))))
+
+  (straight-use-package 'org-plus-contrib)
+  )
 
 ;; I want to use the version of org-mode from upstream.
 ;; remove the built-in org-mode from the load path, so it does not get loaded
