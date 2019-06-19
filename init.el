@@ -2350,6 +2350,9 @@ clipboard."
   ;; need to use plain isearch, pdf-tools hooks into it to handle searching
   (:map pdf-view-mode-map ("C-s" . isearch-forward))
   :config
+  (add-hook 'pdf-view-mode-hook #'auto-revert-mode)
+  (add-hook 'doc-view-mode-hook #'auto-revert-mode)
+
   ;; TODO: figure out how to disable epdf asking to rebuild when starting
   ;; emacsclient, it does not work.
 
