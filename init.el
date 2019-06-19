@@ -87,66 +87,72 @@
 ;; needs to be required after its settings are set
 (require 'use-package)
 
-;; add :download keyword to `use-package' to easily download files
-;; from the web
-;; TODO: make work with list of strings, see :load-path?
-(defun use-package-normalize/:download (_name-symbol keyword args)
-  (use-package-only-one (symbol-name keyword) args
-    (lambda (_label arg)
-      (cond
-       ((stringp arg) arg)
-       ((symbolp arg) (symbol-name arg))
-       (t
-        (use-package-error
-         ":download wants a url (a string)"))))))
-
-(defun use-package-handler/:download (name _keyword url rest state)
-  (let* ((file (url-unhex-string (f-filename url)))
-         (dir user-vendor-directory)
-         (path (f-join dir file)))
-    (if (f-exists-p path)
-        (message "%s already exists, skipping download." file)
-      (message "%s does not exist, downloading %s to %s" file url path)
-      (when (not (f-exists-p dir))
-        (f-mkdir dir))
-      (condition-case _ex
-          (url-copy-file url path)
-        (error '())))
-    (use-package-concat
-     (use-package-process-keywords name rest state))))
-
-(add-to-list 'use-package-keywords :download)
-
-(use-package dash ;; functional things, -map, -concat, etc
+(use-package dash ;; working with lists, -map, -concat, etc
+  :demand t
   :straight (dash :host github :repo "magnars/dash.el"
                   :fork (:host github :repo "jensecj/dash.el")))
 
-(use-package dash-functional :commands (-cut))
+(use-package dash-functional :commands (-cut) :demand t)
 
 (use-package s ;; string things, s-trim, s-replace, etc.
+  :demand t
   :straight (s :host github :repo "magnars/s.el"
                :fork (:host github :repo "jensecj/s.el")))
 
 (use-package f ;; file-system things, f-exists-p, f-base, etc.
+  :demand t
   :straight (f :host github :repo "rejeep/f.el"
                :fork (:host github :repo "jensecj/f.el")))
 
 (use-package ht ;; a great hash-table wrapper.
+  :demand t
   :straight (ht :host github :repo "Wilfred/ht.el"
                 :fork (:host github :repo "jensecj/ht.el")))
 
+(progn
+  ;; add :download keyword to `use-package' to easily download files
+  ;; from the web
+  ;; TODO: make work with list of strings, see :load-path?
+  (defun use-package-normalize/:download (_name-symbol keyword args)
+    (use-package-only-one (symbol-name keyword) args
+      (lambda (_label arg)
+        (cond
+         ((stringp arg) arg)
+         ((symbolp arg) (symbol-name arg))
+         (t
+          (use-package-error
+           ":download wants a url (a string)"))))))
+
+  (defun use-package-handler/:download (name _keyword url rest state)
+    (let* ((file (url-unhex-string (f-filename url)))
+           (dir user-vendor-directory)
+           (path (f-join dir file)))
+      (if (f-exists-p path)
+          (message "%s already exists, skipping download." file)
+        (message "%s does not exist, downloading %s to %s" file url path)
+        (when (not (f-exists-p dir))
+          (f-mkdir dir))
+        (condition-case _ex
+            (url-copy-file url path)
+          (error '())))
+      (use-package-concat
+       (use-package-process-keywords name rest state))))
+
+  (add-to-list 'use-package-keywords :download))
+
 (use-package advice-patch ;; easy way to patch packages
   :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"
-  :load-path "vendor/")
+  :load-path "vendor/"
+  :demand t)
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
 ;; extensions of `use-package', so we need to have those packages.
-(use-package bind-key :straight t)
-(use-package diminish :straight t)
-(use-package delight :straight t)
-(use-package hydra :straight t)
-(use-package shut-up :straight t)
-(use-package ov :straight t)
+(use-package bind-key :straight t :demand t)
+(use-package diminish :straight t :demand t)
+(use-package delight :straight t :demand t)
+(use-package hydra :straight t :demand t)
+(use-package shut-up :straight t :demand t)
+(use-package ov :straight t :demand t)
 
 ;;;; cache, temp files, etc.
 
