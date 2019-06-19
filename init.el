@@ -234,6 +234,27 @@
   "Add FNS to HOOKS."
   (apply* (-cut add-hook <> <> append local) hooks fns))
 
+(defun remove-hook* (hooks fns &optional local)
+  "Remove FNS from HOOKs."
+  (apply* (-cut remove-hook <> <> local) hooks fns))
+
+(defun advice-add* (syms where fns)
+  "Advice FNS to SYMS."
+  (apply* (-cut advice-add <> where <>) syms fns))
+
+(defun advice-remove* (syms fns)
+  "Remove advice FNS from SYMS."
+  (apply* #'advice-remove syms fns))
+
+(defun advice-nuke (sym)
+  "Remove all advice from symbol SYM."
+  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
+
+(defun add-to-list* (list-var elements &optional append compare-fn)
+  "Add multiple ELEMENTS to a LIST-VAR."
+  (dolist (e elements)
+    (add-to-list list-var e append compare-fn)))
+
 (defun add-one-shot-hook (hook fn &optional append local)
   "Add FN to HOOK, and remove it after is has triggered once."
   (let ((sym (gensym "one-shot-hook-")))
@@ -255,26 +276,7 @@ to run and `this-command-keys' returns the key pressed."
   `(add-one-shot-hook 'pre-command-hook
                       (lambda () ,@body)))
 
-(defun remove-hook* (hooks fns &optional local)
-  "Remove FNS from HOOKs."
-  (apply* (-cut remove-hook <> <> local) hooks fns))
 
-(defun advice-add* (syms where fns)
-  "Advice FNS to SYMS."
-  (apply* (-cut advice-add <> where <>) syms fns))
-
-(defun advice-remove* (syms fns)
-  "Remove advice FNS from SYMS."
-  (apply* #'advice-remove syms fns))
-
-(defun advice-nuke (sym)
-  "Remove all advice from symbol SYM."
-  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
-
-(defun add-to-list* (list-var elements &optional append compare-fn)
-  "Add multiple ELEMENTS to a LIST-VAR."
-  (dolist (e elements)
-    (add-to-list list-var e append compare-fn)))
 
 ;;; built-in
 ;;;; settings
