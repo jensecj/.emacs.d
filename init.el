@@ -1045,6 +1045,7 @@ number input"
   (setq mu4e-maildir-shortcuts '(("/archive" . ?r)
                                  ("/drafts" . ?d)
                                  ("/sent" . ?s)
+                                 ("/gmail/Inbox" . ?i)
                                  ("/trash" . ?t)))
 
   ;; prmopt for pinentry when attempting to fetch new mail
@@ -1054,6 +1055,7 @@ number input"
   ;;;;;;;;;;;;;
   ;; headers ;;
   ;;;;;;;;;;;;;
+  (add-to-list 'mu4e-headers-actions '("org-contact-add" . mu4e-action-add-org-contact) t)
 
   (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
   (setq mu4e-headers-show-threads t)
@@ -1062,7 +1064,8 @@ number input"
   (defun my/mu4e-change-headers (&rest _args)
     (interactive)
     (setq mu4e-headers-fields
-          `((:human-date . 18)
+          `((:flags . 4)
+            (:human-date . 18)
             (:from-or-to . 20)
             (:subject . ,(- (window-body-width) 45))
             (:size . 10))))
@@ -1070,9 +1073,23 @@ number input"
   (add-hook 'mu4e-headers-mode-hook #'my/mu4e-change-headers)
   (advice-add #'mu4e-headers-rerun-search :before #'my/mu4e-change-headers)
 
+  (add-to-list 'mu4e-marks
+               '(tag
+                 :char       "T"
+                 :prompt     "tag"
+                 :ask-target (lambda () (read-string "add tag: "))
+                 :action      (lambda (docid msg target)
+                                (let* ((tags (s-split " " target))
+                                       (tags (s-join "," tags)))
+                                  (mu4e-action-retag-message msg tags)))))
+
+  (mu4e~headers-defun-mark-for tag)
+  (define-key mu4e-headers-mode-map (kbd "T") #'mu4e-headers-mark-for-tag)
+
   ;;;;;;;;;;
   ;; view ;;
   ;;;;;;;;;;
+  (add-to-list 'mu4e-view-actions '("org-contact-add" . mu4e-action-add-org-contact) t)
 
   (setq mu4e-view-show-addresses 't)
   (setq mu4e-view-date-format "%Y-%m-%d %H:%M")
@@ -1080,10 +1097,98 @@ number input"
   ;;;;;;;;;;;;;
   ;; compose ;;
   ;;;;;;;;;;;;;
-
+  (setq mu4e-compose-complete-addresses nil) ;; using my own completion
+  (setq mu4e-user-mail-address-list `(,user-mail-address))
   (setq mu4e-compose-signature nil)
   (setq mu4e-compose-signature-auto-include nil)
+  (add-hook* 'mu4e-compose-mode-hook '(flyspell-mode org-mu4e-compose-org-mode))
 
+  (defun jens/mu4e-contacts ()
+    "Return all contacts from `mu4e'."
+    ;; taken from `mu4e~request-contacts-maybe'.
+
+    (setq mu4e-contacts-func 'mu4e~fill-contacts)
+
+    (mu4e~proc-contacts
+     mu4e-compose-complete-only-personal
+     (when mu4e-compose-complete-only-after
+	     (float-time
+	      (apply 'encode-time
+	             (mu4e-parse-time-string mu4e-compose-complete-only-after)))))
+
+    (when mu4e~contacts
+      (ht-keys mu4e~contacts)))
+
+  (defun jens/org-contacts ()
+    "Return all contacts from `org-contacts', in 'NAME <EMAIL>' format."
+    (let ((data (-map #'caddr (org-contacts-db))))
+      (-map
+       (lambda (d)
+         (let ((email (cdr (assoc-string org-contacts-email-property d)))
+               (name (cdr (assoc-string "ITEM" d))))
+           (format "%s <%s>" (or name "") (or email ""))))
+       data)))
+
+  (defun jens/ivy-email-action (contact)
+    (with-ivy-window
+      (end-of-line)
+      (insert contact)))
+
+  (defun jens/ivy-email-more ()
+    "Insert email address and prompt for another."
+    (interactive)
+    (ivy-call)
+    (with-ivy-window
+      (insert ", "))
+    (delete-minibuffer-contents)
+    (setq ivy-text ""))
+
+  (defvar jens/ivy-email-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "," #'jens/ivy-email-more)
+      map))
+
+  (defun jens/mu4e-address-completion-handler ()
+    "Collect known mail addresses, and prompt the user to pick one."
+    (let* ((org-contacts (jens/org-contacts))
+           (mu4e-contacts (jens/mu4e-contacts))
+           (merged-contacts (-concat org-contacts mu4e-contacts))
+           (deduped-contacts (delete-dups merged-contacts))
+           (cleaned-contacts (delq nil deduped-contacts)))
+      (ivy-read "Contact: " cleaned-contacts
+                :action #'jens/ivy-email-action
+                :keymap jens/ivy-email-map)))
+
+  (defun jens/mu4e-at-mail-header (&optional start)
+    "Return `t' if point is at an email header, nil otherwise.
+
+Taken from `mu4e~compose-complete-contact'."
+    (let ((mail-abbrev-mode-regexp mu4e~compose-address-fields-regexp)
+	        (eoh ;; end-of-headers
+	         (save-excursion
+	           (goto-char (point-min))
+	           (search-forward-regexp mail-header-separator nil t))))
+      ;; try to complete only when we're in the headers area,
+      ;; looking  at an address field.
+      (when (and eoh (> eoh (point)) (mail-abbrev-in-expansion-header-p))
+        (let* ((end (point))
+	             (start
+		            (or start
+		                (save-excursion
+		                  (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
+		                  (goto-char (match-end 0))
+		                  (point)))))
+          t))))
+
+  (defun jens/mu4e-complete-addresses ()
+    "Complete mail addresses when at a mail-header."
+    (interactive)
+    (when (jens/mu4e-at-mail-header)
+      (jens/mu4e-address-completion-handler)))
+
+  (add-hook 'mu4e-compose-mode-hook
+            (lambda ()
+              (add-hook 'completion-at-point-functions #'jens/mu4e-complete-addresses nil t)))
   ;;;;;;;;;;;;
   ;; extras ;;
   ;;;;;;;;;;;;
@@ -1092,17 +1197,19 @@ number input"
   (setq mu4e-html2text-command #'mu4e-shr2text)
 
   (require 'org-mu4e)
-  (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
+  (setq org-mu4e-convert-to-html t)
+  (setq org-mu4e-link-query-in-headers-mode nil)
 
   (require 'smtpmail)
   (setq sendmail-program "msmtp")
+
+  (require 'message)
   (setq message-sendmail-extra-arguments '("--read-envelope-from"))
   (setq message-send-mail-function 'message-send-mail-with-sendmail)
 
-  (setq mail-specify-envelope-from t)
-  (setq mail-envelope-from 'header)
   (setq message-sendmail-envelope-from 'header)
   (setq message-sendmail-f-is-evil t)
+  (setq message-fill-column 80)
 
   (defun jens/mu4e ()
     "Jump to mu4e maildir using completing-read."
