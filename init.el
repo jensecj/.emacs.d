@@ -3634,16 +3634,12 @@ paste for multi-term mode."
   (setq counsel-outline-display-style 'path)
   (setq counsel-outline-face-style 'verbatim)
 
-  (setq
-   counsel-grep-base-command
-   "rg -i -M 250 --no-heading --line-number --color never '%s' %s")
-
   (setq counsel-yank-pop-height 25)
   (add-to-list 'ivy-height-alist '(counsel-yank-pop . 10))
 
   (setq counsel-yank-pop-separator
         (propertize "\n------------------------------------------\n"
-                    'face `(:foreground "#313131")))
+                    'face `(:foreground "#111111")))
 
   (defun jens/ripgrep ()
     "Interactively search the current directory. Jump to result using ivy."
