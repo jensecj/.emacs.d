@@ -1231,53 +1231,58 @@ Taken from `mu4e~compose-complete-contact'."
 
 (use-package notmuch
   :straight t
+  :defer t
   :config
-  (define-key notmuch-show-mode-map "d"
-    (lambda ()
-      "toggle deleted tag for message"
-      (interactive)
-      (if (member "deleted" (notmuch-show-get-tags))
-          (notmuch-show-tag (list "-deleted"))
-        (notmuch-show-tag (list "+deleted")))))
-
   (setq notmuch-show-logo nil)
-
   (setq notmuch-column-control 1000)
+  (add-to-list 'notmuch-archive-tags "+archived")
 
   (setq notmuch-hello-sections
         (list
          #'notmuch-hello-insert-saved-searches
 	       #'notmuch-hello-insert-search
 	       #'notmuch-hello-insert-alltags
-	       #'notmuch-hello-insert-recent-searches
-         ))
+	       #'notmuch-hello-insert-recent-searches))
 
   (setq notmuch-saved-searches
         '(
-          (:name "today" :query "date:today" :key "t" :sort-order newest-first)
-          (:name "7 days" :query "date:7d..today" :key "w" :sort-order newest-first)
-          (:name "31 days" :query "date:31d..today" :key "m" :sort-order newest-first)
           (:name "unread" :query "tag:unread" :key "u")
+          (:name "today" :query "date:today.. AND NOT tag:archived" :key "t" :sort-order newest-first)
+          (:name "7 days" :query "date:7d.. AND NOT tag:archived" :key "w" :sort-order newest-first)
+          (:name "31 days" :query "date:31d.. AND NOT tag:archived" :key "m" :sort-order newest-first)
           (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
           (:name "sent" :query "tag:sent" :key "s" :sort-order newest-first)
           (:name "drafts" :query "tag:draft" :key "d")
           (:name "all mail" :query "*" :key "a" :sort-order newest-first)
-          (:name "trash" :query "tag:deleted" :key "a" :sort-order newest-first)
-          )
-        )
+          (:name "archive" :query "tag:archived" :key "r" :sort-order newest-first)
+          (:name "trash" :query "tag:deleted" :key "h" :sort-order newest-first)
+          ))
 
-  (define-key notmuch-show-mode-map "d"
-    (lambda ()
-      "toggle deleted tag for message"
-      (interactive)
-      (if (member "deleted" (notmuch-show-get-tags))
-          (notmuch-show-tag (list "-deleted"))
-        (notmuch-show-tag (list "+deleted" "-inbox")))))
-  (define-key notmuch-search-mode-map "d"
-    (lambda (&optional beg end)
-      "delete thread"
-      (interactive (notmuch-interactive-region))
-      (notmuch-search-tag (list "+deleted" "-inbox") beg end)))
+  (defmacro show-set-tags (&rest tags)
+    `(lambda ()
+       (interactive)
+       (notmuch-show-add-tag ',tags)))
+
+  (defmacro search-set-tags (&rest tags)
+    `(lambda (&optional beg end)
+       (interactive)
+       (notmuch-search-add-tag ',tags beg end)))
+
+  (define-key notmuch-search-mode-map "d" (search-set-tags "-inbox" "+deleted"))
+  (define-key notmuch-show-mode-map "d" (show-set-tags "-inbox" "+deleted"))
+
+  (defun jens/notmuch-fetch-mail ()
+    ""
+    (interactive)
+    (shell-command-to-string "mbsync -a"))
+
+  (defun jens/notmuch-delete-mail ()
+    ""
+    (interactive)
+    (let* ((notmuch-cmd "notmuch search --output=files tag:deleted")
+           (cmd-result (shell-command-to-string notmuch-cmd))
+           (files (s-split "\n" cmd-result)))
+      (ivy-read "deleted mail: " files)))
 
   (defun jens/notmuch ()
     "Jump to a saved search."
@@ -1288,7 +1293,7 @@ Taken from `mu4e~compose-complete-contact'."
       (ivy-read "search: "
                 (-map (lambda (m) (map-elt m :name)) data)
                 :require-match t
-                :action (lambda (query) (notmuch-search query)))))
+                :action (lambda (query) (notmuch-search (map-elt data query))))))
   )
 
 ;;;;; org-mode
