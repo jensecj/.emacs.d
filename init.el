@@ -1027,7 +1027,7 @@ number input"
   ;;;;;;;;;;;;;;;;;;;;;;
   ;; general settings ;;
   ;;;;;;;;;;;;;;;;;;;;;;
-
+  (setq mu4e-org-contacts-file user-contacts-file)
   (setq mu4e-get-mail-command "mbsync -a")
   (setq mu4e-maildir user-mail-directory)
   (setq mu4e-attachment-dir (f-join user-mail-directory "attachments"))
