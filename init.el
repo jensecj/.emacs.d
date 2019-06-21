@@ -1234,6 +1234,7 @@ Taken from `mu4e~compose-complete-contact'."
   :config
   (setq notmuch-show-logo nil)
   (setq notmuch-column-control 1000)
+
   (add-to-list 'notmuch-archive-tags "+archived")
 
   (setq notmuch-hello-sections
@@ -1270,31 +1271,59 @@ Taken from `mu4e~compose-complete-contact'."
   (define-key notmuch-search-mode-map "d" (search-set-tags "-inbox" "+deleted"))
   (define-key notmuch-show-mode-map "d" (show-set-tags "-inbox" "+deleted"))
 
-  (defun jens/notmuch-fetch-mail ()
-    ""
+  (defun jens/notmuch-refresh (&optional silent)
+    "Calls `notmuch' to refresh the mailbox."
     (interactive)
-    (shell-command-to-string "mbsync -a"))
+    (let ((res (shell-command-to-string "notmuch new")))
+      (unless silent
+        (message "%s" res))))
+
+  (define-key notmuch-hello-mode-map (kbd "u") #'jens/notmuch-refresh)
+
+  (defun jens/notmuch-fetch-mail ()
+    "Calls `mbsync' to fetch new mail from the mailserver."
+    (interactive)
+    (message "notmuch: Fetching new mail.")
+    (message (shell-command-to-string "mbsync -a"))
+    (jens/notmuch-refresh))
+
+  (define-key notmuch-hello-mode-map (kbd "U") #'jens/notmuch-fetch-mail)
 
   (defun jens/notmuch-delete-mail ()
-    ""
+    "Delete the actual files on disk, for mail tagged with `deleted'."
     (interactive)
     (let* ((notmuch-cmd "notmuch search --output=files tag:deleted")
            (cmd-result (shell-command-to-string notmuch-cmd))
            (files (s-split "\n" cmd-result)))
       (ivy-read "deleted mail: " files)))
 
-  (defun jens/notmuch ()
-    "Jump to a saved search."
-    (interactive)
+  (defun jens/notmuch-candidates ()
+    "Return list of saved searches, as candidates for completion."
     (let* ((data (notmuch-hello-query-counts
                   notmuch-saved-searches
                   :show-empty-searches notmuch-show-empty-saved-searches)))
-      (ivy-read "search: "
-                (-map (lambda (m) (map-elt m :name)) data)
-                :require-match t
-                :action (lambda (query) (notmuch-search (map-elt data query))))))
-  )
+      (-map
+       (lambda (m)
+         (let ((name (map-elt m :name))
+               (mails (map-elt m :count))
+               (query (map-elt m :query))
+               (sort-order (map-elt m :sort-order)))
+           (-> (format "%s (%s)" name mails)
+               (propertize 'query query)
+               (propertize 'sort-order sort-order))))
+       data)))
 
+  (defun jens/notmuch ()
+    "Jump to a saved search via prompt.."
+    (interactive)
+    (jens/notmuch-refresh 'silent)
+    (ivy-read "search: "
+              (jens/notmuch-candidates)
+              :require-match t
+              :action (lambda (cand)
+                        (let ((query (get-text-property 0 'query cand))
+                              (sort-order (get-text-property 0 'sort-order cand)))
+                          (notmuch-search query (not (eq sort-order 'newest-first))))))))
 ;;;;; org-mode
 
 (progn ;; the straight.el org-mode hack
