@@ -3,7 +3,7 @@
 
  ("~/.emacs.d/init.el")
 
- ("~/.emacs.d/straight/repos/dokumat.el/")
+ ("~/.emacs.d/straight/repos/dokument.el/")
  ("~/.emacs.d/straight/repos/etmux.el/")
  ("~/.emacs.d/straight/repos/lowkey-mode-line.el/")
  ("~/.emacs.d/straight/repos/replace-at-point.el/")
