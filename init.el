@@ -1202,16 +1202,9 @@ Taken from `mu4e~compose-complete-contact'."
   (setq org-mu4e-convert-to-html t)
   (setq org-mu4e-link-query-in-headers-mode nil)
 
-  (require 'smtpmail)
-  (setq sendmail-program "msmtp")
-
   (require 'message)
-  (setq message-sendmail-extra-arguments '("--read-envelope-from"))
-  (setq message-send-mail-function 'message-send-mail-with-sendmail)
-
-  (setq message-sendmail-envelope-from 'header)
-  (setq message-sendmail-f-is-evil t)
-  (setq message-fill-column 80)
+  (require 'smtpmail)
+  (require 'smtpmail-async)
 
   (defun jens/mu4e ()
     "Jump to mu4e maildir using completing-read."
@@ -1230,6 +1223,43 @@ Taken from `mu4e~compose-complete-contact'."
   (setq mu4e-maildirs-extension-maildir-default-prefix "*")
   (setq mu4e-maildirs-extension-maildir-indent 4)
   (mu4e-maildirs-extension))
+
+(use-package message
+  :after (:any mu4e notmuch)
+  :config
+  (setq message-sendmail-envelope-from 'header)
+  (setq message-sendmail-extra-arguments '("--read-envelope-from"))
+  (setq message-sendmail-f-is-evil t)
+  (setq message-fill-column 80))
+
+(use-package sendmail
+  :after (:any mu4e notmuch)
+  :config
+  (setq mail-envelope-from 'header)
+  (setq mail-user-agent 'mu4e-user-agent)
+  (setq sendmail-program "msmtp")
+
+  (require 'async)
+  (defun async-sendmail-send-it ()
+    (let ((to          (message-field-value "To"))
+          (buf-content (buffer-substring-no-properties
+                        (point-min) (point-max))))
+      (message "Delivering message to %s..." to)
+      (async-start
+       `(lambda ()
+          (require 'sendmail)
+          (require 'message)
+          (with-temp-buffer
+            (insert ,buf-content)
+            (set-buffer-multibyte nil)
+            ,(async-inject-variables
+              "\\`\\(sendmail\\|message-\\|\\(user-\\)?mail\\)-\\|auth-sources\\|epg\\|nsm"
+              nil "\\`\\(mail-header-format-function\\|smtpmail-address-buffer\\|mail-mode-abbrev-table\\)")
+            (message-send-mail-with-sendmail)))
+       (lambda (&optional _ignore)
+         (message "Delivering message to %s...done" to)))))
+
+  (setq message-send-mail-function 'async-sendmail-send-it))
 
 (use-package notmuch
   :straight t
