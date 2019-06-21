@@ -1507,6 +1507,17 @@ Taken from `mu4e~compose-complete-contact'."
   ;;               org-latex-pdf-process
   ;;               '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
   ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+(use-package org-contacts
+  :after org
+  :defer t
+  :init
+  (setq org-contacts-enable-completion nil)
+  (setq org-contacts-icon-use-gravatar nil)
+  :config
+  (jens/load-secrets)
+
+  (setq org-contacts-files `(,user-contacts-file)))
+
   )
 
 ;;; homemade
