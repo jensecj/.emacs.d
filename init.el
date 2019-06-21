@@ -666,7 +666,6 @@ seconds."
   :bind
   (("C-M-," . flyspell-goto-next-error))
   :config
-
   (defun enable-spellchecking ()
     "Enable spellchecking in the current buffer."
     (interactive)
@@ -1547,7 +1546,6 @@ Taken from `mu4e~compose-complete-contact'."
   (setq org-contacts-icon-use-gravatar nil)
   :config
   (jens/load-secrets)
-
   (setq org-contacts-files `(,user-contacts-file)))
 
   )
@@ -2949,7 +2947,6 @@ clipboard."
   :hook ((c++-mode . #'lsp))
   :commands (lsp))
 
-(use-package rtags :ensure t :defer t :disabled t)
 (use-package clang-format :straight t :defer t)
 
 (use-package flymake-shellcheck
@@ -3219,7 +3216,6 @@ in the same file."
 (use-package rg :straight t :after wgrep) ;; ripgrep in emacs
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
 (use-package dumb-jump :straight t :defer t)
-(use-package with-editor :straight t :defer t) ;; run commands in `emacsclient'
 (use-package gist :straight t :defer t) ;; work with github gists
 (use-package popup :straight t)
 
@@ -3977,7 +3973,6 @@ initial search query."
 (bind-key* "\e\em" (xi (find-file "~/vault/git/org/roadmap.org")))
 (bind-key* "\e\et" (xi (find-file "~/vault/git/org/today.org")))
 (bind-key* "\e\ec" (xi (find-file "~/.emacs.d/init.el")))
-
 
 ;;;; for built-in things
 
