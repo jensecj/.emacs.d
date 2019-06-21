@@ -824,21 +824,24 @@ number input"
   (with-eval-after-load 'smartparens
     (defun jens/lispify-eldoc-message (eldoc-msg)
       "Change the format of eldoc messages for functions to `(fn args)'."
-      (if (and eldoc-msg
-               (member major-mode sp-lisp-modes))
-          (let* ((parts (s-split ": " eldoc-msg))
-                 (sym-name (car parts))
-                 (sym (intern sym-name))
-                 (args (cadr parts))
-                 (doc (and (fboundp sym) (documentation sym 'raw)))
-                 (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
-                 (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
-            (cond
-             ((string= args "()") (format "(%s)" sym-name))
-             (t (format "(%s %s)\t%s" sym-name
-                        (substring args 1 (- (length args) 1))
-                        short-doc))))
-        eldoc-msg))
+      (shut-up
+        (save-window-excursion
+          (save-mark-and-excursion
+            (if (and eldoc-msg
+                     (member major-mode sp-lisp-modes))
+                (let* ((parts (s-split ": " eldoc-msg))
+                       (sym-name (car parts))
+                       (sym (intern sym-name))
+                       (args (cadr parts))
+                       (doc (and (fboundp sym) (documentation sym 'raw)))
+                       (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
+                       (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
+                  (cond
+                   ((string= args "()") (format "(%s)" sym-name))
+                   (t (format "(%s %s)\t\t%s" sym-name
+                              (substring args 1 (- (length args) 1))
+                              short-doc))))
+              eldoc-msg)))))
     (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message))
 
   (global-eldoc-mode +1)
