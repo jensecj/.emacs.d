@@ -1746,6 +1746,17 @@ buffer."
   (backward-delete-char 1)
   (save-buffer))
 
+(defun jens/reopen-this-file ()
+  "Reopen the current file."
+  (interactive)
+  (let ((file (buffer-file-name)))
+    (cond
+     ((not (f-exists-p file)) (message "file does not exist on disk, cannot re-open."))
+     ((buffer-modified-p (current-buffer)) (message "buffer has not been saved, aborting re-open."))
+     (t
+      (kill-buffer-if-not-modified (current-buffer))
+      (find-file file)))))
+
 ;;;;; lisp
 
 (defun jens/one-shot-keybinding (key command)
