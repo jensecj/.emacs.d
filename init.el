@@ -10,8 +10,6 @@
 (defun log-warning (txt) (message "! %s" txt))
 (defun log-success (txt) (message "@ %s" txt))
 
-(setq debug-on-error t)
-
 (log-info "Started initializing emacs!")
 (log-info "Doing early initialization")
 
