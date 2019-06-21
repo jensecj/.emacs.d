@@ -1036,6 +1036,9 @@ number input"
   (setq mu4e-completing-read-function #'ivy-completing-read)
   (setq mu4e-confirm-quit nil)
   (setq mu4e-change-filenames-when-moving t)
+  (setq mu4e-compose-format-flowed t)
+
+  (setq mail-user-agent 'mu4e-user-agent)
 
   (setq mu4e-bookmarks
         '(("flag:unread AND NOT flag:trashed" "Unread"         ?u)
@@ -1202,10 +1205,6 @@ Taken from `mu4e~compose-complete-contact'."
   (setq org-mu4e-convert-to-html t)
   (setq org-mu4e-link-query-in-headers-mode nil)
 
-  (require 'message)
-  (require 'smtpmail)
-  (require 'smtpmail-async)
-
   (defun jens/mu4e ()
     "Jump to mu4e maildir using completing-read."
     (interactive)
@@ -1236,7 +1235,6 @@ Taken from `mu4e~compose-complete-contact'."
   :after (:any mu4e notmuch)
   :config
   (setq mail-envelope-from 'header)
-  (setq mail-user-agent 'mu4e-user-agent)
   (setq sendmail-program "msmtp")
 
   (require 'async)
@@ -1543,8 +1541,7 @@ Taken from `mu4e~compose-complete-contact'."
   ;;               '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
   ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 (use-package org-contacts
-  :after org
-  :defer t
+  :after (:any mu4e notmuch)
   :init
   (setq org-contacts-enable-completion nil)
   (setq org-contacts-icon-use-gravatar nil)
