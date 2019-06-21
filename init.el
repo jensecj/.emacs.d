@@ -1267,6 +1267,7 @@ Taken from `mu4e~compose-complete-contact'."
   :config
   (setq notmuch-show-logo nil)
   (setq notmuch-column-control 1000)
+  (setq notmuch-wash-wrap-lines-length 80)
 
   (add-to-list 'notmuch-archive-tags "+archived")
 
@@ -1309,7 +1310,8 @@ Taken from `mu4e~compose-complete-contact'."
     (interactive)
     (let ((res (shell-command-to-string "notmuch new")))
       (unless silent
-        (message "%s" res))))
+        (message "%s" res)))
+    (notmuch-refresh-this-buffer))
 
   (define-key notmuch-hello-mode-map (kbd "u") #'jens/notmuch-refresh)
 
