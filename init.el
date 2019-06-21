@@ -2172,13 +2172,14 @@ current line."
 ;; auto-tail the *Messages* buffer by default
 (jens/tail-message-buffer)
 
-(defun jens/toggle-window-margins ()
+(defun jens/toggle-focus ()
   "Toggle left and right window margins, centering `fill-column' lines."
   (interactive)
-  (let ((margins (window-margins)))
+  (let ((margins (window-margins))
+        (width (or 100 fill-column)))
     (if (and (null (car margins)) (null (cdr margins)))
         (let* ((win-width (window-width (selected-window)))
-               (margin (/ (- win-width fill-column) 2)))
+               (margin (/ (- win-width width) 2)))
           (set-window-margins (selected-window) margin margin))
       (set-window-margins (selected-window) 0 0))))
 
