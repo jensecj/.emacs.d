@@ -1359,7 +1359,7 @@ Taken from `mu4e~compose-complete-contact'."
   (setq notmuch-show-logo nil)
   (setq notmuch-column-control 1000)
   (setq notmuch-wash-wrap-lines-length 80)
-
+  (setq notmuch-fcc-dirs "sent +sent")
   (add-to-list 'notmuch-archive-tags "+archived")
 
   (setq notmuch-hello-sections
@@ -1449,7 +1449,14 @@ Taken from `mu4e~compose-complete-contact'."
               :action (lambda (cand)
                         (let ((query (get-text-property 0 'query cand))
                               (sort-order (get-text-property 0 'sort-order cand)))
-                          (notmuch-search query (not (eq sort-order 'newest-first))))))))
+                          (notmuch-search query (not (eq sort-order 'newest-first)))))))
+
+  ;; TODO: fix these so org-store-link stores link to the message at ;; point in search mode.
+  (require 'org-notmuch)
+  (define-key notmuch-show-mode-map (kbd "C-c C-l") #'org-store-link)
+  (define-key notmuch-search-mode-map (kbd "C-c C-l") #'org-store-link)
+  )
+
 ;;;;; org-mode
 
 (progn ;; the straight.el org-mode hack
