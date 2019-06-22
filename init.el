@@ -1210,6 +1210,93 @@ Taken from `mu4e~compose-complete-contact'."
     (when-let ((maildirs (mu4e-get-maildirs))
                (pick (completing-read "maildir: " maildirs)))
       (mu4e~headers-jump-to-maildir pick)))
+
+  (advice-patch
+   #'mu4e~main-view-real
+   '(insert
+     "* "
+	   (propertize "mu4e - mu for emacs version " 'face 'mu4e-title-face)
+	   (propertize  mu4e-mu-version 'face 'mu4e-header-key-face)
+
+     ;; show some server properties; in this case; a big C when there's
+     ;; crypto support, a big G when there's Guile support
+     " "
+     (propertize
+	    (concat
+	     (when (plist-get mu4e~server-props :crypto) "C")
+	     (when (plist-get mu4e~server-props :guile)  "G")
+	     (when (plist-get mu4e~server-props :mux)  "X"))
+	    'face 'mu4e-title-face)
+
+     "\n\n"
+     (propertize "  Bookmarks\n" 'face 'mu4e-title-face)
+     ;; TODO: it's a bit uncool to hard-code the "b" shortcut...
+     (mapconcat
+	    (lambda (bm)
+	      (mu4e~main-action-str
+	       (concat "\t* [b" (make-string 1 (mu4e-bookmark-key bm)) "] "
+	               (mu4e-bookmark-name bm))
+	       (concat "b" (make-string 1 (mu4e-bookmark-key bm)))))
+	    (mu4e-bookmarks) "\n")
+
+	   ;; show the queue functions if `smtpmail-queue-dir' is defined
+	   (if (file-directory-p smtpmail-queue-dir)
+	       (mu4e~main-view-queue)
+	     "")
+	   "\n")
+
+   '(insert
+     "* "
+	   (propertize "mu4e - mu for emacs version " 'face 'mu4e-title-face)
+	   (propertize  mu4e-mu-version 'face 'mu4e-header-key-face)
+
+     ;; show some server properties; in this case; a big C when there's
+     ;; crypto support, a big G when there's Guile support
+     " "
+     (propertize
+	    (concat
+	     (when (plist-get mu4e~server-props :crypto) "C")
+	     (when (plist-get mu4e~server-props :guile)  "G")
+	     (when (plist-get mu4e~server-props :mux)  "X"))
+	    'face 'mu4e-title-face)
+
+     "\n\n"
+     (propertize "  Basics\n\n" 'face 'mu4e-title-face)
+	   (mu4e~main-action-str
+	    "\t* [j]ump to some maildir\n" 'mu4e-jump-to-maildir)
+	   (mu4e~main-action-str
+	    "\t* enter a [s]earch query\n" 'mu4e-search)
+	   (mu4e~main-action-str
+	    "\t* [C]ompose a new message\n" 'mu4e-compose-new)
+     "\n"
+     (propertize "  Bookmarks\n\n" 'face 'mu4e-title-face)
+     ;; TODO: it's a bit uncool to hard-code the "b" shortcut...
+     (mapconcat
+	    (lambda (bm)
+	      (mu4e~main-action-str
+	       (concat "\t* [b" (make-string 1 (mu4e-bookmark-key bm)) "] "
+	               (mu4e-bookmark-name bm))
+	       (concat "b" (make-string 1 (mu4e-bookmark-key bm)))))
+	    (mu4e-bookmarks) "\n")
+     "\n\n"
+     (propertize "  Misc\n\n" 'face 'mu4e-title-face)
+
+	   (mu4e~main-action-str "\t* [;]Switch context\n" 'mu4e-context-switch)
+
+	   (mu4e~main-action-str "\t* [U]pdate email & database\n"
+	                         'mu4e-update-mail-and-index)
+
+	   ;; show the queue functions if `smtpmail-queue-dir' is defined
+	   (if (file-directory-p smtpmail-queue-dir)
+	       (mu4e~main-view-queue)
+	     "")
+	   "\n"
+	   (mu4e~main-action-str "\t* [N]ews\n" 'mu4e-news)
+	   (mu4e~main-action-str "\t* [A]bout mu4e\n" 'mu4e-about)
+	   (mu4e~main-action-str "\t* [H]elp\n" 'mu4e-display-manual)
+	   (mu4e~main-action-str "\t* [q]uit\n" 'mu4e-quit))
+   )
+
   :custom-face
   ;; TODO: change unread-face?
   (mu4e-header-highlight-face ((t (:inherit region :underline nil)))))
