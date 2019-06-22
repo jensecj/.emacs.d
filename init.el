@@ -1393,8 +1393,8 @@ Taken from `mu4e~compose-complete-contact'."
        (interactive)
        (notmuch-search-add-tag ',tags beg end)))
 
-  (define-key notmuch-search-mode-map "d" (search-set-tags "-inbox" "+deleted"))
-  (define-key notmuch-show-mode-map "d" (show-set-tags "-inbox" "+deleted"))
+  (define-key notmuch-search-mode-map "d" (search-set-tags "-inbox" "-archived" "+deleted"))
+  (define-key notmuch-show-mode-map "d" (show-set-tags "-inbox" "-archived" "+deleted"))
 
   (defun jens/notmuch-refresh (&optional silent)
     "Calls `notmuch' to refresh the mailbox."
@@ -1455,7 +1455,10 @@ Taken from `mu4e~compose-complete-contact'."
   (require 'org-notmuch)
   (define-key notmuch-show-mode-map (kbd "C-c C-l") #'org-store-link)
   (define-key notmuch-search-mode-map (kbd "C-c C-l") #'org-store-link)
-  )
+  :custom-face
+  (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-05")))))
+  (notmuch-search-unread-face ((t (:weight bold :foreground ,(zenburn-get "zenburn-yellow")))))
+  (notmuch-tag-face ((t (:foreground "#11ff11")))))
 
 ;;;;; org-mode
 
