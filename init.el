@@ -1305,7 +1305,7 @@ Taken from `mu4e~compose-complete-contact'."
   (defun jens/notmuch-refresh (&optional silent)
     "Calls `notmuch' to refresh the mailbox."
     (interactive)
-    (let ((res (shell-command-to-string "notmuch new")))
+    (let ((res (s-trim (shell-command-to-string "notmuch new"))))
       (unless silent
         (message "%s" res)))
     (notmuch-refresh-this-buffer))
@@ -1316,7 +1316,7 @@ Taken from `mu4e~compose-complete-contact'."
     "Calls `mbsync' to fetch new mail from the mailserver."
     (interactive)
     (message "notmuch: Fetching new mail.")
-    (message (shell-command-to-string "mbsync -a"))
+    (message (s-trim (shell-command-to-string "mbsync -a")))
     (jens/notmuch-refresh))
 
   (define-key notmuch-hello-mode-map (kbd "U") #'jens/notmuch-fetch-mail)
@@ -2183,7 +2183,9 @@ current line."
       (set-window-margins (selected-window) 0 0))))
 
 (defun jens/emacs-init-loc ()
-  "Total lines of emacs-lisp code in my emacs configuration."
+  "Total lines of emacs-lisp code in my emacs configuration.
+
+Requires the system tools `tokei' and `jq'."
   (interactive)
   (let* ((locs '("init.el"
                  "early-init.el"
@@ -3739,7 +3741,7 @@ paste for multi-term mode."
 
   (ivy-mode)
   :custom-face
-  (ivy-current-match ((t (:foreground nil :background "#292929" :height 110)))))
+  (ivy-current-match ((t (:foreground nil :background "#292929" :height 110 :underline nil)))))
 
 (use-package counsel
   :straight t
