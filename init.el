@@ -1220,6 +1220,13 @@ Taken from `mu4e~compose-complete-contact'."
   :config
   (setq mu4e-maildirs-extension-maildir-default-prefix "*")
   (setq mu4e-maildirs-extension-maildir-indent 4)
+  (setq mu4e-maildirs-extension-ignored-regex (rx "attachments"))
+  (setq mu4e-maildirs-extension-action-text nil)
+  (setq mu4e-maildirs-extension-insert-before-str "\n  Bookmarks")
+
+  (remove-hook 'mu4e-maildirs-extension-before-insert-maildir-hook
+               'mu4e-maildirs-extension-insert-newline-when-root-maildir)
+
   (mu4e-maildirs-extension))
 
 (use-package message
