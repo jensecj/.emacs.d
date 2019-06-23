@@ -143,7 +143,6 @@
 
 (use-package advice-patch ;; easy way to patch packages
   :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"
-  :load-path "vendor/"
   :demand t)
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
@@ -3462,7 +3461,6 @@ title and duration."
 
 (use-package help-fns+
   :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
-  :load-path "vendor"
   :demand t)
 
 (use-package amx
