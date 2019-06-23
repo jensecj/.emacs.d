@@ -2182,12 +2182,17 @@ current line."
      (t (message "unknown repo: %s" pick)))))
 
 (defun jens/load-secrets ()
-  "Eval everything in secrets.el.gpg."
+  "Load secrets from `user-secrets-file'`"
   (interactive)
-  (with-current-buffer
-      (find-file-noselect (locate-user-emacs-file "secrets.el.gpg"))
-    (eval-buffer)
-    (kill-current-buffer)))
+  (with-temp-buffer
+    (insert-file-contents user-secrets-file)
+    (eval-buffer)))
+
+(defun jens/get-secret (secret)
+  "Get a secret from `user-secrets-file'`."
+  (jens/load-secrets)
+  (when (boundp secret)
+    (symbol-value secret)))
 
 (defun jens/--headings-org-level-1 ()
   "Return list of level 1 heading in an org-buffer."
