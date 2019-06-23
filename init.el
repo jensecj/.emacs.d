@@ -154,6 +154,7 @@
 (use-package hydra :straight t :demand t)
 (use-package shut-up :straight t :demand t)
 (use-package ov :straight t :demand t)
+(use-package async :straight t :demand t)
 
 ;;;; cache, temp files, etc.
 
