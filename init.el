@@ -2575,9 +2575,25 @@ _t_: go to today-file
 
 (log-info "Loading third-party packages")
 
-;;;; major modes and extentions
+;;;; themes
 
-(use-package lsp-mode :straight t)
+(use-package zenburn-theme
+  :straight t
+  :demand t
+  :functions zenburn-get
+  :config
+  (defmacro zenburn-get (color)
+    (cdr (assoc color zenburn-default-colors-alist)))
+
+  (load-theme 'zenburn t)
+  :custom-face
+  (mode-line ((t (:box nil :background  "#2B2B2B"))))
+  (header-line ((t (:box nil))))
+  (mode-line-inactive ((t (:box nil))))
+  (hl-line ((t (:background "gray30"))))
+  (highlight ((t (:background nil :foreground nil))))
+  (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
+
 (use-package cmake-mode :straight t :mode "\\CmakeLists.txt\\'")
 (use-package dockerfile-mode :straight t :mode "\\Dockerfile\\'")
 (use-package gitconfig-mode :straight t :mode "\\.gitconfig\\'")
@@ -3990,22 +4006,6 @@ initial search query."
   :hook (emacs-lisp-mode . eros-mode)
   :config
   (eros-mode +1))
-
-(use-package zenburn-theme
-  :straight t
-  :demand t
-  :functions zenburn-get
-  :config
-  (defmacro zenburn-get (color)
-    (cdr (assoc color zenburn-default-colors-alist)))
-
-  (load-theme 'zenburn t)
-  :custom-face
-  (mode-line ((t (:box nil))))
-  (mode-line-inactive ((t (:box nil))))
-  (hl-line ((t (:background "gray30"))))
-  (highlight ((t (:background nil :foreground nil))))
-  (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
 
 ;;;; auto completion
 
