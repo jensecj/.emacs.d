@@ -19,16 +19,19 @@
 (scroll-bar-mode -1)
 (tooltip-mode -1)
 
-;; directories for elisp things
+;; user directories/files
 (defconst user-elpa-directory (locate-user-emacs-file "elpa/"))
 (defconst user-straight-directory (locate-user-emacs-file "straight/"))
 (defconst user-lisp-directory (locate-user-emacs-file "lisp/"))
 (defconst user-vendor-directory (locate-user-emacs-file "vendor/"))
 (defconst user-mail-directory "~/private/mail")
+(defconst user-contacts-file "~/vault/contacts.org.gpg")
+(defconst user-secrets-file (locate-user-emacs-file "secrets.el.gpg"))
 
 ;; add user directories to the load-path
 (add-to-list 'load-path user-lisp-directory)
 (add-to-list 'load-path user-elpa-directory)
+(add-to-list 'load-path user-vendor-directory)
 
 ;; setup package archives
 (setq package-archives
