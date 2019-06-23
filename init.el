@@ -2238,7 +2238,7 @@ current line."
 (defhydra jens/shortcut (:exit t)
   "Shortcuts for common commands."
   ("m" #'jens/goto-msg-buffer "goto msg buffer")
-  ("M" #'mu4e "goto mu4e mail")
+  ("n" #'notmuch "goto mail")
   ("e" #'elfeed "goto elfeed")
   ("c" #'jens/create-scratch-buffer "create scratch buffer"))
 
