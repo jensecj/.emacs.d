@@ -1329,8 +1329,6 @@ number input"
       (insert (format ";; Package-Version: %s\n" (format-time-string "%Y%m%d")))
       (insert ";; Version: 0.1\n\n")
 
-      (insert ";; This file is NOT part of GNU Emacs.\n\n")
-
       (insert ";;; Commentary:\n\n")
       (insert ";;; Code:\n\n")
 
