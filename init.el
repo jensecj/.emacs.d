@@ -247,14 +247,18 @@
   "Remove advice FNS from SYMS."
   (apply* #'advice-remove syms fns))
 
-(defun advice-nuke (sym)
-  "Remove all advice from symbol SYM."
-  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
-
 (defun add-to-list* (list-var elements &optional append compare-fn)
   "Add multiple ELEMENTS to a LIST-VAR."
   (dolist (e elements)
     (add-to-list list-var e append compare-fn)))
+
+(defmacro remove-from-list (list-var element &optional compare-fn)
+  (let ((compare-fn (or compare-fn #'equal)))
+    `(setf ,list-var (seq-remove (lambda (e) (,compare-fn ,element e)) ,list-var))))
+
+(defun advice-nuke (sym)
+  "Remove all advice from symbol SYM."
+  (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
 (defun add-one-shot-hook (hook fn &optional append local)
   "Add FN to HOOK, and remove it after is has triggered once."
