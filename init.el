@@ -1801,9 +1801,10 @@ current line."
 (defun jens/load-secrets ()
   "Load secrets from `user-secrets-file'`"
   (interactive)
-  (with-temp-buffer
-    (insert-file-contents user-secrets-file)
-    (eval-buffer)))
+  (shut-up
+    (with-temp-buffer
+      (insert-file-contents user-secrets-file)
+      (eval-buffer))))
 
 (defun jens/get-secret (secret)
   "Get a secret from `user-secrets-file'`."
