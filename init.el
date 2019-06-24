@@ -3356,6 +3356,9 @@ re-enable afterwards."
   :straight t
   :bind ("C-å" . avy-zap-to-char))
 
+(use-package ace-window
+  :straight t)
+
 (use-package expand-region
   :straight t
   :bind
