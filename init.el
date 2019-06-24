@@ -2570,15 +2570,19 @@ clipboard."
   (add-to-list 'notmuch-search-line-faces
                '("muted" . notmuch-search-muted-face))
 
+  (defun notmuch/ex-al (query)
+    "Exclude tag:archive and tag:lists from QUERY."
+    (format "%s and not tag:archived and not tag:lists" query))
+
   (setq notmuch-saved-searches
-        '((:name "unread" :query "tag:unread and not tag:lists" :key "u")
-          (:name "today" :query "date:today.. AND NOT tag:archived AND NOT tag:lists" :key "t" :sort-order newest-first)
-          (:name "7 days" :query "date:7d.. AND NOT tag:archived AND NOT tag:lists" :key "w" :sort-order newest-first)
-          (:name "31 days" :query "date:31d.. AND NOT tag:archived AND NOT tag:lists" :key "m" :sort-order newest-first)
+        `((:name "unread" :query ,(notmuch/ex-al "tag:unread") :key "u")
+          (:name "today" :query ,(notmuch/ex-al "date:today..") :key "t" :sort-order newest-first)
+          (:name "7 days" :query ,(notmuch/ex-al "date:7d..") :key "w" :sort-order newest-first)
+          (:name "31 days" :query ,(notmuch/ex-al "date:31d..") :key "m" :sort-order newest-first)
           (:name "drafts" :query "tag:draft" :key "d")
           (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
           (:blank t)
-          (:name "emacs-devel" :query "tag:lists and tag:lists/emacs-devel" :sort-order newest-first)
+          (:name "emacs-devel" :key "le" :query "tag:lists and tag:lists/emacs-devel" :sort-order newest-first)
           (:blank t)
           (:name "all mail" :query "*" :key "a" :sort-order newest-first)
           (:name "sent" :query "tag:sent" :key "s" :sort-order newest-first)
