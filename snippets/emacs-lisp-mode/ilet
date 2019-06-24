@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: ilet
+# key: ilet
+# --
+(if-let (($0)))

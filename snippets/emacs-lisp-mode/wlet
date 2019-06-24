@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: wlet
+# key: wlet
+# --
+(when-let (($0)))
