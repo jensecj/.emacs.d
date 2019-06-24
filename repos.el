@@ -10,6 +10,7 @@
  ("~/.emacs.d/straight/repos/sane-windows.el/")
  ("~/.emacs.d/straight/repos/views.el/")
  ("~/.emacs.d/straight/repos/today.el/")
+ ("~/.emacs.d/straight/repos/notmuch-mojn.el/")
 
  ("~/vault/git/")
  ("~/vault/courses/")
