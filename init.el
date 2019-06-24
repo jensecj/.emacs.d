@@ -1839,7 +1839,7 @@ current line."
 (defhydra jens/shortcut (:exit t)
   "Shortcuts for common commands."
   ("m" #'jens/goto-msg-buffer "goto msg buffer")
-  ("n" #'notmuch "goto mail")
+  ("n" #'notmuch-mojn "goto mail")
   ("e" #'elfeed "goto elfeed")
   ("c" #'jens/create-scratch-buffer "create scratch buffer"))
 
@@ -1956,6 +1956,25 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
 (use-package org-extra :after org :demand t)
 (use-package dev-extra :demand t)
+
+(use-package notmuch-mojn
+  :straight (notmuch-mojn :type git :repo "git@github.com:jensecj/notmuch-mojn.el.git")
+  :defer t
+  :bind*
+  ;; TODO: this is just silly, i could use apply*, but this should be a part of `use-package'
+  ((:map notmuch-show-mode-map
+         ("g" . notmuch-mojn-refresh)
+         ("U" . notmuch-mojn-fetch-mail))
+   (:map notmuch-search-mode-map
+         ("g" . notmuch-mojn-refresh)
+         ("U" . notmuch-mojn-fetch-mail))
+   (:map notmuch-tree-mode-map
+         ("g" . notmuch-mojn-refresh)
+         ("U" . notmuch-mojn-fetch-mail)))
+  :commands notmuch-mojn
+  :config
+  (jens/load-secrets)
+  (require 'notmuch nil 'noerror))
 
 (use-package blog
   :load-path "~/vault/blog/src/"
