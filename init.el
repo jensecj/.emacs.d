@@ -2235,6 +2235,8 @@ _t_: go to today-file
   (highlight ((t (:background nil :foreground nil))))
   (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
 
+;;;; major modes and extentions
+
 (use-package cmake-mode :straight t :mode "\\CmakeLists.txt\\'")
 (use-package dockerfile-mode :straight t :mode "\\Dockerfile\\'")
 (use-package gitconfig-mode :straight t :mode "\\.gitconfig\\'")
