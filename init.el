@@ -25,7 +25,7 @@
 (defconst user-lisp-directory (locate-user-emacs-file "lisp/"))
 (defconst user-vendor-directory (locate-user-emacs-file "vendor/"))
 (defconst user-mail-directory "~/private/mail")
-(defconst user-contacts-file "~/vault/contacts.org.gpg")
+(defconst user-contacts-files '("~/vault/contacts.org.gpg"))
 (defconst user-secrets-file (locate-user-emacs-file "secrets.el.gpg"))
 
 ;; add user directories to the load-path
@@ -1257,7 +1257,7 @@ number input"
   (setq org-contacts-enable-completion nil)
   (setq org-contacts-icon-use-gravatar nil)
   :config
-  (setq org-contacts-files user-contacts-file)
+  (setq org-contacts-files user-contacts-files)
 
   (defun jens/org-contacts ()
     "Return all contacts from `org-contacts', in 'NAME <EMAIL>' format."
