@@ -1247,8 +1247,17 @@ number input"
   (setq org-contacts-enable-completion nil)
   (setq org-contacts-icon-use-gravatar nil)
   :config
-  (jens/load-secrets)
-  (setq org-contacts-files `(,user-contacts-file)))
+  (setq org-contacts-files user-contacts-file)
+
+  (defun jens/org-contacts ()
+    "Return all contacts from `org-contacts', in 'NAME <EMAIL>' format."
+    (let ((data (-map #'caddr (org-contacts-db))))
+      (-map
+       (lambda (d)
+         (let ((email (cdr (assoc-string org-contacts-email-property d)))
+               (name (cdr (assoc-string "ITEM" d))))
+           (format "%s <%s>" (or name "") (or email ""))))
+       data))))
 
   )
 
