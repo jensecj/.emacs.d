@@ -3394,8 +3394,7 @@ re-enable afterwards."
   :straight t
   :config
   (fullframe magit-status magit-mode-quit-window)
-  (fullframe list-packages quit-window)
-  (fullframe ibuffer quit-window))
+  (fullframe list-packages quit-window))
 
 (use-package undo-tree
   :straight t
