@@ -1981,17 +1981,21 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   ;; TODO: this is just silly, i could use apply*, but this should be a part of `use-package'
   ((:map notmuch-show-mode-map
          ("g" . notmuch-mojn-refresh)
-         ("U" . notmuch-mojn-fetch-mail))
+         ("G" . notmuch-mojn-fetch-mail))
    (:map notmuch-search-mode-map
          ("g" . notmuch-mojn-refresh)
-         ("U" . notmuch-mojn-fetch-mail))
+         ("G" . notmuch-mojn-fetch-mail))
    (:map notmuch-tree-mode-map
          ("g" . notmuch-mojn-refresh)
-         ("U" . notmuch-mojn-fetch-mail)))
+         ("G" . notmuch-mojn-fetch-mail)))
   :commands notmuch-mojn
   :config
   (jens/load-secrets)
-  (require 'notmuch nil 'noerror))
+  (require 'notmuch nil 'noerror)
+
+  (advice-add #'notmuch-address-expand-name
+              :override
+              #'notmuch-mojn-complete-address))
 
 (use-package blog
   :load-path "~/vault/blog/src/"
