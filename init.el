@@ -1271,7 +1271,9 @@ number input"
 
   (add-to-list 'notmuch-mojn-candidate-functions #'jens/org-contacts))
 
-  )
+(use-package org-agenda
+  ;; TODO: have a look at https://github.com/alphapapa/org-super-agenda
+  :config)
 
 ;;; homemade
 ;;;; defuns
