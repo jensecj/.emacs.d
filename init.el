@@ -1058,6 +1058,8 @@ number input"
 
 ;;;;; org-mode
 
+(log-info "Setting up org-mode")
+
 (progn ;; the straight.el org-mode hack
   (require 'subr-x)
   (straight-use-package 'git)
