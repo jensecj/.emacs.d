@@ -1267,7 +1267,9 @@ number input"
          (let ((email (cdr (assoc-string org-contacts-email-property d)))
                (name (cdr (assoc-string "ITEM" d))))
            (format "%s <%s>" (or name "") (or email ""))))
-       data))))
+       data)))
+
+  (add-to-list 'notmuch-mojn-candidate-functions #'jens/org-contacts))
 
   )
 
