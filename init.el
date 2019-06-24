@@ -1021,317 +1021,18 @@ number input"
   (setq shr-use-colors nil)
   (setq shr-width 100))
 
-(use-package mu4e
-  :straight t
-  :defer t
-  :commands mu4e
-  :config
-  (jens/load-secrets)
-
-  ;;;;;;;;;;;;;;;;;;;;;;
-  ;; general settings ;;
-  ;;;;;;;;;;;;;;;;;;;;;;
-  (setq mu4e-org-contacts-file user-contacts-file)
-  (setq mu4e-get-mail-command "mbsync -a")
-  (setq mu4e-maildir user-mail-directory)
-  (setq mu4e-attachment-dir (f-join user-mail-directory "attachments"))
-  (setq mu4e-completing-read-function #'ivy-completing-read)
-  (setq mu4e-confirm-quit nil)
-  (setq mu4e-change-filenames-when-moving t)
-  (setq mu4e-compose-format-flowed t)
-
-  (setq mail-user-agent 'mu4e-user-agent)
-
-  (setq mu4e-bookmarks
-        '(("flag:unread AND NOT flag:trashed" "Unread"         ?u)
-          ("date:today..now"                  "Today"          ?t)
-          ("date:7d..now"                     "Last 7 days"    ?w)
-          ("date:31d..now"                    "Last 31 days"   ?m)
-          ("NOT flag:trashed"                 "All mail"       ?a)))
-
-  (setq mu4e-maildir-shortcuts '(("/archive" . ?r)
-                                 ("/drafts" . ?d)
-                                 ("/sent" . ?s)
-                                 ("/gmail/Inbox" . ?i)
-                                 ("/trash" . ?t)))
-
-  ;; prmopt for pinentry when attempting to fetch new mail
-  (defun jens/prompt-gpg (&rest _args) (jens/load-secrets))
-  (advice-add #'mu4e-update-mail-and-index :before #'jens/prompt-gpg)
-
-  ;;;;;;;;;;;;;
-  ;; headers ;;
-  ;;;;;;;;;;;;;
-  (add-to-list 'mu4e-headers-actions '("org-contact-add" . mu4e-action-add-org-contact) t)
-
-  (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
-  (setq mu4e-headers-show-threads t)
-  (setq mu4e-headers-include-related t)
-
-  (defun my/mu4e-change-headers (&rest _args)
-    (interactive)
-    (setq mu4e-headers-fields
-          `((:flags . 4)
-            (:human-date . 18)
-            (:from-or-to . 20)
-            (:subject . ,(- (window-body-width) 45))
-            (:size . 10))))
-
-  (add-hook 'mu4e-headers-mode-hook #'my/mu4e-change-headers)
-  (advice-add #'mu4e-headers-rerun-search :before #'my/mu4e-change-headers)
-
-  (add-to-list 'mu4e-marks
-               '(tag
-                 :char       "T"
-                 :prompt     "tag"
-                 :ask-target (lambda () (read-string "add tag: "))
-                 :action      (lambda (docid msg target)
-                                (let* ((tags (s-split " " target))
-                                       (tags (s-join "," tags)))
-                                  (mu4e-action-retag-message msg tags)))))
-
-  (mu4e~headers-defun-mark-for tag)
-  (define-key mu4e-headers-mode-map (kbd "T") #'mu4e-headers-mark-for-tag)
-
-  ;;;;;;;;;;
-  ;; view ;;
-  ;;;;;;;;;;
-  (add-to-list 'mu4e-view-actions '("org-contact-add" . mu4e-action-add-org-contact) t)
-
-  (setq mu4e-view-show-addresses 't)
-  (setq mu4e-view-date-format "%Y-%m-%d %H:%M")
-
-  ;;;;;;;;;;;;;
-  ;; compose ;;
-  ;;;;;;;;;;;;;
-  (setq mu4e-compose-complete-addresses nil) ;; using my own completion
-  (setq mu4e-user-mail-address-list `(,user-mail-address))
-  (setq mu4e-compose-signature nil)
-  (setq mu4e-compose-signature-auto-include nil)
-  (add-hook* 'mu4e-compose-mode-hook '(flyspell-mode org-mu4e-compose-org-mode))
-
-  (defun jens/mu4e-contacts ()
-    "Return all contacts from `mu4e'."
-    ;; taken from `mu4e~request-contacts-maybe'.
-
-    (setq mu4e-contacts-func 'mu4e~fill-contacts)
-
-    (mu4e~proc-contacts
-     mu4e-compose-complete-only-personal
-     (when mu4e-compose-complete-only-after
-	     (float-time
-	      (apply 'encode-time
-	             (mu4e-parse-time-string mu4e-compose-complete-only-after)))))
-
-    (when mu4e~contacts
-      (ht-keys mu4e~contacts)))
-
-  (defun jens/org-contacts ()
-    "Return all contacts from `org-contacts', in 'NAME <EMAIL>' format."
-    (let ((data (-map #'caddr (org-contacts-db))))
-      (-map
-       (lambda (d)
-         (let ((email (cdr (assoc-string org-contacts-email-property d)))
-               (name (cdr (assoc-string "ITEM" d))))
-           (format "%s <%s>" (or name "") (or email ""))))
-       data)))
-
-  (defun jens/ivy-email-action (contact)
-    (with-ivy-window
-      (end-of-line)
-      (insert contact)))
-
-  (defun jens/ivy-email-more ()
-    "Insert email address and prompt for another."
-    (interactive)
-    (ivy-call)
-    (with-ivy-window
-      (insert ", "))
-    (delete-minibuffer-contents)
-    (setq ivy-text ""))
-
-  (defvar jens/ivy-email-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map "," #'jens/ivy-email-more)
-      map))
-
-  (defun jens/mu4e-address-completion-handler ()
-    "Collect known mail addresses, and prompt the user to pick one."
-    (let* ((org-contacts (jens/org-contacts))
-           (mu4e-contacts (jens/mu4e-contacts))
-           (merged-contacts (-concat org-contacts mu4e-contacts))
-           (deduped-contacts (delete-dups merged-contacts))
-           (cleaned-contacts (delq nil deduped-contacts)))
-      (ivy-read "Contact: " cleaned-contacts
-                :action #'jens/ivy-email-action
-                :keymap jens/ivy-email-map)))
-
-  (defun jens/mu4e-at-mail-header (&optional start)
-    "Return `t' if point is at an email header, nil otherwise.
-
-Taken from `mu4e~compose-complete-contact'."
-    (let ((mail-abbrev-mode-regexp mu4e~compose-address-fields-regexp)
-	        (eoh ;; end-of-headers
-	         (save-excursion
-	           (goto-char (point-min))
-	           (search-forward-regexp mail-header-separator nil t))))
-      ;; try to complete only when we're in the headers area,
-      ;; looking  at an address field.
-      (when (and eoh (> eoh (point)) (mail-abbrev-in-expansion-header-p))
-        (let* ((end (point))
-	             (start
-		            (or start
-		                (save-excursion
-		                  (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
-		                  (goto-char (match-end 0))
-		                  (point)))))
-          t))))
-
-  (defun jens/mu4e-complete-addresses ()
-    "Complete mail addresses when at a mail-header."
-    (interactive)
-    (when (jens/mu4e-at-mail-header)
-      (jens/mu4e-address-completion-handler)))
-
-  (add-hook 'mu4e-compose-mode-hook
-            (lambda ()
-              (add-hook 'completion-at-point-functions #'jens/mu4e-complete-addresses nil t)))
-  ;;;;;;;;;;;;
-  ;; extras ;;
-  ;;;;;;;;;;;;
-
-  (require 'mu4e-contrib)
-  (setq mu4e-html2text-command #'mu4e-shr2text)
-
-  (require 'org-mu4e)
-  (setq org-mu4e-convert-to-html t)
-  (setq org-mu4e-link-query-in-headers-mode nil)
-
-  (defun jens/mu4e ()
-    "Jump to mu4e maildir using completing-read."
-    (interactive)
-    (when-let ((maildirs (mu4e-get-maildirs))
-               (pick (completing-read "maildir: " maildirs)))
-      (mu4e~headers-jump-to-maildir pick)))
-
-  (advice-patch
-   #'mu4e~main-view-real
-   '(insert
-     "* "
-	   (propertize "mu4e - mu for emacs version " 'face 'mu4e-title-face)
-	   (propertize  mu4e-mu-version 'face 'mu4e-header-key-face)
-
-     ;; show some server properties; in this case; a big C when there's
-     ;; crypto support, a big G when there's Guile support
-     " "
-     (propertize
-	    (concat
-	     (when (plist-get mu4e~server-props :crypto) "C")
-	     (when (plist-get mu4e~server-props :guile)  "G")
-	     (when (plist-get mu4e~server-props :mux)  "X"))
-	    'face 'mu4e-title-face)
-
-     "\n\n"
-     (propertize "  Bookmarks\n" 'face 'mu4e-title-face)
-     ;; TODO: it's a bit uncool to hard-code the "b" shortcut...
-     (mapconcat
-	    (lambda (bm)
-	      (mu4e~main-action-str
-	       (concat "\t* [b" (make-string 1 (mu4e-bookmark-key bm)) "] "
-	               (mu4e-bookmark-name bm))
-	       (concat "b" (make-string 1 (mu4e-bookmark-key bm)))))
-	    (mu4e-bookmarks) "\n")
-
-	   ;; show the queue functions if `smtpmail-queue-dir' is defined
-	   (if (file-directory-p smtpmail-queue-dir)
-	       (mu4e~main-view-queue)
-	     "")
-	   "\n")
-
-   '(insert
-     "* "
-	   (propertize "mu4e - mu for emacs version " 'face 'mu4e-title-face)
-	   (propertize  mu4e-mu-version 'face 'mu4e-header-key-face)
-
-     ;; show some server properties; in this case; a big C when there's
-     ;; crypto support, a big G when there's Guile support
-     " "
-     (propertize
-	    (concat
-	     (when (plist-get mu4e~server-props :crypto) "C")
-	     (when (plist-get mu4e~server-props :guile)  "G")
-	     (when (plist-get mu4e~server-props :mux)  "X"))
-	    'face 'mu4e-title-face)
-
-     "\n\n"
-     (propertize "  Basics\n\n" 'face 'mu4e-title-face)
-	   (mu4e~main-action-str
-	    "\t* [j]ump to some maildir\n" 'mu4e-jump-to-maildir)
-	   (mu4e~main-action-str
-	    "\t* enter a [s]earch query\n" 'mu4e-search)
-	   (mu4e~main-action-str
-	    "\t* [C]ompose a new message\n" 'mu4e-compose-new)
-     "\n"
-     (propertize "  Bookmarks\n\n" 'face 'mu4e-title-face)
-     ;; TODO: it's a bit uncool to hard-code the "b" shortcut...
-     (mapconcat
-	    (lambda (bm)
-	      (mu4e~main-action-str
-	       (concat "\t* [b" (make-string 1 (mu4e-bookmark-key bm)) "] "
-	               (mu4e-bookmark-name bm))
-	       (concat "b" (make-string 1 (mu4e-bookmark-key bm)))))
-	    (mu4e-bookmarks) "\n")
-     "\n\n"
-     (propertize "  Misc\n\n" 'face 'mu4e-title-face)
-
-	   (mu4e~main-action-str "\t* [;]Switch context\n" 'mu4e-context-switch)
-
-	   (mu4e~main-action-str "\t* [U]pdate email & database\n"
-	                         'mu4e-update-mail-and-index)
-
-	   ;; show the queue functions if `smtpmail-queue-dir' is defined
-	   (if (file-directory-p smtpmail-queue-dir)
-	       (mu4e~main-view-queue)
-	     "")
-	   "\n"
-	   (mu4e~main-action-str "\t* [N]ews\n" 'mu4e-news)
-	   (mu4e~main-action-str "\t* [A]bout mu4e\n" 'mu4e-about)
-	   (mu4e~main-action-str "\t* [H]elp\n" 'mu4e-display-manual)
-	   (mu4e~main-action-str "\t* [q]uit\n" 'mu4e-quit))
-   )
-
-  :custom-face
-  ;; TODO: change unread-face?
-  (mu4e-header-highlight-face ((t (:inherit region :underline nil)))))
-
-(use-package mu4e-maildirs-extension
-  :straight t
-  :after mu4e
-  :config
-  (setq mu4e-maildirs-extension-maildir-default-prefix "*")
-  (setq mu4e-maildirs-extension-maildir-indent 4)
-  (setq mu4e-maildirs-extension-ignored-regex (rx "attachments"))
-  (setq mu4e-maildirs-extension-action-text nil)
-  (setq mu4e-maildirs-extension-insert-before-str "\n  Bookmarks")
-
-  (remove-hook 'mu4e-maildirs-extension-before-insert-maildir-hook
-               'mu4e-maildirs-extension-insert-newline-when-root-maildir)
-
-  (mu4e-maildirs-extension))
-
-(use-package message
-  :after (:any mu4e notmuch)
-  :config
-  (setq message-sendmail-envelope-from 'header)
-  (setq message-sendmail-extra-arguments '("--read-envelope-from"))
-  (setq message-sendmail-f-is-evil t)
-  (setq message-fill-column 80))
-
 (use-package sendmail
   :after (:any mu4e notmuch)
   :config
   (setq mail-envelope-from 'header)
   (setq sendmail-program "msmtp")
+
+  ;; these really belong in `message.el', but using (use-package
+  ;; message) breaks #'message.
+  (setq message-sendmail-envelope-from 'header)
+  (setq message-sendmail-extra-arguments '("--read-envelope-from"))
+  (setq message-sendmail-f-is-evil t)
+  (setq message-fill-column 80)
 
   (require 'async)
   (defun async-sendmail-send-it ()
@@ -1354,114 +1055,6 @@ Taken from `mu4e~compose-complete-contact'."
          (message "Delivering message to %s...done" to)))))
 
   (setq message-send-mail-function 'async-sendmail-send-it))
-
-(use-package notmuch
-  :straight t
-  :defer t
-  :config
-  (setq notmuch-show-logo nil)
-  (setq notmuch-column-control 1000)
-  (setq notmuch-wash-wrap-lines-length 80)
-  (setq notmuch-fcc-dirs "sent +sent")
-  (add-to-list 'notmuch-archive-tags "+archived")
-
-  (setq notmuch-hello-sections
-        (list
-         #'notmuch-hello-insert-saved-searches
-	       #'notmuch-hello-insert-search
-	       #'notmuch-hello-insert-alltags
-	       #'notmuch-hello-insert-recent-searches))
-
-  (setq notmuch-saved-searches
-        '(
-          (:name "unread" :query "tag:unread" :key "u")
-          (:name "today" :query "date:today.. AND NOT tag:archived" :key "t" :sort-order newest-first)
-          (:name "7 days" :query "date:7d.. AND NOT tag:archived" :key "w" :sort-order newest-first)
-          (:name "31 days" :query "date:31d.. AND NOT tag:archived" :key "m" :sort-order newest-first)
-          (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
-          (:name "sent" :query "tag:sent" :key "s" :sort-order newest-first)
-          (:name "drafts" :query "tag:draft" :key "d")
-          (:name "all mail" :query "*" :key "a" :sort-order newest-first)
-          (:name "archive" :query "tag:archived" :key "r" :sort-order newest-first)
-          (:name "trash" :query "tag:deleted" :key "h" :sort-order newest-first)
-          ))
-
-  (defmacro show-set-tags (&rest tags)
-    `(lambda ()
-       (interactive)
-       (notmuch-show-add-tag ',tags)))
-
-  (defmacro search-set-tags (&rest tags)
-    `(lambda (&optional beg end)
-       (interactive)
-       (notmuch-search-add-tag ',tags beg end)))
-
-  (define-key notmuch-search-mode-map "d" (search-set-tags "-inbox" "-archived" "+deleted"))
-  (define-key notmuch-show-mode-map "d" (show-set-tags "-inbox" "-archived" "+deleted"))
-
-  (defun jens/notmuch-refresh (&optional silent)
-    "Calls `notmuch' to refresh the mailbox."
-    (interactive)
-    (let ((res (s-trim (shell-command-to-string "notmuch new"))))
-      (unless silent
-        (message "%s" res)))
-    (notmuch-refresh-this-buffer))
-
-  (define-key notmuch-hello-mode-map (kbd "u") #'jens/notmuch-refresh)
-
-  (defun jens/notmuch-fetch-mail ()
-    "Calls `mbsync' to fetch new mail from the mailserver."
-    (interactive)
-    (message "notmuch: Fetching new mail.")
-    (message (s-trim (shell-command-to-string "mbsync -a")))
-    (jens/notmuch-refresh))
-
-  (define-key notmuch-hello-mode-map (kbd "U") #'jens/notmuch-fetch-mail)
-
-  (defun jens/notmuch-delete-mail ()
-    "Delete the actual files on disk, for mail tagged with `deleted'."
-    (interactive)
-    (let* ((notmuch-cmd "notmuch search --output=files tag:deleted")
-           (cmd-result (shell-command-to-string notmuch-cmd))
-           (files (s-split "\n" cmd-result)))
-      (ivy-read "deleted mail: " files)))
-
-  (defun jens/notmuch-candidates ()
-    "Return list of saved searches, as candidates for completion."
-    (let* ((data (notmuch-hello-query-counts
-                  notmuch-saved-searches
-                  :show-empty-searches notmuch-show-empty-saved-searches)))
-      (-map
-       (lambda (m)
-         (let ((name (map-elt m :name))
-               (mails (map-elt m :count))
-               (query (map-elt m :query))
-               (sort-order (map-elt m :sort-order)))
-           (-> (format "%s (%s)" name mails)
-               (propertize 'query query)
-               (propertize 'sort-order sort-order))))
-       data)))
-
-  (defun jens/notmuch ()
-    "Jump to a saved search via prompt.."
-    (interactive)
-    (jens/notmuch-refresh 'silent)
-    (ivy-read "search: "
-              (jens/notmuch-candidates)
-              :require-match t
-              :action (lambda (cand)
-                        (let ((query (get-text-property 0 'query cand))
-                              (sort-order (get-text-property 0 'sort-order cand)))
-                          (notmuch-search query (not (eq sort-order 'newest-first)))))))
-
-  ;; TODO: fix these so org-store-link stores link to the message at ;; point in search mode.
-  (require 'org-notmuch)
-  (define-key notmuch-show-mode-map (kbd "C-c C-l") #'org-store-link)
-  (define-key notmuch-search-mode-map (kbd "C-c C-l") #'org-store-link)
-  :custom-face
-  (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-05")))))
-  (notmuch-search-unread-face ((t (:weight bold :foreground ,(zenburn-get "zenburn-yellow")))))
-  (notmuch-tag-face ((t (:foreground "#11ff11")))))
 
 ;;;;; org-mode
 
@@ -2901,6 +2494,72 @@ clipboard."
              :port 6697
              :nick "jensecj"
              :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
+
+(use-package notmuch
+  ;; TODO: attach files via `dired'
+  :straight t
+  :defer t
+  :config
+  (setq notmuch-show-logo nil)
+  (setq notmuch-column-control 1.0)
+  (setq notmuch-wash-wrap-lines-length 80)
+  (setq notmuch-show-indent-messages-width 2)
+  (setq notmuch-fcc-dirs "sent +sent")
+  (add-to-list* 'notmuch-archive-tags '("+archived" "-deleted"))
+
+  (defface notmuch-search-muted-face
+    `((t (:foreground ,(zenburn-get "zenburn-bg+3"))))
+    "Face used in search modes for muted threads.")
+
+  (add-to-list 'notmuch-search-line-faces
+               '("muted" . notmuch-search-muted-face))
+
+  (setq notmuch-saved-searches
+        '((:name "unread" :query "tag:unread and not tag:lists" :key "u")
+          (:name "today" :query "date:today.. AND NOT tag:archived AND NOT tag:lists" :key "t" :sort-order newest-first)
+          (:name "7 days" :query "date:7d.. AND NOT tag:archived AND NOT tag:lists" :key "w" :sort-order newest-first)
+          (:name "31 days" :query "date:31d.. AND NOT tag:archived AND NOT tag:lists" :key "m" :sort-order newest-first)
+          (:name "drafts" :query "tag:draft" :key "d")
+          (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
+          (:blank t)
+          (:name "emacs-devel" :query "tag:lists and tag:lists/emacs-devel" :sort-order newest-first)
+          (:blank t)
+          (:name "all mail" :query "*" :key "a" :sort-order newest-first)
+          (:name "sent" :query "tag:sent" :key "s" :sort-order newest-first)
+          (:name "archive" :query "tag:archived" :key "r" :sort-order newest-first)
+          (:name "trash" :query "tag:deleted" :key "h" :sort-order newest-first)))
+
+  (defun notmuch/quicktag (mode key tags)
+    "Easily add a new tag keybinding to a `notmuch' mode-map."
+    (let ((mode-map (intern (format "notmuch-%s-mode-map" mode))))
+      (cond
+       ((not (boundp mode-map)) (error "%s does not exist!" mode-map))
+       ((eq mode-map 'notmuch-show-mode-map)
+        (define-key mode-map key (xi (notmuch-show-add-tag tags))))
+       ((eq mode-map 'notmuch-search-mode-map)
+        (define-key mode-map key (xi (notmuch-search-add-tag tags))))
+       ((eq mode-map 'notmuch-tree-mode-map)
+        (define-key mode-map key (xi (notmuch-tree-add-tag tags))))
+       (t (error "unknown notmuch mode-map!")))))
+
+  ;; delete mail in all modes with "d"
+  (apply* #'notmuch/quicktag '(show search tree) "d" '(("-inbox" "-archived" "+deleted")))
+  ;; mute mail in all modes with "M"
+  (apply* #'notmuch/quicktag '(show search tree) "M" '(("-unread" "+muted")))
+
+  ;;;;;;;;;;;;
+  ;; extras ;;
+  ;;;;;;;;;;;;
+
+  ;; TODO: fix these so org-store-link stores link to the message at ;; point in search mode.
+  (require 'org-notmuch)
+  (define-key notmuch-show-mode-map (kbd "C-c C-l") #'org-store-link)
+  (define-key notmuch-search-mode-map (kbd "C-c C-l") #'org-store-link)
+
+  :custom-face
+  (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-05")))))
+  (notmuch-search-unread-face ((t (:weight bold :foreground ,(zenburn-get "zenburn-yellow")))))
+  (notmuch-tag-face ((t (:foreground "#11ff11")))))
 
 ;;;; extensions to built-in packages
 
