@@ -1994,6 +1994,10 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   (jens/load-secrets)
   (require 'notmuch nil 'noerror)
 
+  (setq notmuch-mojn-really-delete-mail t)
+
+  (add-hook 'notmuch-mojn-pre-refresh-hook #'jens/load-secrets)
+
   (advice-add #'notmuch-address-expand-name
               :override
               #'notmuch-mojn-complete-address))
