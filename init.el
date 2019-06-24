@@ -1329,13 +1329,15 @@ number input"
          (name (f-no-ext file))
          (p))
     (with-current-buffer (find-file-noselect path)
-      (insert (format ";;; %s. --- -*- lexical-binding: t; -*-\n\n" file))
+      (insert (format ";;; %s. --- DESCRIPTION -*- lexical-binding: t; -*-\n\n" file))
       (insert (format ";; Copyright (C) %s %s\n\n"
                       (format-time-string "%Y")
                       user-full-name))
 
       (insert (format ";; Author: %s <%s>\n" user-full-name user-mail-address))
-      (insert ";; Keywords:\n")
+      (insert ";; URL: \n")
+      (insert ";; Keywords: \n")
+      (insert (format ";; Package-Requires: ((emacs \"%s\"))\n" emacs-version))
       (insert (format ";; Package-Version: %s\n" (format-time-string "%Y%m%d")))
       (insert ";; Version: 0.1\n\n")
 
