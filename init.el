@@ -1660,6 +1660,14 @@ currently is), otherwise comment or uncomment the current line."
       (comment-or-uncomment-region (region-beginning) (region-end))
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
 
+(defmacro easy-eldoc (hook fn)
+  "Add FN to `eldoc-documentation-function' in HOOK."
+  (let ((name (intern (format "easy-eldoc-%s-%s" (syddmbol-name hook) (symbol-name fn)))))
+    `(progn
+       (defun ,name ()
+         (set (make-local-variable 'eldoc-documentation-function) #',fn))
+       (add-hook ',hook #',name))))
+
 ;;;;; misc
 
 (defun jens/get-package-reqs (package)
