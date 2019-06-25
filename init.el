@@ -1325,38 +1325,6 @@ number input"
     (switch-to-buffer newbuf)
     (goto-char p)))
 
-(defun jens/new-package ()
-  "Create a skeleton for a elisp package."
-  (interactive)
-  (let* ((path (read-file-name "package name: "))
-         (file (f-filename path))
-         (name (f-no-ext file))
-         (p))
-    (with-current-buffer (find-file-noselect path)
-      (insert (format ";;; %s. --- DESCRIPTION -*- lexical-binding: t; -*-\n\n" file))
-      (insert (format ";; Copyright (C) %s %s\n\n"
-                      (format-time-string "%Y")
-                      user-full-name))
-
-      (insert (format ";; Author: %s <%s>\n" user-full-name user-mail-address))
-      (insert ";; URL: \n")
-      (insert ";; Keywords: \n")
-      (insert (format ";; Package-Requires: ((emacs \"%s\"))\n" emacs-version))
-      (insert (format ";; Package-Version: %s\n" (format-time-string "%Y%m%d")))
-      (insert ";; Version: 0.1\n\n")
-
-      (insert ";;; Commentary:\n\n")
-      (insert ";;; Code:\n\n")
-
-      (setq p (point))
-
-      (insert "\n\n")
-
-      (insert (format "(provide '%s)" name))
-
-      (goto-char p)
-      (switch-to-buffer (current-buffer)))))
-
 (defun jens/sudo-find-file (filename)
   "Open FILENAME with superuser permissions."
   (let ((remote-method (file-remote-p default-directory 'method))
