@@ -121,6 +121,7 @@
            (user-full-name)
            (user-full-name)
            user-mail-address
+           (format "emacs \"%s\"" emacs-version)
            (format-time-string "%Y%m%d"))))
 
 (provide 'dev-extra)
