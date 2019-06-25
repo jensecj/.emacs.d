@@ -2538,7 +2538,7 @@ clipboard."
   (setq notmuch-show-logo nil)
   (setq notmuch-column-control 1.0)
   (setq notmuch-wash-wrap-lines-length 80)
-  (setq notmuch-show-indent-messages-width 2)
+  (setq notmuch-show-indent-messages-width 1)
   (setq notmuch-fcc-dirs "sent +sent")
   (add-to-list* 'notmuch-archive-tags '("+archived" "-deleted"))
 
