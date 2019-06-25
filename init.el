@@ -2588,6 +2588,19 @@ clipboard."
   ;; mute mail in all modes with "M"
   (apply* #'notmuch/quicktag '(show search tree) "M" '(("-unread" "+muted")))
 
+  (defun notmuch-show/eldoc ()
+    (let* ((headers (notmuch-show-get-prop :headers))
+           (from (map-elt headers :From))
+           (subject (map-elt headers :Subject)))
+      (format "%s - %s" from subject)))
+
+  (defun notmuch-search/eldoc ()
+    (let ((data (notmuch-search-get-result)))
+      (map-elt data :authors)))
+
+  (easy-eldoc notmuch-show-mode-hook notmuch-show/eldoc)
+  (easy-eldoc notmuch-search-mode-hook notmuch-search/eldoc)
+
   ;;;;;;;;;;;;
   ;; extras ;;
   ;;;;;;;;;;;;
