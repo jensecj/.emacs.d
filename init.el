@@ -3920,7 +3920,7 @@ initial search query."
 
 (global-set-key (kbd "<f12>") #'jens/inspect-variable-at-point)
 
-(global-set-key (kbd "C-M-s") #'jens/shortcut/body)
+(global-set-key (kbd "C-½") #'jens/shortcut/body)
 
 (bind-key "C-x <left>" #'jens/buffer-carousel-previous)
 (bind-key "C-x <right>" #'jens/buffer-carousel-next)
