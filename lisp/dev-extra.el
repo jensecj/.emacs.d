@@ -78,11 +78,12 @@
   (when-let ((ver (dev--header-exists "version")))
     (dev--update-version (dev--bump-version ver 'major))))
 
-(defhydra dev-bump-version-hydra ()
+(defhydra dev-hydra ()
   "Hydra for bumping package version"
-  ("p" #'dev-bump-patch "patch")
-  ("m" #'dev-bump-minor "minor")
-  ("M" #'dev-bump-major "major"))
+  ("u" #'dev-update-package-version "update package-version")
+  ("p" #'dev-bump-patch "bump patch")
+  ("m" #'dev-bump-minor "bump minor")
+  ("M" #'dev-bump-major "bump major"))
 
 (defun dev-update-package-version ()
   "Update the package-version to current date in compact format."
