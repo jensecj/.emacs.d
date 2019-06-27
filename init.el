@@ -221,6 +221,12 @@
      (apply fn (-map #'car lists))
      (apply #'-mapcar fn (-map #'cdr lists))))))
 
+(defun -mapply (fn atom-or-list)
+  "If ATOM-OR-LIST if a list, map FN over it, otherwise apply FN."
+  (cond
+   ((listp atom-or-list) (-map fn atom-or-list))
+   (t (funcall fn atom-or-list))))
+
 (defun transpose (&rest lists)
   (apply #'-mapcar #'-list lists))
 
