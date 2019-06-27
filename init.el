@@ -284,6 +284,15 @@ to run and `this-command-keys' returns the key pressed."
                       (lambda () ,@body)))
 
 
+(defun fn-checksum (fn &optional checksum)
+  "Return a string md5 checksum of FN, or, given CHECKSUM, test
+equality of computed checksum and arg."
+  (let* ((def (symbol-function fn))
+         (str (prin1-to-string def))
+         (chk (md5 str)))
+    (if checksum
+        (string= chk checksum)
+      chk)))
 
 ;;; built-in
 ;;;; settings
