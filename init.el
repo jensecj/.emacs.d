@@ -2583,16 +2583,11 @@ clipboard."
 
   (defun notmuch/quicktag (mode key tags)
     "Easily add a new tag keybinding to a `notmuch' mode-map."
-    (let ((mode-map (intern (format "notmuch-%s-mode-map" mode))))
-      (cond
-       ((not (boundp mode-map)) (error "%s does not exist!" mode-map))
-       ((eq mode-map 'notmuch-show-mode-map)
-        (define-key mode-map key (xi (notmuch-show-add-tag tags))))
-       ((eq mode-map 'notmuch-search-mode-map)
-        (define-key mode-map key (xi (notmuch-search-add-tag tags))))
-       ((eq mode-map 'notmuch-tree-mode-map)
-        (define-key mode-map key (xi (notmuch-tree-add-tag tags))))
-       (t (error "unknown notmuch mode-map!")))))
+    (if (member mode '(show tree search))
+        (let ((mode-map (intern (format "notmuch-%s-mode-map" mode)))
+              (fn (intern (format "notmuch-%s-add-tag" mode))))
+          (define-key mode-map key (lambda () (interactive) (funcall fn tags))))
+      (error "%s is not a proper notmuch mode" mode)))
 
   ;; delete mail in all modes with "d"
   (apply* #'notmuch/quicktag '(show search tree) "d" '(("-inbox" "-archived" "+deleted")))
