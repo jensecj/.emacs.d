@@ -2866,25 +2866,28 @@ in the same file."
 
   ;; fontify the entire outshine-heading, including the comment
   ;; characters (;;;)
-  (advice-patch #'outshine-fontify-headlines
-                '(font-lock-new-keywords
-                  `((,heading-1-regexp 0 'outshine-level-1 t)
-                    (,heading-2-regexp 0 'outshine-level-2 t)
-                    (,heading-3-regexp 0 'outshine-level-3 t)
-                    (,heading-4-regexp 0 'outshine-level-4 t)
-                    (,heading-5-regexp 0 'outshine-level-5 t)
-                    (,heading-6-regexp 0 'outshine-level-6 t)
-                    (,heading-7-regexp 0 'outshine-level-7 t)
-                    (,heading-8-regexp 0 'outshine-level-8 t)))
-                '(font-lock-new-keywords
-                  `((,heading-1-regexp 1 'outshine-level-1 t)
-                    (,heading-2-regexp 1 'outshine-level-2 t)
-                    (,heading-3-regexp 1 'outshine-level-3 t)
-                    (,heading-4-regexp 1 'outshine-level-4 t)
-                    (,heading-5-regexp 1 'outshine-level-5 t)
-                    (,heading-6-regexp 1 'outshine-level-6 t)
-                    (,heading-7-regexp 1 'outshine-level-7 t)
-                    (,heading-8-regexp 1 'outshine-level-8 t))))
+  (if (not (fn-checksum #'outshine-fontify-headlines
+                        "f608ba6df13db0f6076d8182e8491a75"))
+      (log-warning "`outshine-fontify-headlines' changed definition, ignoring patch.")
+    (advice-patch #'outshine-fontify-headlines
+                  '(font-lock-new-keywords
+                    `((,heading-1-regexp 0 'outshine-level-1 t)
+                      (,heading-2-regexp 0 'outshine-level-2 t)
+                      (,heading-3-regexp 0 'outshine-level-3 t)
+                      (,heading-4-regexp 0 'outshine-level-4 t)
+                      (,heading-5-regexp 0 'outshine-level-5 t)
+                      (,heading-6-regexp 0 'outshine-level-6 t)
+                      (,heading-7-regexp 0 'outshine-level-7 t)
+                      (,heading-8-regexp 0 'outshine-level-8 t)))
+                  '(font-lock-new-keywords
+                    `((,heading-1-regexp 1 'outshine-level-1 t)
+                      (,heading-2-regexp 1 'outshine-level-2 t)
+                      (,heading-3-regexp 1 'outshine-level-3 t)
+                      (,heading-4-regexp 1 'outshine-level-4 t)
+                      (,heading-5-regexp 1 'outshine-level-5 t)
+                      (,heading-6-regexp 1 'outshine-level-6 t)
+                      (,heading-7-regexp 1 'outshine-level-7 t)
+                      (,heading-8-regexp 1 'outshine-level-8 t)))))
   :custom-face
   (outshine-level-1 ((t (:inherit outline-1 :background "#393939" :weight bold :foreground "#DFAF8F"))))
   (outshine-level-2 ((t (:inherit outline-2 :background "#393939" :weight bold))))
@@ -3010,9 +3013,13 @@ in the same file."
 
   ;; Use clean fringe style for highlighting
   (setq diff-hl-fringe-bmp-function #'jens/empty-fringe-bmp)
-  (advice-patch #'diff-hl-dired-highlight-items
-                'jens/empty-fringe-bmp
-                'diff-hl-fringe-bmp-from-type))
+
+  (if (not (fn-checksum #'diff-hl-dired-highlight-items
+                        "e06f15da2bf831295e015c9c82f11539"))
+      (message "`diff-hl-dired-highlight-items' changed definition, ignoring patch.")
+    (advice-patch #'diff-hl-dired-highlight-items
+                  'jens/empty-fringe-bmp
+                  'diff-hl-fringe-bmp-from-type)))
 
 (use-package hl-todo
   :straight t
