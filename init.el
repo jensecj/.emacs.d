@@ -24,9 +24,10 @@
 (defconst user-straight-directory (locate-user-emacs-file "straight/"))
 (defconst user-lisp-directory (locate-user-emacs-file "lisp/"))
 (defconst user-vendor-directory (locate-user-emacs-file "vendor/"))
+(defconst user-secrets-file (locate-user-emacs-file "secrets.el.gpg"))
+
 (defconst user-mail-directory "~/private/mail")
 (defconst user-contacts-files '("~/vault/contacts.org.gpg"))
-(defconst user-secrets-file (locate-user-emacs-file "secrets.el.gpg"))
 
 ;; add user directories to the load-path
 (add-to-list 'load-path user-lisp-directory)
@@ -182,10 +183,8 @@
 
 (log-info "Defining fundamental defuns")
 
-;; easy 'commenting out' of sexps
 (defmacro comment (&rest _args) "Ignore everything inside this sexp.")
 
-;; easy interactive lambda forms
 (defmacro xi (&rest body)
   "Convenience macro for creating interactive lambdas."
   `(lambda ()
