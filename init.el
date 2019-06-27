@@ -1968,6 +1968,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   :bind*
   ;; TODO: this is just silly, i could use apply*, but this should be a part of `use-package'
   ((:map notmuch-show-mode-map
+         ("U" . notmuch-mojn-show-goto-unread)
          ("u" . notmuch-mojn-refresh)
          ("g" . notmuch-mojn-revert-buffer)
          ("G" . notmuch-mojn-fetch-mail))
@@ -2547,6 +2548,7 @@ clipboard."
   :defer t
   :config
   (setq notmuch-show-logo nil)
+  (setq notmuch-search-oldest-first nil)
   (setq notmuch-column-control 1.0)
   (setq notmuch-wash-wrap-lines-length 80)
   (setq notmuch-show-indent-messages-width 1)
