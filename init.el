@@ -143,7 +143,9 @@
 
 (use-package advice-patch ;; easy way to patch packages
   :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"
-  :demand t)
+  :demand t
+  :config
+  (advice-add #'advice-patch :before (lambda (name &rest ) (message "patching %s" name))))
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
 ;; extensions of `use-package', so we need to have those packages.
