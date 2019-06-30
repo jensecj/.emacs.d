@@ -2548,9 +2548,13 @@ clipboard."
              :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
 
 (use-package notmuch
-  ;; TODO: attach files via `dired'
   :straight t
   :defer t
+  :bind
+  (:map notmuch-show-mode-map
+   ("B" . #'jens/notmuch-show-list-links)
+   :map notmuch-message-mode-map
+   ("C-c C-a" . mail-add-attachment))
   :config
   (setq notmuch-show-logo nil)
   (setq notmuch-search-oldest-first nil)
@@ -2567,15 +2571,15 @@ clipboard."
   (add-to-list 'notmuch-search-line-faces
                '("muted" . notmuch-search-muted-face))
 
-  (defun notmuch/ex-al (query)
-    "Exclude tag:archive and tag:lists from QUERY."
-    (format "%s and not tag:archived and not tag:lists" query))
+  (defun notmuch/ex-ald (query)
+    "Exclude tag:archive, tag:draft and tag:lists from QUERY."
+    (format "%s and not tag:archived and not tag:lists and not tag:draft" query))
 
   (setq notmuch-saved-searches
-        `((:name "unread" :query ,(notmuch/ex-al "tag:unread") :key "u")
-          (:name "today" :query ,(notmuch/ex-al "date:today..") :key "t" :sort-order newest-first)
-          (:name "7 days" :query ,(notmuch/ex-al "date:7d..") :key "w" :sort-order newest-first)
-          (:name "31 days" :query ,(notmuch/ex-al "date:31d..") :key "m" :sort-order newest-first)
+        `((:name "unread" :query ,(notmuch/ex-ald "tag:unread") :key "u")
+          (:name "today" :query ,(notmuch/ex-ald "date:today..") :key "t" :sort-order newest-first)
+          (:name "7 days" :query ,(notmuch/ex-ald "date:7d..") :key "w" :sort-order newest-first)
+          (:name "31 days" :query ,(notmuch/ex-ald "date:31d..") :key "m" :sort-order newest-first)
           (:name "drafts" :query "tag:draft" :key "d")
           (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
           (:blank t)
@@ -2583,10 +2587,24 @@ clipboard."
           (:name "emacs-help" :key "lh" :query "tag:lists and tag:lists/emacs-help" :sort-order newest-first)
           (:name "emacs-orgmode" :key "lo" :query "tag:lists and tag:lists/emacs-orgmode" :sort-order newest-first)
           (:blank t)
-          (:name "all mail" :query "not tag:lists" :key "a" :sort-order newest-first)
+          (:name "all mail" :query "not tag:lists and not tag:draft" :key "a" :sort-order newest-first)
           (:name "sent" :query "tag:sent" :key "s" :sort-order newest-first)
           (:name "archive" :query "tag:archived" :key "r" :sort-order newest-first)
           (:name "trash" :query "tag:deleted" :key "h" :sort-order newest-first)))
+
+  (defun jens/notmuch-show-list-links ()
+    "List links in the current message, if one is selected, browse to it."
+    (interactive)
+    (let ((links (notmuch-show--gather-urls)))
+      (if links
+          (browse-url (completing-read "Links: " links)))))
+
+  (setq notmuch-tagging-keys
+        '(("a" notmuch-archive-tags "archive")
+          ("r" notmuch-show-mark-read-tags "mark read")
+          ("d" ("-inbox" "-archived" "+deleted") "delete")
+          ("f" ("+flagged") "flag")
+          ("m" ("-unread" "+muted") "mute")))
 
   (defun notmuch/quicktag (mode key tags)
     "Easily add a new tag keybinding to a `notmuch' mode-map."
