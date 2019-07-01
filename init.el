@@ -1678,7 +1678,7 @@ currently is), otherwise comment or uncomment the current line."
 
 (defmacro easy-eldoc (hook fn)
   "Add FN to `eldoc-documentation-function' in HOOK."
-  (let ((name (intern (format "easy-eldoc-%s-%s" (syddmbol-name hook) (symbol-name fn)))))
+  (let ((name (intern (format "easy-eldoc-%s-%s" (symbol-name hook) (symbol-name fn)))))
     `(progn
        (defun ,name ()
          (set (make-local-variable 'eldoc-documentation-function) #',fn))
