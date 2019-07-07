@@ -2018,6 +2018,10 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   (struere-add 'org-mode #'jens/org-indent)
   (struere-add 'python-mode #'blacken-buffer))
 
+(use-package augment
+  :straight (augment :type git :repo "git@github.com:jensecj/augment.el.git")
+  :defer t)
+
 (use-package views
   :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
   :defer t
