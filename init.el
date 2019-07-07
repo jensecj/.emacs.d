@@ -1933,6 +1933,13 @@ Requires the system tools `tokei' and `jq'."
          (lines-of-code (s-trim (shell-command-to-string final-cmd))))
     lines-of-code))
 
+(defun jens/cloc-this-file ()
+  "Count the number of code lines in the current file."
+  (interactive)
+  (if-let ((file (buffer-file-name)))
+      (message (s-trim (shell-command-to-string (format "tokei %s" file))))
+    (message "This buffer does not have a file.")))
+
 (defun jens/download-file (url &optional dir overwrite)
   "Download a file from URL to DIR, optionally OVERWRITE an existing file.
 If DIR is nil, download to current directory."
