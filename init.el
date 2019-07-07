@@ -3736,11 +3736,19 @@ initial search query."
     "Suggest synonyms for the word at point, using `wordnet' as a thesaurus."
     (interactive)
     (let* ((word (thing-at-point 'word))
-           (synonyms (when word (-uniq (-flatten (funcall synosaurus-backend word))))))
-      (cond
-       ((not word) (message "No word at point"))
-       ((not synonyms) (message "No synonyms found for '%s'" word))
-       (t (completing-read "Synonyms: " synonyms))))))
+           (bounds (bounds-of-thing-at-point 'word))
+           (synonyms (when word (-uniq (-flatten (funcall synosaurus-backend word)))))
+           (pick))
+      (setq pick
+            (cond
+             ((not word) (message "No word at point"))
+             ((not synonyms) (message "No synonyms found for '%s'" word))
+             (t (completing-read "Synonyms: " synonyms))))
+      (when pick
+        (save-mark-and-excursion
+          (delete-region (car bounds) (cdr bounds))
+          (goto-char (car bounds))
+          (insert pick))))))
 
 (use-package so-long
   :straight (so-long :type git :repo "https://git.savannah.gnu.org/git/so-long.git/")
