@@ -94,12 +94,13 @@
       (kill-line)
       (insert (format-time-string "%Y%m%d")))))
 
-(defun dev-insert-header ()
+(defun dev-new-package ()
   "Insert standard library header at the top of the current buffer."
   (interactive)
   (goto-char (point-min))
   (insert
-   (format ";;; %s.el --- some description. -*- lexical-binding: t; -*-
+   (format
+    ";;; %s --- Some description. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) %s %s
 
@@ -112,16 +113,22 @@
 
 
 ;;; Commentary:
+;;
 
 ;;; Code:
 
+
+(provide '%s)
+;;; %s ends here
 "
-           (buffer-name)
-           (format-time-string "%Y")
-           (user-full-name)
-           (user-full-name)
-           user-mail-address
-           (format "emacs \"%s\"" emacs-version)
-           (format-time-string "%Y%m%d"))))
+    (buffer-name)
+    (format-time-string "%Y")
+    (user-full-name)
+    (user-full-name)
+    user-mail-address
+    (format "emacs \"%s\"" emacs-version)
+    (format-time-string "%Y%m%d")
+    (f-base (buffer-name))
+    (buffer-name))))
 
 (provide 'dev-extra)
