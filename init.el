@@ -1980,7 +1980,6 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   :bind*
   ;; TODO: this is just silly, i could use apply*, but this should be a part of `use-package'
   ((:map notmuch-show-mode-map
-         ("U" . notmuch-mojn-show-goto-unread)
          ("u" . notmuch-mojn-refresh)
          ("g" . notmuch-mojn-revert-buffer)
          ("G" . notmuch-mojn-fetch-mail))
@@ -2567,6 +2566,7 @@ clipboard."
   :bind
   (:map notmuch-show-mode-map
    ("B" . #'jens/notmuch-show-list-links)
+   ("U" . #'notmuch-show/goto-unread)
    :map notmuch-message-mode-map
    ("C-c C-a" . mail-add-attachment))
   :config
@@ -2651,6 +2651,10 @@ clipboard."
     (bug-reference-mode +1))
 
   (add-hook 'notmuch-show-mode-hook #'notmuch/enable-debbugs)
+
+  (defun notmuch-show/goto-unread ()
+    (interactive)
+    (notmuch-show-filter-thread "tag:unread"))
 
   ;;;;;;;;;;;;
   ;; extras ;;
