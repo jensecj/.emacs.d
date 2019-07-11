@@ -2646,6 +2646,12 @@ clipboard."
   (easy-eldoc notmuch-show-mode-hook notmuch-show/eldoc)
   (easy-eldoc notmuch-search-mode-hook notmuch-search/eldoc)
 
+  (defun notmuch/enable-debbugs ()
+    (setq bug-reference-url-format "https://debbugs.gnu.org/%s")
+    (bug-reference-mode +1))
+
+  (add-hook 'notmuch-show-mode-hook #'notmuch/enable-debbugs)
+
   ;;;;;;;;;;;;
   ;; extras ;;
   ;;;;;;;;;;;;
