@@ -353,7 +353,7 @@ equality of computed checksum and arg."
 (setq shift-select-mode nil)
 
 ;; always display text left-to-right
-(setq-default bidi-display-reordering nil)
+(setq-default bidi-display-reordering 'left-to-right)
 
 ;; fold characters in searches (e.g. 'a' matches 'â')
 (setq search-default-mode 'char-fold-to-regexp)
