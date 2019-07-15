@@ -146,7 +146,7 @@
   :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"
   :demand t
   :config
-  (advice-add #'advice-patch :before (lambda (name &rest ) (message "patching %s" name))))
+  (advice-add #'advice-patch :before (lambda (name &rest) (message "patching %s" name))))
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
 ;; extensions of `use-package', so we need to have those packages.
@@ -2016,7 +2016,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
               #'notmuch-mojn-complete-address))
 
 (use-package straight-ui
-    :straight (straight-ui :type git :repo "git@github.com:jensecj/straight-ui.el.git"))
+  :straight (straight-ui :type git :repo "git@github.com:jensecj/straight-ui.el.git"))
 
 (use-package blog
   :load-path "~/vault/blog/src/"
@@ -2193,7 +2193,7 @@ _t_: go to today-file
 
 (use-package dokument
   :straight (dokument :repo "git@github.com:jensecj/dokument.el.git")
-  :defer t
+  :demand t
   :bind
   (("C-+" . dokument))
   :commands (dokument
@@ -3254,7 +3254,9 @@ title and duration."
   :config
   (amx-mode))
 
-(use-package prescient :straight t)
+(use-package prescient
+  :straight t
+  :demand t)
 
 (use-package ivy-prescient
   :after (prescient ivy)
