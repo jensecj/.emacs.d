@@ -156,7 +156,18 @@
 (use-package hydra :straight t :demand t)
 (use-package shut-up :straight t :demand t)
 (use-package ov :straight t :demand t)
-(use-package async :straight t :demand t)
+
+(use-package async
+  :straight t
+  :demand t
+  :config
+  (defmacro async! (body &optional callback)
+    `(async-start
+      (lambda ()
+        ,(async-inject-variables "^load-path$")
+        ,body)
+      ,(if callback
+           `(lambda (res) (funcall ,callback res))))))
 
 ;;;; cache, temp files, etc.
 
