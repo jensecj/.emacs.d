@@ -2525,7 +2525,8 @@ _t_: go to today-file
   :bind
   (:map elfeed-search-mode-map
         ("t" . today-capture-elfeed-at-point)
-        ("c" . jens/elfeed-copy-link-at-point))
+        ("c" . jens/elfeed-copy-link-at-point)
+        ("V" . jens/elfeed-play-video-at-point))
   :config
   (setq elfeed-search-filter "@1-month-ago +unread ")
 
@@ -2550,7 +2551,11 @@ _t_: go to today-file
     :group 'elfeed-faces)
   (push '(aggregate aggregate-elfeed-face) elfeed-search-face-alist)
 
-  (setq elfeed-feeds (jens/load-from-file (locate-user-emacs-file "elfeeds.el")))
+  (defun jens/load-elfeed ()
+    (interactive)
+    (setq elfeed-feeds (jens/load-from-file (locate-user-emacs-file "elfeeds.el"))))
+
+  (jens/load-elfeed)
 
   (defun jens/elfeed-select-emacs-after-browse-url (fn &rest args)
     "Activate the emacs-window"
@@ -2567,6 +2572,15 @@ _t_: go to today-file
         (shell-command-to-string (format "xdotool windowactivate %s" emacs-window)))))
 
   (advice-add #'elfeed-search-browse-url :around #'jens/elfeed-select-emacs-after-browse-url)
+
+  (defun jens/elfeed-play-video-at-point ()
+    "Attempt to play the video link of the elfeed entry at point."
+    (interactive)
+    (letrec ((entry (car (elfeed-search-selected)))
+             (link (elfeed-entry-link entry))
+             (mpv-buf (get-buffer-create "*mpv*")))
+      (start-process "mpv-ytdl" mpv-buf "mpv" "--ytdl-format=bestvideo[width<=1920][height<=1080]" "--ytdl" link)
+      (view-buffer-other-window mpv-buf)))
 
   (defun jens/elfeed-copy-link-at-point ()
     "Copy the link of the elfeed entry at point to the
