@@ -2665,12 +2665,17 @@ clipboard."
    :map notmuch-message-mode-map
    ("C-c C-a" . mail-add-attachment))
   :config
-  (setq notmuch-show-logo nil)
-  (setq notmuch-search-oldest-first nil)
+  (setq notmuch-fcc-dirs "sent +sent")
   (setq notmuch-column-control 1.0)
   (setq notmuch-wash-wrap-lines-length 80)
+
+  (setq notmuch-show-logo nil)
   (setq notmuch-show-indent-messages-width 1)
-  (setq notmuch-fcc-dirs "sent +sent")
+
+  (setq notmuch-search-oldest-first nil)
+
+  (setq notmuch-message-headers-visible nil)
+
   (add-to-list* 'notmuch-archive-tags '("+archived" "-deleted"))
 
   (defface notmuch-search-muted-face
@@ -2680,25 +2685,29 @@ clipboard."
   (add-to-list 'notmuch-search-line-faces
                '("muted" . notmuch-search-muted-face))
 
-  (defun notmuch/ex-ald (query)
-    "Exclude tag:archive, tag:draft and tag:lists from QUERY."
-    (format "%s and not tag:archived and not tag:lists and not tag:draft" query))
+  (defun notmuch/excl (query &rest tags)
+    "Exclude TAGS from QUERY."
+    (let* ((default-excludes '("archived" "lists" "draft"))
+           (all-tags (-concat default-excludes tags))
+           (excludes (s-join " " (-map (lambda (t) (format "and not tag:%s" t)) all-tags))))
+      (format "%s %s" query excludes)))
 
   (setq notmuch-saved-searches
-        `((:name "unread" :query ,(notmuch/ex-ald "tag:unread") :key "u")
-          (:name "today" :query ,(notmuch/ex-ald "date:today..") :key "t" :sort-order newest-first)
-          (:name "7 days" :query ,(notmuch/ex-ald "date:7d..") :key "w" :sort-order newest-first)
-          (:name "31 days" :query ,(notmuch/ex-ald "date:31d..") :key "m" :sort-order newest-first)
+        `((:name "unread" :query ,(notmuch/excl "tag:unread") :key "u")
+          (:name "today" :query ,(notmuch/excl "date:today..") :key "t" :sort-order newest-first)
+          (:name "7 days" :query ,(notmuch/excl "date:7d..") :key "w" :sort-order newest-first)
+          (:name "30 days" :query ,(notmuch/excl "date:30d..") :key "m" :sort-order newest-first)
           (:name "drafts" :query "tag:draft" :key "d")
           (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
           (:blank t)
-          (:name "emacs-devel" :key "ld" :query "tag:lists and tag:lists/emacs-devel" :sort-order newest-first)
-          (:name "emacs-help" :key "lh" :query "tag:lists and tag:lists/emacs-help" :sort-order newest-first)
-          (:name "emacs-orgmode" :key "lo" :query "tag:lists and tag:lists/emacs-orgmode" :sort-order newest-first)
+          (:name "emacs-devel" :key "ld" :query "tag:lists/emacs-devel" :sort-order newest-first)
+          (:name "emacs-help" :key "lh" :query "tag:lists/emacs-help" :sort-order newest-first)
+          (:name "emacs-orgmode" :key "lo" :query "tag:lists/emacs-orgmode" :sort-order newest-first)
           (:blank t)
           (:name "all mail" :query "not tag:lists and not tag:draft" :key "a" :sort-order newest-first)
-          (:name "sent" :query "tag:sent" :key "s" :sort-order newest-first)
           (:name "archive" :query "tag:archived" :key "r" :sort-order newest-first)
+          (:name "bills" :query "tag:bills" :key "b" :sort-order newest-first)
+          (:name "sent" :query "tag:sent" :key "s" :sort-order newest-first)
           (:name "trash" :query "tag:deleted" :key "h" :sort-order newest-first)))
 
   (defun jens/notmuch-show-list-links ()
@@ -2709,10 +2718,11 @@ clipboard."
           (browse-url (completing-read "Links: " links)))))
 
   (setq notmuch-tagging-keys
-        '(("a" notmuch-archive-tags "archive")
-          ("r" notmuch-show-mark-read-tags "mark read")
-          ("d" ("-inbox" "-archived" "+deleted") "delete")
+        '(("a" ("-inbox" "+archived") "archive")
+          ("r" ("-unread") "mark read")
+          ("d" ("-unread" "-inbox" "-archived" "+deleted") "delete")
           ("f" ("+flagged") "flag")
+          ("b" ("+bills" "-archived") "bill")
           ("m" ("-unread" "+muted") "mute")))
 
   (defun notmuch/quicktag (mode key tags)
@@ -2761,8 +2771,9 @@ clipboard."
   (define-key notmuch-search-mode-map (kbd "C-c C-l") #'org-store-link)
 
   :custom-face
-  (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-05")))))
+  (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-1") :height 105))))
   (notmuch-search-unread-face ((t (:weight bold :foreground ,(zenburn-get "zenburn-yellow")))))
+  (notmuch-tag-deleted ((t (:foreground ,(zenburn-get "zenburn-red") :underline "red" :strike-through nil))))
   (notmuch-tag-face ((t (:foreground "#11ff11")))))
 
 ;;;; extensions to built-in packages
