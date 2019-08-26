@@ -393,6 +393,10 @@ equality of computed checksum and arg."
 
 (setq fill-column 85)
 
+;; TODO: arrives in 27.1
+;; (setq display-fill-column-indicator-character "|")
+;; (setq display-fill-column-indicator t)
+
 ;; show location of cursor in non-selected windows
 (setq cursor-in-non-selected-windows t)
 
