@@ -305,10 +305,10 @@ to run and `this-command-keys' returns the key pressed."
 equality of computed checksum and arg."
   (let* ((def (symbol-function fn))
          (str (prin1-to-string def))
-         (chk (md5 str)))
+         (hash (md5 str)))
     (if checksum
-        (string= chk checksum)
-      chk)))
+        (string= hash checksum)
+      hash)))
 
 ;;; built-in
 ;;;; settings
@@ -353,7 +353,8 @@ equality of computed checksum and arg."
 (setq shift-select-mode nil)
 
 ;; always display text left-to-right
-(setq-default bidi-display-reordering 'left-to-right)
+(setq-default bidi-display-reordering nil) ; FIXME: non-nil values cause "Reordering buffer..."
+;; (setq-default bidi-paragraph-direction 'left-to-right)
 
 ;; fold characters in searches (e.g. 'a' matches 'â')
 (setq search-default-mode 'char-fold-to-regexp)
@@ -466,6 +467,7 @@ equality of computed checksum and arg."
 
 ;; just give me a clean scratch buffer
 (setq initial-scratch-message "")
+(setq initial-major-mode 'emacs-lisp-mode)
 
 ;; default regexp for files to hide in dired-omit-mode
 ;; FIXME: this needs to be toplevel, otherwise dired+ fails to load...
@@ -592,6 +594,11 @@ seconds."
          ("\\.zshrc\\'" . shell-script-mode)
          ("\\.zshenv\\'" . shell-script-mode)
          ("\\.zprofile\\'" . shell-script-mode)
+         ("\\.profile\\'" . shell-script-mode)
+         ("\\.bashrc\\'" . shell-script-mode)
+         ("\\.bash_profile\\'" . shell-script-mode)
+         ("\\.extend.bashrc\\'" . shell-script-mode)
+         ("\\.xinitrc\\'" . shell-script-mode)
          ("\\.PKGBUILD\\'" . shell-script-mode))
   :config
   (add-hook* 'sh-mode-hook '(flymake-mode flycheck-mode)))
@@ -1799,7 +1806,7 @@ current line."
     (cond
      ((f-directory? pick) (dired pick))
      ((f-file? pick) (find-file pick))
-     (t (message "unknown repo: %s" pick)))))
+     (t (message "unable to locate repo: %s" pick)))))
 
 (defun jens/load-secrets ()
   "Load secrets from `user-secrets-file'`"
