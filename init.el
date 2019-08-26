@@ -2249,7 +2249,7 @@ _t_: go to today-file
   (("C-+" . dokument))
   :commands (dokument
              dokument-company-menu-selection-quickhelp
-             dokument-setup-defaults)
+             dokument-use-defaults)
   :config
   (setq dokument--posframe-font "Source Code Pro Semibold")
 
