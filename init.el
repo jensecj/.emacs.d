@@ -2933,6 +2933,7 @@ clipboard."
 (use-package fontify-face
   :straight t
   :defer t
+  :diminish fontify-face-mode
   :hook (emacs-lisp-mode . fontify-face-mode))
 
 (use-package package-lint :straight t :defer t :commands (package-lint-current-buffer))
