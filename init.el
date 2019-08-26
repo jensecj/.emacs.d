@@ -2308,6 +2308,17 @@ _t_: go to today-file
   (defmacro zenburn-get (color)
     (cdr (assoc color zenburn-default-colors-alist)))
 
+  (mapatoms (lambda (atom)
+              (let ((underline nil))
+                (when (and (facep atom)
+                           (setq underline
+                                 (face-attribute atom
+                                                 :underline))
+                           (eq (plist-get underline :style) 'wave))
+                  (plist-put underline :style 'line)
+                  (set-face-attribute atom nil
+                                      :underline underline)))))
+
   (load-theme 'zenburn t)
   :custom-face
   (mode-line ((t (:box nil :background  "#2B2B2B"))))
