@@ -19,6 +19,43 @@
 
 (defalias '@ 'progn)
 
+;;;; macros
+
+(defmacro ignore-error (errors &rest body)
+  (declare (indent defun))
+  (let ((handlers (when errors `((,errors nil)))))
+    `(condition-case _
+         ,@body
+       ,@handlers)))
+
+(ignore-error (user-error file-error)
+  (signal 'user-error '("some error"))
+  (message "test!"))
+
+;;;; functions
+
+(defun -mapcar (fn &rest lists)
+  "Map FN to the car of each list in LISTS."
+  (cond
+   ((null lists) nil)
+   ((null (car lists)) nil)
+   ((listp lists)
+    (cons
+     (apply fn (-map #'car lists))
+     (apply #'-mapcar fn (-map #'cdr lists))))))
+
+(cl-defmacro bench (&optional (times 100000) &rest body)
+  "Call `benchmark-run-compiled' on BODY with TIMES iterations, returning list suitable for Org source block evaluation.
+Garbage is collected before calling `benchmark-run-compiled' to
+avoid counting existing garbage which needs collection."
+  (declare (indent defun))
+  `(progn
+     (garbage-collect)
+     (list '("Total runtime" "# of GCs" "Total GC runtime")
+           'hline
+           (benchmark-run-compiled ,times
+             (progn
+               ,@body)))))
 
 ;;;; syntax-ppss accessors
 

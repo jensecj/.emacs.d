@@ -221,16 +221,6 @@
 
 ;; (broadcast 'a '(1 2 3) 'z '(a b c) '(æ ø å))
 
-(defun -mapcar (fn &rest lists)
-  "Map FN to the car of each list in LISTS."
-  (cond
-   ((null lists) nil)
-   ((null (car lists)) nil)
-   ((listp lists)
-    (cons
-     (apply fn (-map #'car lists))
-     (apply #'-mapcar fn (-map #'cdr lists))))))
-
 (defun -mapply (fn atom-or-list)
   "If ATOM-OR-LIST if a list, map FN over it, otherwise apply FN."
   (cond
