@@ -685,6 +685,38 @@ seconds."
 (use-package elisp-mode
   :delight (emacs-lisp-mode "Elisp" :major))
 
+(use-package eww
+  :bind (("M-s M-o" . #'eww/open)
+         ("M-s M-w" . #'eww/search-region)
+         ("M-s M-d" . #'eww/delete-cookies)
+         ("M-s M-s" . #'eww-list-buffers)
+         ("M-s M-c" . #'url-cookie-list))
+  :config
+  (defun eww/search-region ()
+    "Open eww and search for the contents of the region."
+    (interactive)
+    (when-let (((use-region-p))
+               (query (buffer-substring (region-beginning) (region-end)))
+               (url (concat eww-search-prefix query))
+               (buf (get-buffer-create "*eww*")))
+      (view-buffer-other-window buf)
+      (eww url)))
+
+  (defun eww/open ()
+    "Open link at point in eww."
+    (interactive)
+    (message "test!")
+    (when-let ((url (car (eww-suggested-uris)))
+               (buf (get-buffer-create "*eww*")))
+      (view-buffer-other-window buf)
+      (eww url)))
+
+  (defun eww/delete-cookies ()
+    "Delete all eww cookies."
+    (interactive)
+    (message "deleting cookies...")
+    (url-cookie-delete-cookies)))
+
 ;;;;; minor modes
 
 (use-package hi-lock :diminish hi-lock-mode)
