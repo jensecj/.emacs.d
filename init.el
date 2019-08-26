@@ -2339,6 +2339,7 @@ _t_: go to today-file
 (use-package scss-mode :straight t :mode "\\.scss\\'")
 (use-package tuareg :straight t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
 (use-package restclient :straight t)
+(use-package json-mode :straight t)
 
 (use-package rust-mode
   :straight t
