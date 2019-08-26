@@ -972,8 +972,7 @@ number input"
   :defer t
   :config
   (setq tramp-default-method "ssh")
-  (setq tramp-persistency-file-name (no-littering-expand-var-file-name "tramp"))
-  (setq tramp-terminal-type "tramp")
+  (setq tramp-persistency-file-name (no-littering-expand-var-file-name "tramp/"))
   (setq tramp-verbose 6))
 
 (use-package recentf ;; save a list of recently visited files.
