@@ -1989,14 +1989,16 @@ Requires the system tools `tokei' and `jq'."
       (message (s-trim (shell-command-to-string (format "tokei %s" file))))
     (message "This buffer does not have a file.")))
 
-(defun jens/download-file (url &optional dir overwrite)
+(defun jens/download-file (url &optional newname dir overwrite)
   "Download a file from URL to DIR, optionally OVERWRITE an existing file.
 If DIR is nil, download to current directory."
   (let* ((dir (or dir default-directory))
-         (file (url-unhex-string (f-filename url)))
+         (file (or newname (url-unhex-string (f-filename url))))
          (path (f-join dir file)))
     (condition-case _ex
-        (url-copy-file url path overwrite)
+        (progn
+          (url-copy-file url path overwrite)
+          path)
       (error 'file-already-exists))))
 
 (defun uuid ()
@@ -2015,6 +2017,23 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   (let ((modes (--filter (and (boundp it) (symbol-value it)) minor-mode-list)))
     (ivy-read "Active Minor Modes: " modes
               :action (lambda (m) (dokument-other-buffer m)))))
+
+(defun jens/diff (a b)
+  "Diff A with B, either should be a location of a document, local or remote."
+  (interactive)
+  (let* ((a-name (f-filename a))
+         (b-name (f-filename b))
+         (file_a (if (f-exists-p a) a
+                   (jens/download-file a (concat (uuid) "-" a-name) temporary-file-directory)))
+         (file_b (if (f-exists-p b) b
+                   (jens/download-file b (concat (uuid) "-" b-name) temporary-file-directory))))
+    (diff file_a file_b)))
+
+(defun jens/diff-news ()
+  "Check whats new in NEWS."
+  (interactive)
+  (jens/diff "/home/jens/.aur/emacs-git-src/etc/NEWS"
+             "https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/NEWS"))
 
 ;;;; packages
 
