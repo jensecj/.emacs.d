@@ -94,6 +94,12 @@
       (kill-line)
       (insert (format-time-string "%Y%m%d")))))
 
+(defun dev-insert-mode-header ()
+  ""
+  (interactive)
+  (goto-char (point-min))
+  (insert "-*- mode: org -*-"))
+
 (defun dev-new-package ()
   "Insert standard library header at the top of the current buffer."
   (interactive)
