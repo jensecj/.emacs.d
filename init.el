@@ -3768,6 +3768,7 @@ paste for multi-term mode."
   (("C-S-s" . jens/ripgrep)
    ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
+   ("C-S-f" . counsel-fzf)
    ("C-x C-i" . counsel-imenu)
    ("C-x i" . counsel-outline)
    ("M-æ" . counsel-mark-ring)
@@ -3779,12 +3780,16 @@ paste for multi-term mode."
   (setq counsel-outline-display-style 'path)
   (setq counsel-outline-face-style 'verbatim)
 
+  (setq counsel-fzf-cmd "fzf -i -x -f \"%s\"")
+
   (setq counsel-yank-pop-height 25)
   (add-to-list 'ivy-height-alist '(counsel-yank-pop . 10))
 
   (setq counsel-yank-pop-separator
         (propertize "\n------------------------------------------\n"
                     'face `(:foreground "#111111")))
+
+  (setq counsel-rg-base-command "rg --hidden -S --no-heading --line-number --color never %s .")
 
   (defun jens/ripgrep ()
     "Interactively search the current directory. Jump to result using ivy."
