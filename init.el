@@ -1409,9 +1409,11 @@ With prefix ARG, ask for file to open."
   (if (or arg (not buffer-file-name))
       (read-file-name "Find file:"))
 
-  (let ((place (point)))
+  (let ((place (point))
+        (mode major-mode))
     (jens/sudo-find-file buffer-file-name)
-    (goto-char place)))
+    (goto-char place)
+    (funcall mode)))
 
 (defun jens/inspect-variable-at-point (&optional arg)
   "Inspect variable at point."
