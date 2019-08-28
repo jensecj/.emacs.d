@@ -2703,7 +2703,6 @@ clipboard."
           (:blank t)
           (:name "emacs-devel" :key "ld" :query "tag:lists/emacs-devel" :sort-order newest-first)
           (:name "emacs-help" :key "lh" :query "tag:lists/emacs-help" :sort-order newest-first)
-          (:name "emacs-orgmode" :key "lo" :query "tag:lists/emacs-orgmode" :sort-order newest-first)
           (:blank t)
           (:name "all mail" :query "not tag:lists and not tag:draft" :key "a" :sort-order newest-first)
           (:name "archive" :query "tag:archived" :key "r" :sort-order newest-first)
@@ -2723,7 +2722,7 @@ clipboard."
           ("r" ("-unread") "mark read")
           ("d" ("-unread" "-inbox" "-archived" "+deleted") "delete")
           ("f" ("+flagged") "flag")
-          ("b" ("+bills" "-archived") "bill")
+          ("b" ("+bills" "-inbox" "-archived") "bill")
           ("m" ("-unread" "+muted") "mute")))
 
   (defun notmuch/quicktag (mode key tags)
