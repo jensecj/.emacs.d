@@ -976,9 +976,28 @@ number input"
 (use-package tramp ;; easily access and edit files on remote machines
   :defer t
   :config
-  (setq tramp-default-method "ssh")
+  (setq tramp-verbose 6)
+
   (setq tramp-persistency-file-name (no-littering-expand-var-file-name "tramp/"))
-  (setq tramp-verbose 6))
+  (setq tramp-default-method "ssh")
+
+  (defun tramp/get-method-parameter (method param)
+    "Return the method parameter PARAM.
+If the `tramp-methods' entry does not exist, return NIL."
+    (let ((entry (assoc param (assoc method tramp-methods))))
+      (when entry (cadr entry))))
+
+  (defun tramp/set-method-parameter (method param newvalue)
+    "Set the method paramter PARAM to VALUE for METHOD.
+
+If METHOD does not yet have PARAM, add it.
+If METHOD does not exist, do nothing."
+    (let ((method-params (assoc method tramp-methods)))
+      (when method-params
+        (let ((entry (assoc param method-params)))
+          (if entry
+              (setcar (cdr entry) newvalue)
+            (setcdr (last method-params) '(param newvalue))))))))
 
 (use-package recentf ;; save a list of recently visited files.
   :demand t
