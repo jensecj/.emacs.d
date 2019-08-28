@@ -816,6 +816,7 @@ seconds."
 
 (use-package autorevert
   ;; always show the version of a file as it appears on disk
+  :disabled t
   :demand t
   :diminish auto-revert-mode
   :config
@@ -827,7 +828,7 @@ seconds."
   (setq revert-without-query '("\\.pdf"))
 
   ;; auto refresh buffers
-  (global-auto-revert-mode 1))
+  (global-auto-revert-mode -1))
 
 (use-package display-line-numbers
   :defer t
