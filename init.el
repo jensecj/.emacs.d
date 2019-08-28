@@ -523,7 +523,11 @@ times."
 ;; set the paranoia level to medium, warns if connections are insecure
 (setq network-security-level 'medium)
 
-(setq auth-sources '("~/vault/authinfo.gpg" "~/.netrc"))
+(use-package auth-source
+  :demand t
+  :config
+  (setq auth-sources '("~/vault/authinfo.gpg" "~/.netrc"))
+  (setq auth-source-save-behavior nil))
 
 (use-package epa-file
   :demand t
