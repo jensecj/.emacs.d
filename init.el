@@ -2067,6 +2067,8 @@ With `prefix-arg', insert the UUID at point in the current buffer."
               #'notmuch-mojn-complete-address))
 
 (use-package straight-ui
+  :defer t
+  :commands straight-ui
   :straight (straight-ui :type git :repo "git@github.com:jensecj/straight-ui.el.git"))
 
 (use-package blog
