@@ -560,6 +560,7 @@ times."
   "Kill .gpg buffers after they have not been used for 60
 seconds."
   (interactive)
+  ;; TODO: maybe use `midnight-mode'
   (let ((buffers-killed 0))
     (dolist (buffer (buffer-list))
       (with-current-buffer buffer
@@ -2090,6 +2091,9 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   (jens/load-secrets)
   (require 'notmuch nil 'noerror)
 
+  ;; TODO: action for adding contact to org-contacts?
+  ;; TODO: action for viewing a mail in org-mode
+
   (setq notmuch-mojn-really-delete-mail t)
 
   (add-hook 'notmuch-mojn-pre-refresh-hook #'jens/load-secrets)
@@ -2689,6 +2693,8 @@ clipboard."
              :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
 
 (use-package notmuch
+  ;; TODO: setup notmuch for multiple mail-profiles
+  ;; see https://www.djcbsoftware.nl/code/mu/mu4e/Contexts-example.html
   :straight t
   :defer t
   :bind
@@ -2863,6 +2869,7 @@ clipboard."
         ("c" . dired-ranger-copy)
         ("p" . dired-ranger-paste)))
 
+;; FIXME: does not load properly, only after calling one of the bound keys
 (use-package dired+
   :straight (dired+ :type git :host github :repo "emacsmirror/dired-plus")
   :after dired
@@ -3138,6 +3145,7 @@ in the same file."
   (yas-global-mode +1))
 
 (use-package smartparens
+  ;; TODO: replace this
   :straight t
   :defer t
   :bind (("M-<up>" .  sp-backward-barf-sexp)
@@ -3504,6 +3512,7 @@ title and duration."
    :order 1))
 
 (use-package paxedit
+  ;; TODO: replace this
   :straight t
   :defer t
   :delight " paxedit "
@@ -3774,6 +3783,7 @@ paste for multi-term mode."
   (("C-x C-b" . ivy-switch-buffer)
    ("C-c C-r" . ivy-resume)
    :map ivy-minibuffer-map
+   ;; TODO: fix this, should jump to selected entries dir, not the candidates
    ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
    ("C-<return>" . ivy-immediate-done)
    :map ivy-occur-grep-mode-map
@@ -3798,6 +3808,8 @@ paste for multi-term mode."
   :commands (counsel-mode counsel--find-file-matcher)
   :bind
   (("C-S-s" . jens/ripgrep)
+   ;; TODO: replace counsel-recentf with a version which combines
+   ;; recent files and directories, and highlights files by type
    ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
    ("C-S-f" . counsel-fzf)
