@@ -886,15 +886,21 @@ number input"
       (error doc)))
   (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
 
-  ;; FIXME: remove the requirement on `sp-lisp-modes'
-  (with-eval-after-load 'smartparens
+  (setq lispy-modes
+        (-concat '(lisp-mode lisp-interaction-mode inferior-lisp-mode)
+                 '(clojure-mode clojurec-mode clojurescript-mode inf-clojure-mode cider-repl-mode)
+                 '(emacs-lisp-mode eshell-mode inferior-emacs-lisp-mode)
+                 '(common-lisp-mode slime-repl-mode)
+                 '(scheme-mode geiser-repl-mode inferior-scheme-mode scheme-interaction-mode)))
+
+  (with-eval-after-load 'dokument
     (defun jens/lispify-eldoc-message (eldoc-msg)
       "Change the format of eldoc messages for functions to `(fn args)'."
       (shut-up
         (save-window-excursion
           (save-mark-and-excursion
             (if (and eldoc-msg
-                     (member major-mode sp-lisp-modes))
+                     (member major-mode lispy-modes))
                 (let* ((parts (s-split ": " eldoc-msg))
                        (sym-name (car parts))
                        (sym (intern sym-name))
