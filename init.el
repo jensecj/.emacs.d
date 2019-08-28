@@ -1098,7 +1098,7 @@ number input"
   (setq shr-width 100))
 
 (use-package sendmail
-  :after (:any mu4e notmuch)
+  :after notmuch
   :config
   (setq mail-envelope-from 'header)
   (setq sendmail-program "msmtp")
