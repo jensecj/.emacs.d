@@ -2588,7 +2588,12 @@ clipboard."
       (with-temp-buffer
         (insert link)
         (clipboard-kill-ring-save (point-min) (point-max))
-        (message (format "copied %s to clipboard" link))))))
+        (message (format "copied %s to clipboard" link)))))
+
+  :custom-face
+  (elfeed-search-date-face ((t (:underline nil))))
+  (elfeed-search-unread-title-face ((t (:height 100 :strike-through nil))))
+  (elfeed-search-title-face ((t (:height 90 :strike-through t)))))
 
 (use-package pdf-tools
   :straight t
