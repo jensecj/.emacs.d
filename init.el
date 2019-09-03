@@ -1005,7 +1005,8 @@ If METHOD does not exist, do nothing."
 
 (use-package recentf ;; save a list of recently visited files.
   :demand t
-  :commands recentf-mode
+  :commands (recentf-mode jens/recentf)
+  :bind (("C-x f" . jens/recentf))
   :config
   ;; TODO: maybe move to var directory?
   (setq recentf-save-file
@@ -1026,6 +1027,51 @@ If METHOD does not exist, do nothing."
   (setq recentf-auto-save-timer
         (run-with-idle-timer 30 t (lambda ()
                                     (shut-up (recentf-save-list)))))
+
+  (defun path-colorize-tail (path face)
+    ""
+    (let ((last-part (-last-item (f-split path))))
+      (replace-regexp-in-string
+       (regexp-quote last-part)
+       (lambda (s) (propertize s 'face face))
+       path)))
+
+  (defun path-colorize-whole (path face)
+    ""
+    (propertize path 'face face))
+
+  (defun path-colorize-file (file)
+    ""
+    ;; TODO: colorize different file-types
+    (path-colorize-tail file 'font-lock-keyword-face))
+
+  (defun path-colorize (path)
+    ""
+    (cond
+     ((file-remote-p path)
+      (let* ((remote-part (file-remote-p path))
+             (path-part (replace-regexp-in-string (regexp-quote remote-part) "" path)))
+        (s-concat
+         (path-colorize-whole remote-part 'font-lock-string-face)
+         (path-colorize-tail path-part 'font-lock-builtin-face))))
+     ((f-dir-p path) (path-colorize-tail path 'dired-directory))
+     ((f-file-p path) (path-colorize-file path))
+     (t (path-colorize-whole path 'font-lock-warning-face))))
+
+
+  (defun jens/recentf ()
+    "Show list of recently visited files, colorized by type."
+    (interactive)
+    (let* ((recent-files (mapcar #'substring-no-properties recentf-list))
+           (colorized-files (-map #'path-colorize recent-files)))
+
+      (ivy-read "recent files: "
+                colorized-files
+                :action (lambda (f)
+                          (with-ivy-window
+                            (find-file f)))
+                :require-match t
+                :caller 'jens/recentf)))
 
   (defun jens/recentf-cleanup (orig-fun &rest args)
     "Silence `recentf-auto-cleanup'."
