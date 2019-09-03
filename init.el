@@ -1619,7 +1619,7 @@ not in the overlay-map"
      (define-key map (kbd key) command)
      map) t))
 ;; example
-;; (jens/one-shot-keybinding "a" (xi (previous-line)))
+;; (jens/one-shot-keybinding "a" (xi (forward-line -1)))
 
 (defun jens/one-shot-keymap (key-command-pairs)
   "Set a keybinding that disappear once you press a key that is
