@@ -1367,6 +1367,16 @@ If METHOD does not exist, do nothing."
   ;; helper functions ;;
   ;;;;;;;;;;;;;;;;;;;;;;
 
+  (setq org-link-re (rx "[[" (group (zero-or-more any))  "][" (group (zero-or-more any)) "]]"))
+
+  (defun jens/org-open-link-at-point ()
+    "Open the org-link at point."
+    (interactive)
+    (when-let* ((line-string (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                (found (string-match org-link-re line-string))
+                (url (substring line-string (match-beginning 0) (match-end 0))))
+      (org-open-link-from-string url)))
+
   (defun jens/toggle-org-babel-safe ()
     "Toggle whether it is safe to eval babel code blocks in the current buffer."
     (interactive)
