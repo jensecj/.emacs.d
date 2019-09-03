@@ -49,10 +49,13 @@
     (if (not (find-font (font-spec :name my-font)))
         (log-warning (format "could not find font: %s" my-font))
       (add-to-list 'default-frame-alist `(font . ,my-font))
-      (set-frame-font my-font)
+      (set-frame-font my-font))
 
-      ;; only setup fonts once
-      (remove-hook 'server-after-make-frame-hook #'jens/init-fonts))))
+    ;; only setup fonts once
+    (remove-hook 'server-after-make-frame-hook #'jens/init-fonts)))
+
+(unless (daemonp)
+  (jens/init-fonts))
 
 (add-hook 'server-after-make-frame-hook #'jens/init-fonts)
 
