@@ -560,7 +560,7 @@ times."
   )
 
 (defun jens/kill-idle-gpg-buffers ()
-  "Kill .gpg buffers after they have not been used for 60
+  "Kill .gpg buffers after they have not been used for 120
 seconds."
   (interactive)
   ;; TODO: maybe use `midnight-mode'
@@ -580,7 +580,7 @@ seconds."
     (unless (zerop buffers-killed)
       (message "%s .gpg buffer(s) saved and killed" buffers-killed))))
 
-(setq jens/kill-idle-gpg-buffers-timer (run-with-idle-timer 60 t 'jens/kill-idle-gpg-buffers))
+(setq jens/kill-idle-gpg-buffers-timer (run-with-idle-timer 120 t 'jens/kill-idle-gpg-buffers))
 
 ;;;; packages
 
