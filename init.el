@@ -399,10 +399,6 @@ equality of computed checksum and arg."
 
 (setq fill-column 85)
 
-;; TODO: arrives in 27.1
-;; (setq display-fill-column-indicator-character "|")
-;; (setq display-fill-column-indicator t)
-
 ;; show location of cursor in non-selected windows
 (setq cursor-in-non-selected-windows t)
 
@@ -731,6 +727,12 @@ seconds."
 
 (use-package hi-lock :diminish hi-lock-mode)
 (use-package outline :diminish outline-minor-mode)
+
+(use-package display-fill-column-indicator
+  :hook ((text-mode prog-mode) . display-fill-column-indicator-mode)
+  :config
+  ;; (setq display-fill-column-indicator-character ?\u2502)
+  )
 
 (use-package ispell
   :defer t
@@ -3203,13 +3205,6 @@ in the same file."
   ;; Remove newline checks, since they would trigger an immediate check
   ;; when we want the idle-change-delay to be in effect while editing.
   (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled)))
-
-(use-package fill-column-indicator
-  :straight t
-  :hook ((text-mode prog-mode) . fci-mode)
-  :config
-  (setq-default fci-rule-color "#555555")
-  (fci-mode +1))
 
 (use-package yasnippet
   :straight t
