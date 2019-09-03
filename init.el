@@ -3250,7 +3250,7 @@ in the same file."
   ((magit-post-refresh . diff-hl-magit-post-refresh)
    (prog-mode . diff-hl-mode)
    (org-mode . diff-hl-mode)
-   (dired-mode . diff-hl-dired-mode))
+   (dired-mode . diff-hl-dired-mode-unless-remote))
   :config
   (setq diff-hl-dired-extra-indicators t)
   (setq diff-hl-draw-borders nil)
