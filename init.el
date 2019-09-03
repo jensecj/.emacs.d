@@ -688,7 +688,7 @@ seconds."
   :delight (emacs-lisp-mode "Elisp" :major))
 
 (use-package eww
-  :bind (("M-s M-o" . #'eww/open)
+  :bind (("M-s M-o" . #'eww/open-url-at-point)
          ("M-s M-w" . #'eww/search-region)
          ("M-s M-d" . #'eww/delete-cookies)
          ("M-s M-s" . #'eww-list-buffers)
@@ -704,7 +704,7 @@ seconds."
       (view-buffer-other-window buf)
       (eww url)))
 
-  (defun eww/open ()
+  (defun eww/open-url-at-point ()
     "Open link at point in eww."
     (interactive)
     (message "test!")
