@@ -21,16 +21,6 @@
 
 ;;;; macros
 
-(defmacro ignore-error (errors &rest body)
-  (declare (indent defun))
-  (let ((handlers (when errors `((,errors nil)))))
-    `(condition-case _
-         ,@body
-       ,@handlers)))
-
-(ignore-error (user-error file-error)
-  (signal 'user-error '("some error"))
-  (message "test!"))
 
 ;;;; functions
 
