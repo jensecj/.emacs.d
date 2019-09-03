@@ -3885,7 +3885,6 @@ paste for multi-term mode."
   (("C-S-s" . jens/ripgrep)
    ;; TODO: replace counsel-recentf with a version which combines
    ;; recent files and directories, and highlights files by type
-   ("C-x f" . counsel-recentf)
    ("C-x C-f" . counsel-find-file)
    ("C-S-f" . counsel-fzf)
    ("C-x C-i" . counsel-imenu)
