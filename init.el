@@ -687,6 +687,11 @@ seconds."
 (use-package elisp-mode
   :delight (emacs-lisp-mode "Elisp" :major))
 
+(use-package ediff
+  :config
+  (setq ediff-window-setup-function 'ediff-setup-windows)
+  (setq ediff-split-window-function 'split-window-vertically))
+
 (use-package eww
   :bind (("M-s M-o" . #'eww/open-url-at-point)
          ("M-s M-w" . #'eww/search-region)
