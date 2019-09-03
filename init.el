@@ -312,7 +312,7 @@ equality of computed checksum and arg."
 (log-info "Redefining built-in defaults")
 
 ;; location of emacs source files
-(let ((src-dir "/home/jens/.aur/emacs-git-src/"))
+(let ((src-dir "/home/jens/emacs/src/"))
   (if (f-exists-p src-dir)
       (setq source-directory src-dir)
     (log-warning "Unable to locate emacs source directory.")))
