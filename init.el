@@ -2848,6 +2848,19 @@ clipboard."
     (interactive)
     (notmuch-show-filter-thread "tag:unread"))
 
+  (defun notmuch-show/view-mime-part-at-point-in-mode ()
+    "Open MIME-part at point in a specific major-mode."
+    (interactive)
+    (let* ((handle (notmuch-show-current-part-handle))
+           (buf (nth 0 handle))
+           (modes '(org-mode text-mode))
+           (mode (intern (completing-read "mode: " modes nil t))))
+
+      (with-current-buffer buf
+        (funcall mode))
+
+      (view-buffer-other-window buf)))
+
   ;;;;;;;;;;;;
   ;; extras ;;
   ;;;;;;;;;;;;
