@@ -4119,6 +4119,9 @@ initial search query."
 (global-set-key (kbd "M-l") #'downcase-dwim)
 (global-set-key (kbd "M-c") #'capitalize-dwim)
 
+(global-set-key (kbd "C-M-n") #'forward-paragraph)
+(global-set-key (kbd "C-M-p") #'backward-paragraph)
+
 (global-set-key (kbd "C-x b") 'ibuffer)
 
 ;; Scroll the buffer without moving the point (unless we over-move)
