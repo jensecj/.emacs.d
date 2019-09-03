@@ -3894,6 +3894,8 @@ paste for multi-term mode."
    ("M-b" . counsel-bookmark)
    :map help-map
    ("l" . counsel-find-library))
+  :init
+  (setenv "FZF_DEFAULT_COMMAND" "fd --type f --hidden --follow --exclude .git")
   :config
   (setq counsel-outline-display-style 'path)
   (setq counsel-outline-face-style 'verbatim)
