@@ -691,6 +691,8 @@ seconds."
   (setq ediff-window-setup-function 'ediff-setup-windows)
   (setq ediff-split-window-function 'split-window-vertically))
 
+(use-package diff)
+
 (use-package eww
   :bind (("M-s M-o" . #'eww/open-url-at-point)
          ("M-s M-w" . #'eww/search-region)
