@@ -74,9 +74,8 @@ document."
 (defun org-extra-copy-url-at-point ()
   "Grab URL from org-link at point."
   (interactive)
-  (let* ((link-info (assoc :link (org-context)))
-         (text (when link-info
-                 (buffer-substring-no-properties (cadr link-info) (caddr link-info)))))
+  (when-let* ((link-info (assoc :link (org-context)))
+              (text (buffer-substring-no-properties (cadr link-info) (caddr link-info))))
     (if (not text)
         (error "Not in org link")
       (with-temp-buffer
