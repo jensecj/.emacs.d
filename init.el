@@ -1282,8 +1282,7 @@ That is, remove a non kept file from the recent list."
       :files (:defaults "contrib/lisp/*.el")
       :includes (org))))
 
-  (straight-use-package 'org-plus-contrib)
-  )
+  (straight-use-package 'org-plus-contrib))
 
 ;; I want to use the version of org-mode from upstream.
 ;; remove the built-in org-mode from the load path, so it does not get loaded
@@ -1366,7 +1365,13 @@ That is, remove a non kept file from the recent list."
   (plist-put org-format-latex-options :scale 1.6)
   (setq org-preview-latex-default-process 'dvisvgm)
 
-  (setq org-html-head "<style type=\"text/css\">body {max-width: 800px; margin: 0 auto;} img {max-width: 100%;}</style>")
+  (setq org-html-head
+        (s-join " "
+                '("<style type=\"text/css\">"
+                  "body {max-width: 800px; margin: 0 auto;}"
+                  "img {max-width: 100%;}"
+                  "</style>")))
+
   (setq org-outline-path-complete-in-steps t)
   (setq org-refile-allow-creating-parent-nodes (quote confirm))
   (setq org-refile-use-outline-path t)
@@ -3906,8 +3911,6 @@ paste for multi-term mode."
   :commands (counsel-mode counsel--find-file-matcher)
   :bind
   (("C-S-s" . jens/ripgrep)
-   ;; TODO: replace counsel-recentf with a version which combines
-   ;; recent files and directories, and highlights files by type
    ("C-x C-f" . counsel-find-file)
    ("C-S-f" . counsel-fzf)
    ("C-x C-i" . counsel-imenu)
@@ -3945,6 +3948,7 @@ paste for multi-term mode."
       (counsel-ag initial-input default-directory)))
 
   (counsel-mode))
+
 (use-package counsel-tramp :straight t :defer t)
 
 (use-package ivy-rich
@@ -4258,8 +4262,10 @@ initial search query."
 
 ;;; epilogue
 
-(log-success (format "Configuration is %s lines of emacs-lisp. (excluding 3rd-parties)" (jens/emacs-init-loc)))
-(log-success (format "Initialized in %s, with %s garbage collections." (emacs-init-time) gcs-done))
+(log-success (format "Configuration is %s lines of emacs-lisp. (excluding 3rd-parties)"
+                     (jens/emacs-init-loc)))
+(log-success (format "Initialized in %s, with %s garbage collections."
+                     (emacs-init-time) gcs-done))
 
 (defun jens/show-initial-important-messages ()
   "Show all lines in *Messages* matching a regex for important messages."
