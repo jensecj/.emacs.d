@@ -1070,6 +1070,26 @@ If METHOD does not exist, do nothing."
      ((f-file-p path) (path-colorize-file path))
      (t (path-colorize-whole path 'font-lock-warning-face))))
 
+  (defun recentf/track-opened-file ()
+    "Insert the name of the dired or file just opened or written into the recent list."
+    (let ((buff-name (or buffer-file-name (and (derived-mode-p 'dired-mode) default-directory))))
+      (and buff-name
+           (recentf-add-file buff-name)))
+    ;; Must return nil because it is run from `write-file-functions'.
+    nil)
+
+  (defun recentf/track-closed-file ()
+    "Update the recent list when a file or dired buffer is killed.
+That is, remove a non kept file from the recent list."
+    (let ((buff-name (or buffer-file-name (and (derived-mode-p 'dired-mode) default-directory))))
+      (and buff-name
+           (recentf-remove-if-non-kept buff-name))))
+
+  (map-put! recentf-used-hooks 'find-file-hook #'recentf/track-opened-file)
+  (map-put! recentf-used-hooks 'write-file-functions #'recentf/track-opened-file)
+  (map-put! recentf-used-hooks 'kill-buffer-hook #'recentf/track-closed-file)
+
+  (add-hook 'dired-after-readin-hook 'recentf/track-opened-file)
 
   (defun jens/recentf ()
     "Show list of recently visited files, colorized by type."
