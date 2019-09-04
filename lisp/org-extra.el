@@ -85,4 +85,18 @@ document."
         (clipboard-kill-ring-save (point-min) (point-max))
         (buffer-string)))))
 
+(defun org-extra-refile-here ()
+  "Refile entry at point to a headline in the current file."
+  (interactive)
+  ;; TODO: create new entry if pick is not in list
+  (let* ((entries (org-ql (current-buffer) (level 1)))
+         (headlines (-map
+                     (lambda (e)
+                       (plist-get (cadr e) ':raw-value))
+                     entries))
+         (pick (completing-read "Refile to: " headlines nil t)))
+    (if (org-at-heading-p)
+        (today-refile (buffer-file-name) pick)
+      (message "Point is not at a refilable ting"))))
+
 (provide 'org-extra)
