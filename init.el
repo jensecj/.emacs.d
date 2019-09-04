@@ -734,7 +734,8 @@ seconds."
   :hook ((text-mode prog-mode) . display-fill-column-indicator-mode)
   :config
   ;; (setq display-fill-column-indicator-character ?\u2502)
-  )
+  :custom-face
+  (fill-column-indicator ((t (:foreground ,(zenburn-get "zenburn-bg+1"):background nil)))))
 
 (use-package ispell
   :defer t
