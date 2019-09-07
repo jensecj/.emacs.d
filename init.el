@@ -3545,6 +3545,11 @@ title and duration."
   :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
   :demand t)
 
+(use-package pp+
+  :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/pp%2b.el"
+  :demand t
+  :bind (("M-:" . #'pp-eval-expression)))
+
 (use-package amx
   :straight t
   :config
