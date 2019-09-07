@@ -1057,14 +1057,39 @@ If METHOD does not exist, do nothing."
   (defun path-colorize-file (file)
     ""
     ;; TODO: colorize different file-types
-    (path-colorize-tail file 'font-lock-keyword-face))
+    (path-colorize-tail
+     file
+     (cond
+      ((member (f-ext file) '("org" "md" "rst" "tex" "txt"))
+       '(:foreground "#ffed4a"))
+      ((member (f-ext file) '("css" "less" "sass" "scss" "htm" "html"))
+       '(:foreground "#eb5286"))
+      ((member (f-ext file) '("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+       '(:foreground "#9561e2"))
+      ((member (f-ext file) '("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "toml" "rss" "yaml" "yml"))
+       '(:foreground "#f2d024"))
+      ((member (f-ext file) '("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+       '(:foreground "#51d88a"))
+
+      ;; TODO: f-ext does not work with dotfiles
+      ((member (f-ext file) '("bashrc" "bash_profile" "bash_history" "zshrc" "zshenv" "zprofile" "zsh_history" "xinitrc" "xsession" "Xauthority" "Xclients" "profile" "inputrc" "Xresources"))
+       '(:foreground "#6C6063"))
+
+      ((member (f-ext file) '("asm" "cl" "lisp" "el" "c" "c++" "cpp" "cxx" "h" "h++" "hpp" "hxx" "m" "cc" "cs" "go" "rs" "hi" "hs" "pyc" "java"))
+       '(:foreground "#F0DFAF"))
+      ((member (f-ext file) '("sh" "tmux" "zsh" "py" "ipynb" "rb" "pl" "mysql" "pgsql" "sql" "cljr" "clj" "cljs" "scala" "js"))
+       '(:foreground "#8FB28F"))
+      ((member (f-ext file) '("git" "gitignore" "gitattributes" "gitmodules"))
+       '(:foreground "#8CD0D3"))
+
+      (t 'font-lock-builtin-face))))
 
   (defun path-colorize (path)
     ""
     (cond
      ((file-remote-p path)
       (let* ((remote-part (file-remote-p path))
-             (path-part (replace-regexp-in-string (regexp-quote remote-part) "" path)))
+             (path-part (substring path (length remote-part))))
         (s-concat
          (path-colorize-whole remote-part 'font-lock-string-face)
          (path-colorize-tail path-part 'font-lock-builtin-face))))
