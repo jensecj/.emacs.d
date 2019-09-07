@@ -4012,23 +4012,6 @@ paste for multi-term mode."
 
 (use-package counsel-tramp :straight t :defer t)
 
-(use-package ivy-rich
-  :straight t
-  :config
-  (defun ivy-rich-bookmark-context-string (candidate)
-    "Transformer for pretty bookmarks in `counsel-bookmark'.n"
-    (let ((front (cdr (assoc 'front-context-string (cdr (assoc candidate bookmark-alist))))))
-      (s-replace "\n" ""  (concat  "" front))))
-
-  (add-to-list 'ivy-rich--display-transformers-list
-               '(:columns
-                 ((ivy-rich-candidate (:width 35 :face font-lock-builtin-face))
-                  (ivy-rich-bookmark-filename (:face font-lock-doc-face)))))
-
-  (add-to-list 'ivy-rich--display-transformers-list 'counsel-bookmark)
-
-  (ivy-rich-mode +1))
-
 (use-package swiper
   :straight t
   :bind ("C-s" . jens/swiper)
