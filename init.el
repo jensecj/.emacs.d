@@ -2851,7 +2851,7 @@ clipboard."
     "Exclude TAGS from QUERY."
     (let* ((default-excludes '("archived" "lists" "draft"))
            (all-tags (-concat default-excludes tags))
-           (excludes (s-join " " (-map (lambda (t) (format "and not tag:%s" t)) all-tags))))
+           (excludes (s-join " " (-map (lambda (tag) (format "and not tag:%s" tag)) all-tags))))
       (format "%s %s" query excludes)))
 
   (setq notmuch-saved-searches
