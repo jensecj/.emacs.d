@@ -2823,7 +2823,8 @@ clipboard."
   :bind
   (:map notmuch-show-mode-map
    ("B" . #'jens/notmuch-show-list-links)
-   ("U" . #'notmuch-show/goto-unread)
+   ("N" . #'notmuch-show/next-unread-message)
+   ("P" . #'notmuch-show/previous-unread-message)
    :map notmuch-message-mode-map
    ("C-c C-a" . mail-add-attachment))
   :config
@@ -2918,22 +2919,51 @@ clipboard."
 
   (add-hook 'notmuch-show-mode-hook #'notmuch/enable-debbugs)
 
-  (defun notmuch-show/goto-unread ()
-    (interactive)
-    (notmuch-show-filter-thread "tag:unread"))
-
   (defun notmuch-show/view-mime-part-at-point-in-mode ()
     "Open MIME-part at point in a specific major-mode."
     (interactive)
-    (let* ((handle (notmuch-show-current-part-handle))
-           (buf (nth 0 handle))
-           (modes '(org-mode text-mode))
+
+    (let* ((modes '(org-mode text-mode))
            (mode (intern (completing-read "mode: " modes nil t))))
+      (notmuch-show-apply-to-current-part-handle
+       (lambda (handle)
+         (let ((buf (get-buffer-create (generate-new-buffer-name
+				                                (concat " *notmuch-internal-part*")))))
+           (switch-to-buffer buf)
+           (if (eq (mm-display-part handle) 'external)
+	             (kill-buffer buf)
+             (goto-char (point-min))
+             (set-buffer-modified-p nil)
+             (funcall mode)
+             (if (eq major-mode 'org-mode)
+                 (org-show-all))
+             (view-buffer buf 'kill-buffer-if-not-modified)
+             (font-lock-fontify-buffer))))
+       "text/plain")))
 
-      (with-current-buffer buf
-        (funcall mode))
+  (defun notmuch-show/message-has-tag-p (tag)
+    ""
+    (let ((tags (notmuch-show-get-prop :tags))
+          (orig-tags (notmuch-show-get-prop :orig-tags)))
+      (member tag (-concat tags orig-tags))))
 
-      (view-buffer-other-window buf)))
+  (defun notmuch-show/goto-message-with-tag (tag &optional backwards)
+    (let (msg)
+      (while (and (setq msg (if backwards
+                                (notmuch-show-goto-message-previous)
+                              (notmuch-show-goto-message-next)))
+		              (not (notmuch-show/message-has-tag-p tag))))
+      (if msg
+	        (notmuch-show-message-adjust))
+      msg))
+
+  (defun notmuch-show/next-unread-message ()
+    (interactive)
+    (notmuch-show/goto-message-with-tag "unread"))
+
+  (defun notmuch-show/previous-unread-message ()
+    (interactive)
+    (notmuch-show/goto-message-with-tag "unread" 'backwards))
 
   ;;;;;;;;;;;;
   ;; extras ;;
