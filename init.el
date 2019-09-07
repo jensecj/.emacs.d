@@ -3069,11 +3069,11 @@ clipboard."
     "Show the result of evaluating the last-sexp in an overlay."
     (interactive)
     (slime-eval-async `(swank:eval-and-grab-output ,(slime-last-expression))
-                      (lambda (result)
-                        (cl-destructuring-bind (output value) result
-                          (let ((string (s-replace "\n" " " (concat output value))))
-                            (message string)
-                            (eros--eval-overlay string (point))))))
+      (lambda (result)
+        (cl-destructuring-bind (output value) result
+          (let ((string (s-replace "\n" " " (concat output value))))
+            (message string)
+            (eros--eval-overlay string (point))))))
     (slime-sync))
 
   (defun jens/qlot-slime (directory)
