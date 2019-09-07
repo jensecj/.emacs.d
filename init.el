@@ -3439,6 +3439,7 @@ in the same file."
 
 (use-package frog-menu
   :straight t
+  :after flyspell
   :config
   (setq frog-menu-avy-padding t)
   (setq frog-menu-min-col-padding 4)
