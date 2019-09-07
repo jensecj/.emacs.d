@@ -380,6 +380,7 @@ equality of computed checksum and arg."
 ;; make backups of files, even when they're in version control, and set how many
 ;; backups we want to save for each file.
 (setq make-backup-files t
+      backup-by-copying t
       vc-make-backup-files t
       version-control t
       delete-old-versions t
