@@ -1116,7 +1116,7 @@ That is, remove a non kept file from the recent list."
   (map-put! recentf-used-hooks 'write-file-functions #'recentf/track-opened-file)
   (map-put! recentf-used-hooks 'kill-buffer-hook #'recentf/track-closed-file)
 
-  (add-hook 'dired-after-readin-hook 'recentf/track-opened-file)
+  (add-hook 'dired-after-readin-hook #'recentf/track-opened-file)
 
   (defun jens/recentf ()
     "Show list of recently visited files, colorized by type."
