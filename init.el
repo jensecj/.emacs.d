@@ -398,7 +398,7 @@ equality of computed checksum and arg."
 (setq line-number-mode t)
 (setq column-number-mode t)
 
-(setq fill-column 85)
+(setq fill-column 90)
 
 ;; show location of cursor in non-selected windows
 (setq cursor-in-non-selected-windows t)
