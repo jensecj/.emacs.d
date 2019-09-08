@@ -2856,7 +2856,7 @@ clipboard."
 
   (defun notmuch/excl (query &rest tags)
     "Exclude TAGS from QUERY."
-    (let* ((default-excludes '("archived" "lists" "draft"))
+    (let* ((default-excludes '("archived" "lists" "builds" "draft"))
            (all-tags (-concat default-excludes tags))
            (excludes (s-join " " (-map (lambda (tag) (format "and not tag:%s" tag)) all-tags))))
       (format "%s %s" query excludes)))
@@ -2871,6 +2871,8 @@ clipboard."
           (:blank t)
           (:name "emacs-devel" :key "ld" :query "tag:lists/emacs-devel" :sort-order newest-first)
           (:name "emacs-help" :key "lh" :query "tag:lists/emacs-help" :sort-order newest-first)
+          (:blank t)
+          (:name "builds" :key "b" :query "tag:builds" :sort-order newest-first)
           (:blank t)
           (:name "all mail" :query "not tag:lists and not tag:draft" :key "a" :sort-order newest-first)
           (:name "archive" :query "tag:archived" :key "r" :sort-order newest-first)
