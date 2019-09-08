@@ -2188,6 +2188,11 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
 ;;;; packages
 
+(use-package epdh
+  :straight (emacs-package-dev-handbook
+             :host github :repo "alphapapa/emacs-package-dev-handbook"
+             :fork (:host github :repo "jensecj/emacs-package-dev-handbook")))
+
 (log-info "Loading homemade packages")
 
 (use-package org-extra :after org :demand t)
