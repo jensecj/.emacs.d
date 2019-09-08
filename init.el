@@ -81,6 +81,7 @@
 
 (message "bootstrapping use-package...")
 (straight-use-package 'use-package)
+(setq straight-vc-git-default-protocol 'ssh)
 
 ;; need to enable imenu support before requiring `use-package'
 (setq use-package-enable-imenu-support t)
