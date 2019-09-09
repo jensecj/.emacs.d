@@ -3981,6 +3981,7 @@ paste for multi-term mode."
   :commands (counsel-mode counsel--find-file-matcher)
   :bind
   (("C-S-s" . jens/ripgrep)
+   ("C-x d" . counsel-dired)
    ("C-x C-f" . counsel-find-file)
    ("C-S-f" . counsel-fzf)
    ("C-x C-i" . counsel-imenu)
