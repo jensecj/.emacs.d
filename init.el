@@ -606,6 +606,33 @@ seconds."
   :config
   (add-hook* 'sh-mode-hook '(flymake-mode flycheck-mode)))
 
+(use-package conf-mode
+  :config
+  (defun conf-mode/indent ()
+    ;; FIXME: does not work when called with indent-region
+    (interactive)
+    (save-excursion
+      (beginning-of-line)
+
+      (let ((col (syntax-ppss-depth (syntax-ppss))))
+        (save-excursion
+          ;; indent lines that are part of multi-line commands
+          (skip-syntax-backward "-")
+          (backward-char 2)
+          (if (looking-at (rx ?\\ eol))
+              (incf col)))
+
+        (save-excursion
+          ;; dont indent the terminating line of a block
+          (skip-syntax-forward "-")
+          (if (looking-at (rx (or ?\] ?\} ?\))))
+              (decf col)))
+
+        (indent-line-to (* col tab-width)))))
+
+  (require 'mode-local)
+  (setq-mode-local conf-space-mode indent-line-function #'conf-mode/indent))
+
 (use-package scheme
   :defer t
   :mode ("\\.scm\\'" . scheme-mode)
