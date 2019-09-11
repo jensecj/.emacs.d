@@ -742,7 +742,6 @@ seconds."
   (defun eww/open-url-at-point ()
     "Open link at point in eww."
     (interactive)
-    (message "test!")
     (when-let ((url (car (eww-suggested-uris)))
                (buf (get-buffer-create "*eww*")))
       (view-buffer-other-window buf)
@@ -760,9 +759,8 @@ seconds."
 (use-package outline :diminish outline-minor-mode)
 
 (use-package display-fill-column-indicator
+  :after zenburn
   :hook ((text-mode prog-mode) . display-fill-column-indicator-mode)
-  :config
-  ;; (setq display-fill-column-indicator-character ?\u2502)
   :custom-face
   (fill-column-indicator ((t (:foreground ,(zenburn-get "zenburn-bg+1"):background nil)))))
 
@@ -1071,20 +1069,17 @@ If METHOD does not exist, do nothing."
                                     (shut-up (recentf-save-list)))))
 
   (defun path-colorize-tail (path face)
-    ""
     (let ((last-part (-last-item (f-split path))))
+      ;; TODO: replace in-string, dont use regexp, it matches other things as well
       (replace-regexp-in-string
        (regexp-quote last-part)
        (lambda (s) (propertize s 'face face))
        path)))
 
   (defun path-colorize-whole (path face)
-    ""
     (propertize path 'face face))
 
   (defun path-colorize-file (file)
-    ""
-    ;; TODO: colorize different file-types
     (path-colorize-tail
      file
      (cond
@@ -1163,8 +1158,8 @@ That is, remove a non kept file from the recent list."
   (defun jens/recentf-cleanup (orig-fun &rest args)
     "Silence `recentf-auto-cleanup'."
     (shut-up (apply orig-fun args)))
-  (advice-add #'recentf-cleanup :around #'jens/recentf-cleanup)
 
+  (advice-add #'recentf-cleanup :around #'jens/recentf-cleanup)
   (recentf-mode +1))
 
 (use-package replace
@@ -2496,6 +2491,7 @@ _t_: go to today-file
   (defmacro zenburn-get (color)
     (cdr (assoc color zenburn-default-colors-alist)))
 
+  ;; replace wavy-underlines with straight ones in all faces
   (mapatoms (lambda (atom)
               (let ((underline nil))
                 (when (and (facep atom)
@@ -2513,8 +2509,7 @@ _t_: go to today-file
   (header-line ((t (:box nil))))
   (mode-line-inactive ((t (:box nil))))
   (hl-line ((t (:background "gray30"))))
-  (highlight ((t (:background nil :foreground nil))))
-  (popup-tip-face ((t (:background "#cbcbbb" :foreground "#2b2b2b")))))
+  (highlight ((t (:background nil :foreground nil)))))
 
 ;;;; major modes and extentions
 
@@ -3103,12 +3098,13 @@ clipboard."
   (defun jens/slime-eval-last-sexp ()
     "Show the result of evaluating the last-sexp in an overlay."
     (interactive)
-    (slime-eval-async `(swank:eval-and-grab-output ,(slime-last-expression))
-      (lambda (result)
-        (cl-destructuring-bind (output value) result
-          (let ((string (s-replace "\n" " " (concat output value))))
-            (message string)
-            (eros--eval-overlay string (point))))))
+    (slime-eval-async
+     `(swank:eval-and-grab-output ,(slime-last-expression))
+     (lambda (result)
+       (cl-destructuring-bind (output value) result
+         (let ((string (s-replace "\n" " " (concat output value))))
+           (message string)
+           (eros--eval-overlay string (point))))))
     (slime-sync))
 
   (defun jens/qlot-slime (directory)
