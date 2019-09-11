@@ -1113,9 +1113,9 @@ That is, remove a non kept file from the recent list."
       (and buff-name
            (recentf-remove-if-non-kept buff-name))))
 
-  (map-put! recentf-used-hooks 'find-file-hook #'recentf/track-opened-file)
-  (map-put! recentf-used-hooks 'write-file-functions #'recentf/track-opened-file)
-  (map-put! recentf-used-hooks 'kill-buffer-hook #'recentf/track-closed-file)
+  (setcdr (nth 0 recentf-used-hooks) '(recentf/track-opened-file)) ;find-file-hook
+  (setcdr (nth 1 recentf-used-hooks) '(recentf/track-opened-file)) ;write-file-functions
+  (setcdr (nth 2 recentf-used-hooks) '(recentf/track-closed-file)) ;kill-buffer-hook
 
   (add-hook 'dired-after-readin-hook #'recentf/track-opened-file)
 
