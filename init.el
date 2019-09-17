@@ -659,8 +659,37 @@ seconds."
     (bind-key k nil c-mode-base-map)))
 
 (use-package make-mode
+  :mode (("\\justfile\\'" . makefile-mode)
+         ("\\Makefile\\'" . makefile-mode))
   :config
   ;; TODO: fix indentation
+  (defun line-to-string (&optional line)
+    ""
+    (save-excursion
+      (if line (forward-line line))
+      (buffer-substring-no-properties
+       (line-beginning-position)
+       (line-end-position))))
+
+  (defun make-mode/indent ()
+    ""
+    (untabify (point-min) (point-max))
+    (let* ((indent-column 2)
+           (line (line-to-string))
+           (prev-line (line-to-string -1))
+           (label-line-regex (rx (optional ".") (1+ ascii) ":" (0+ ascii) eol))
+           (indented-line-regex (rx (= (eval indent-column) space) (0+ ascii) eol))
+           (multi-line-regex (rx (0+ ascii) ?\\ eol))
+           (assignment-regex (rx bol (0+ ascii) ?= (0+ ascii) eol)))
+      (cond
+       ((s-matches-p multi-line-regex prev-line) (indent-to-left-margin))
+       ((s-matches-p assignment-regex line) (indent-to-left-margin))
+       ((s-matches-p label-line-regex line) (indent-to-left-margin))
+       ((s-matches-p label-line-regex prev-line) (indent-line-to indent-column))
+       ((s-matches-p indented-line-regex prev-line) (indent-line-to indent-column)))))
+
+  (setq-mode-local makefile-mode indent-tabs-mode nil)
+  (setq-mode-local makefile-mode indent-line-function #'make-mode/indent)
   )
 
 (use-package dired
