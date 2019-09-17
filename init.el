@@ -2544,6 +2544,7 @@ _t_: go to today-file
 
 (use-package cmake-mode :straight t :mode "\\CmakeLists.txt\\'")
 (use-package yaml-mode :straight t :mode ("\\.yaml\\'" "\\.yml\\'"))
+(use-package toml-mode :straight t :mode ("\\.toml\\'"))
 (use-package dockerfile-mode :straight t :mode "\\Dockerfile\\'")
 (use-package gitconfig-mode :straight t :mode "\\.gitconfig\\'")
 (use-package gitignore-mode :straight t :mode "\\.gitignore\\'")
