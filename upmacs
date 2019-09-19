@@ -33,20 +33,20 @@
 
 ;;; Core functionality
 
-(defun usage ()
+(defun upmacs-usage ()
   "Print script usage."
   (msg "help:             show usage")
   (msg "ls, list:         list all straight packages")
   (msg "update <pkg(s)>:  update specific package(s)")
   (msg "update-all:       update all packages"))
 
-(defun list-straight-packages ()
+(defun upmacs-list ()
   "List all packages."
   (let* ((pkgs (f-directories straight-build-dir))
          (names (-map #'f-base pkgs)))
     (-map #'msg names)))
 
-(defun remove-package ()
+(defun upmacs-remove ()
   "Remove a package by name."
   (let ((pkg (pop argv)))
     (cond
@@ -68,7 +68,7 @@
             (msg "removing %s" repo-dir)
             (f-delete repo-dir 'force))))))))
 
-(defun update-package ()
+(defun upmacs-update ()
   "Update one or more packages by name."
   (let* ((pkgs ()))
     (while argv
@@ -80,7 +80,7 @@
         (straight-pull-package pkg)
         (straight-rebuild-package pkg))))))
 
-(defun update-all-packages ()
+(defun upmacs-update-all ()
   "Update all packages."
   (let ((failed-packages (straight-pull-all)))
     (if failed-packages
@@ -91,7 +91,7 @@
   "Get most recent commit in REPO."
   (s-trim (shell-command-to-string (format "(cd %s; git rev-parse HEAD)" repo))))
 
-(defun freeze ()
+(defun upmacs-freeze ()
   "List all packages and their most recent commit."
   (let ((pkgs (f-directories straight-repo-dir)))
     (dolist (pkg pkgs)
@@ -103,9 +103,9 @@
   (while argv
     (let ((arg (pop argv)))
       (pcase arg
-        ("help" (usage))
-        ((or "ls" "list") (list-straight-packages))
-        ((or "rm" "remove") (remove-package))
-        ((or "install" "update") (update-package))
-        ("update-all" (update-all-packages))
-        ("freeze" (freeze))))))
+        ("help" (upmacs-usage))
+        ((or "ls" "list") (upmacs-list))
+        ((or "rm" "remove") (upmacs-remove))
+        ((or "install" "update") (upmacs-update))
+        ("update-all" (upmacs-update-all))
+        ("freeze" (upmacs-freeze))))))
