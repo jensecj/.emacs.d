@@ -69,13 +69,16 @@
             (f-delete repo-dir 'force))))))))
 
 (defun update-package ()
-  "Update a package by name."
-  (let ((pkg (pop argv)))
+  "Update one or more packages by name."
+  (let* ((pkgs ()))
+    (while argv
+      (add-to-list 'pkgs (pop argv) 'append))
     (cond
-     ((null pkg) (error "no package provided"))
+     ((null pkgs) (error "no package(s) provided"))
      (t
-      (straight-pull-package pkg)
-      (straight-rebuild-package pkg)))))
+      (dolist (pkg pkgs)
+        (straight-pull-package pkg)
+        (straight-rebuild-package pkg))))))
 
 (defun update-all-packages ()
   "Update all packages."
