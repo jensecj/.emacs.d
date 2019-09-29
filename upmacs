@@ -5,13 +5,16 @@
 ;; make sure to print everything
 (setq inhibit-message nil)
 
-(defconst straight-build-dir (expand-file-name (locate-user-emacs-file "straight/build/")))
-(defconst straight-repo-dir (expand-file-name (locate-user-emacs-file "straight/repos/")))
+(defconst straight-build-dir
+  (expand-file-name (locate-user-emacs-file "straight/build/")))
+(defconst straight-repo-dir
+  (expand-file-name (locate-user-emacs-file "straight/repos/")))
 
 (defmacro req (feature)
   "Convenience macro for requiring packages."
   `(progn
-     (add-to-list 'load-path (concat straight-build-dir (symbol-name ,feature)))
+     (add-to-list 'load-path
+                  (concat straight-build-dir (symbol-name ,feature)))
      (require ,feature)))
 
 (req 'dash)
@@ -33,6 +36,20 @@
 
 ;;; Core functionality
 
+(defun upmacs--get-packages ()
+  "Return a list of all packages."
+  (f-directories straight-build-dir))
+
+(defun upmacs--get-latest-commit (repo)
+  "Return the most recent commit in REPO."
+  (s-trim (shell-command-to-string (format "(cd %s; git rev-parse HEAD)" repo))))
+
+(defun upmacs--get-dependents (pkg)
+  "Return a list of packages that PKG depends on."
+  '())
+
+;;; Interface
+
 (defun upmacs-usage ()
   "Print script usage."
   (msg "help:             show usage")
@@ -42,7 +59,7 @@
 
 (defun upmacs-list ()
   "List all packages."
-  (let* ((pkgs (f-directories straight-build-dir))
+  (let* ((pkgs (upmacs--get-packages))
          (names (-map #'f-base pkgs)))
     (-map #'msg names)))
 
@@ -61,12 +78,10 @@
                ;; repository directory.
                (symlink (file-symlink-p build-src-file))
                (repo-dir (when symlink (f-dirname symlink))))
-          (when (and build-dir (f-directory-p build-dir))
-            (msg "removing %s" build-dir)
-            (f-delete build-dir 'force))
-          (when (and repo-dir (f-directory-p repo-dir))
-            (msg "removing %s" repo-dir)
-            (f-delete repo-dir 'force))))))))
+          (dolist (d (list build-dir repo-dir))
+            (when (and d (f-directory-p d))
+              (msg "removing %s" d)
+              (f-delete d 'force)))))))))
 
 (defun upmacs-update ()
   "Update one or more packages by name."
@@ -87,19 +102,25 @@
         (msg "failed to update %s" failed-packages)
       (msg "updated all packages."))))
 
-(defun _get-commit (repo)
-  "Get most recent commit in REPO."
-  (s-trim (shell-command-to-string (format "(cd %s; git rev-parse HEAD)" repo))))
-
 (defun upmacs-freeze ()
   "List all packages and their most recent commit."
   (let ((pkgs (f-directories straight-repo-dir)))
     (dolist (pkg pkgs)
-      (msg "%s %s" (_get-commit pkg) pkg))))
+      (msg "%s %s" (upmacs--get-latest-commit pkg) pkg))))
+
+(defun upmacs-dependencies ()
+  ""
+  (let ((pkgs (upmacs--get-packages)))
+    (-map (lambda (p) (cons p (upmacs--get-dependents p))) pkgs)))
+
+(let ((pkgs (upmacs--get-packages)))
+  (dolist (p pkgs)
+    (lm-header)
+    (message "%s = %s" (car p) (package-desc-reqs (cadr p)))))
 
 (if (null argv)
     ;; display usage if called without arguments
-    (usage)
+    (upmacs-usage)
   (while argv
     (let ((arg (pop argv)))
       (pcase arg
@@ -108,4 +129,6 @@
         ((or "rm" "remove") (upmacs-remove))
         ((or "install" "update") (upmacs-update))
         ("update-all" (upmacs-update-all))
-        ("freeze" (upmacs-freeze))))))
+        ("freeze" (upmacs-freeze))
+        ((or "deps" "depends") (upmacs-dependencies))
+        ))))
