@@ -64,7 +64,6 @@
 (log-info "Loading fundamental third-party packages")
 
 ;; make sure straight.el is installed
-;; TODO: replace find(1) with fd to make init faster?
 (defvar bootstrap-version)
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
