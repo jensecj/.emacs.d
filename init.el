@@ -424,6 +424,7 @@ equality of computed checksum and arg."
 
 ;; don't automatically break lines
 (setq truncate-lines t)
+(setq truncate-partial-width-windows t)
 
 ;; allow recursive mini buffers
 (setq enable-recursive-minibuffers t)
