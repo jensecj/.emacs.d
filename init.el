@@ -3942,7 +3942,23 @@ re-enable afterwards."
   (exec-path-from-shell-copy-env "SSH_AGENT_PID")
   (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
 
+(use-package vterm
+  ;; :disabled t
+  :straight (vterm :type git :repo "https://github.com/akermu/emacs-libvterm.git")
+  :init
+  (add-to-list 'load-path (expand-file-name "~/software/emacs-libvterm"))
+  :config
+  (setq vterm-max-scrollback 10000))
+
+(use-package multi-libvterm
+  :after vterm
+  :straight (multi-libvterm :type git :repo "https://github.com/suonlight/multi-libvterm.git")
+  :bind (("C-z" . multi-libvterm))
+  :config
+  )
+
 (use-package multi-term
+  :disabled t
   :straight t
   :defer t
   :commands (multi-term-get-buffer
