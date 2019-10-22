@@ -2682,7 +2682,7 @@ _t_: go to today-file
   :hook (magit-status-mode . magit-todos-mode)
   :commands magit-todos-mode
   :config
-  (setq magit-todos-exclude-globs '("var/*")))
+  (setq magit-todos-exclude-globs '("var/*" "venv/*")))
 
 (use-package auctex
   :straight t
