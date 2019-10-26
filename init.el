@@ -3199,7 +3199,8 @@ clipboard."
   :config
   (setq org-babel-clojure-backend 'cider))
 
-(use-package ox-pandoc :straight t :defer t)
+(use-package ox-pandoc :straight t :defer t :after org)
+(use-package ox-asciidoc :straight t :defer t :after org)
 (use-package org-ref :straight t :defer t)
 
 ;;;; minor modes
