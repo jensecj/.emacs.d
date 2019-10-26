@@ -17,6 +17,8 @@
                   (concat straight-build-dir (symbol-name ,feature)))
      (require ,feature)))
 
+(require 'lisp-mnt)
+
 (req 'dash)
 (req 's)
 (req 'f)
