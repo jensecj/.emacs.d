@@ -662,6 +662,8 @@ seconds."
   :mode (("\\justfile\\'" . makefile-mode)
          ("\\Makefile\\'" . makefile-mode))
   :config
+  (setq-mode-local makefile-mode whitespace-style
+                   '(face indentation space-before-tab space-after-tab trailing lines))
   (setq-mode-local makefile-mode indent-tabs-mode t)
   ;; TODO: fix indentation
   (defun line-to-string (&optional line)
