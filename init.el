@@ -3002,6 +3002,7 @@ clipboard."
   (define-key notmuch-search-mode-map (kbd "C-c C-l") #'org-store-link)
 
   :custom-face
+  (notmuch-wash-cited-text ((t (:inherit font-lock-comment-face))))
   (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-1") :height 105))))
   (notmuch-search-unread-face ((t (:weight bold :foreground ,(zenburn-get "zenburn-yellow")))))
   (notmuch-tag-deleted ((t (:foreground ,(zenburn-get "zenburn-red") :underline "red" :strike-through nil))))
