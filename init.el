@@ -2757,7 +2757,7 @@ _t_: go to today-file
 (use-package elfeed
   :straight t
   :defer t
-  :commands (elfeed elfeed-search-selected)
+  :commands (elfeed elfeed-search-selected jens/load-elfeed)
   :functions jens/elfeed-copy-link-at-point
   :bind
   (:map elfeed-search-mode-map
