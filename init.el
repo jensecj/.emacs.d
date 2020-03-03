@@ -2271,6 +2271,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
   (setq notmuch-mojn-really-delete-mail t)
 
+  (remove-hook 'notmuch-mojn-post-refresh-hook #'notmuch-mojn-mute-retag-messages)
   (add-hook 'notmuch-mojn-pre-refresh-hook #'jens/load-secrets)
 
   (advice-add #'notmuch-address-expand-name
@@ -2925,23 +2926,25 @@ clipboard."
       (format "%s %s" query excludes)))
 
   (setq notmuch-saved-searches
-        `((:name "unread" :query ,(notmuch/excl "tag:unread") :key "u")
-          (:name "today" :query ,(notmuch/excl "date:today..") :key "t" :sort-order newest-first)
-          (:name "7 days" :query ,(notmuch/excl "date:7d..") :key "w" :sort-order newest-first)
-          (:name "30 days" :query ,(notmuch/excl "date:30d..") :key "m" :sort-order newest-first)
-          (:name "drafts" :query "tag:draft" :key "d")
-          (:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
+        `((:name "unread"  :key "u" :query ,(notmuch/excl "tag:unread") :sort-order newest-first)
+          (:name "today"   :key "t" :query ,(notmuch/excl "date:today..") :sort-order newest-first)
+          (:name "7 days"  :key "W" :query ,(notmuch/excl "date:7d..") :sort-order newest-first)
+          (:name "30 days" :key "M" :query ,(notmuch/excl "date:30d..") :sort-order newest-first)
+          (:name "drafts"  :key "d" :query "tag:draft" :sort-order newest-first)
+          (:name "inbox"   :key "i" :query "tag:inbox" :sort-order newest-first)
           (:blank t)
           (:name "emacs-devel" :key "ld" :query "tag:lists/emacs-devel" :sort-order newest-first)
-          (:name "emacs-help" :key "lh" :query "tag:lists/emacs-help" :sort-order newest-first)
+          (:name "emacs-help"  :key "lh" :query "tag:lists/emacs-help" :sort-order newest-first)
           (:blank t)
-          (:name "builds" :key "b" :query "tag:builds" :sort-order newest-first)
+          (:name "builds"   :key "B" :query "tag:builds" :sort-order newest-first)
+          (:name "bills"    :key "b" :query "tag:bills" :sort-order newest-first)
+          (:name "personal" :key "p" :query "tag:personal" :sort-order newest-first)
+          (:name "work"     :key "w" :query "tag:work" :sort-order newest-first)
           (:blank t)
-          (:name "all mail" :query "not tag:lists and not tag:draft" :key "a" :sort-order newest-first)
-          (:name "archive" :query "tag:archived" :key "r" :sort-order newest-first)
-          (:name "bills" :query "tag:bills" :key "b" :sort-order newest-first)
-          (:name "sent" :query "tag:sent" :key "s" :sort-order newest-first)
-          (:name "trash" :query "tag:deleted" :key "h" :sort-order newest-first)))
+          (:name "all mail" :key "a" :query "not tag:lists and not tag:draft" :sort-order newest-first)
+          (:name "archive"  :key "r" :query "tag:archived" :sort-order newest-first)
+          (:name "sent"     :key "s" :query "tag:sent" :sort-order newest-first)
+          (:name "trash"    :key "h" :query "tag:deleted" :sort-order newest-first)))
 
   (defun jens/notmuch-show-list-links ()
     "List links in the current message, if one is selected, browse to it."
@@ -2956,6 +2959,8 @@ clipboard."
           ("d" ("-unread" "-inbox" "-archived" "+deleted") "delete")
           ("f" ("+flagged") "flag")
           ("b" ("+bills" "-inbox" "-archived") "bill")
+          ("p" ("+personal" "-inbox" "-archived") "personal")
+          ("w" ("+work" "-inbox" "-archived") "work")
           ("m" ("-unread" "+muted") "mute")))
 
   (defun notmuch/quicktag (mode key tags)
