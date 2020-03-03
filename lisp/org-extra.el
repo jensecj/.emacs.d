@@ -98,6 +98,16 @@ document."
         (today-refile (buffer-file-name) pick)
       (message "Point is not at a refilable ting"))))
 
+(defun org-extra-url-at-point-to-org-link ()
+  ""
+  (interactive)
+  (when-let* ((url (thing-at-point 'url))
+              (bounds (bounds-of-thing-at-point 'url))
+              (entry (today-capture--url-to-org-link url)))
+    (save-excursion
+      (delete-region (car bounds) (cdr bounds))
+      (insert entry))))
+
 (defun org-extra-rate ()
   "Rate an org-heading on a scale from 1-10"
   (interactive)
