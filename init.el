@@ -1497,14 +1497,6 @@ If METHOD does not exist, do nothing."
     (org-indent-line)
     (message "indented"))
 
-  (defun jens/org-rate ()
-    "Rate an org-heading on a scale from 1-10"
-    (interactive)
-    (let ((ivy-sort-functions-alist nil))
-      (when-let* ((values (-map #'number-to-string (number-sequence 1 10)))
-                  (rating (completing-read "rate: " values nil t)))
-        (org-set-property "RATING" rating))))
-
   ;; (defun jens/load-org-agenda-files ()
   ;;   (interactive)
   ;;   (setq org-agenda-files

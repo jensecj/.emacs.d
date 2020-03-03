@@ -98,4 +98,12 @@ document."
         (today-refile (buffer-file-name) pick)
       (message "Point is not at a refilable ting"))))
 
+(defun org-extra-rate ()
+  "Rate an org-heading on a scale from 1-10"
+  (interactive)
+  (let ((ivy-sort-functions-alist nil))
+    (when-let* ((values (-map #'number-to-string (number-sequence 1 10)))
+                (rating (completing-read "rate: " values nil t)))
+      (org-set-property "RATING" rating))))
+
 (provide 'org-extra)
