@@ -1511,6 +1511,18 @@ If METHOD does not exist, do nothing."
   ;;               org-latex-pdf-process
   ;;               '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
   ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+(use-package reftex
+  :straight t
+  :after org-mode)
+
+(use-package bibtex
+  :straight t
+  :after org-mode)
+
+(use-package org-ref
+  :straight t
+  :after org-mode)
+
 (use-package org-contacts
   :after (:any mu4e notmuch)
   :init
