@@ -2127,7 +2127,7 @@ current line."
   (unless (boundp 'tail-message-buffer-mode)
     (define-minor-mode tail-message-buffer-mode
       "Tail the *Messages* buffer every time something calls `message'."
-      nil " tail" '(())
+      nil " tail" (make-keymap)
       (if (bound-and-true-p tail-message-buffer-mode)
           (advice-add #'message :filter-args #'tmb/message-buffer-goto-end)
         (advice-remove #'message #'tmb/message-buffer-goto-end))))
