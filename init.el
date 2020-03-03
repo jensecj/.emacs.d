@@ -3302,7 +3302,7 @@ in the same file."
   ;; fontify the entire outshine-heading, including the comment
   ;; characters (;;;)
   (if (not (fn-checksum #'outshine-fontify-headlines
-                        "8a2e4c08ce76394bb1259e6d59280367"))
+                        "77bb9734c4c082edc89a0270eb79ac77"))
       (log-warning "`outshine-fontify-headlines' changed definition, ignoring patch.")
     (advice-patch #'outshine-fontify-headlines
                   '(font-lock-new-keywords
