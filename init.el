@@ -2863,11 +2863,12 @@ clipboard."
   :defer t
   :after auth-source-pass
   :functions ercgo
-  :commands erc-tls
+  :commands (erc-tls ercgo)
   :config
   (setq erc-rename-buffers t
         erc-interpret-mirc-color t
         erc-prompt ">"
+        erc-track-enable-keybindings nil
         erc-insert-timestamp-function 'erc-insert-timestamp-left
         erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
 
