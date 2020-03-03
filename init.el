@@ -3073,7 +3073,9 @@ clipboard."
   :after dired
   :bind
   (:map dired-mode-map
-        ("<tab>" . dired-subtree-toggle)))
+        ("<tab>" . dired-subtree-toggle))
+  :config
+  (setq dired-subtree-use-backgrounds nil))
 
 (use-package dired-collapse
   :straight t
