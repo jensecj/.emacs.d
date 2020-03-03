@@ -2506,15 +2506,61 @@ _t_: go to today-file
 (log-info "Loading third-party packages")
 
 ;;;; themes
+(defvar zenburn-colors
+  '(("zenburn-fg+1"     . "#FFFFEF")
+    ("zenburn-fg"       . "#DCDCCC")
+    ("zenburn-fg-1"     . "#656555")
+    ("zenburn-bg-2"     . "#000000")
+    ("zenburn-bg-1"     . "#2B2B2B")
+    ("zenburn-bg-05"    . "#383838")
+    ("zenburn-bg"       . "#3F3F3F")
+    ("zenburn-bg+05"    . "#494949")
+    ("zenburn-bg+1"     . "#4F4F4F")
+    ("zenburn-bg+2"     . "#5F5F5F")
+    ("zenburn-bg+3"     . "#6F6F6F")
+    ("zenburn-red+2"    . "#ECB3B3")
+    ("zenburn-red+1"    . "#DCA3A3")
+    ("zenburn-red"      . "#CC9393")
+    ("zenburn-red-1"    . "#BC8383")
+    ("zenburn-red-2"    . "#AC7373")
+    ("zenburn-red-3"    . "#9C6363")
+    ("zenburn-red-4"    . "#8C5353")
+    ("zenburn-red-5"    . "#7C4343")
+    ("zenburn-red-6"    . "#6C3333")
+    ("zenburn-orange"   . "#DFAF8F")
+    ("zenburn-yellow"   . "#F0DFAF")
+    ("zenburn-yellow-1" . "#E0CF9F")
+    ("zenburn-yellow-2" . "#D0BF8F")
+    ("zenburn-green-5"  . "#2F4F2F")
+    ("zenburn-green-4"  . "#3F5F3F")
+    ("zenburn-green-3"  . "#4F6F4F")
+    ("zenburn-green-2"  . "#5F7F5F")
+    ("zenburn-green-1"  . "#6F8F6F")
+    ("zenburn-green"    . "#7F9F7F")
+    ("zenburn-green+1"  . "#8FB28F")
+    ("zenburn-green+2"  . "#9FC59F")
+    ("zenburn-green+3"  . "#AFD8AF")
+    ("zenburn-green+4"  . "#BFEBBF")
+    ("zenburn-cyan"     . "#93E0E3")
+    ("zenburn-blue+3"   . "#BDE0F3")
+    ("zenburn-blue+2"   . "#ACE0E3")
+    ("zenburn-blue+1"   . "#94BFF3")
+    ("zenburn-blue"     . "#8CD0D3")
+    ("zenburn-blue-1"   . "#7CB8BB")
+    ("zenburn-blue-2"   . "#6CA0A3")
+    ("zenburn-blue-3"   . "#5C888B")
+    ("zenburn-blue-4"   . "#4C7073")
+    ("zenburn-blue-5"   . "#366060")
+    ("zenburn-magenta"  . "#DC8CC3"))
+  "Zenburn colors")
+
+(defun zenburn-get (color)
+  (cdr (assoc color zenburn-colors)))
 
 (use-package zenburn-theme
   :straight t
   :demand t
-  :functions zenburn-get
   :config
-  (defmacro zenburn-get (color)
-    (cdr (assoc color zenburn-default-colors-alist)))
-
   ;; replace wavy-underlines with straight ones in all faces
   (mapatoms (lambda (atom)
               (let ((underline nil))
@@ -2529,6 +2575,8 @@ _t_: go to today-file
 
   (load-theme 'zenburn t)
   :custom-face
+  (cursor ((t (:foreground ,(zenburn-get "zenburn-fg-1") :background ,(zenburn-get "zenburn-fg")))))
+  (region ((t (:background  "#2B2B2B"))))
   (mode-line ((t (:box nil :background  "#2B2B2B"))))
   (header-line ((t (:box nil))))
   (mode-line-inactive ((t (:box nil))))
