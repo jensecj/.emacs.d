@@ -1555,6 +1555,19 @@ If METHOD does not exist, do nothing."
   (setq org-refile-use-outline-path t)
   (setq org-refile-targets '( (nil . (:maxlevel . 1))))
 
+  ;;;;;;;;;;;;;;;
+  ;; exporting ;;
+  ;;;;;;;;;;;;;;;
+
+  (require 'ox-latex)
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (setq org-latex-listings 'minted)
+
+  (setq org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
   ;;;;;;;;;;;;
   ;; advice ;;
   ;;;;;;;;;;;;
