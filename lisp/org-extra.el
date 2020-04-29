@@ -1,11 +1,11 @@
 ;;; org-extra.el --- Extra utilities for org-mode. -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018, 2019 Jens Christian Jensen
+;; Copyright (C) 2020 Jens Christian Jensen
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: org-mode
-;; Package-Version: 20190526
-;; Version: 0.1
+;; Package-Version: 20200415
+;; Version: 0.2.0
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ document."
         (buffer-string)))))
 
 (defun org-extra-refile-here ()
-  "Refile entry at point to a headline in the current file."
+  "Refile entry-at-point to a headline in the current file."
   (interactive)
   ;; TODO: create new entry if pick is not in list
   (let* ((entries (org-ql (current-buffer) (level 1)))
@@ -98,8 +98,21 @@ document."
         (today-refile (buffer-file-name) pick)
       (message "Point is not at a refilable ting"))))
 
+(defun org-extra-refile-to-open-org-file ()
+  "Refile entry-at-point to another open org file."
+  (interactive)
+  (when-let* ((files (-select (lambda (b) (s-ends-with-p ".org" (buffer-file-name b))) (buffer-list)))
+              (buffers (-map (lambda (b) (buffer-name b)) files))
+              (pick (completing-read "" buffers))
+              (buffer (get-buffer pick)))
+    (org-extra-cut-subtree-at-point)
+    (with-current-buffer buffer
+      (goto-char (point-max))
+      (org-paste-subtree)
+      (save-buffer))))
+
 (defun org-extra-url-at-point-to-org-link ()
-  ""
+  "Convert the url-at-point to an org-link."
   (interactive)
   (when-let* ((url (thing-at-point 'url))
               (bounds (bounds-of-thing-at-point 'url))
