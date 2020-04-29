@@ -2950,23 +2950,30 @@ clipboard."
   :defer 40
   :bind
   (:map notmuch-show-mode-map
-   ("B" . #'jens/notmuch-show-list-links)
-   ("N" . #'notmuch-show/next-unread-message)
-   ("P" . #'notmuch-show/previous-unread-message)
-   :map notmuch-message-mode-map
-   ("C-c C-a" . mail-add-attachment))
+        ("B" . #'jens/notmuch-show-list-links)
+        ("N" . #'notmuch-show/next-unread-message)
+        ("P" . #'notmuch-show/previous-unread-message)
+        :map notmuch-search-mode-map
+        ("N" . #'notmuch-search/next-unread-thread)
+        ("P" . #'notmuch-search/previous-unread-thread)
+        :map notmuch-message-mode-map
+        ("C-c C-a" . mail-add-attachment)
+        :map notmuch-show-part-map
+        ("V" . #'notmuch-show/view-mime-part-at-point-in-mode))
   :config
   (setq notmuch-fcc-dirs "sent +sent")
   (setq notmuch-column-control 1.0)
   (setq notmuch-wash-wrap-lines-length 80)
+  (setq notmuch-wash-citation-lines-prefix 20)
+  (setq notmuch-wash-citation-lines-suffix 0)
+  (setq notmuch-wash-button-signature-hidden-format "[ signature -- click to show ]")
+  (setq notmuch-wash-button-signature-visible-format "[ signature -- click to hide ]")
+  (setq notmuch-wash-button-citation-hidden-format "[ %d more lines -- click to show ]")
+  (setq notmuch-wash-button-citation-visible-format "[ %d more lines -- click to hide ]")
 
-  (setq notmuch-show-logo nil)
-  (setq notmuch-show-indent-messages-width 1)
-
-  (setq notmuch-search-oldest-first nil)
-
-  (setq notmuch-message-headers-visible nil)
-
+  ;; notmuch-message-forwarded-tags
+  ;; notmuch-draft-tags
+  ;; notmuch-message-replied-tags
   (add-to-list* 'notmuch-archive-tags '("+archived" "-deleted"))
 
   (defface notmuch-search-muted-face
@@ -3004,13 +3011,6 @@ clipboard."
           (:name "sent"     :key "s" :query "tag:sent" :sort-order newest-first)
           (:name "trash"    :key "h" :query "tag:deleted" :sort-order newest-first)))
 
-  (defun jens/notmuch-show-list-links ()
-    "List links in the current message, if one is selected, browse to it."
-    (interactive)
-    (let ((links (notmuch-show--gather-urls)))
-      (if links
-          (browse-url (completing-read "Links: " links)))))
-
   (setq notmuch-tagging-keys
         '(("a" ("-inbox" "+archived") "archive")
           ("r" ("-unread") "mark read")
@@ -3034,18 +3034,28 @@ clipboard."
   ;; mute mail in all modes with "M"
   (apply* #'notmuch/quicktag '(show search tree) "M" '(("-unread" "+muted")))
 
+  ;;;;;;;;;;;;;;;;;;;;;;;
+  ;; notmuch-show mode ;;
+  ;;;;;;;;;;;;;;;;;;;;;;;
+
+  (setq notmuch-show-logo nil)
+  (setq notmuch-show-indent-messages-width 1)
+  (setq notmuch-message-headers-visible nil)
+
+  (defun jens/notmuch-show-list-links ()
+    "List links in the current message, if one is selected, browse to it."
+    (interactive)
+    (let ((links (notmuch-show--gather-urls)))
+      (if links
+          (browse-url (completing-read "Links: " links)))))
+
   (defun notmuch-show/eldoc ()
     (let* ((headers (notmuch-show-get-prop :headers))
            (from (map-elt headers :From))
            (subject (map-elt headers :Subject)))
       (format "%s - %s" from subject)))
 
-  (defun notmuch-search/eldoc ()
-    (let ((data (notmuch-search-get-result)))
-      (map-elt data :authors)))
-
   (easy-eldoc notmuch-show-mode-hook notmuch-show/eldoc)
-  (easy-eldoc notmuch-search-mode-hook notmuch-search/eldoc)
 
   (defun notmuch/enable-debbugs ()
     (setq bug-reference-url-format "https://debbugs.gnu.org/%s")
@@ -3071,7 +3081,7 @@ clipboard."
              (funcall mode)
              (if (eq major-mode 'org-mode)
                  (org-show-all))
-             (view-buffer buf 'kill-buffer-if-not-modified)
+             (view-buffer buf #'kill-buffer-if-not-modified)
              (font-lock-fontify-buffer))))
        "text/plain")))
 
@@ -3099,6 +3109,38 @@ clipboard."
     (interactive)
     (notmuch-show/goto-message-with-tag "unread" 'backwards))
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; notmuch-search mode ;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (setq notmuch-search-oldest-first nil)
+
+  (defun notmuch-search/eldoc ()
+    (let ((data (notmuch-search-get-result)))
+      (map-elt data :authors)))
+
+  (easy-eldoc notmuch-search-mode-hook notmuch-search/eldoc)
+
+  (defun notmuch-search/thread-has-tag-p (tag)
+    (let ((tags (notmuch-search-get-tags)))
+      (member tag tags)))
+
+  (defun notmuch-search/goto-thread-with-tag (tag &optional backwards)
+    (let (thread)
+      (while (and (setq thread (if backwards
+                                   (notmuch-search-previous-thread)
+                                 (notmuch-search-next-thread)))
+		              (not (notmuch-search/thread-has-tag-p tag))))
+      thread))
+
+  (defun notmuch-search/next-unread-thread ()
+    (interactive)
+    (notmuch-search/goto-thread-with-tag "unread"))
+
+  (defun notmuch-search/previous-unread-thread ()
+    (interactive)
+    (notmuch-search/goto-thread-with-tag "unread" 'backwards))
+
   ;;;;;;;;;;;;
   ;; extras ;;
   ;;;;;;;;;;;;
@@ -3110,7 +3152,8 @@ clipboard."
 
   :custom-face
   (notmuch-wash-cited-text ((t (:inherit font-lock-comment-face))))
-  (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-1") :height 105))))
+  (notmuch-wash-toggle-button ((t (:foreground ,(zenburn-get "zenburn-yellow") :background ,(zenburn-get "zenburn-bg")))))
+  (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-1") :height 105 :extend t))))
   (notmuch-search-unread-face ((t (:weight bold :foreground ,(zenburn-get "zenburn-yellow")))))
   (notmuch-tag-deleted ((t (:foreground ,(zenburn-get "zenburn-red") :underline "red" :strike-through nil))))
   (notmuch-tag-face ((t (:foreground "#11ff11")))))
