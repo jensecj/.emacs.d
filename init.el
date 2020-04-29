@@ -2281,11 +2281,21 @@ With `prefix-arg', insert the UUID at point in the current buffer."
                    (jens/download-file b (concat (uuid) "-" b-name) temporary-file-directory))))
     (diff file_a file_b)))
 
-(defun jens/diff-news ()
-  "Check whats new in NEWS."
+(defun jens/diff-pick ()
+  "Pick two files and diff them."
   (interactive)
-  (jens/diff "/home/jens/.aur/emacs-git-src/etc/NEWS"
-             "https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/NEWS"))
+  (let ((a (read-file-name "File A: " (f-dirname (buffer-file-name))))
+        (b (read-file-name "File B: " (f-dirname (buffer-file-name)))))
+    (jens/diff a b)))
+
+(defun jens/diff-emacs-news ()
+  "Check what's new in NEWS."
+  (interactive)
+  (let* ((news-files (f-glob "NEWS*" "/home/jens/emacs/src/etc/"))
+         (news-file (completing-read "news file: " news-files nil t)))
+    (jens/diff news-file
+               "https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/NEWS")))
+
 
 ;;;; packages
 
