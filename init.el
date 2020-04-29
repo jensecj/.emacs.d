@@ -402,7 +402,7 @@ equality of computed checksum and arg."
 (setq line-number-mode t)
 (setq column-number-mode t)
 
-(setq fill-column 90)
+(setq-default fill-column 90)
 
 ;; show location of cursor in non-selected windows
 (setq cursor-in-non-selected-windows t)
@@ -903,7 +903,7 @@ seconds."
 (use-package display-fill-column-indicator
   :hook ((text-mode prog-mode) . display-fill-column-indicator-mode)
   :custom-face
-  (fill-column-indicator ((t (:foreground ,(zenburn-get "zenburn-bg+1"):background nil)))))
+  (fill-column-indicator ((t (:foreground ,(zenburn-get "zenburn-bg+05") :background nil)))))
 
 (use-package ispell
   :defer t
@@ -1373,7 +1373,7 @@ If METHOD does not exist, do nothing."
 
 (use-package browse-url
   :defer t
-  :config (setq browse-url-firefox-program "firefox"))
+  :config (setq browse-url-firefox-program "firefox-developer-edition"))
 
 (use-package shr
   :defer t
@@ -2813,6 +2813,8 @@ _t_: go to today-file
   :config
   (setq elfeed-search-filter "@1-month-ago +unread ")
 
+  (setq elfeed-search-trailing-width 25)
+
   (defface youtube-elfeed-face '((t :foreground "#E0CF9F"))
     "face for youtube.com entries"
     :group 'elfeed-faces)
@@ -2846,9 +2848,9 @@ _t_: go to today-file
            (active-window "")
            (counter 0))
       (apply fn args)
-      (sleep-for 0.5)
+      (sleep-for 0.7)
       (while (and (not (string= active-window emacs-window))
-                  (< counter 5))
+                  (< counter 15))
         (sleep-for 0.2)
         (incf counter)
         (setq active-window (shell-command-to-string "xdotool getactivewindow"))
@@ -3305,7 +3307,7 @@ clipboard."
   :diminish highlight-thing-mode
   :config
   (setq highlight-thing-ignore-list '("nil" "t"))
-  (setq highlight-thing-delay-seconds 0.2)
+  (setq highlight-thing-delay-seconds 0.4)
   (setq highlight-thing-case-sensitive-p nil)
   (setq highlight-thing-exclude-thing-under-point nil)
   (global-highlight-thing-mode +1)
@@ -3364,7 +3366,7 @@ clipboard."
 
 (use-package git-timemachine :straight t :defer t)
 (use-package centered-cursor-mode :straight t :defer t)
-(use-package rainbow-mode :straight t :defer t :diminish) ;; highlight color-strings (hex, etc.)
+(use-package rainbow-mode :straight t :defer t :diminish t) ;; highlight color-strings (hex, etc.)
 
 (use-package outshine
   :straight t
@@ -3423,11 +3425,11 @@ in the same file."
                       (,heading-7-regexp 1 'outshine-level-7 t)
                       (,heading-8-regexp 1 'outshine-level-8 t)))))
   :custom-face
-  (outshine-level-1 ((t (:inherit outline-1 :background "#393939" :weight bold :foreground "#DFAF8F"))))
-  (outshine-level-2 ((t (:inherit outline-2 :background "#393939" :weight bold))))
-  (outshine-level-3 ((t (:inherit outline-3 :background "#393939" :weight bold))))
-  (outshine-level-4 ((t (:inherit outline-4 :background "#393939" :weight bold))))
-  (outshine-level-5 ((t (:inherit outline-5 :background "#393939" :weight bold)))))
+  (outshine-level-1 ((t (:inherit outline-1 :background nil :weight bold :foreground "#DFAF8F"))))
+  (outshine-level-2 ((t (:inherit outline-2 :background nil :weight bold))))
+  (outshine-level-3 ((t (:inherit outline-3 :background nil :weight bold))))
+  (outshine-level-4 ((t (:inherit outline-4 :background nil :weight bold))))
+  (outshine-level-5 ((t (:inherit outline-5 :background nil :weight bold)))))
 
 (use-package outline-minor-faces
   ;; required by `backline'
@@ -3938,9 +3940,6 @@ re-enable afterwards."
   :straight t
   :bind ("C-å" . avy-zap-to-char))
 
-(use-package ace-window
-  :straight t)
-
 (use-package expand-region
   :straight t
   :bind
@@ -4154,7 +4153,7 @@ paste for multi-term mode."
   (setq ivy-re-builders-alist '((t . ivy--regex-plus)))
   (setq ivy-on-del-error-function nil)
 
-  (ivy-mode)
+  (ivy-mode +1)
   :custom-face
   (ivy-current-match ((t (:foreground nil :background "#292929" :height 110 :underline nil)))))
 
@@ -4176,7 +4175,9 @@ paste for multi-term mode."
    ("M-x" . counsel-M-x)
    ("M-b" . counsel-bookmark)
    :map help-map
-   ("l" . counsel-find-library))
+   ("l" . counsel-find-library)
+   :map org-mode-map
+   ("C-c C-q" . counsel-org-tag))
   :init
   (setenv "FZF_DEFAULT_COMMAND" "fd --type f --hidden --follow --exclude .git")
   :config
@@ -4506,7 +4507,7 @@ initial search query."
 
 (log-success (format "Configuration is %s lines of emacs-lisp. (excluding 3rd-parties)"
                      (jens/emacs-init-loc)))
-(log-success (format "Initialized in %s, with %s garbage collections."
+(log-success (format "Initialized in %s, with %s garbage collections.\n"
                      (emacs-init-time) gcs-done))
 
 (defun jens/show-initial-important-messages ()
