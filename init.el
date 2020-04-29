@@ -832,10 +832,13 @@ seconds."
   :defer t
   :bind (("M-s M-o" . #'eww/open-url-at-point)
          ("M-s M-w" . #'eww/search-region)
-         ("M-s M-d" . #'eww/delete-cookies)
+         ("M-s M-d" . #'eww/download-url-at-point)
+         ("M-s M-D" . #'eww/delete-cookies)
          ("M-s M-s" . #'eww-list-buffers)
          ("M-s M-c" . #'url-cookie-list))
   :config
+  (setq eww-download-directory (expand-file-name "~/downloads"))
+
   (defun eww/search-region ()
     "Open eww and search for the contents of the region."
     (interactive)
@@ -853,6 +856,12 @@ seconds."
                (buf (get-buffer-create "*eww*")))
       (view-buffer-other-window buf)
       (eww url)))
+
+  (defun eww/download-url-at-point ()
+    "Download the url at point using eww."
+    (interactive)
+    (when-let ((url (thing-at-point 'url)))
+      (url-retrieve url 'eww-download-callback (list url))))
 
   (defun eww/delete-cookies ()
     "Delete all eww cookies."
