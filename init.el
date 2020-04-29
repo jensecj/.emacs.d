@@ -758,6 +758,7 @@ seconds."
   :bind
   (("C-x C-d" . dired-jump)
    :map dired-mode-map
+   ("c" . dired-do-copy)
    ("C-." . dired-omit-mode)
    ("SPC" . jens/dired-toggle-mark)
    ("C-+" . dired-create-empty-file))
@@ -769,6 +770,7 @@ seconds."
   (setq dired-listing-switches "-agholXN")
   (setq dired-create-destination-dirs 'always)
   (setq dired-hide-details-hide-symlink-targets nil)
+  (setq dired-dwim-target t)
 
   ;; always delete and copy recursively
   (setq dired-recursive-deletes 'always)
@@ -799,7 +801,20 @@ seconds."
     (let ((this-line (buffer-substring (line-beginning-position) (line-end-position))))
       (if (s-matches-p (dired-marker-regexp) this-line)
           (dired-unmark arg)
-        (dired-mark arg)))))
+        (dired-mark arg))))
+
+  (defun jens/dired-show-readme ()
+    "Popup readme in a temporary view-buffer."
+    (interactive)
+    (when-let* ((dir (dired-current-directory))
+                (files (f-entries dir))
+                (readme (-first
+                         (lambda (e) (s-match "readme\..*$" e))
+                         files)))
+      (view-buffer-other-window
+       (find-file-noselect readme)
+       nil #'kill-buffer-if-not-modified)))
+  )
 
 (use-package elisp-mode
   :delight (emacs-lisp-mode "Elisp" :major))
@@ -3078,9 +3093,8 @@ clipboard."
   :defer t
   :commands erc-hl-nicks-enable)
 
-(use-package dired-filter
-  :straight t
-  :after dired)
+(use-package dired-filter :straight t :after dired)
+(use-package dired-collapse :straight t :after dired)
 
 (use-package dired-subtree
   :straight t
@@ -3091,9 +3105,14 @@ clipboard."
   :config
   (setq dired-subtree-use-backgrounds nil))
 
-(use-package dired-collapse
+(use-package dired-rsync
   :straight t
-  :after dired)
+  :after dired
+  :bind
+  (:map dired-mode-map
+        ("C" . dired-rsync))
+  :config
+  (setq dired-rsync-options "-azz --info=progress2"))
 
 (use-package dired-rainbow
   :straight t
@@ -3119,14 +3138,6 @@ clipboard."
   (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
   (dired-rainbow-define vc "#8CD0D3" ("git" "gitignore" "gitattributes" "gitmodules"))
   (dired-rainbow-define-chmod executable-unix "#8FB28F" "-.*x.*"))
-
-(use-package dired-ranger
-  :straight t
-  :after dired
-  :bind
-  (:map dired-mode-map
-        ("c" . dired-ranger-copy)
-        ("p" . dired-ranger-paste)))
 
 ;; FIXME: does not load properly, only after calling one of the bound keys
 (use-package dired+
