@@ -11,7 +11,8 @@
 (defun log-success (txt) (message "@ %s" txt))
 
 (log-info "Started initializing emacs!")
-(message "Version: %s" (call-interactively #'emacs-version))
+
+(call-interactively #'emacs-version)
 (message "Commit: %s (%s)" emacs-repository-version emacs-repository-branch)
 
 (log-info "Doing early initialization")
