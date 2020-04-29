@@ -446,8 +446,8 @@ equality of computed checksum and arg."
 (setq kill-ring-max 500)
 
 ;; keep a lot more undo history (expressed in bytes)
-(setq undo-limit (* 5 1024 1024))
-(setq undo-strong-limit (* 20 1024 1024))
+(setq undo-limit (* 10 1024 1024))
+(setq undo-strong-limit (* 30 1024 1024))
 
 ;; remember a lot of messages
 (setq message-log-max 10000)
