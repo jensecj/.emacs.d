@@ -3334,6 +3334,7 @@ clipboard."
   :hook (emacs-lisp-mode . fontify-face-mode))
 
 (use-package package-lint :straight t :defer t :commands (package-lint-current-buffer))
+(use-package relint :straight t :defer t :commands (relint-current-buffer relint-file relint-directory))
 (use-package flycheck-package :straight t :defer t :commands (flycheck-package-setup))
 
 (use-package ggtags
