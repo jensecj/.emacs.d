@@ -542,7 +542,33 @@ times."
   :commands epa-file-enable
   :config
   (setq epg-pinentry-mode 'loopback)
-  (epa-file-enable))
+  (epa-file-enable)
+
+  (defun epa/gpg-key-in-cache (key)
+    "Return whether KEY is in the GPG cache."
+    ;; TODO: check if key is in gpg-agent cache entirely in elisp
+    (when-let ((keys (s-split " " (s-trim (shell-command-to-string "gpg-cached")))))
+      (member key keys)))
+
+  (defun epa/gpg-cache-key (key)
+    "Call GPG to cache KEY in the GPG-agent."
+    (interactive)
+    (when-let ((buf (get-buffer-create "*gpg-login*"))
+               (pw (read-passwd (format "%s key: " key)))
+               (proc (make-process
+                      :name "gpg-login-proc"
+                      :buffer buf
+                      :command '("gpg"
+                                 "--quiet"
+                                 "--no-greeting"
+                                 "--batch"
+                                 "--pinentry-mode" "loopback"
+                                 "--clearsign"
+                                 "--output" "/dev/null"
+                                 "--default-key" key
+                                 "--passphrase-fd" "0"
+                                 "/dev/null"))))
+      (process-send-string proc (format "%s\n" pw)))))
 
 (use-package pinentry ;; enable GPG pinentry through the minibuffer
   :straight t
