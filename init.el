@@ -1634,42 +1634,16 @@ If METHOD does not exist, do nothing."
 
 ;;;;; convenience
 
-(defun jens/-new-scratch-buffer ()
-  "Return a newly created scratch buffer."
-  (let ((n 0)
-        bufname)
-    (while (progn
-             (setq bufname
-                   (concat "*scratch"
-                           (if (= n 0) "" (format "-%s" (int-to-string n)))
-                           "*"))
-             (setq n (1+ n))
-             (get-buffer bufname)))
-    (get-buffer-create bufname)))
-
-(defun jens/create-scratch-buffer ()
-  "Create a new scratch buffer to work in.  (named *scratch* -
-*scratch<n>*)."
-  (interactive)
-  (let ((scratch-buf (jens/-new-scratch-buffer))
-        (initial-content (if (use-region-p)
-                             (buffer-substring (region-beginning) (region-end)))))
-    (xref-push-marker-stack)
-    (switch-to-buffer scratch-buf)
-    (when initial-content (insert initial-content))
-    (goto-char (point-min))
-    (emacs-lisp-mode)))
-
 (defun jens/clean-view ()
   "Create a scratch buffer, and make it the only buffer visible."
   (interactive)
-  (jens/create-scratch-buffer)
+  (b-jump-to-empty-scratch-buffer)
   (delete-other-windows))
 
 (defun jens/clone-buffer ()
   "Open a clone of the current buffer."
   (interactive)
-  (let ((newbuf (jens/-new-scratch-buffer))
+  (let ((newbuf (b-new-scratch-buffer))
         (content (buffer-string))
         (p (point)))
     (with-current-buffer newbuf
@@ -1733,16 +1707,6 @@ With prefix ARG, ask for file to open."
   (if (f-exists? (concat (f-no-ext (buffer-file-name)) ".elc"))
       (byte-recompile-file (buffer-file-name))
     (byte-compile-file (buffer-file-name))))
-
-(defun jens/get-buffer-file-name+ext ()
-  "Get the file name and extension of the file belonging to the
-current buffer."
-  (file-name-nondirectory buffer-file-name))
-
-(defun jens/get-buffer-file-name ()
-  "Get the file name of the file belonging to the current
-buffer."
-  (file-name-sans-extension (jens/get-buffer-file-name+ext)))
 
 (defun jens/get-buffer-file-directory ()
   "Get the directory of the file belonging to the current
@@ -2184,11 +2148,10 @@ current line."
     (goto-char (cdr (assoc pick headings)))))
 
 (defhydra jens/shortcut (:exit t)
-  "Shortcuts for common commands."
-  ("m" #'jens/goto-msg-buffer "goto msg buffer")
-  ("n" #'notmuch-mojn "goto mail")
-  ("e" #'elfeed "goto elfeed")
-  ("c" #'jens/create-scratch-buffer "create scratch buffer"))
+  ("m" #'jens/goto-msg-buffer "*messages*")
+  ("n" #'notmuch-mojn "notmuch")
+  ("e" #'elfeed "elfeed")
+  ("c" #'b-jump-to-empty-scratch-buffer "new *scratch*"))
 
 (defun jens/buffer-carousel-previous ()
   (interactive)
@@ -2334,6 +2297,9 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 (log-info "Loading homemade packages")
 
 (use-package org-extra :after org :demand t)
+(use-package b ;; buffer extentions
+  :demand t)
+
 (use-package dev-extra :demand t)
 
 (use-package notmuch-mojn
