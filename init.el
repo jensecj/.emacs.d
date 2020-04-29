@@ -663,6 +663,7 @@ seconds."
   (add-hook* 'sh-mode-hook '(flymake-mode flycheck-mode)))
 
 (use-package conf-mode
+  :defer t
   :config
   (defun conf-mode/indent ()
     ;; FIXME: does not work when called with indent-region
@@ -820,6 +821,7 @@ seconds."
   :delight (emacs-lisp-mode "Elisp" :major))
 
 (use-package ediff
+  :defer t
   :config
   (setq ediff-window-setup-function 'ediff-setup-windows)
   (setq ediff-split-window-function 'split-window-vertically))
@@ -827,6 +829,7 @@ seconds."
 (use-package diff)
 
 (use-package eww
+  :defer t
   :bind (("M-s M-o" . #'eww/open-url-at-point)
          ("M-s M-w" . #'eww/search-region)
          ("M-s M-d" . #'eww/delete-cookies)
@@ -863,7 +866,6 @@ seconds."
 (use-package outline :diminish outline-minor-mode)
 
 (use-package display-fill-column-indicator
-  :after zenburn
   :hook ((text-mode prog-mode) . display-fill-column-indicator-mode)
   :custom-face
   (fill-column-indicator ((t (:foreground ,(zenburn-get "zenburn-bg+1"):background nil)))))
@@ -1592,7 +1594,7 @@ If METHOD does not exist, do nothing."
   :after org-mode)
 
 (use-package org-contacts
-  :after (:any mu4e notmuch)
+  :after notmuch-mojn
   :init
   (setq org-contacts-enable-completion nil)
   (setq org-contacts-icon-use-gravatar nil)
@@ -1612,8 +1614,9 @@ If METHOD does not exist, do nothing."
   (add-to-list 'notmuch-mojn-candidate-functions #'jens/org-contacts))
 
 (use-package org-agenda
+  :defer t
   ;; TODO: have a look at https://github.com/alphapapa/org-super-agenda
-  :config)
+  )
 
 ;;; homemade
 ;;;; defuns
@@ -2615,21 +2618,22 @@ _t_: go to today-file
 
 ;;;; major modes and extentions
 
-(use-package cmake-mode :straight t :mode "\\CmakeLists.txt\\'")
-(use-package yaml-mode :straight t :mode ("\\.yaml\\'" "\\.yml\\'"))
-(use-package toml-mode :straight t :mode ("\\.toml\\'"))
-(use-package dockerfile-mode :straight t :mode "\\Dockerfile\\'")
-(use-package gitconfig-mode :straight t :mode "\\.gitconfig\\'")
-(use-package gitignore-mode :straight t :mode "\\.gitignore\\'")
-(use-package lua-mode :straight t :mode "\\.lua\\'")
-(use-package markdown-mode :straight t :mode ("\\.md\\'" "\\.card\\'"))
-(use-package scss-mode :straight t :mode "\\.scss\\'")
-(use-package tuareg :straight t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
-(use-package restclient :straight t)
-(use-package json-mode :straight t)
-(use-package ini-mode :straight t)
-(use-package systemd :straight t)
-(use-package nginx-mode :straight t)
+(use-package lsp-mode :straight t :defer t)
+(use-package cmake-mode :straight t :defer t :mode "\\CmakeLists.txt\\'")
+(use-package yaml-mode :straight t :defer t :mode ("\\.yaml\\'" "\\.yml\\'"))
+(use-package toml-mode :straight t :defer t :mode ("\\.toml\\'"))
+(use-package dockerfile-mode :straight t :defer t :mode "\\Dockerfile\\'")
+(use-package gitconfig-mode :straight t :defer t :mode "\\.gitconfig\\'")
+(use-package gitignore-mode :straight t :defer t :mode "\\.gitignore\\'")
+(use-package lua-mode :straight t :defer t :mode "\\.lua\\'")
+(use-package markdown-mode :straight t :defer t :mode ("\\.md\\'" "\\.card\\'"))
+(use-package scss-mode :straight t :defer t :mode "\\.scss\\'")
+(use-package tuareg :straight t :defer t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
+(use-package restclient :straight t :defer t)
+(use-package json-mode :straight t :defer t :hook ((json-mode . flycheck-mode)))
+(use-package ini-mode :straight t :defer t)
+(use-package systemd :straight t :defer t)
+(use-package nginx-mode :straight t :defer t)
 
 
 (use-package rust-mode
@@ -2646,7 +2650,6 @@ _t_: go to today-file
 
 (use-package racer
   :straight t
-  :defer t
   :after rust-mode
   :hook ((rust-mode . racer-mode)
          (racer-mode . eldoc-mode)))
@@ -2678,7 +2681,7 @@ _t_: go to today-file
 
 (use-package cider
   :straight t
-  :defer t
+  :after clojure-mode
   :hook (clojure-mode . cider-mode)
   :config
   (setq cider-repl-use-pretty-printing t
@@ -2690,7 +2693,7 @@ _t_: go to today-file
 
 (use-package clj-refactor
   :straight t
-  :defer t
+  :after clojure-mode
   :hook (clojure-mode . clj-refactor-mode)
   :config
   ;; don't warn on refactor eval
@@ -2698,7 +2701,7 @@ _t_: go to today-file
 
 (use-package magit
   :straight t
-  :defer t
+  :defer 30
   :bind
   (("C-x m" . magit-status)
    :map magit-file-mode-map
@@ -2773,7 +2776,7 @@ _t_: go to today-file
 
 (use-package elfeed
   :straight t
-  :defer t
+  :defer 60
   :commands (elfeed elfeed-search-selected jens/load-elfeed)
   :functions jens/elfeed-copy-link-at-point
   :bind
@@ -2918,7 +2921,7 @@ clipboard."
   ;; TODO: setup notmuch for multiple mail-profiles
   ;; see https://www.djcbsoftware.nl/code/mu/mu4e/Contexts-example.html
   :straight t
-  :defer t
+  :defer 40
   :bind
   (:map notmuch-show-mode-map
    ("B" . #'jens/notmuch-show-list-links)
@@ -3296,7 +3299,7 @@ clipboard."
 
 (use-package outshine
   :straight t
-  :diminish
+  :diminish t
   :hook ((emacs-lisp-mode) . outshine-mode)
   :bind
   (:map outshine-mode-map
@@ -3834,7 +3837,7 @@ title and duration."
   :bind ("C-x C-y" . browse-kill-ring)
   :config (setq browse-kill-ring-quit-action 'save-and-restore))
 
-(use-package browse-at-remote :straight t)
+(use-package browse-at-remote :straight t :defer t)
 
 (use-package avy
   :straight t
@@ -3998,7 +4001,7 @@ re-enable afterwards."
   (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
 
 (use-package vterm
-  ;; :disabled t
+  :defer t
   :straight (vterm :type git :repo "https://github.com/akermu/emacs-libvterm.git")
   :init
   (add-to-list 'load-path (expand-file-name "~/software/emacs-libvterm"))
