@@ -2379,6 +2379,12 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   (remove-hook 'notmuch-mojn-post-refresh-hook #'notmuch-mojn-mute-retag-messages)
   (add-hook 'notmuch-mojn-pre-refresh-hook #'jens/load-secrets)
 
+  (defun notmuch-mojn/cache-mail-key ()
+    (unless (epa/gpg-key-in-cache "pass")
+      (epa/gpg-cache-key "pass")))
+
+  (add-hook 'notmuch-mojn-pre-fetch-hook #'notmuch-mojn/cache-mail-key)
+
   (advice-add #'notmuch-address-expand-name
               :override
               #'notmuch-mojn-complete-address))
