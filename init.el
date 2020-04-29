@@ -2306,9 +2306,20 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
 (log-info "Loading homemade packages")
 
-(use-package org-extra :after org :demand t)
 (use-package b ;; buffer extentions
   :demand t)
+
+(use-package org-extra
+  :after org
+  :demand t
+  :bind ("M-o" . org-extra/commands/body)
+  :config
+  (defhydra org-extra/commands (:foreign-keys run)
+    ("r" #'org-extra-rate "rate")
+    ("h" #'org-extra-refile-here "refile here")
+    ("o" #'org-extra-refile-to-open-org-files "refile to open")
+    ("u" #'org-extra-copy-url-at-point "copy url")
+    ("q" nil "quit")))
 
 (use-package dev-extra :demand t)
 
@@ -2414,9 +2425,7 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   :defer t
   :commands (today-hydra/body)
   :bind
-  (("C-x t" . today-hydra/body)
-   :map org-mode-map
-   ("M-o" . today-track-hydra/body))
+  (("C-x t" . today-hydra/body))
   :config
   (setq today-directory "~/vault/git/org/archive/")
   (setq today-file "~/vault/git/org/today.org")
