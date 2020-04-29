@@ -4373,6 +4373,8 @@ initial search query."
 (bind-key* "\e\ek" (xi (find-file "~/vault/git/org/tracking.org")))
 (bind-key* "\e\em" (xi (find-file "~/vault/git/org/roadmap.org")))
 (bind-key* "\e\et" (xi (find-file "~/vault/git/org/today.org")))
+(bind-key* "\e\er" (xi (find-file "~/vault/git/org/read.org")))
+(bind-key* "\e\ew" (xi (find-file "~/vault/git/org/watch.org")))
 (bind-key* "\e\ec" (xi (find-file "~/.emacs.d/init.el")))
 
 ;;;; for built-in things
