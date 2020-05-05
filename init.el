@@ -541,7 +541,9 @@ times."
 (use-package auth-source
   :demand t
   :config
-  (setq auth-sources '("~/vault/authinfo.gpg" "~/.netrc"))
+  (setq authinfo-mode)                  ; TODO: make sure reveal-mode hooks to the files
+  (setq authinfo-hidden (rx (or "password" "secret")))
+  (setq auth-sources `(,(expand-file-name "~/vault/.authinfo.gpg")))
   (setq auth-source-save-behavior nil))
 
 (use-package epa-file
