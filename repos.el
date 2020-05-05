@@ -2,6 +2,8 @@
  ("~/.dotfiles/")
 
  ("~/.emacs.d/init.el")
+ ("~/.emacs.d/lisp/org-extra.el")
+ ("~/.emacs.d/lisp/dev-extra.el")
 
  ("~/.emacs.d/straight/repos/dokument.el/")
  ("~/.emacs.d/straight/repos/etmux.el/")
