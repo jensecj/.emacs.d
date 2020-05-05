@@ -1400,7 +1400,8 @@ If METHOD does not exist, do nothing."
   :defer t
   :config
   (setq shr-use-colors nil)
-  (setq shr-width 100))
+  (setq shr-width 100)
+  (setq shr-cookie-policy nil))
 
 (use-package sendmail
   :after notmuch
