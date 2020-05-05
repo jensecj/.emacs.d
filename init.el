@@ -2121,11 +2121,17 @@ current line."
           (jens/function-def-string fnsym)
           "#+end_src"))
 
-(defun jens/copy-symbol-at-point ()
+(defun jens/copy-sexp-at-point ()
   "Save the `symbol-at-point' to the `kill-ring'."
   (interactive)
-  (let ((sym (symbol-at-point)))
-    (kill-new (symbol-name sym))))
+  (let ((sexp (thing-at-point 'sexp t)))
+    (kill-new sexp)))
+
+(defun jens/kill-sexp-at-point ()
+  "Kill the sexp at point."
+  (interactive)
+  (let ((bounds (bounds-of-thing-at-point 'sexp)))
+    (delete-region (car bounds) (cdr bounds))))
 
 (defun jens/copy-buffer-file-path ()
   "Copy the current buffers file path to the clipboard."
@@ -4525,7 +4531,8 @@ initial search query."
 (bind-key* "s-n" 'jens/goto-next-line-with-same-indentation)
 (bind-key* "s-p" 'jens/goto-prev-line-with-same-indentation)
 
-(bind-key* "C-M-k" #'jens/copy-symbol-at-point)
+(bind-key* "C-M-k" #'jens/copy-sexp-at-point)
+(bind-key* "M-K" #'jens/kill-sexp-at-point)
 
 (bind-key* "M-r" #'jens/goto-repo)
 
