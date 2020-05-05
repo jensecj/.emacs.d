@@ -2994,11 +2994,12 @@ clipboard."
   :bind
   (:map notmuch-show-mode-map
         ("B" . #'jens/notmuch-show-list-links)
-        ("N" . #'notmuch-show/next-unread-message)
-        ("P" . #'notmuch-show/previous-unread-message)
+        ("N" . #'notmuch-show/goto-next-unread-message)
+        ("P" . #'notmuch-show/goto-previous-unread-message)
         :map notmuch-search-mode-map
-        ("N" . #'notmuch-search/next-unread-thread)
-        ("P" . #'notmuch-search/previous-unread-thread)
+        ("N" . #'notmuch-search/goto-next-unread-thread)
+        ("P" . #'notmuch-search/goto-previous-unread-thread)
+        ("<C-return>" . #'notmuch-search/show-thread-first-unread)
         :map notmuch-message-mode-map
         ("C-c C-a" . mail-add-attachment)
         :map notmuch-show-part-map
@@ -3093,6 +3094,9 @@ clipboard."
           (browse-url (completing-read "Links: " links)))))
 
   (defun notmuch-show/eldoc ()
+    "Simple eldoc handler for `notmuch-show-mode'.
+
+Inserts information about senders, and the mail subject into eldoc."
     (let* ((headers (notmuch-show-get-prop :headers))
            (from (map-elt headers :From))
            (subject (map-elt headers :Subject)))
@@ -3129,12 +3133,15 @@ clipboard."
        "text/plain")))
 
   (defun notmuch-show/message-has-tag-p (tag)
-    ""
+    "Return non-nil if the message-at-point is tagged with TAG."
     (let ((tags (notmuch-show-get-prop :tags))
           (orig-tags (notmuch-show-get-prop :orig-tags)))
       (member tag (-concat tags orig-tags))))
 
   (defun notmuch-show/goto-message-with-tag (tag &optional backwards)
+    "Jump to the next message tagged with TAG.
+
+if BACKWARDS is non-nil, jump backwards instead."
     (let (msg)
       (while (and (setq msg (if backwards
                                 (notmuch-show-goto-message-previous)
@@ -3144,11 +3151,13 @@ clipboard."
 	        (notmuch-show-message-adjust))
       msg))
 
-  (defun notmuch-show/next-unread-message ()
+  (defun notmuch-show/goto-next-unread-message ()
+    "Jump forwards to the next unread message."
     (interactive)
     (notmuch-show/goto-message-with-tag "unread"))
 
-  (defun notmuch-show/previous-unread-message ()
+  (defun notmuch-show/goto-previous-unread-message ()
+    "Jump backwards to the previous unread message."
     (interactive)
     (notmuch-show/goto-message-with-tag "unread" 'backwards))
 
@@ -3159,16 +3168,24 @@ clipboard."
   (setq notmuch-search-oldest-first nil)
 
   (defun notmuch-search/eldoc ()
+    "Simple eldoc handler for `notmuch-search-mode'.
+
+Inserts information about the authors of the mail-at-point
+into eldoc."
     (let ((data (notmuch-search-get-result)))
       (map-elt data :authors)))
 
   (easy-eldoc notmuch-search-mode-hook notmuch-search/eldoc)
 
   (defun notmuch-search/thread-has-tag-p (tag)
+    "Return non-nil if the thread-at-point is tagged with TAG."
     (let ((tags (notmuch-search-get-tags)))
       (member tag tags)))
 
   (defun notmuch-search/goto-thread-with-tag (tag &optional backwards)
+    "Jump forwards to the next thread that is tagged with TAG.
+
+if BACKWARDS is non-nil, jump backwards instead."
     (let (thread)
       (while (and (setq thread (if backwards
                                    (notmuch-search-previous-thread)
@@ -3176,13 +3193,23 @@ clipboard."
 		              (not (notmuch-search/thread-has-tag-p tag))))
       thread))
 
-  (defun notmuch-search/next-unread-thread ()
+  (defun notmuch-search/goto-next-unread-thread ()
+    "Jump forward to the next unread thread."
     (interactive)
     (notmuch-search/goto-thread-with-tag "unread"))
 
-  (defun notmuch-search/previous-unread-thread ()
+  (defun notmuch-search/goto-previous-unread-thread ()
+    "Jump back to the previous unread thread."
     (interactive)
     (notmuch-search/goto-thread-with-tag "unread" 'backwards))
+
+  (defun notmuch-search/show-thread-first-unread ()
+    "Show the thread-at-point, but jump to the first unread message."
+    (interactive)
+    (notmuch-search-show-thread)
+    (goto-char (point-min))
+    (unless (notmuch-show/message-has-tag-p "unread")
+      (notmuch-show/goto-next-unread-message)))
 
   ;;;;;;;;;;;;
   ;; extras ;;
