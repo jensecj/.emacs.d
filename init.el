@@ -2396,6 +2396,10 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
 (use-package dev-extra :demand t)
 
+(use-package indset
+  :demand t
+  :bind (("M-i" . indset)))
+
 (use-package notmuch-mojn
   :straight (notmuch-mojn :type git :repo "git@github.com:jensecj/notmuch-mojn.el.git")
   :defer t
