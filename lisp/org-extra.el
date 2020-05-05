@@ -71,9 +71,8 @@ document."
     (yank)
     (buffer-string)))
 
-(defun org-extra-copy-url-at-point ()
-  "Grab URL from org-link at point."
-  (interactive)
+(defun org-extra-url-at-point ()
+  "Return the URL from the org-link-at-point"
   (when-let* ((link-info (assoc :link (org-context)))
               (text (buffer-substring-no-properties (cadr link-info) (caddr link-info))))
     (if (not text)
@@ -81,8 +80,26 @@ document."
       (with-temp-buffer
         (string-match "\\[\\[.*\\]\\[" text)
         (insert (substring-no-properties text (+ (match-beginning 0) 2) (- (match-end 0) 2)))
-        (clipboard-kill-ring-save (point-min) (point-max))
         (buffer-string)))))
+
+(defun org-extra-copy-url-at-point ()
+  "Grab URL from org-link at point."
+  (interactive)
+  (when-let* ((url (org-extra-url-at-point)))
+    (with-temp-buffer
+      (insert url)
+      (clipboard-kill-ring-save (point-min) (point-max))
+      (message "%s" (buffer-string)))))
+
+(defun org-extra-open-link-at-point ()
+  ;; TODO: remove #'org-extra-open-link-at-point
+  "Open the org-link at point."
+  (interactive)
+  (when-let* ((line-string (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+              (org-link-re (rx "[[" (group (zero-or-more any))  "][" (group (zero-or-more any)) "]]"))
+              (found (string-match org-link-re line-string))
+              (url (substring line-string (match-beginning 0) (match-end 0))))
+    (org-open-link-from-string url)))
 
 (defun org-extra-refile-here ()
   "Refile entry-at-point to a headline in the current file."
