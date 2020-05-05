@@ -1720,7 +1720,7 @@ If METHOD does not exist, do nothing."
         (remote-host (file-remote-p default-directory 'host))
         (remote-localname (file-remote-p filename 'localname)))
     (find-file (format "/%s:root@%s:%s"
-                       (or remote-method "sudo")
+                       (or remote-method "sudoedit")
                        (or remote-host "localhost")
                        (or remote-localname filename)))))
 
