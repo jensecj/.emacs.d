@@ -96,6 +96,9 @@
 ;; needs to be required after its settings are set
 (require 'use-package)
 
+(use-package modern :demand t)
+(use-package contrib :demand t)
+
 (use-package dash ;; working with lists, -map, -concat, etc
   :demand t
   :straight (dash :host github :repo "magnars/dash.el"
