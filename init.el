@@ -2461,9 +2461,13 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
   :defer t
   :bind
-  (("M-p p" . views-push)
-   ("M-p k" . views-pop)
-   ("M-v" . views-switch)))
+  (("M-v" . views-hydra/body))
+  :config
+  (defhydra views-hydra (:exit t)
+    ""
+    ("s" #'views-switch "switch")
+    ("p" #'views-push "push")
+    ("k" #'views-pop "pop")))
 
 (use-package sane-windows
   :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
