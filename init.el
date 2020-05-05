@@ -197,6 +197,8 @@
   (setq auto-save-file-name-transforms `((".*" ,auto-save-dir t)))
   (setq auto-save-list-file-prefix auto-save-dir))
 
+(setq auto-save-no-message t)
+
 ;; don't use the customize system, all settings are keps in this file
 (setq custom-file null-device)
 
