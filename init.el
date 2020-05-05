@@ -546,6 +546,21 @@ times."
   (setq auth-sources `(,(expand-file-name "~/vault/.authinfo.gpg")))
   (setq auth-source-save-behavior nil))
 
+(use-package auth-source-pass
+  ;; :straight t  ; TODO: is auth-source-pass now part of emacs?
+  :commands (auth-source-pass-enable auth-source-pass-get)
+  :config
+  (auth-source-pass-enable)
+  ;; using authinfo.gpg
+  ;; (letrec ((auth (auth-source-search :host "freenode"))
+  ;;          (user (plist-get (car auth) :user))
+  ;;          (secret (plist-get (car auth) :secret)))
+  ;;   (message (format "user: %s, secret: %s" user (funcall secret))))
+
+  ;; using password-store
+  ;; (auth-source-pass-get 'secret "irc/freenode/jensecj")
+  )
+
 (use-package epa-file
   :demand t
   :commands epa-file-enable
@@ -4102,21 +4117,6 @@ re-enable afterwards."
               :map ivy-occur-grep-mode-map
               ("+" . grep-context-more-around-point)
               ("-" . grep-context-less-around-point)))
-
-(use-package auth-source-pass
-  :straight t
-  :commands (auth-source-pass-enable auth-source-pass-get)
-  :config
-  (auth-source-pass-enable)
-  ;; using authinfo.gpg
-  ;; (letrec ((auth (auth-source-search :host "freenode"))
-  ;;          (user (plist-get (car auth) :user))
-  ;;          (secret (plist-get (car auth) :secret)))
-  ;;   (message (format "user: %s, secret: %s" user (funcall secret))))
-
-  ;; using password-store
-  ;; (auth-source-pass-get 'secret "irc/freenode/nickserv")
-  )
 
 (use-package exec-path-from-shell
   :straight t
