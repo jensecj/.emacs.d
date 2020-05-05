@@ -466,6 +466,8 @@ equality of computed checksum and arg."
 ;; only scroll the current line when moving outside window-bounds
 (setq auto-hscroll-mode 'current-line)
 
+(setq fast-but-imprecise-scrolling t)
+
 ;; save clipboard from other programs to kill-ring
 (setq save-interprogram-paste-before-kill t)
 
