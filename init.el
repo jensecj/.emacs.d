@@ -1382,7 +1382,19 @@ If METHOD does not exist, do nothing."
 
 (use-package browse-url
   :defer t
-  :config (setq browse-url-firefox-program "firefox-developer-edition"))
+  :bind
+  ("C-c C-o" . #'jens/open-url-at-point)
+  :config
+  (setq browse-url-firefox-program "firefox-developer-edition")
+
+  (defun jens/open-url-at-point ()
+    "Open the URL-at-point, dwim."
+    (interactive)
+    (let ((url))
+      (cond
+       ((thing-at-point 'url t) (browse-url-at-point))
+       ((setq url (shr-url-at-point nil)) (browse-url url))
+       ((org-extra-url-at-point) (org-open-at-point))))))
 
 (use-package shr
   :defer t
@@ -4480,8 +4492,6 @@ initial search query."
 
 ;; Completion that uses many different methods to find options.
 (global-set-key (kbd "C-.") 'hippie-expand)
-
-(bind-key "C-c C-o" #'browse-url-at-point)
 
 ;;;; for homemade things
 
