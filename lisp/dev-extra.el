@@ -1,11 +1,12 @@
 ;;; dev-extra.el --- Convenience functions for lisp maintainers. -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018, 2019 Jens Christian Jensen
+;; Copyright (C) 2020 Jens Christian Jensen
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
-;; Keywords: library, maintenance
-;; Package-Version: 20190610
-;; Version: 0.1.1
+;; Keywords: elisp, packages
+;; Package-Version: 20200505
+;; Version: 0.2.0
+;; Package-Requires: ((emacs "28.0.0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -27,13 +28,24 @@
 (require 'lisp-mnt)
 (require 's)
 (require 'dash)
-(require 'hydra)
 
-(defun dev--header-exists (header)
-  "Return content of header if it exists."
+(defun dev--get-header (header)
+  "Return content of HEADER if it exists."
   (save-excursion
-    (goto-char (point-min))
     (lm-header header)))
+
+(defun dev--set-header (header new)
+  "Set HEADER's contents to NEW."
+  (save-excursion
+    (when (lm-header header)
+      (kill-line)
+      (insert new))))
+
+(defun dev--edit-header (header)
+  "Edit HEADER interactively."
+  (when-let* ((contents (dev--get-header header))
+              (new (completing-read (format "%s: " header) nil nil nil contents)))
+    (dev--set-header header new)))
 
 (defun dev--crack-version (ver)
   "Convert a version string into a list of numbers."
@@ -41,9 +53,9 @@
        (s-split (regexp-quote "."))
        (-map #'string-to-number)))
 
-(defun dev--bump-version (ver loc)
+(defun dev--make-version (ver loc)
   "Bump the LOC part of version VER."
-  (when-let* ((ver (dev--crack-version ver)))
+  (when-let ((ver (dev--crack-version ver)))
     ;; make sure the version is in three parts (major.minor.patch)
     (while (< (length ver) 3)
       (setq ver (-snoc ver 0)))
@@ -53,88 +65,59 @@
      ((equal loc 'minor) (format "%s.%s.%s" (nth 0 ver) (1+ (nth 1 ver)) 0))
      ((equal loc 'major) (format "%s.%s.%s" (1+ (nth 0 ver)) 0 0)))))
 
-(defun dev--update-version (ver)
-  "Update the package version to VER."
-  (save-excursion
-    (lm-header "version")
-    (kill-line)
-    (insert ver)))
+(defun dev-edit-version ()
+  "Edit the Version header interactively."
+  (interactive)
+  (dev--edit-header "version"))
 
 (defun dev-bump-patch ()
-  "Bump the patch part of the version header."
+  "Bump the patch part of the Version header."
   (interactive)
-  (when-let ((ver (dev--header-exists "version")))
-    (dev--update-version (dev--bump-version ver 'patch))))
+  (when-let ((ver (dev--get-header "version")))
+    (dev--set-header "version" (dev--make-version ver 'patch))))
 
 (defun dev-bump-minor ()
-  "Bump the minor part of the version header."
+  "Bump the minor part of the Version header."
   (interactive)
-  (when-let ((ver (dev--header-exists "version")))
-    (dev--update-version (dev--bump-version ver 'minor))))
+  (when-let ((ver (dev--get-header "version")))
+    (dev--set-header "version" (dev--make-version ver 'minor))))
 
 (defun dev-bump-major ()
-  "Bump the major part of the version header."
+  "Bump the major part of the Version header."
   (interactive)
-  (when-let ((ver (dev--header-exists "version")))
-    (dev--update-version (dev--bump-version ver 'major))))
-
-(defhydra dev-hydra ()
-  "Hydra for bumping package version"
-  ("u" #'dev-update-package-version "update package-version")
-  ("p" #'dev-bump-patch "bump patch")
-  ("m" #'dev-bump-minor "bump minor")
-  ("M" #'dev-bump-major "bump major"))
+  (when-let ((ver (dev--get-header "version")))
+    (dev--set-header "version" (dev--make-version ver 'major))))
 
 (defun dev-update-package-version ()
-  "Update the package-version to current date in compact format."
+  "Update the Package-Version header to the current date in compact format."
   (interactive)
-  (when (dev--header-exists "package-version")
+  (when (dev--get-header "package-version")
+    (dev--set-header "package-version" (format-time-string "%Y%m%d"))))
+
+(defun dev-edit-package-version ()
+  "Edit the Package-Version header."
+  (interactive)
+  (dev--edit-header "package-version"))
+
+(defun dev-update-copyright ()
+  "Update the Copyright header to the current year."
+  (interactive)
+  (let ((copyright-regex (rx bol ";; Copyright (C) " (group (1+ digit) (optional "-" (1+ digit))))))
     (save-excursion
-      (lm-header "package-version")
-      (kill-line)
-      (insert (format-time-string "%Y%m%d")))))
+      (ignore-errors
+        (goto-char (point-min))
+        (regexp-search-forward copyright-regex)
+        (replace-match (format-time-string "%Y") nil nil nil 1)))))
 
-(defun dev-insert-mode-header ()
-  ""
+(defun dev-edit-keywords ()
+  "Edit the Keywords header."
   (interactive)
-  (goto-char (point-min))
-  (insert "-*- mode: org -*-"))
+  (dev--edit-header "keywords"))
 
-(defun dev-new-package ()
-  "Insert standard library header at the top of the current buffer."
+(defun dev-edit-requires ()
+  "Edit Package-Requires header."
   (interactive)
-  (goto-char (point-min))
-  (insert
-   (format
-    ";;; %s --- Some description. -*- lexical-binding: t; -*-
+  (dev--edit-header "package-requires"))
 
-;; Copyright (C) %s %s
-
-;; Author: %s <%s>
-;; URL:
-;; Keywords:
-;; Package-Requires ((%s))
-;; Package-Version: %s
-;; Version: 0.1.0
-
-
-;;; Commentary:
-;;
-
-;;; Code:
-
-
-(provide '%s)
-;;; %s ends here
-"
-    (buffer-name)
-    (format-time-string "%Y")
-    (user-full-name)
-    (user-full-name)
-    user-mail-address
-    (format "emacs \"%s\"" emacs-version)
-    (format-time-string "%Y%m%d")
-    (f-base (buffer-name))
-    (buffer-name))))
 
 (provide 'dev-extra)
