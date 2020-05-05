@@ -109,15 +109,26 @@
         (regexp-search-forward copyright-regex)
         (replace-match (format-time-string "%Y") nil nil nil 1)))))
 
+(defun dev-edit-url ()
+  "Edit the URL header."
+  (interactive)
+  (dev--edit-header "url"))
+
 (defun dev-edit-keywords ()
   "Edit the Keywords header."
   (interactive)
   (dev--edit-header "keywords"))
 
 (defun dev-edit-requires ()
-  "Edit Package-Requires header."
+  "Edit the Package-Requires header."
   (interactive)
   (dev--edit-header "package-requires"))
+
+(defun dev-fixup ()
+  "Update common headers which go out-of-date."
+  (interactive)
+  (dev-update-package-version)
+  (dev-update-copyright))
 
 
 (provide 'dev-extra)
