@@ -1409,16 +1409,17 @@ If METHOD does not exist, do nothing."
   (setq mail-envelope-from 'header)
   (setq sendmail-program "msmtp")
 
-  ;; these really belong in `message.el', but using (use-package
-  ;; message) breaks #'message.
+  ;; this belongs in `message.el', but using (use-package message) breaks #'message.
   (setq message-sendmail-envelope-from 'header)
   (setq message-sendmail-extra-arguments '("--read-envelope-from"))
   (setq message-sendmail-f-is-evil t)
-  (setq message-fill-column 80)
+  (setq message-fill-column fill-column)
+
+  (setq mail-signature nil)
 
   (require 'async)
   (defun async-sendmail-send-it ()
-    (let ((to          (message-field-value "To"))
+    (let ((to (message-field-value "To"))
           (buf-content (buffer-substring-no-properties
                         (point-min) (point-max))))
       (message "Delivering message to %s..." to)
