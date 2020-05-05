@@ -567,17 +567,17 @@ times."
                (proc (make-process
                       :name "gpg-login-proc"
                       :buffer buf
-                      :command '("gpg"
+                      :command `("gpg"
                                  "--quiet"
                                  "--no-greeting"
-                                 "--batch"
                                  "--pinentry-mode" "loopback"
                                  "--clearsign"
                                  "--output" "/dev/null"
-                                 "--default-key" key
+                                 "--default-key" ,key
                                  "--passphrase-fd" "0"
                                  "/dev/null"))))
-      (process-send-string proc (format "%s\n" pw)))))
+      (process-send-string proc (format "%s\n" pw))))
+  )
 
 (use-package pinentry ;; enable GPG pinentry through the minibuffer
   :straight t
