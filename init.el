@@ -2398,15 +2398,15 @@ With `prefix-arg', insert the UUID at point in the current buffer."
   ;; TODO: this is just silly, i could use apply*, but this should be a part of `use-package'
   ((:map notmuch-show-mode-map
          ("u" . notmuch-mojn-refresh)
-         ("g" . notmuch-mojn-revert-buffer)
+         ("g" . notmuch-refresh-this-buffer)
          ("G" . notmuch-mojn-fetch-mail))
    (:map notmuch-search-mode-map
          ("u" . notmuch-mojn-refresh)
-         ("g" . notmuch-mojn-revert-buffer)
+         ("g" . notmuch-refresh-this-buffer)
          ("G" . notmuch-mojn-fetch-mail))
    (:map notmuch-tree-mode-map
          ("u" . notmuch-mojn-refresh)
-         ("g" . notmuch-mojn-revert-buffer)
+         ("g" . notmuch-refresh-this-buffer)
          ("G" . notmuch-mojn-fetch-mail)))
   :commands notmuch-mojn
   :config
