@@ -33,23 +33,26 @@ buffer."
 
 (defun b-get-empty-scratch-buffer ()
   "Return an empty scratch buffer if one exists."
-  (let* ((buf-regex (rx bol "*scratch" (optional "-" (1+ digit)) "*"))
+  (let* ((buf-regex (rx bol "*scratch*" (optional "<" (1+ digit)) ">"))
          (bufs (b-get-buffers-by-name buf-regex))
          (empty-bufs (-filter (lambda (b) (< (buffer-size b) 100)) bufs)))
     (first empty-bufs)))
 
-(defun b-new-scratch-buffer ()
-  "Return a newly created scratch buffer, uniq-ifying name if needed."
+(defun b-get-buffer-create-uniq (name)
+  "Return a new buffer with NAME, uniq-ifying its name if needed."
   (let ((n 0)
         bufname)
     (while (progn
              (setq bufname
-                   (concat "*scratch"
-                           (if (= n 0) "" (format "-%s" (int-to-string n)))
-                           "*"))
+                   (concat name
+                           (if (= n 0) "" (format "<%s>" (int-to-string n)))))
              (setq n (1+ n))
              (get-buffer bufname)))
     (get-buffer-create bufname)))
+
+(defun b-new-scratch-buffer ()
+  "Return a newly created scratch buffer, uniq-ifying name if needed."
+  (b-get-buffer-create-uniq "*scratch*"))
 
 (defun b-jump-to-empty-scratch-buffer ()
   "Create a new scratch buffer to work in. (named *scratch* - *scratch<n>*)."
@@ -63,6 +66,7 @@ buffer."
     (when initial-content (insert initial-content))
     (goto-char (point-min))
     (emacs-lisp-mode)))
+
 
 (provide 'b)
 ;;; b.el ends here
