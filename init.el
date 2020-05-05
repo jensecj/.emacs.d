@@ -3004,7 +3004,7 @@ clipboard."
         :map notmuch-show-part-map
         ("V" . #'notmuch-show/view-mime-part-at-point-in-mode))
   :config
-  (setq notmuch-fcc-dirs "sent +sent")
+  (setq notmuch-fcc-dirs "sent +sent -new")
   (setq notmuch-column-control 1.0)
   (setq notmuch-wash-wrap-lines-length 80)
   (setq notmuch-wash-citation-lines-prefix 20)
@@ -3028,7 +3028,7 @@ clipboard."
 
   (defun notmuch/excl (query &rest tags)
     "Exclude TAGS from QUERY."
-    (let* ((default-excludes '("archived" "lists" "builds" "draft"))
+    (let* ((default-excludes '("archived" "lists" "builds" "draft" "sent"))
            (all-tags (-concat default-excludes tags))
            (excludes (s-join " " (-map (lambda (tag) (format "and not tag:%s" tag)) all-tags))))
       (format "%s %s" query excludes)))
