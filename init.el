@@ -2665,7 +2665,6 @@ _t_: go to today-file
 (use-package lowkey-mode-line
   :straight (lowkey-mode-line :repo "git@github.com:jensecj/lowkey-mode-line.el.git")
   :demand t
-  :after pdf-tools
   :commands lowkey-mode-line-enable
   :config
   (lowkey-mode-line-enable)
