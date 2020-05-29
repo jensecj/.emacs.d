@@ -2370,6 +2370,24 @@ With `prefix-arg', insert the UUID at point in the current buffer."
                "https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/NEWS")))
 
 
+(defun jens/render-control-chars ()
+  "Render common control characters, such as ^L and ^M."
+  (interactive)
+  (setq control-char-replacements
+        `((?\^M . [])
+          (?\^L . ,(vconcat (make-list fill-column (make-glyph-code ?̶ 'font-lock-builtin-face))))))
+
+  (when (not buffer-display-table)
+    (setq buffer-display-table (make-display-table)))
+
+  (-map
+   (lambda (c) (aset buffer-display-table (car c) (cdr c)))
+   control-char-replacements)
+
+  (redraw-frame))
+
+(add-hook* '(special-mode-hook view-mode-hook) #'jens/render-control-chars)
+
 ;;;; packages
 
 (use-package epdh
