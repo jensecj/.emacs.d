@@ -121,6 +121,10 @@
   :straight (ht :host github :repo "Wilfred/ht.el"
                 :fork (:host github :repo "jensecj/ht.el")))
 
+(use-package ts ;; time api
+  :demand t
+  :straight (ts :host github :repo "alphapapa/ts.el"))
+
 (progn
   ;; add :download keyword to `use-package' to easily download files
   ;; from the web
