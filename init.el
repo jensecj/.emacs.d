@@ -2330,16 +2330,6 @@ If DIR is nil, download to current directory."
           path)
       (error 'file-already-exists))))
 
-(defun uuid ()
-  "Generate a random UUID.
-
-With `prefix-arg', insert the UUID at point in the current buffer."
-  (interactive)
-  (let ((id (s-trim (shell-command-to-string "uuidgen --random"))))
-    (when current-prefix-arg
-      (insert id))
-    (message "%s" id)))
-
 (defun jens/list-active-minor-modes ()
   "List all active minor modes."
   (interactive)

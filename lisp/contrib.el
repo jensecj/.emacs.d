@@ -49,6 +49,19 @@ counting existing garbage which needs collection."
              (progn
                ,@body)))))
 
+(defun uuid ()
+  "Generate a random UUID.
+
+With `prefix-arg', insert the UUID at point in the current buffer."
+  (interactive)
+
+  (unless (executable-find "uuidgen")
+    (error "generating a UUID requires the `uuidgen' executable."))
+
+  (let ((id (replace-regexp-in-string "\n" "" (shell-command-to-string "uuidgen --random"))))
+    (when current-prefix-arg
+      (insert id))
+    id))
 
 (provide 'contrib)
 ;;; contrib.el ends here
