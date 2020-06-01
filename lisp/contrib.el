@@ -35,6 +35,10 @@
      (apply fn (-map #'car lists))
      (apply #'-mapcar fn (-map #'cdr lists))))))
 
+(defun deleteq (ELT LIST)
+  "Delete ELT from LIST, in-place."
+  (setq LIST (delete ELT LIST)))
+
 (cl-defmacro bench (&optional (times 100000) &rest body)
   "Call `benchmark-run-compiled' on BODY with TIMES iterations,
 returning list suitable for Org source block evaluation.  Garbage
