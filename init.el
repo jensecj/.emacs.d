@@ -2879,6 +2879,8 @@ _t_: go to today-file
         ("c" . jens/elfeed-copy-link-at-point)
         ("V" . jens/elfeed-play-video-at-point))
   :config
+  (require 'today)
+
   (setq elfeed-search-filter "@1-month-ago +unread ")
 
   (setq elfeed-search-trailing-width 25)
