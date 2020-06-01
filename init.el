@@ -2806,6 +2806,8 @@ _t_: go to today-file
   (setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
   (setq magit-merge-arguments '("--no-ff"))
   (setq magit-section-visibility-indicator '("…", t))
+  (setq git-commit-summary-max-length fill-column)
+  (setq git-commit-style-convention-checks nil) ; don't warn about long or multiline messages
 
   (add-hook 'git-commit-mode-hook #'flyspell-prog-mode))
 
