@@ -2521,7 +2521,8 @@ If DIR is nil, download to current directory."
 (use-package today
   :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
   :defer t
-  :commands (today-hydra/body)
+  :commands (today-hydra/body
+             today-capture-elfeed-at-point)
   :bind
   (("C-x t" . today-hydra/body))
   :config
