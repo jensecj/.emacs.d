@@ -4,8 +4,8 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: org-mode
-;; Package-Version: 20200415
-;; Version: 0.2.0
+;; Package-Version: 20200602
+;; Version: 0.3.0
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -21,6 +21,10 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+(require 'dash)
+(require 's)
+(require 'org)
 
 ;;; Code:
 
@@ -145,5 +149,17 @@ document."
     (when-let* ((values (-map #'number-to-string (number-sequence 1 10)))
                 (rating (completing-read "rate: " values nil t)))
       (org-set-property "RATING" rating))))
+
+(defun org-extra-split-link (org-link)
+  "Split ORG-LINK, into a (title . url) pair."
+  (ignore-errors
+    (let* ((part (rx (0+ (or alpha digit punct space))))
+           (whole (rx "[[" (group (regexp part)) "][" (group (regexp part)) "]]"))
+           (match (s-match whole org-link)))
+      (cons (nth 1 match) (nth 2 match)))))
+
+(defun org-extra-link-title (org-link)
+  "Return the title part of ORG-LINK."
+  (car (org-extra-split-link org-link)))
 
 (provide 'org-extra)
