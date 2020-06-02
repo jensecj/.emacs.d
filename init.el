@@ -575,15 +575,17 @@ times."
   :commands epa-file-enable
   :config
   (setq epg-pinentry-mode 'loopback)
-  (epa-file-enable)
 
-  (defun epa/gpg-key-in-cache (key)
-    "Return whether KEY is in the GPG cache."
+  (shut-up
+    (epa-file-enable))
+
+  (defun gpg/key-in-cache-p (key)
+    "Return whether KEY is in the GPG-agents cache."
     ;; TODO: check if key is in gpg-agent cache entirely in elisp
     (when-let ((keys (s-split " " (s-trim (shell-command-to-string "gpg-cached")))))
       (member key keys)))
 
-  (defun epa/gpg-cache-key (key)
+  (defun gpg/cache-key (key)
     "Call GPG to cache KEY in the GPG-agent."
     (interactive)
     (when-let ((buf (get-buffer-create "*gpg-login*"))
@@ -2438,8 +2440,8 @@ If DIR is nil, download to current directory."
   (remove-hook 'notmuch-mojn-post-refresh-hook #'notmuch-mojn-mute-retag-messages)
 
   (defun notmuch-mojn/cache-mail-key ()
-    (unless (epa/gpg-key-in-cache "pass")
-      (epa/gpg-cache-key user-gpg-mail-key)))
+    (unless (gpg/key-in-cache-p "pass")
+      (gpg/cache-key user-gpg-mail-key)))
 
   (add-hook 'notmuch-mojn-pre-fetch-hook #'notmuch-mojn/cache-mail-key)
 
