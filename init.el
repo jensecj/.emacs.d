@@ -1786,17 +1786,6 @@ With prefix ARG, ask for file to open."
       (byte-recompile-file (buffer-file-name))
     (byte-compile-file (buffer-file-name))))
 
-(defun jens/get-buffer-file-directory ()
-  "Get the directory of the file belonging to the current
-buffer."
-  (file-name-directory (buffer-file-name)))
-
-(defun jens/file-age (file)
-  "Return the number of seconds since FILE was last modified."
-  (float-time
-   (time-subtract (current-time)
-                  (nth 5 (file-attributes (file-truename file))))))
-
 (defun jens/rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
