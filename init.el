@@ -1156,28 +1156,6 @@ number input"
 
 ;;;;; misc packages
 
-(use-package package
-  :config
-  (defun jens/package-menu-show-updates (&rest args)
-    "Show a list of the packages marked as upgrading."
-    (let* ((packages (->>
-                      (package-menu--find-upgrades)
-                      (-map #'car)
-                      (-map #'symbol-name)
-                      (s-join "\n")))
-           (this-buffer (current-buffer)))
-      (unless (s-blank-p packages)
-        (with-current-buffer (get-buffer-create "*Package Menu Updates*")
-          (let ((inhibit-read-only t))
-            (erase-buffer)
-            (insert packages)
-            (goto-char (point-min))
-            (view-buffer (current-buffer))))
-        (view-buffer-other-window (get-buffer "*Messages*"))
-        (set-buffer this-buffer))))
-
-  (advice-add #'package-menu-execute :before #'jens/package-menu-show-updates))
-
 (use-package simple
   :defines auto-fill-mode
   :diminish auto-fill-mode
