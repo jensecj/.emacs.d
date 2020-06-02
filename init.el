@@ -129,9 +129,9 @@
   :straight (ts :host github :repo "alphapapa/ts.el"))
 
 (progn
-  ;; add :download keyword to `use-package' to easily download files
+  ;; add `:download' keyword to `use-package' to easily download files
   ;; from the web
-  ;; TODO: make work with list of strings, see :load-path?
+  ;; TODO: make `:download' work with list of strings, see `:load-path'?
   (defun use-package-normalize/:download (_name-symbol keyword args)
     (use-package-only-one (symbol-name keyword) args
       (lambda (_label arg)
@@ -147,7 +147,7 @@
            (dir user-vendor-directory)
            (path (f-join dir file)))
       (if (f-exists-p path)
-          (message "%s already exists, skipping download." file)
+          (message "%s already exists, skipping download. (%s days old)" file (file-age path 'days))
         (message "%s does not exist, downloading %s to %s" file url path)
         (when (not (f-exists-p dir))
           (f-mkdir dir))
