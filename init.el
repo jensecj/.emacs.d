@@ -435,6 +435,7 @@ equality of computed checksum and arg."
 ;; this messes with less things when indenting,
 ;; tabs are converted to spaces automatically
 (setq-default indent-line-function 'insert-tab)
+(electric-indent-mode +1)
 
 ;; show me empty lines after buffer end
 (setq indicate-empty-lines t)
@@ -599,8 +600,7 @@ times."
                                  "--default-key" ,key
                                  "--passphrase-fd" "0"
                                  "/dev/null"))))
-      (process-send-string proc (format "%s\n" pw))))
-  )
+      (process-send-string proc (format "%s\n" pw)))))
 
 (use-package pinentry ;; enable GPG pinentry through the minibuffer
   :straight t
@@ -618,9 +618,7 @@ times."
   (jens/pinentry-reset)
 
   ;; need to reset the pinentry from time to time, otherwise it stops working?
-  (setq jens/gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset))
-  ;; (cancel-timer gpg-reset-timer)
-  )
+  (setq jens/gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset)))
 
 (defun jens/kill-idle-gpg-buffers ()
   "Kill .gpg buffers after they have not been used for 120
@@ -999,10 +997,8 @@ seconds."
   (show-paren-match-expression ((t (:foreground nil :background "#353535")))))
 
 (use-package abbrev ;; auto-replace common abbreviations
-  :demand t
   :diminish abbrev-mode
-  :hook (org-mode . abbrev-mode)
-  :commands read-abbrev-file
+  :hook (text-mode  . abbrev-mode)
   :config
   (setq abbrev-file-name (no-littering-expand-etc-file-name "abbreviations.el"))
   (read-abbrev-file)
@@ -1012,7 +1008,7 @@ seconds."
   :demand t
   :diminish subword-mode
   :config
-  (global-subword-mode 1))
+  (global-subword-mode +1))
 
 (use-package saveplace ;; save point position between sessions
   :demand t
@@ -1033,7 +1029,7 @@ seconds."
   ;; just keep all history
   (setq history-length t)
   (setq history-delete-duplicates t)
-  (savehist-mode 1))
+  (savehist-mode +1))
 
 (use-package autorevert
   ;; always show the version of a file as it appears on disk
@@ -1046,10 +1042,7 @@ seconds."
   (setq auto-revert-verbose nil)
 
   ;; just revert pdf files without asking
-  (setq revert-without-query '("\\.pdf"))
-
-  ;; auto refresh buffers
-  (global-auto-revert-mode -1))
+  (setq revert-without-query '("\\.pdf")))
 
 (use-package display-line-numbers
   :defer t
@@ -1062,7 +1055,7 @@ number input"
     (interactive)
     (unwind-protect
         (progn
-          (display-line-numbers-mode 1)
+          (display-line-numbers-mode +1)
           (call-interactively 'goto-line))
       (display-line-numbers-mode -1))))
 
@@ -1082,7 +1075,7 @@ number input"
     (save-excursion
       (goto-char (point-min))
       (when (re-search-forward "^<<<<<<< " nil t)
-        (smerge-mode 1))))
+        (smerge-mode +1))))
 
   (add-hook* '(find-file-hook after-revert-hook) #'jens/enable-smerge-if-diff-buffer))
 
@@ -1201,8 +1194,8 @@ number input"
   (defun tramp/get-method-parameter (method param)
     "Return the method parameter PARAM.
 If the `tramp-methods' entry does not exist, return NIL."
-    (let ((entry (assoc param (assoc method tramp-methods))))
-      (when entry (cadr entry))))
+    (when-let ((entry (assoc param (assoc method tramp-methods))))
+      (cadr entry)))
 
   (defun tramp/set-method-parameter (method param newvalue)
     "Set the method paramter PARAM to VALUE for METHOD.
@@ -1211,10 +1204,9 @@ If METHOD does not yet have PARAM, add it.
 If METHOD does not exist, do nothing."
     (let ((method-params (assoc method tramp-methods)))
       (when method-params
-        (let ((entry (assoc param method-params)))
-          (if entry
-              (setcar (cdr entry) newvalue)
-            (setcdr (last method-params) '(param newvalue))))))))
+        (if-let ((entry (assoc param method-params)))
+            (setcar (cdr entry) newvalue)
+          (setcdr (last method-params) '(param newvalue)))))))
 
 (use-package recentf ;; save a list of recently visited files.
   :demand t
@@ -1592,14 +1584,14 @@ If METHOD does not exist, do nothing."
   (setq org-html-head
         (s-join " "
                 '("<style type=\"text/css\">"
-                  "body {max-width: 800px; margin: 0 auto;}"
+                  "body {max-width: 800px; margin: auto;}"
                   "img {max-width: 100%;}"
                   "</style>")))
 
   (setq org-outline-path-complete-in-steps t)
-  (setq org-refile-allow-creating-parent-nodes (quote confirm))
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-refile-use-outline-path t)
-  (setq org-refile-targets '( (nil . (:maxlevel . 1))))
+  (setq org-refile-targets '((nil . (:maxlevel . 1))))
 
   ;;;;;;;;;;;;;;;
   ;; exporting ;;
