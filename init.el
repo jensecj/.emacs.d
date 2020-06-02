@@ -244,7 +244,7 @@
 ;; (broadcast 'a '(1 2 3) 'z '(a b c) '(æ ø å))
 
 (defun -mapply (fn atom-or-list)
-  "If ATOM-OR-LIST if a list, map FN over it, otherwise apply FN."
+  "If ATOM-OR-LIST is a list, map FN over it, otherwise apply FN."
   (cond
    ((listp atom-or-list) (-map fn atom-or-list))
    (t (funcall fn atom-or-list))))
@@ -252,7 +252,8 @@
 (defun transpose (&rest lists)
   (apply #'-mapcar #'-list lists))
 
-;; (transpose '(1 2 3) '(a b c))
+;; (transpose '(1 2 3) '(a b c)) ; => ((1 a) (2 b) (3 c))
+;; (transpose '(1 a) '(2 b) '(3 c)) ; => ((1 2 3) (a b c))
 
 (defun apply* (fn &rest args)
   "Apply FN to all combinations of ARGS."
@@ -328,7 +329,7 @@ equality of computed checksum and arg."
 (log-info "Redefining built-in defaults")
 
 ;; location of emacs source files
-(let ((src-dir "/home/jens/emacs/src/"))
+(let ((src-dir (expand-file-name  "~/emacs/src/")))
   (if (f-exists-p src-dir)
       (setq source-directory src-dir)
     (log-warning "Unable to locate emacs source directory.")))
@@ -2361,7 +2362,7 @@ If DIR is nil, download to current directory."
 (defun jens/diff-emacs-news ()
   "Check what's new in NEWS."
   (interactive)
-  (let* ((news-files (f-glob "NEWS*" "/home/jens/emacs/src/etc/"))
+  (let* ((news-files (f-glob "NEWS*" (expand-file-name "~/emacs/src/etc/")))
          (news-file (completing-read "news file: " news-files nil t)))
     (jens/diff news-file
                "https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/NEWS")))
