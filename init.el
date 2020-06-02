@@ -1539,8 +1539,9 @@ If METHOD does not exist, do nothing."
 
   (setq org-use-speed-commands t)
 
-  ;; don't indent things
-  (setq org-adapt-indentation nil)
+  (setq org-adapt-indentation nil) ; don't indent things
+
+  (add-to-list 'org-cycle-hook #'org-cycle-hide-drawers) ; don't expand org drawers
 
   (setq org-archive-save-context-info '(time file olpath itags))
 
