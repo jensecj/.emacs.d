@@ -96,8 +96,9 @@
 ;; needs to be required after its settings are set
 (require 'use-package)
 
-(use-package modern :demand t)
-(use-package contrib :demand t)
+(message "loading commmon elisp libraries...")
+
+(use-package contrib :demand t) ; the mailing list is against a lot of these, but i think they're nifty
 
 (use-package dash ;; working with lists, -map, -concat, etc
   :demand t
