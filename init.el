@@ -2770,7 +2770,7 @@ _t_: go to today-file
    ("<tab>" . magit-section-cycle))
   :config
   (setq magit-auto-revert-mode nil)
-  (setq magit-log-arguments '("--graph" "--color" "--decorate" "-n256"))
+  (put 'magit-log-mode 'magit-log-default-arguments '("--graph" "--color" "-n256" "--decorate"))
   (setq magit-merge-arguments '("--no-ff"))
   (setq magit-section-visibility-indicator '("…", t))
   (setq git-commit-summary-max-length fill-column)
