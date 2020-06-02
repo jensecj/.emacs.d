@@ -1,4 +1,4 @@
-;;; b.el --- Buffer extentions. -*- lexical-binding: t; -*-
+;;; buf.el --- Buffer extentions. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020 Jens Christian Jensen
 
@@ -15,30 +15,35 @@
 
 ;;; Code:
 
-(defun b-get-buffer-file-name+ext (&optional buffer)
+(defun buf-get-buffer-file-name+ext (&optional buffer)
   "Get the file name and extension of the file belonging to the
 current buffer."
   (ignore-errors
     (with-current-buffer (or buffer (current-buffer))
       (file-name-nondirectory buffer-file-name))))
 
-(defun b-get-buffer-file-name (&optional buffer)
+(defun buf-get-buffer-file-name (&optional buffer)
   "Get the file name of the file belonging to the current
 buffer."
-  (file-name-sans-extension (b-get-buffer-file-name+ext buffer)))
+  (file-name-sans-extension (buf-get-buffer-file-name+ext buffer)))
 
-(defun b-get-buffers-by-name (name)
+(defun buf-get-buffer-file-directory ()
+  "Get the directory of the file belonging to the current
+buffer."
+  (file-name-directory (buffer-file-name)))
+
+(defun buf-get-buffers-by-name (name)
   "Return all buffers where buffer-name matches NAME."
   (-filter (lambda (b) (s-match name (buffer-name b))) (buffer-list)))
 
-(defun b-get-empty-scratch-buffer ()
+(defun buf-get-empty-scratch-buffer ()
   "Return an empty scratch buffer if one exists."
   (let* ((buf-regex (rx bol "*scratch*" (optional "<" (1+ digit)) ">"))
-         (bufs (b-get-buffers-by-name buf-regex))
+         (bufs (buf-get-buffers-by-name buf-regex))
          (empty-bufs (-filter (lambda (b) (< (buffer-size b) 100)) bufs)))
     (first empty-bufs)))
 
-(defun b-get-buffer-create-uniq (name)
+(defun buf-get-buffer-create-uniq (name)
   "Return a new buffer with NAME, uniq-ifying its name if needed."
   (let ((n 0)
         bufname)
@@ -50,15 +55,15 @@ buffer."
              (get-buffer bufname)))
     (get-buffer-create bufname)))
 
-(defun b-new-scratch-buffer ()
+(defun buf-new-scratch-buffer ()
   "Return a newly created scratch buffer, uniq-ifying name if needed."
-  (b-get-buffer-create-uniq "*scratch*"))
+  (buf-get-buffer-create-uniq "*scratch*"))
 
-(defun b-jump-to-empty-scratch-buffer ()
+(defun buf-jump-to-empty-scratch-buffer ()
   "Create a new scratch buffer to work in. (named *scratch* - *scratch<n>*)."
   (interactive)
-  (let ((scratch-buf (or (b-get-empty-scratch-buffer)
-                         (b-new-scratch-buffer)))
+  (let ((scratch-buf (or (buf-get-empty-scratch-buffer)
+                         (buf-new-scratch-buffer)))
         (initial-content (if (use-region-p)
                              (buffer-substring (region-beginning) (region-end)))))
     (xref-push-marker-stack)
@@ -68,5 +73,5 @@ buffer."
     (emacs-lisp-mode)))
 
 
-(provide 'b)
-;;; b.el ends here
+(provide 'buf)
+;;; buf.el ends here

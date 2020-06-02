@@ -1708,13 +1708,13 @@ If METHOD does not exist, do nothing."
 (defun jens/clean-view ()
   "Create a scratch buffer, and make it the only buffer visible."
   (interactive)
-  (b-jump-to-empty-scratch-buffer)
+  (buf-jump-to-empty-scratch-buffer)
   (delete-other-windows))
 
 (defun jens/clone-buffer ()
   "Open a clone of the current buffer."
   (interactive)
-  (let ((newbuf (b-new-scratch-buffer))
+  (let ((newbuf (buf-new-scratch-buffer))
         (content (buffer-string))
         (p (point)))
     (with-current-buffer newbuf
@@ -2391,7 +2391,7 @@ If DIR is nil, download to current directory."
 
 (log-info "Loading homemade packages")
 
-(use-package b ;; buffer extentions
+(use-package buf ;; buffer extentions
   :demand t)
 
 (use-package org-extra
