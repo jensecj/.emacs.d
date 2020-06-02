@@ -1084,7 +1084,16 @@ number input"
 (use-package eldoc
   ;; show useful contextual information in the echo-area
   :diminish
+  :commands (easy-eldoc)
   :config
+  (defmacro easy-eldoc (hook fn)
+    "Add FN to `eldoc-documentation-function' in HOOK."
+    (let ((name (intern (format "easy-eldoc-%s-%s" (symbol-name hook) (symbol-name fn)))))
+      `(progn
+         (defun ,name ()
+           (set (make-local-variable 'eldoc-documentation-function) #',fn))
+         (add-hook ',hook #',name))))
+
   (setq eldoc-idle-delay 0.2)
 
   (defface eldoc-highlight-&s-face '((t ())) "")
@@ -2046,14 +2055,6 @@ currently is), otherwise comment or uncomment the current line."
   (if (region-active-p)
       (comment-or-uncomment-region (region-beginning) (region-end))
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
-
-(defmacro easy-eldoc (hook fn)
-  "Add FN to `eldoc-documentation-function' in HOOK."
-  (let ((name (intern (format "easy-eldoc-%s-%s" (symbol-name hook) (symbol-name fn)))))
-    `(progn
-       (defun ,name ()
-         (set (make-local-variable 'eldoc-documentation-function) #',fn))
-       (add-hook ',hook #',name))))
 
 ;;;;; misc
 
