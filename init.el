@@ -2,6 +2,8 @@
 ;;; prelude
 ;;;; early setup
 
+;; TODO: look into (require 'message), and if it breaks #'message
+
 ;; use lexical binding for initialization code
 (setq-default lexical-binding t)
 
@@ -98,9 +100,10 @@
 ;; needs to be required after its settings are set
 (require 'use-package)
 
-(message "loading commmon elisp libraries...")
+(message "loading common elisp libraries...")
 
-(use-package contrib :demand t) ; the mailing list is against a lot of these, but i think they're nifty
+
+(use-package contrib :demand t) ; the mailing list is against a lot of these, but I think they're nifty
 
 (use-package dash ;; working with lists, -map, -concat, etc
   :demand t
@@ -128,9 +131,7 @@
   :demand t
   :straight (ts :host github :repo "alphapapa/ts.el"))
 
-(progn
-  ;; add `:download' keyword to `use-package' to easily download files
-  ;; from the web
+(progn ;; add `:download' keyword to `use-package' to easily download files
   ;; TODO: make `:download' work with list of strings, see `:load-path'?
   (defun use-package-normalize/:download (_name-symbol keyword args)
     (use-package-only-one (symbol-name keyword) args
@@ -213,13 +214,13 @@
 (setq inhibit-default-init t)
 
 ;;;; fundamental defuns
-
+;; TODO: move to contrib.el?
 (log-info "Defining fundamental defuns")
 
 (defmacro comment (&rest _args) "Ignore everything inside this sexp.")
 
 (defmacro xi (&rest body)
-  "Convenience macro for creating interactive lambdas."
+  "Convenience macro for creating no-argument interactive lambdas."
   `(lambda ()
      (interactive)
      ,@body))
@@ -316,6 +317,7 @@ to run and `this-command-keys' returns the key pressed."
 (defun fn-checksum (fn &optional checksum)
   "Return a string md5 checksum of FN, or, given CHECKSUM, test
 equality of computed checksum and arg."
+  ;; TODO: does advicing change a functions checksum?
   (let* ((def (symbol-function fn))
          (str (prin1-to-string def))
          (hash (md5 str)))
