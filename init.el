@@ -3748,9 +3748,14 @@ in the same file."
 (use-package flx :straight t) ;; fuzzy searching for ivy, etc.
 (use-package rg :straight t :after wgrep) ;; ripgrep in emacs
 (use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
-(use-package dumb-jump :straight t :defer t)
 (use-package gist :straight t :defer t) ;; work with github gists
 (use-package popup :straight t)
+(use-package dumb-jump
+  :straight t
+  :defer t
+  :config
+  (setq dumb-jump-selector 'ivy)
+  (setq dumb-jump-prefer-searcher 'rg))
 
 (use-package auto-compile
   :straight t
