@@ -4162,11 +4162,12 @@ re-enable afterwards."
   :straight t
   :diminish which-key-mode
   :commands (which-key-mode
-             which-key-setup-side-window-right)
+             which-key-setup-side-window-bottom)
   :config
-  (which-key-setup-side-window-right)
-  (setq which-key-max-description-length 40)
-  (which-key-mode))
+  (setq which-key-separator "  ")
+  (setq which-key-max-description-length 30)
+  (which-key-setup-side-window-bottom)
+  (which-key-mode +1))
 
 (use-package wgrep
   :straight t
