@@ -1308,7 +1308,9 @@ If METHOD does not exist, do nothing."
                 colorized-files
                 :action (lambda (f)
                           (with-ivy-window
-                            (find-file f)))
+                            (if current-prefix-arg
+                                (find-file-other-window f)
+                              (find-file f))))
                 :require-match t
                 :caller 'jens/recentf)))
 
