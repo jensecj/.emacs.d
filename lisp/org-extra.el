@@ -105,6 +105,13 @@ document."
               (url (substring line-string (match-beginning 0) (match-end 0))))
     (org-open-link-from-string url)))
 
+(defun org-extra--refile (file headline &optional arg)
+  (let ((pos (save-excursion
+               (find-file file)
+               (org-find-exact-headline-in-buffer headline))))
+    (org-refile arg nil (list headline file nil pos)))
+  (switch-to-buffer (current-buffer)))
+
 (defun org-extra-refile-here ()
   "Refile entry-at-point to a headline in the current file."
   (interactive)
@@ -116,7 +123,7 @@ document."
                      entries))
          (pick (completing-read "Refile to: " headlines nil t)))
     (if (org-at-heading-p)
-        (today-refile (buffer-file-name) pick)
+        (org-extra--refile (buffer-file-name) pick)
       (message "Point is not at a refilable ting"))))
 
 (defun org-extra-refile-to-open-org-file ()
