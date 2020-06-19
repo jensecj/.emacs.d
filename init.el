@@ -3019,15 +3019,17 @@ clipboard."
         :map notmuch-show-part-map
         ("V" . #'notmuch-show/view-mime-part-at-point-in-mode))
   :config
-  (setq notmuch-fcc-dirs "sent +sent -new")
+  (setq notmuch-fcc-dirs "sent +sent -new -unread")
   (setq notmuch-column-control 1.0)
-  (setq notmuch-wash-wrap-lines-length 80)
+  (setq notmuch-wash-wrap-lines-length fill-column)
   (setq notmuch-wash-citation-lines-prefix 20)
   (setq notmuch-wash-citation-lines-suffix 0)
-  (setq notmuch-wash-button-signature-hidden-format "[ signature -- click to show ]")
-  (setq notmuch-wash-button-signature-visible-format "[ signature -- click to hide ]")
+  (setq notmuch-wash-button-signature-hidden-format "\n[ signature -- click to show ]")
+  (setq notmuch-wash-button-signature-visible-format "\n[ signature -- click to hide ]")
   (setq notmuch-wash-button-citation-hidden-format "[ %d more lines -- click to show ]")
   (setq notmuch-wash-button-citation-visible-format "[ %d more lines -- click to hide ]")
+  (setq notmuch-wash-button-original-hidden-format "[ %d-line hidden original message. click to show ]")
+  (setq notmuch-wash-button-original-visible-format "[ %d-line hidden original message. click to hide ]")
 
   ;; notmuch-message-forwarded-tags
   ;; notmuch-draft-tags
@@ -3104,7 +3106,10 @@ clipboard."
 
   (setq notmuch-show-logo nil)
   (setq notmuch-show-indent-messages-width 1)
+  (setq notmuch-show-relative-dates nil)
   (setq notmuch-message-headers-visible nil)
+  (setq notmuch-show-max-text-part-size 10000) ; collapse text-parts over 10000 characters
+
 
   (defun jens/notmuch-show-list-links ()
     "List links in the current message, if one is selected, browse to it."
