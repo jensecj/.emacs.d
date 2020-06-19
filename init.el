@@ -477,7 +477,10 @@ equality of computed checksum and arg."
 (setq undo-strong-limit (* 30 1024 1024))
 
 ;; remember a lot of messages
-(setq message-log-max 10000)
+(setq message-log-max 50000)
+
+;; allow processes to read big chuncks of process output at a time
+(setq read-process-output-max (* 1024 1024))
 
 (setq auto-window-vscroll nil)
 
