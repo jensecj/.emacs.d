@@ -3115,6 +3115,17 @@ clipboard."
 
   (setq notmuch-show-max-text-part-size 10000) ; collapse text-parts over 10000 characters
 
+  (defun notmuch-show/format-headerline-date (&rest args)
+    (let* ((args (car args))
+           (date (nth 1 args))
+           (new-date (format-time-string
+                      "%Y-%m-%d %H:%M"
+                      (encode-time (parse-time-string date)))))
+      (list (nth 0 args) new-date (nth 2 args) (nth 3 args))))
+
+  (advice-add #'notmuch-show-insert-headerline
+              :filter-args
+              #'notmuch-show/format-headerline-date)
 
   (defun jens/notmuch-show-list-links ()
     "List links in the current message, if one is selected, browse to it."
