@@ -43,21 +43,9 @@ buffer."
          (empty-bufs (-filter (lambda (b) (< (buffer-size b) 100)) bufs)))
     (first empty-bufs)))
 
-(defun buf-get-buffer-create-uniq (name)
-  "Return a new buffer with NAME, uniq-ifying its name if needed."
-  (let ((n 0)
-        bufname)
-    (while (progn
-             (setq bufname
-                   (concat name
-                           (if (= n 0) "" (format "<%s>" (int-to-string n)))))
-             (setq n (1+ n))
-             (get-buffer bufname)))
-    (get-buffer-create bufname)))
-
 (defun buf-new-scratch-buffer ()
   "Return a newly created scratch buffer, uniq-ifying name if needed."
-  (buf-get-buffer-create-uniq "*scratch*"))
+  (generate-new-buffer "*scratch*"))
 
 (defun buf-jump-to-empty-scratch-buffer ()
   "Create a new scratch buffer to work in. (named *scratch* - *scratch<n>*)."
