@@ -227,6 +227,11 @@
      (interactive)
      ,@body))
 
+(defmacro fn (&rest body)
+  "Convenience macro for creating no-argument lambdas."
+  `(lambda ()
+     ,@body))
+
 (defun longest-list (&rest lists)
   (-max-by
    (lambda (a b)
