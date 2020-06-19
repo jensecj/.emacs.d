@@ -3145,11 +3145,8 @@ Inserts information about senders, and the mail subject into eldoc."
 
   (easy-eldoc notmuch-show-mode-hook notmuch-show/eldoc)
 
-  (defun notmuch/enable-debbugs ()
-    (setq bug-reference-url-format "https://debbugs.gnu.org/%s")
-    (bug-reference-mode +1))
+  (add-hook 'notmuch-show-mode-hook #'augment-mode)
 
-  (add-hook 'notmuch-show-mode-hook #'notmuch/enable-debbugs)
 
   (defun notmuch-show/view-mime-part-at-point-in-mode ()
     "Open MIME-part at point in a specific major-mode."
