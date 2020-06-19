@@ -3032,6 +3032,8 @@ clipboard."
   (setq notmuch-wash-button-original-hidden-format "[ %d-line hidden original message. click to show ]")
   (setq notmuch-wash-button-original-visible-format "[ %d-line hidden original message. click to hide ]")
 
+  (add-to-list 'notmuch-show-insert-text/plain-hook
+               #'notmuch-wash-convert-inline-patch-to-part)
   ;; notmuch-message-forwarded-tags
   ;; notmuch-draft-tags
   ;; notmuch-message-replied-tags
