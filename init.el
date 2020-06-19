@@ -2207,7 +2207,7 @@ current line."
   ("m" #'jens/goto-msg-buffer "*messages*")
   ("n" #'notmuch-mojn "notmuch")
   ("e" #'elfeed "elfeed")
-  ("c" #'b-jump-to-empty-scratch-buffer "new *scratch*"))
+  ("c" #'buf-jump-to-empty-scratch-buffer "new *scratch*"))
 
 (defun jens/buffer-carousel-previous ()
   (interactive)
