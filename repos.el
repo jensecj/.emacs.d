@@ -13,10 +13,11 @@
  ("~/.emacs.d/straight/repos/views.el/")
  ("~/.emacs.d/straight/repos/today.el/")
  ("~/.emacs.d/straight/repos/notmuch-mojn.el/")
- ("~/.emacs.d/straight/repos/augment.el/")
  ("~/.emacs.d/straight/repos/straight-ui.el/")
+ ("~/.emacs.d/straight/repos/augment.el/")
+ ("~/.emacs.d/straight/repos/orgflow.el/")
 
- ("~/vault/git/")
+ ("~/vault/org/")
  ("~/vault/courses/")
  ("~/vault/knowledge-base/")
  ("~/vault/projects/clojure/microblog/")
