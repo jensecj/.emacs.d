@@ -2772,7 +2772,7 @@ _t_: go to today-file
 
 (use-package magit
   :straight t
-  :defer 30
+  :defer t
   :bind
   (("C-x m" . magit-status)
    :map magit-file-mode-map
@@ -2849,7 +2849,7 @@ _t_: go to today-file
 
 (use-package elfeed
   :straight t
-  :defer 60
+  :defer
   :commands (elfeed elfeed-search-selected jens/load-elfeed)
   :functions jens/elfeed-copy-link-at-point
   :bind
@@ -2998,7 +2998,7 @@ clipboard."
   ;; TODO: setup notmuch for multiple mail-profiles
   ;; see https://www.djcbsoftware.nl/code/mu/mu4e/Contexts-example.html
   :straight t
-  :defer 40
+  :defer
   :bind
   (:map notmuch-show-mode-map
         ("B" . #'jens/notmuch-show-list-links)
@@ -4123,7 +4123,7 @@ re-enable afterwards."
 
 (use-package exec-path-from-shell
   :straight t
-  :defer 3
+  :demand t
   :config
   (exec-path-from-shell-initialize)
   ;; try to grab the ssh-agent if it is running
