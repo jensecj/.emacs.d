@@ -4079,11 +4079,11 @@ re-enable afterwards."
 
   (advice-add #'avy-goto-char :around #'jens/avy-disable-highlight-thing)
   :custom-face
-  (avy-background-face ((t (:foreground "gray50" :background "#313131"))))
-  (avy-lead-face ((t (:background "#2B2B2B"))))
-  (avy-lead-face-0 ((t (:background "#2B2B2B"))))
-  (avy-lead-face-1 ((t (:background "#2B2B2B"))))
-  (avy-lead-face-2 ((t (:background "#2B2B2B")))))
+  (avy-background-face ((t (:foreground "grey50" :background ,(zenburn-get "zenburn-bg-1") :extend t))))
+  (avy-lead-face ((t (:background ,(zenburn-get "zenburn-bg-1")))))
+  (avy-lead-face-0 ((t (:background ,(zenburn-get "zenburn-bg-1")))))
+  (avy-lead-face-1 ((t (:background ,(zenburn-get "zenburn-bg-1")))))
+  (avy-lead-face-2 ((t (:background ,(zenburn-get "zenburn-bg-1"))))))
 
 (use-package avy-zap
   :straight t
