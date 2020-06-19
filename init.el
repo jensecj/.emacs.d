@@ -1051,7 +1051,6 @@ seconds."
 
 (use-package autorevert
   ;; always show the version of a file as it appears on disk
-  :disabled t
   :demand t
   :diminish auto-revert-mode
   :config
