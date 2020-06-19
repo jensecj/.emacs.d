@@ -2505,9 +2505,9 @@ If DIR is nil, download to current directory."
   :bind
   (("C-x t" . today-hydra/body))
   :config
-  (setq today-directory "~/vault/git/org/archive/")
-  (setq today-file "~/vault/git/org/today.org")
-  (setq today-inbox-file "~/vault/git/org/inbox.org")
+  (setq today-directory "~/vault/journal/")
+  (setq today-file "~/vault/org/today.org")
+  (setq today-inbox-file "~/vault/org/inbox.org")
 
   (defhydra today-refile-pl-hydra (:foreign-keys run)
     "
