@@ -4,7 +4,7 @@
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: org-mode
-;; Package-Version: 20200602
+;; Package-Version: 20200615
 ;; Version: 0.3.0
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -22,11 +22,13 @@
 
 ;;; Commentary:
 
+;;; Code:
 (require 'dash)
 (require 's)
-(require 'org)
 
-;;; Code:
+(require 'org)
+(require 'rx)
+
 
 (defun org-extra-subtree-remove-checkboxes (subtree &optional checkbox-state)
   "Returns SUBTREE with all checkboxes that are in CHECKBOX-STATE removed."
