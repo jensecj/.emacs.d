@@ -3111,6 +3111,8 @@ clipboard."
   (setq notmuch-show-indent-messages-width 1)
   (setq notmuch-show-relative-dates nil)
   (setq notmuch-message-headers-visible nil)
+  (remove-hook 'notmuch-show-hook #'notmuch-show-turn-on-visual-line-mode)
+
   (setq notmuch-show-max-text-part-size 10000) ; collapse text-parts over 10000 characters
 
 
