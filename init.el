@@ -2450,7 +2450,12 @@ If DIR is nil, download to current directory."
 
 (use-package augment
   :straight (augment :type git :repo "git@github.com:jensecj/augment.el.git")
-  :defer t)
+  :defer t
+  :config
+  (require 'augment-git)
+  (add-to-list 'augment-entries augment-entry-github-commits)
+  (add-to-list 'augment-entries augment-entry-github-issues)
+  (augment-sort-entries))
 
 (use-package views
   :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
