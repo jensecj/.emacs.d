@@ -1653,14 +1653,6 @@ If METHOD does not exist, do nothing."
     (org-indent-line)
     (message "indented"))
 
-  ;; (defun jens/load-org-agenda-files ()
-  ;;   (interactive)
-  ;;   (setq org-agenda-files
-  ;;         (append '("")
-  ;;                 (f-glob "**/*.org" "~/vault/org/planning"))))
-
-  ;; (advice-add 'org-agenda :before #'jens/load-org-agenda-files)
-
   ;; syntax highlight org-mode code blocks when exporting as pdf
   ;; (setq-default org-latex-listings 'minted
   ;;               org-latex-packages-alist '(("" "minted"))
