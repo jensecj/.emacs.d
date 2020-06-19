@@ -2414,6 +2414,7 @@ If DIR is nil, download to current directory."
 (use-package notmuch-mojn
   :straight (notmuch-mojn :type git :repo "git@github.com:jensecj/notmuch-mojn.el.git")
   :defer t
+  :requires epa-file
   :bind*
   ;; TODO: this is just silly, i could use apply*, but this should be a part of `use-package'
   ((:map notmuch-show-mode-map
