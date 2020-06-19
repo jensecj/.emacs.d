@@ -3253,6 +3253,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (define-key notmuch-search-mode-map (kbd "C-c C-l") #'org-store-link)
 
   :custom-face
+  (notmuch-search-flagged-face ((t (:background ,(zenburn-get "zenburn-blue-5") :extend t))))
   (notmuch-wash-cited-text ((t (:inherit font-lock-comment-face))))
   (notmuch-wash-toggle-button ((t (:foreground ,(zenburn-get "zenburn-yellow") :background ,(zenburn-get "zenburn-bg")))))
   (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-1") :height 105 :extend t))))
