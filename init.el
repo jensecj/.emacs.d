@@ -4437,8 +4437,7 @@ initial search query."
   :hook (emacs-lisp-mode . company-mode)
   :bind
   (("<backtab>" . #'completion-at-point)
-   ("M-<tab>" . #'jens/complete)
-   ("C-<tab>" . #'company-complete))
+   ("M-<tab>" . #'jens/complete))
   :config
   (setq company-search-regexp-function 'company-search-flex-regexp)
   (setq company-require-match nil)
@@ -4455,13 +4454,15 @@ initial search query."
 
   ;; don't show the company menu automatically
   (setq company-begin-commands nil)
+  (setq company-idle-delay nil)
+  (setq company-tooltip-idle-delay nil)
 
   (defun jens/complete ()
     "Show company completions using ivy."
     (interactive)
     (unless company-candidates
       (let ((company-frontends nil))
-        (company-complete)))
+        (shut-up (company-complete))))
 
     (when-let ((prefix (symbol-name (symbol-at-point)))
                (bounds (bounds-of-thing-at-point 'symbol)))
