@@ -2386,15 +2386,12 @@ If DIR is nil, download to current directory."
 
 (use-package org-extra
   :after org
-  :demand t
-  :bind ("M-o" . org-extra/commands/body)
-  :config
-  (defhydra org-extra/commands (:foreign-keys run)
-    ("r" #'org-extra-rate "rate")
-    ("h" #'org-extra-refile-here "refile here")
-    ("o" #'org-extra-refile-to-open-org-files "refile to open")
-    ("u" #'org-extra-copy-url-at-point "copy url")
-    ("q" nil "quit")))
+  :bind
+  (:map org-extra-map
+        ("*" . #'org-extra-rate)
+        ("r" . #'org-extra-refile-here)
+        ("R" . #'org-extra-refile-to-open-org-file)
+        ("c" . #'org-extra-copy-url-at-point)))
 
 (use-package dev-extra :demand t)
 
