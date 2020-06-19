@@ -102,6 +102,8 @@
 
 (message "loading common elisp libraries...")
 
+(use-package cl-lib :demand t)
+(use-package mode-local :demand t)
 
 (use-package contrib :demand t) ; the mailing list is against a lot of these, but I think they're nifty
 
@@ -747,7 +749,6 @@ seconds."
 
         (indent-line-to (* col tab-width)))))
 
-  (require 'mode-local)
   (setq-mode-local conf-space-mode indent-line-function #'conf-mode/indent))
 
 (use-package scheme
