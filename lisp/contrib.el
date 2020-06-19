@@ -103,16 +103,15 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 
 Alternatively the return type is defined by FORMAT
 Valid formats are `seconds', `minutes', `hours', and `days'."
-  (let ((secs
-         (float-time
-          (time-subtract (current-time)
-                         (nth 5 (file-attributes (file-truename filename)))))))
-    (floor (case format
-             ('seconds secs)
-             ('minutes (/ secs 60))
-             ('hours (/ secs 60 60))
-             ('days (/ secs 60 60 24))
-             (t secs)))))
+  (let* ((time-struct (nth 5 (file-attributes (file-truename filename))))
+         (secs (float-time (time-subtract (current-time) time-struct)))
+         (output (cl-case format
+                   ('seconds secs)
+                   ('minutes (/ secs 60))
+                   ('hours (/ secs 60 60))
+                   ('days (/ secs 60 60 24))
+                   (t secs))))
+    (floor output)))
 
 ;;;;; syntax-ppss accessors
 
@@ -166,6 +165,16 @@ Valid formats are `seconds', `minutes', `hours', and `days'."
     delimiter or an Escaped or Char-quoted character."
   (nth 10 (syntax-ppss pos)))
 
+;;;; caching
+(setq --cache-map (make-hash-table :test 'equal))
+
+(defun --cache (fn &rest args)
+  "Cache the functino FN called with ARGS."
+  (let* ((key (substring-no-properties (concat (symbol-name fn) "@" (prin1-to-string args))))
+         (val (gethash key --cache-map 'not-found-in-cache)))
+    (if (eq val 'not-found-in-cache)
+        (puthash key (apply fn args) --cache-map)
+      val)))
 
 (provide 'contrib)
 ;;; contrib.el ends here
