@@ -1555,6 +1555,10 @@ If METHOD does not exist, do nothing."
 
   (setq org-use-speed-commands t)
 
+  (setq org-speed-commands-user
+        ;; don't move the point when using speed-commands...
+        '(("o" . (lambda () (save-excursion (org-open-at-point))))))
+
   (setq org-adapt-indentation nil) ; don't indent things
 
   (add-to-list 'org-cycle-hook #'org-cycle-hide-drawers) ; don't expand org drawers
