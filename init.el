@@ -3151,13 +3151,11 @@ Inserts information about senders, and the mail subject into eldoc."
   (defun notmuch-show/view-mime-part-at-point-in-mode ()
     "Open MIME-part at point in a specific major-mode."
     (interactive)
-
-    (let* ((modes '(org-mode text-mode))
+    (let* ((modes '(org-mode text-mode markdown-mode diff-mode))
            (mode (intern (completing-read "mode: " modes nil t))))
       (notmuch-show-apply-to-current-part-handle
        (lambda (handle)
-         (let ((buf (get-buffer-create (generate-new-buffer-name
-				                                (concat " *notmuch-internal-part*")))))
+         (let ((buf (generate-new-buffer " *notmuch-internal-part*")))
            (switch-to-buffer buf)
            (if (eq (mm-display-part handle) 'external)
 	             (kill-buffer buf)
