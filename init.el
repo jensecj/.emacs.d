@@ -3197,6 +3197,35 @@ if BACKWARDS is non-nil, jump backwards instead."
     (interactive)
     (notmuch-show/goto-message-with-tag "unread" 'backwards))
 
+  ;; don't indent headerline if content is not indented
+  (if (not (fn-checksum #'notmuch-show-insert-headerline "3fe006fc96276830f7b5309cd6502a45"))
+      (log-warning "#'notmuch-show-insert-headerline changed definition, skipping patch")
+    (advice-patch #'notmuch-show-insert-headerline
+                  '(if notmuch-show-indent-content
+                       (notmuch-show-spaces-n (* notmuch-show-indent-messages-width depth))
+                     "")
+                  '(notmuch-show-spaces-n (* notmuch-show-indent-messages-width depth))))
+
+  ;; make sure that messages end in a newline, just like the newline after the header.
+  (if (not (fn-checksum #'notmuch-show-insert-msg "8aeeebe6781a195fc1ee53fea1a0575e"))
+      (log-warning "#'notmuch-show-insert-msg changed definition, skipping patch.")
+    (advice-patch #'notmuch-show-insert-msg
+                  '(progn
+                     (unless (bolp)
+                       (insert "\n"))
+                     (insert "\n"))
+                  '(unless (bolp)
+                     (insert "\n"))))
+
+  ;; only show text/plain part by default
+  (if (not (fn-checksum #'notmuch-show-insert-bodypart "e46448fdf4e2e29eeeb4761cd692f5bb"))
+      (log-warning "#'notmuch-show-insert-bodypart changed definition, skipping patch.")
+    (advice-patch #'notmuch-show-insert-bodypart
+                  '(or (notmuch-match-content-type mime-type "multipart/*")
+                       (notmuch-match-content-type mime-type "text/plain"))
+                  '(not (or (equal hide t)
+			                      (and long button)))))
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; notmuch-search mode ;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;
