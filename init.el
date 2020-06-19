@@ -1379,10 +1379,7 @@ If METHOD does not exist, do nothing."
   (add-hook 'compilation-mode-hook #'visual-line-mode)
 
   (require 'ansi-color)
-  (defun jens/colorize-compilation-buffer ()
-    (unless (derived-mode-p 'grep-mode)
-      (ansi-color-apply-on-region compilation-filter-start (point))))
-  (add-hook 'compilation-filter-hook #'modi/colorize-compilation-buffer)
+  (add-hook* '(compilation-filter-hook shell-mode-hook) #'ansi-color-for-comint-mode-on)
 
   (defhydra jens/goto-error-hydra ()
     "Hydra for navigating between errors."
