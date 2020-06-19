@@ -3013,6 +3013,7 @@ clipboard."
         ("N" . #'notmuch-search/goto-next-unread-thread)
         ("P" . #'notmuch-search/goto-previous-unread-thread)
         ("<C-return>" . #'notmuch-search/show-thread-first-unread)
+        ("s" . #'notmuch/search)
         :map notmuch-message-mode-map
         ("C-c C-a" . mail-add-attachment)
         :map notmuch-show-part-map
@@ -3090,6 +3091,12 @@ clipboard."
   (apply* #'notmuch/quicktag '(show search tree) "d" '(("-inbox" "-archived" "+deleted")))
   ;; mute mail in all modes with "M"
   (apply* #'notmuch/quicktag '(show search tree) "M" '(("-unread" "+muted")))
+
+  (defun notmuch/search ()
+    "Search notmuch interactively, using the current query as initial input."
+    (interactive)
+    (let ((query (notmuch-search-get-query)))
+      (notmuch-search (completing-read "Notmuch search: " nil nil nil query))))
 
   ;;;;;;;;;;;;;;;;;;;;;;;
   ;; notmuch-show mode ;;
