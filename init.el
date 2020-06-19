@@ -2384,6 +2384,18 @@ If DIR is nil, download to current directory."
 (use-package buf ;; buffer extentions
   :demand t)
 
+(use-package orgflow
+  :straight (orgflow :type git :repo "git@github.com:jensecj/orgflow.el.git")
+  :after org
+  :bind
+  (:map org-extra-map
+        ("u" . #'orgflow-visit-linked-url)
+        ("f" . #'orgflow-visit-linked-file)
+        ("i" . #'orgflow-insert-nearby-file-link)
+        ("n" . #'orgflow-visit-nearby-file)
+        ("t" . #'orgflow-visit-tagged-heading)
+        ("b" . #'orgflow-visit-backlinks)))
+
 (use-package org-extra
   :after org
   :bind
