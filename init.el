@@ -3012,6 +3012,7 @@ clipboard."
         :map notmuch-search-mode-map
         ("N" . #'notmuch-search/goto-next-unread-thread)
         ("P" . #'notmuch-search/goto-previous-unread-thread)
+        ("U" . #'notmuch-search/filter-unread)
         ("<C-return>" . #'notmuch-search/show-thread-first-unread)
         ("s" . #'notmuch/search)
         :map notmuch-message-mode-map
@@ -3227,6 +3228,12 @@ if BACKWARDS is non-nil, jump backwards instead."
     "Jump back to the previous unread thread."
     (interactive)
     (notmuch-search/goto-thread-with-tag "unread" 'backwards))
+
+  (defun notmuch-search/filter-unread ()
+    "Filter the current search-query to only show unread messages."
+    (interactive)
+    (let ((query (notmuch-search-get-query)))
+      (notmuch-search (concat query " and tag:unread"))))
 
   (defun notmuch-search/show-thread-first-unread ()
     "Show the thread-at-point, but jump to the first unread message."
