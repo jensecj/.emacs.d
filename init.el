@@ -110,7 +110,11 @@
 (use-package dash ;; working with lists, -map, -concat, etc
   :demand t
   :straight (dash :host github :repo "magnars/dash.el"
-                  :fork (:host github :repo "jensecj/dash.el")))
+                  :fork (:host github :repo "jensecj/dash.el"))
+  :config
+  (defun -flatmap (fn list)
+    "(-flatten (-map FN LIST))."
+    (-flatten (-map fn list))))
 
 (use-package dash-functional :commands (-cut) :demand t)
 
