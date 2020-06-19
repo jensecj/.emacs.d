@@ -1525,12 +1525,15 @@ If METHOD does not exist, do nothing."
              org-indent-line
              org-babel-do-load-languages
              org-context)
-  :defines jens/load-org-agenda-files
+  :bind-keymap
+  ("M-o" . org-extra-map)
   :bind
-  (("C-x g " . org-agenda)
+  (
    :map org-mode-map
-   ([(tab)] . nil)
+   ("M-<next>" . org-move-subtree-down)
+   ("M-<prior>" . org-move-subtree-up)
    ;; unbind things that are used for other things
+   ([(tab)] . nil)
    ("C-a" . nil)
    ("<S-up>" . nil)
    ("<S-down>" . nil)
@@ -1542,9 +1545,11 @@ If METHOD does not exist, do nothing."
    ("<M-S-down>" . nil)
    ("<C-S-up>" . nil)
    ("<C-S-down>" . nil)
-   ("M-<next>" . org-move-subtree-down)
-   ("M-<prior>" . org-move-subtree-up))
+   ("C-c C-o" . nil))
   :config
+  (defvar org-extra-map (make-sparse-keymap)
+    "Extra keymap for `org-mode'.")
+
   ;;;;;;;;;;;;;;;;;;;;;;
   ;; general settings ;;
   ;;;;;;;;;;;;;;;;;;;;;;
