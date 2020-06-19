@@ -3794,7 +3794,10 @@ of (command . word) to be used by `flyspell-do-correct'."
         (error "Quit"))
       res))
 
-  (setq flyspell-correct-interface #'frog-menu-flyspell-correct))
+  (setq flyspell-correct-interface #'frog-menu-flyspell-correct)
+  :custom-face
+  (frog-menu-border ((t (:background ,(zenburn-get "zenburn-bg-1")))))
+  (frog-menu-posframe-background-face ((t (:background ,(zenburn-get "zenburn-bg-1"))))))
 
 (use-package spinner
   :straight t
