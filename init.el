@@ -1405,14 +1405,20 @@ If METHOD does not exist, do nothing."
   :config
   (setq browse-url-firefox-program "firefox-developer-edition")
 
+  (defun jens/get-url-at-point ()
+    "Return the url at point, if any."
+    (or
+     (thing-at-point 'url t)
+     (shr-url-at-point nil)
+     (org-extra-url-at-point)
+     (if (fboundp 'augment-at-point) (augment-at-point)) ;url from augment
+     ;; bug-links from bug-reference-mode
+     (-any (lambda (o) (overlay-get o 'bug-reference-url)) (overlays-at (point)))))
+
   (defun jens/open-url-at-point ()
     "Open the URL-at-point, dwim."
     (interactive)
-    (let ((url))
-      (cond
-       ((thing-at-point 'url t) (browse-url-at-point))
-       ((setq url (shr-url-at-point nil)) (browse-url url))
-       ((org-extra-url-at-point) (org-open-at-point))))))
+    (browse-url (jens/get-url-at-point))))
 
 (use-package shr
   :defer t
