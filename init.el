@@ -764,6 +764,11 @@ seconds."
 
   (setq-mode-local conf-space-mode indent-line-function #'conf-mode/indent))
 
+(use-package doc-view
+  :config
+  (setq doc-view-resolution 300)
+  (add-hook 'doc-view-mode-hook #'auto-revert-mode))
+
 (use-package scheme
   :defer t
   :mode ("\\.scm\\'" . scheme-mode)
@@ -2816,13 +2821,15 @@ _t_: go to today-file
 
   (add-hook 'git-commit-mode-hook #'flyspell-prog-mode))
 
+(use-package forge
+  :straight t
+  :after magit)
+
 (use-package magithub
-  ;; TODO: replace with forge.el?
   ;; https://github.com/vermiculus/magithub/blob/9fb9c653d0dad3da7ccff3ae321fa6e54c08f41b/magithub.el#L223
   ;; https://github.com/vermiculus/ghub-plus
   ;; https://github.com/vermiculus/apiwrap.el
   ;; https://github.com/magit/ghub/issues/84
-  ;; :disabled t
   :straight t
   :after magit
   :config
@@ -2851,7 +2858,6 @@ _t_: go to today-file
   (setq TeX-save-query nil) ;; save before compiling
   (setq TeX-master nil) ;; try to figure out which file is the master
   (setq reftex-plug-into-AUCTeX t) ;; make reftex and auctex work together
-  (setq doc-view-resolution 300)
 
   ;; (setq TeX-view-program-selection (quote ((output-pdf "zathura") (output-dvi "xdvi"))))
   (TeX-source-correlate-mode)        ; activate forward/reverse search
@@ -2968,7 +2974,6 @@ clipboard."
   (:map pdf-view-mode-map ("C-s" . isearch-forward))
   :config
   (add-hook 'pdf-view-mode-hook #'auto-revert-mode)
-  (add-hook 'doc-view-mode-hook #'auto-revert-mode)
 
   ;; TODO: figure out how to disable epdf asking to rebuild when starting
   ;; emacsclient, it does not work.
@@ -4695,7 +4700,6 @@ initial search query."
 (add-hook #'server-after-make-frame-hook #'jens/show-initial-important-messages)
 
 ;; TODO: get buffer string without `with-current-buffer', to speed things up?
-;; TODO: replace `magithub' with `forge'
 ;; TODO: colorize message/compile buffer
 ;; TODO: add separator in compile mode
 ;; TODO: test with ert?
