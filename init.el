@@ -4224,6 +4224,8 @@ re-enable afterwards."
 (use-package exec-path-from-shell
   :straight t
   :demand t
+  :init
+  (setq exec-path-from-shell-check-startup-files nil)
   :config
   (exec-path-from-shell-initialize)
   ;; try to grab the ssh-agent if it is running
