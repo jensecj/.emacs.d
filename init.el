@@ -909,6 +909,7 @@ seconds."
 
 (use-package eww
   :defer t
+  :after browse-url
   :bind (("M-s M-o" . #'eww/open-url-at-point)
          ("M-s M-w" . #'eww/search-region)
          ("M-s M-d" . #'eww/download-url-at-point)
@@ -931,7 +932,7 @@ seconds."
   (defun eww/open-url-at-point ()
     "Open link at point in eww."
     (interactive)
-    (when-let ((url (car (eww-suggested-uris)))
+    (when-let ((url (or (car (eww-suggested-uris)) (jens/get-url-at-point)))
                (buf (get-buffer-create "*eww*")))
       (view-buffer-other-window buf)
       (eww url)))
