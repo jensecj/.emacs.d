@@ -5,7 +5,7 @@
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; URL:
 ;; Keywords:
-;; Package-Version: 20200505
+;; Package-Version: 20200623
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "28.0.0.5"))
 
