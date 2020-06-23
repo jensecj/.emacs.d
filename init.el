@@ -3027,6 +3027,10 @@ clipboard."
   (defalias #'describe-symbol #'helpful-symbol)
   (defalias #'describe-key #'helpful-key))
 
+(use-package inform
+  ;; hyperlinks of symbols (functions, variables, etc.) in Info to their documentation.
+  :straight t)
+
 (use-package vdiff
   :straight t
   :config
