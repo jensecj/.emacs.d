@@ -1595,7 +1595,7 @@ If METHOD does not exist, do nothing."
 
   (setq org-adapt-indentation nil) ; don't indent things
 
-  (add-to-list 'org-cycle-hook #'org-cycle-hide-drawers) ; don't expand org drawers
+  (add-to-list 'org-cycle-hook #'org-cycle-hide-drawers) ; don't expand org drawers on cycling
 
   (setq org-archive-save-context-info '(time file olpath itags))
 
@@ -1616,7 +1616,7 @@ If METHOD does not exist, do nothing."
                  (-filter (lambda (e)
                             (and
                              (s-starts-with-p "ditaa" (f-filename e))
-                             (string= "jar" (f-ext e))))
+                             (f-ext-p e "jar")))
                           es)
                  (car es))))
     (setq org-ditaa-jar-path ditaa-jar))
@@ -2435,7 +2435,7 @@ If DIR is nil, download to current directory."
         ("b" . #'orgflow-visit-backlinks))
   :config
   (setq orgflow-section-sizes '(40 40))
-  (setq orgflow-directory (fn (project-root (project-current)))))
+  (setq orgflow-directory (fn (or default-directory (cdr (project-current))))))
 
 
 (use-package org-extra
@@ -2488,6 +2488,7 @@ If DIR is nil, download to current directory."
       (gpg/cache-key user-gpg-mail-key)))
 
   (add-hook 'notmuch-mojn-pre-fetch-hook #'notmuch-mojn/cache-mail-key)
+  (add-hook 'message-send-hook #'notmuch-mojn/cache-mail-key)
 
   (advice-add #'notmuch-address-expand-name
               :override
@@ -2514,6 +2515,7 @@ If DIR is nil, download to current directory."
 (use-package augment
   :straight (augment :type git :repo "git@github.com:jensecj/augment.el.git")
   :defer t
+  :hook (emacs-lisp-mode . augment-prog-mode)
   :config
   (require 'augment-git)
   (add-to-list 'augment-entries augment-entry-github-commits)
@@ -2571,7 +2573,9 @@ If DIR is nil, download to current directory."
   :commands (today-hydra/body
              today-capture-elfeed-at-point)
   :bind
-  (("C-x t" . today-hydra/body))
+  (("C-x t" . today-hydra/body)
+   :map elfeed-search-mode-map
+   ("t" . today-capture-elfeed-at-point))
   :config
   (setq today-directory "~/vault/journal/")
   (setq today-file "~/vault/org/today.org")
@@ -2923,7 +2927,6 @@ _t_: go to today-file
   :functions jens/elfeed-copy-link-at-point
   :bind
   (:map elfeed-search-mode-map
-        ("t" . today-capture-elfeed-at-point)
         ("c" . jens/elfeed-copy-link-at-point)
         ("V" . jens/elfeed-play-video-at-point))
   :config
@@ -3012,6 +3015,7 @@ clipboard."
   (pdf-tools-install 'no-query 'skip-dependencies))
 
 (use-package helpful
+  ;; replacement for *help* buffers that provides more contextual information.
   :straight t
   :demand t
   :commands (helpful-key
