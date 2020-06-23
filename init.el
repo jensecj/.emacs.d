@@ -4443,11 +4443,12 @@ initial search query."
 
 (use-package flyspell-correct
   :straight t
-  :after flyspell
   :bind
   (:map flyspell-mode-map
         ("C-," . flyspell-correct-at-point))
-  :commands flyspell-correct-at-point)
+  :commands flyspell-correct-at-point
+  :config
+  (require 'flyspell))
 
 (use-package synosaurus
   :straight t
