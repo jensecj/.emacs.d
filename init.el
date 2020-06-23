@@ -2427,7 +2427,12 @@ If DIR is nil, download to current directory."
         ("i" . #'orgflow-insert-nearby-file-link)
         ("n" . #'orgflow-visit-nearby-file)
         ("t" . #'orgflow-visit-tagged-heading)
-        ("b" . #'orgflow-visit-backlinks)))
+        ("h" . #'orgflow-visit-nearby-heading)
+        ("b" . #'orgflow-visit-backlinks))
+  :config
+  (setq orgflow-section-sizes '(40 40))
+  (setq orgflow-directory (fn (project-root (project-current)))))
+
 
 (use-package org-extra
   :after org
