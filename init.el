@@ -3700,6 +3700,13 @@ in the same file."
          ("S-<next>" . sp-split-sexp)
          ("S-<prior>" . sp-join-sexp)))
 
+(use-package paren-face
+  :straight t
+  :config
+  (global-paren-face-mode +1)
+  :custom-face
+  (parenthesis ((t (:foreground "#a1a1a1")))))
+
 (use-package macrostep
   :straight t
   :bind ("C-c e" . macrostep-expand))
