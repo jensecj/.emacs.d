@@ -905,7 +905,20 @@ seconds."
   (setq ediff-window-setup-function 'ediff-setup-windows)
   (setq ediff-split-window-function 'split-window-vertically))
 
-(use-package diff)
+(use-package diff
+  :config
+  ;;files are diffed with `diff old new', why apply patches in reverse?
+  (setq diff-jump-to-old-file t)
+  (setq diff-default-read-only t)
+  (setq diff-font-lock-prettify t)
+
+  (defun diff-fullscreen (old new)
+    "Like `diff', but hide delete other windows, fullscreening the diff buffer.
+
+Works well being called from a terminal:
+`emacsclient -c --eval '(diff-fullscreen \"oldfile.txt\" \"newfile.txt\")'"
+    (interactive)
+    (delete-other-windows (diff old new))))
 
 (use-package eww
   :defer t
@@ -3000,6 +3013,12 @@ clipboard."
   (defalias #'describe-variable #'helpful-variable)
   (defalias #'describe-symbol #'helpful-symbol)
   (defalias #'describe-key #'helpful-key))
+
+(use-package vdiff
+  :straight t
+  :config
+  (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map)
+  (define-key vdiff-3way-mode-map (kbd "C-c") vdiff-mode-prefix-map))
 
 (use-package erc
   :defer t
