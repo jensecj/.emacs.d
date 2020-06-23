@@ -36,6 +36,13 @@
   (insert (format "-*- mode: %s -*-\n"  (s-chop-suffix "-mode" (symbol-name major-mode))))
   (comment-line -1))
 
+(defun indset--package-header ()
+  "Insert standard elisp package header."
+  (interactive)
+  (goto-char (point-min))
+  (insert
+   (format ";;; %s. --- -*- lexical-binding: t; -*-\n" (file-name-nondirectory (buffer-file-name)))))
+
 (defun indset--new-package ()
   "Insert standard template for new elisp packages."
   (goto-char (point-min))
@@ -88,6 +95,7 @@
     (shebang-python . "#!/usr/bin/env python")
     (current-file . (lambda () (buffer-file-name)))
     (pi . indset--calc-pi)
+    (package-header . indset--package-header)
     (new-package . indset--new-package)
     (mode-header . indset--mode-header))
   "Alist of handlers for types to insert.
