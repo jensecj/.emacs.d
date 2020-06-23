@@ -765,9 +765,10 @@ seconds."
   (setq-mode-local conf-space-mode indent-line-function #'conf-mode/indent))
 
 (use-package doc-view
+  :hook (doc-view-mode . auto-revert-mode)
+  :defines doc-view-mode-hook
   :config
-  (setq doc-view-resolution 300)
-  (add-hook 'doc-view-mode-hook #'auto-revert-mode))
+  (setq doc-view-resolution 300))
 
 (use-package scheme
   :defer t
@@ -2980,20 +2981,13 @@ clipboard."
 
 (use-package pdf-tools
   :straight t
-  :demand t
-  :commands pdf-tools-install
-  :hook (doc-view-mode . pdf-tools-install)
+  :defer t
+  :hook (pdf-view-mode . auto-revert-mode)
   :bind
   ;; need to use plain isearch, pdf-tools hooks into it to handle searching
   (:map pdf-view-mode-map ("C-s" . isearch-forward))
   :config
-  (add-hook 'pdf-view-mode-hook #'auto-revert-mode)
-
-  ;; TODO: figure out how to disable epdf asking to rebuild when starting
-  ;; emacsclient, it does not work.
-
-  ;; (pdf-tools-install)
-  )
+  (pdf-tools-install 'no-query 'skip-dependencies))
 
 (use-package helpful
   :straight t
