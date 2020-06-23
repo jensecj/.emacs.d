@@ -27,23 +27,21 @@
       (calc)
       (calc-precision digits)
       (setq res (calc-eval "evalv(pi)"))
-      (calc-quit)
-      res)))
+      (calc-quit))
+    (insert (format "%s" res))))
 
 (defun indset--mode-header ()
   "Insert mode-header for current mode."
-  (save-excursion
-    (goto-char (point-min))
-    (insert (format "-*- mode: %s -*-\n"  (s-chop-suffix "-mode" (symbol-name major-mode))))
-    (comment-line -1)))
+  (goto-char (point-min))
+  (insert (format "-*- mode: %s -*-\n"  (s-chop-suffix "-mode" (symbol-name major-mode))))
+  (comment-line -1))
 
 (defun indset--new-package ()
-  "Insert standard template for new packages."
-  (save-excursion
-    (goto-char (point-min))
-    (insert
-     (format
-      ";;; %s --- Some description. -*- lexical-binding: t; -*-
+  "Insert standard template for new elisp packages."
+  (goto-char (point-min))
+  (insert
+   (format
+    ";;; %s --- Some description. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) %s %s
 
@@ -60,24 +58,24 @@
 
 ;;; Code:
 "
-      (buffer-name)
-      (format-time-string "%Y")
-      (user-full-name)
-      (user-full-name)
-      user-mail-address
-      (format "emacs \"%s\"" emacs-version)
-      (format-time-string "%Y%m%d")))
-    (goto-char (point-max))
-    (insert
-     (format
-      "
+    (buffer-name)
+    (format-time-string "%Y")
+    (user-full-name)
+    (user-full-name)
+    user-mail-address
+    (format "emacs \"%s\"" emacs-version)
+    (format-time-string "%Y%m%d")))
+  (goto-char (point-max))
+  (insert
+   (format
+    "
 
 
 (provide '%s)
 ;;; %s ends here
 "
-      (f-base (buffer-name))
-      (buffer-name)))))
+    (f-base (buffer-name))
+    (buffer-name))))
 
 (defvar indset-alist
   '((date . (lambda () (format-time-string "%Y-%m-%d")))
@@ -103,7 +101,7 @@ inserted as-is.")
   (when-let* ((pick (intern (completing-read "pick: " indset-alist nil t)))
               (el (cdr (assoc pick indset-alist))))
     (if (functionp el)
-        (insert (format "%s" (funcall el)))
+        (save-excursion (funcall el))
       (insert (format "%s" el)))))
 
 
