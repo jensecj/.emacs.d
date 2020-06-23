@@ -353,6 +353,9 @@ equality of computed checksum and arg."
 ;; don't disable function because they're confusing to beginners
 (setq disabled-command-function nil)
 
+;; recurse deeper by default, note: can be dangerous
+(setq max-lisp-eval-depth 2000)
+
 ;; never use dialog boxes
 (setq use-dialog-box nil)
 
