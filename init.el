@@ -1762,11 +1762,12 @@ If METHOD does not exist, do nothing."
                        (or remote-host "localhost")
                        (or remote-localname filename)))))
 
-(defun jens/sudo-edit (&optional arg)
+(defun jens/sudo-edit ()
   "Re-open current buffer file with superuser permissions.
 With prefix ARG, ask for file to open."
-  (interactive "P")
-  (if (or arg (not buffer-file-name))
+  (interactive)
+  (if (or current-prefix-arg
+          (not buffer-file-name))
       (read-file-name "Find file:"))
 
   (let ((place (point))
@@ -1775,8 +1776,20 @@ With prefix ARG, ask for file to open."
     (goto-char place)
     (funcall mode)))
 
-(defun jens/inspect-variable-at-point (&optional arg)
-  "Inspect variable at point."
+(defun jens/sudo-save (&optional arg)
+  "Save the current buffer using sudo through TRAMP."
+  (interactive)
+  (let ((contents (buffer-string))
+        (p (point)))
+    (jens/sudo-edit)
+    (delete-region (point-min) (point-max))
+    (goto-char (point-min))
+    (insert contents)
+    (goto-char p)
+    (save-buffer)))
+
+(defun jens/inspect-symbol-at-point (&optional arg)
+  "Inspect symbol at point."
   (interactive "P")
   (require 'dokument)
   (let* ((sym (symbol-at-point))
