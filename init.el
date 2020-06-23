@@ -1802,7 +1802,7 @@ With prefix ARG, ask for file to open."
             (erase-buffer)
             (pp value (current-buffer))
             (emacs-lisp-mode)
-            (goto-char 0))
+            (goto-char (point-min)))
           (view-buffer-other-window (current-buffer)))
 
       ;; TODO: don't use `dap' posframe, create a posframe for all-purpose emacs things
@@ -2314,16 +2314,17 @@ Requires the system tools `tokei' and `jq'."
   (let* ((locs '("init.el"
                  "early-init.el"
                  "experimental.el"
-                 "repos.el"
                  "lisp/*.el"
                  "modes/*.el"
-                 "straight/repos/dokument.el/*.el"
-                 "straight/repos/notmuch-mojn.el/*.el"
-                 "straight/repos/etmux.el/*.el"
-                 "straight/repos/lowkey-mode-line.el/*.el"
                  "straight/repos/today.el/*.el"
-                 "straight/repos/views.el/*.el"
+                 "straight/repos/dokument.el/*.el"
+                 "straight/repos/orgflow.el/*.el"
+                 "straight/repos/augment.el/*.el"
+                 "straight/repos/notmuch-mojn.el/*.el"
+                 "straight/repos/lowkey-mode-line.el/*.el"
                  "straight/repos/sane-windows.el/*.el"
+                 "straight/repos/etmux.el/*.el"
+                 "straight/repos/views.el/*.el"
                  "straight/repos/replace-at-point.el/*.el"))
          (full-paths (-map (lambda (l) (f-full (concat user-emacs-directory l))) locs))
          (all-files (-flatten (-map (lambda (p) (f-glob p)) full-paths)))
@@ -2994,8 +2995,8 @@ clipboard."
 
   :custom-face
   (elfeed-search-date-face ((t (:underline nil))))
-  (elfeed-search-unread-title-face ((t (:height 100 :strike-through nil))))
-  (elfeed-search-title-face ((t (:height 90 :strike-through t)))))
+  (elfeed-search-unread-title-face ((t (:strike-through nil))))
+  (elfeed-search-title-face ((t (:strike-through t)))))
 
 (use-package pdf-tools
   :straight t
@@ -3707,8 +3708,7 @@ in the same file."
              diff-hl-mode
              diff-hl-next-hunk
              diff-hl-previous-hunk)
-  :functions (jens/diff-hl-hydra/body jens/diff-hl-refresh)
-  :bind ("C-c C-v" . jens/diff-hl-hydra/body)
+  :bind ("C-c C-v" . diff-hl/hydra/body)
   :hook
   ((magit-post-refresh . diff-hl-magit-post-refresh)
    (prog-mode . diff-hl-mode)
@@ -3718,13 +3718,22 @@ in the same file."
   (setq diff-hl-dired-extra-indicators t)
   (setq diff-hl-draw-borders nil)
 
-  (defun jens/diff-hl-refresh ()
-    (diff-hl-mode +1))
+  (defun diff-hl/first-hunk ()
+    (interactive)
+    (goto-char (point-min))
+    (diff-hl-next-hunk))
 
-  (defhydra jens/diff-hl-hydra ()
+  (defun diff-hl/last-hunk ()
+    (interactive)
+    (goto-char (point-max))
+    (diff-hl-previous-hunk))
+
+  (defhydra diff-hl/hydra ()
     "Move to changed VC hunks."
+    ("f" #'diff-hl/first-hunk "first")
     ("n" #'diff-hl-next-hunk "next")
-    ("p" #'diff-hl-previous-hunk "previous"))
+    ("p" #'diff-hl-previous-hunk "previous")
+    ("l" #'diff-hl/last-hunk "last"))
 
   (global-diff-hl-mode +1)
   :custom-face
@@ -4274,9 +4283,7 @@ re-enable afterwards."
 (use-package multi-libvterm
   :after vterm
   :straight (multi-libvterm :type git :repo "https://github.com/suonlight/multi-libvterm.git")
-  :bind (("C-z" . multi-libvterm))
-  :config
-  )
+  :bind (("C-z" . multi-libvterm)))
 
 (use-package multi-term
   :disabled t
