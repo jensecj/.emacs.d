@@ -2571,7 +2571,7 @@ If DIR is nil, download to current directory."
   :config
   (setq today-directory "~/vault/journal/")
   (setq today-file "~/vault/org/today.org")
-  (setq today-inbox-file "~/vault/org/inbox.org")
+  (setq today-inbox-file "~/vault/inbox/inbox.org")
 
   (defhydra today-refile-pl-hydra (:foreign-keys run)
     "
@@ -2583,14 +2583,14 @@ _C_: Clojure     _m_: ML
 _p_: Python      ^ ^
 _j_: Java        ^ ^
 "
-    ("c" (today-refile "today.org" "C/C++"))
-    ("C" (today-refile "today.org" "Clojure"))
-    ("g" (today-refile "today.org" "Git"))
-    ("j" (today-refile "today.org" "Java"))
-    ("l" (today-refile "today.org" "Lisp"))
-    ("m" (today-refile "today.org" "ML"))
-    ("p" (today-refile "today.org" "Python"))
-    ("r" (today-refile "today.org" "Rust"))
+    ("c" (today-refile today-file "C/C++"))
+    ("C" (today-refile today-file "Clojure"))
+    ("g" (today-refile today-file "Git"))
+    ("j" (today-refile today-file "Java"))
+    ("l" (today-refile today-file "Lisp"))
+    ("m" (today-refile today-file "ML"))
+    ("p" (today-refile today-file "Python"))
+    ("r" (today-refile today-file "Rust"))
 
     ("x" today-refile-hydra/body "Refile entries" :exit t)
     ("z" org-refile-goto-last-stored "Jump to last refile")
@@ -2606,26 +2606,26 @@ _j_: Java        ^ ^
  _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Work
  _C_: Courses       _M_: Math              _s_: Computer Science        _W_: Web
 "
-    ("a" (today-refile "today.org" "AI"))
-    ("A" (today-refile "today.org" "Algorithms"))
-    ("b" (today-refile "today.org" "Business"))
-    ("c" (today-refile "today.org" "Climate"))
-    ("C" (today-refile "today.org" "Courses"))
-    ("d" (today-refile "today.org" "DevOps"))
-    ("e" (today-refile "today.org" "Emacs"))
-    ("l" (today-refile "today.org" "Linux"))
-    ("m" (today-refile "today.org" "Machine Learning"))
-    ("M" (today-refile "today.org" "Math"))
-    ("n" (today-refile "today.org" "Next"))
-    ("o" (today-refile "today.org" "Other Talks"))
-    ("p" (today-refile "today.org" "Programming"))
-    ("P" (today-refile "today.org" "Programming Languages"))
-    ("s" (today-refile "today.org" "Computer Science"))
-    ("S" (today-refile "today.org" "Statistics"))
-    ("t" (today-refile "today.org" "Tech Talks"))
-    ("T" (today-refile "today.org" "TED Talks"))
-    ("w" (today-refile "today.org" "Work"))
-    ("W" (today-refile "today.org" "Web"))
+    ("a" (today-refile today-file "AI"))
+    ("A" (today-refile today-file "Algorithms"))
+    ("b" (today-refile today-file "Business"))
+    ("c" (today-refile today-file "Climate"))
+    ("C" (today-refile today-file "Courses"))
+    ("d" (today-refile today-file "DevOps"))
+    ("e" (today-refile today-file "Emacs"))
+    ("l" (today-refile today-file "Linux"))
+    ("m" (today-refile today-file "Machine Learning"))
+    ("M" (today-refile today-file "Math"))
+    ("n" (today-refile today-file "Next"))
+    ("o" (today-refile today-file "Other Talks"))
+    ("p" (today-refile today-file "Programming"))
+    ("P" (today-refile today-file "Programming Languages"))
+    ("s" (today-refile today-file "Computer Science"))
+    ("S" (today-refile today-file "Statistics"))
+    ("t" (today-refile today-file "Tech Talks"))
+    ("T" (today-refile today-file "TED Talks"))
+    ("w" (today-refile today-file "Work"))
+    ("W" (today-refile today-file "Web"))
 
     ("x" today-refile-pl-hydra/body "Refile programming languages" :exit t)
     ("z" org-refile-goto-last-stored "Jump to last refile")
@@ -4566,7 +4566,7 @@ initial search query."
 (log-info "Setting keybindings")
 
 ;; keys for quickly going to common files
-(bind-key* "\e\ei" (xi (find-file "~/vault/org/inbox.org")))
+(bind-key* "\e\ei" (xi (find-file "~/vault/inbox/inbox.org")))
 (bind-key* "\e\ek" (xi (find-file "~/vault/org/tracking.org")))
 (bind-key* "\e\em" (xi (find-file "~/vault/org/roadmap.org")))
 (bind-key* "\e\et" (xi (find-file "~/vault/org/today.org")))
