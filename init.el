@@ -4410,7 +4410,7 @@ paste for multi-term mode."
         (propertize "\n------------------------------------------\n"
                     'face `(:foreground "#111111")))
 
-  (setq counsel-rg-base-command "rg --hidden -S --no-heading --line-number --color never %s .")
+  (setq counsel-rg-base-command "rg --hidden --glob='!.git' -S --no-heading --line-number --color never %s .")
 
   (defun jens/ripgrep ()
     "Interactively search the current directory. Jump to result using ivy."
