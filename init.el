@@ -897,11 +897,7 @@ seconds."
                          files)))
       (view-buffer-other-window
        (find-file-noselect readme)
-       nil #'kill-buffer-if-not-modified)))
-  )
-
-(use-package elisp-mode
-  :delight (emacs-lisp-mode "Elisp" :major))
+       nil #'kill-buffer-if-not-modified))))
 
 (use-package ediff
   :defer t
@@ -1001,7 +997,7 @@ Works well being called from a terminal:
 
 (use-package whitespace
   :demand t
-  :diminish
+  :diminish whitespace-mode
   :config
   (defun jens/show-trailing-whitespace ()
     "Show trailing whitespace in buffer."
@@ -1075,9 +1071,8 @@ Works well being called from a terminal:
 (use-package autorevert
   ;; always show the version of a file as it appears on disk
   :demand t
-  :diminish auto-revert-mode
   :config
-  ;; also auto refresh dired, but be quiet about it
+  ;; auto revert applicable buffers
   (setq global-auto-revert-non-file-buffers t)
   (setq auto-revert-verbose nil)
 
@@ -1121,7 +1116,7 @@ number input"
 
 (use-package eldoc
   ;; show useful contextual information in the echo-area
-  :diminish
+  :diminish eldoc-mode
   :commands (easy-eldoc)
   :config
   (defmacro easy-eldoc (hook fn)
@@ -3577,11 +3572,11 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 (use-package git-timemachine :straight t :defer t)
 (use-package centered-cursor-mode :straight t :defer t)
-(use-package rainbow-mode :straight t :defer t :diminish t) ;; highlight color-strings (hex, etc.)
+(use-package rainbow-mode :straight t :defer t :diminish rainbow-mode) ;; highlight color-strings (hex, etc.)
 
 (use-package outshine
   :straight t
-  :diminish t
+  :diminish outshine-mode
   :hook ((emacs-lisp-mode) . outshine-mode)
   :bind
   (:map outshine-mode-map
@@ -3850,7 +3845,7 @@ in the same file."
 
 (use-package frog-menu
   :straight t
-  :after flyspell
+  :after flyspell-correct
   :config
   (setq frog-menu-avy-padding t)
   (setq frog-menu-min-col-padding 4)
@@ -4094,7 +4089,7 @@ title and duration."
   ;; TODO: replace this
   :straight t
   :defer t
-  :delight " paxedit "
+  :diminish paxedit-mode
   :hook ((lisp-mode . paxedit-mode)
          (lisp-interaction-mode . paxedit-mode)
          (emacs-lisp-mode . paxedit-mode)
