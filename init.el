@@ -912,6 +912,28 @@ seconds."
   (setq diff-default-read-only t)
   (setq diff-font-lock-prettify t)
 
+  (defun diff/-get-file-strings ()
+    (let ((files))
+      (save-excursion
+        (goto-line 3)
+        (push (buffer-substring-no-properties (line-beginning-position) (line-end-position)) files)
+        (goto-line 2)
+        (push (buffer-substring-no-properties (line-beginning-position) (line-end-position)) files))
+      files))
+
+  (defun diff/-extract-file-from-file-string (s)
+    (nth 1
+         (s-match (rx (or "---" "+++") (1+ space)
+                      (group (1+ any)) (1+ space)
+                      (= 4 num) "-" (= 2 num) "-" (= 2 num) (1+ space)
+                      (= 2 num) ":" (= 2 num) ":" (= 2 num) (optional "." (1+ num)) (1+ space)
+                      (or "-" "+") (1+ num))
+                  s)))
+
+  (defun diff/get-files ()
+    (let ((files (diff/-get-file-strings)))
+      (-map #'diff/-extract-file-from-file-string files)))
+
   (defun diff-fullscreen (old new)
     "Like `diff', but hide delete other windows, fullscreening the diff buffer.
 
@@ -3035,9 +3057,30 @@ clipboard."
 
 (use-package vdiff
   :straight t
+  :bind
+  (:map diff-mode-map
+        ("V" . #'vdiff/from-diff))
   :config
   (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map)
-  (define-key vdiff-3way-mode-map (kbd "C-c") vdiff-mode-prefix-map))
+  (define-key vdiff-3way-mode-map (kbd "C-c") vdiff-mode-prefix-map)
+
+  (defun vdiff/from-diff ()
+    (interactive)
+    (when (eq major-mode 'diff-mode)
+      (let ((files (diff/get-files)))
+        (vdiff-files (nth 0 files) (nth 1 files))))))
+
+(use-package vdiff-magit
+  :straight t
+  :bind
+  (:map magit-mode-map
+        ("e" . #'vdiff-magit-dwim)
+        ("E" . #'vdiff-magit))
+  :config
+  (transient-suffix-put 'magit-dispatch "e" :description "vdiff (dwim)")
+  (transient-suffix-put 'magit-dispatch "e" :command 'vdiff-magit-dwim)
+  (transient-suffix-put 'magit-dispatch "E" :description "vdiff")
+  (transient-suffix-put 'magit-dispatch "E" :command 'vdiff-magit))
 
 (use-package erc
   :defer t
