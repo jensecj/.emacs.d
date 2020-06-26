@@ -123,12 +123,12 @@
   :straight (s :host github :repo "magnars/s.el"
                :fork (:host github :repo "jensecj/s.el")))
 
-(use-package f ;; file-system things, f-exists-p, f-base, etc.
+(use-package f ;; file-things, f-exists-p, f-base, etc.
   :demand t
   :straight (f :host github :repo "rejeep/f.el"
                :fork (:host github :repo "jensecj/f.el")))
 
-(use-package ht ;; a great hash-table wrapper.
+(use-package ht ;; great hash-table wrapper.
   :demand t
   :straight (ht :host github :repo "Wilfred/ht.el"
                 :fork (:host github :repo "jensecj/ht.el")))
@@ -2213,7 +2213,7 @@ current line."
      ((f-file? pick) (find-file pick))
      (t (message "unable to locate repo: %s" pick)))))
 
-(defun jens/load-secrets ()
+(defun load-secrets ()
   "Load secrets from `user-secrets-file'`"
   (interactive)
   (shut-up
@@ -2221,9 +2221,9 @@ current line."
       (insert-file-contents user-secrets-file)
       (eval-buffer))))
 
-(defun jens/get-secret (secret)
+(defun get-secret (secret)
   "Get a secret from `user-secrets-file'`."
-  (jens/load-secrets)
+  (load-secrets)
   (when (boundp secret)
     (symbol-value secret)))
 
@@ -2340,6 +2340,7 @@ Requires the system tools `tokei' and `jq'."
                  "straight/repos/today.el/*.el"
                  "straight/repos/dokument.el/*.el"
                  "straight/repos/orgflow.el/*.el"
+                 "straight/repos/org-proplines.el/*.el"
                  "straight/repos/augment.el/*.el"
                  "straight/repos/notmuch-mojn.el/*.el"
                  "straight/repos/lowkey-mode-line.el/*.el"
@@ -2476,7 +2477,6 @@ If DIR is nil, download to current directory."
   :defer t
   :requires epa-file
   :bind*
-  ;; TODO: this is just silly, i could use apply*, but this should be a part of `use-package'
   ((:map notmuch-show-mode-map
          ("u" . notmuch-mojn-refresh)
          ("g" . notmuch-refresh-this-buffer)
@@ -2491,7 +2491,7 @@ If DIR is nil, download to current directory."
          ("G" . notmuch-mojn-fetch-mail)))
   :commands notmuch-mojn
   :config
-  (jens/load-secrets)
+  (load-secrets)
   (require 'notmuch nil 'noerror)
 
   ;; TODO: action for adding contact to org-contacts?
@@ -2531,7 +2531,7 @@ If DIR is nil, download to current directory."
   (struere-add 'python-mode #'blacken-buffer))
 
 (use-package augment
-  :straight (augment :type git :repo "git@github.com:jensecj/augment.el.git")
+  :straight (augment :type git :repo "git@github.com:jensecj/augment.el")
   :defer t
   :hook (emacs-lisp-mode . augment-prog-mode)
   :config
@@ -2950,7 +2950,7 @@ _t_: go to today-file
   :config
   (require 'today)
 
-  (setq elfeed-search-filter "@1-month-ago +unread ")
+  (setq elfeed-search-filter "@12-month-ago +unread ")
 
   (setq elfeed-search-trailing-width 25)
 
@@ -3086,22 +3086,21 @@ clipboard."
 (use-package erc
   :defer t
   :after auth-source-pass
-  :functions ercgo
-  :commands (erc-tls ercgo)
+  :commands (erc-tls erc/start)
   :config
-  (setq erc-rename-buffers t
-        erc-interpret-mirc-color t
-        erc-prompt ">"
-        erc-track-enable-keybindings nil
-        erc-insert-timestamp-function 'erc-insert-timestamp-left
-        erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
-
+  (setq erc-rename-buffers t)
+  (setq erc-interpret-mirc-color t)
+  (setq erc-prompt ">")
+  (setq erc-track-enable-keybindings nil)
+  (setq erc-insert-timestamp-function 'erc-insert-timestamp-left)
+  (setq erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
   (setq erc-user-full-name user-full-name)
+
   (erc-hl-nicks-enable)
 
   (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs" "##java")))
 
-  (defun ercgo ()
+  (defun erc/start ()
     (interactive)
     (erc-tls :server "irc.freenode.net"
              :port 6697
@@ -4333,7 +4332,7 @@ re-enable afterwards."
 
 (use-package vterm
   :defer t
-  :straight (vterm :type git :repo "https://github.com/akermu/emacs-libvterm.git")
+  :straight (vterm :type git :host github :repo "akermu/emacs-libvterm")
   :init
   (add-to-list 'load-path (expand-file-name "~/software/emacs-libvterm"))
   :config
@@ -4409,7 +4408,7 @@ paste for multi-term mode."
    ("D" . ivy-occur-delete-candidate))
   :config
   (setq ivy-height 15)
-  (setq ivy-count-format "")
+  (setq ivy-count-format "%d/%d ")
   (setq ivy-use-virtual-buffers t)
   (setq ivy-re-builders-alist '((t . ivy--regex-plus)))
   (setq ivy-on-del-error-function nil)
