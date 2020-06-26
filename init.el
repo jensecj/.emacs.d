@@ -2457,6 +2457,16 @@ If DIR is nil, download to current directory."
   (setq orgflow-section-sizes '(40 40))
   (setq orgflow-directory (fn (or default-directory (cdr (project-current))))))
 
+(use-package org-proplines
+  :straight (org-proplines :type git :repo "git@github.com:jensecj/org-proplines.el.git")
+  :after org
+  :hook (org-mode . org-proplines-mode)
+  :config
+  (setq org-proplines-entries
+        '((:RATING . (lambda (d) (s-repeat (string-to-number d) "★")))
+          (:LOC . (lambda (d) (format "(%s lines)" d)))
+          (:DURATION . (lambda (d) (format "(%s)" d)))
+          (:DATE . (lambda (d) (format "[%s]" d))))))
 
 (use-package org-extra
   :after org
