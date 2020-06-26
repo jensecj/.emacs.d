@@ -1205,6 +1205,7 @@ number input"
 (use-package fringe
   :commands fringe-mode
   :config
+  (define-fringe-bitmap 'empty-fringe-bitmap [0] 1 1 'center)
   (set-fringe-mode '(5 . 5))
   :custom-face
   (fringe ((t (:background "#3f3f3f")))))
@@ -3803,18 +3804,18 @@ in the same file."
   :after diff-hl
   :defer t
   :config
-  (defun jens/empty-fringe-bmp (_type _pos)
+  (defun jens/empty-fringe-bitmap (&rest _args)
     "Always use the clean empty BMP for fringe display"
-    'diff-hl-bmp-empty)
+    'empty-fringe-bitmap)
 
   ;; Use clean fringe style for highlighting
-  (setq diff-hl-fringe-bmp-function #'jens/empty-fringe-bmp)
+  (setq diff-hl-fringe-bmp-function #'jens/empty-fringe-bitmap)
 
   (if (not (fn-checksum #'diff-hl-dired-highlight-items
                         "e06f15da2bf831295e015c9c82f11539"))
       (message "`diff-hl-dired-highlight-items' changed definition, ignoring patch.")
     (advice-patch #'diff-hl-dired-highlight-items
-                  'jens/empty-fringe-bmp
+                  'jens/empty-fringe-bitmap
                   'diff-hl-fringe-bmp-from-type)))
 
 (use-package hl-todo
