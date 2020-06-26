@@ -116,7 +116,7 @@
     "(-flatten (-map FN LIST))."
     (-flatten (-map fn list))))
 
-(use-package dash-functional :commands (-cut) :demand t)
+(use-package dash-functional :straight t :demand t)
 
 (use-package s ;; string things, s-trim, s-replace, etc.
   :demand t
