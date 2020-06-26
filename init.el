@@ -1813,9 +1813,13 @@ With prefix ARG, ask for file to open."
   "Inspect symbol at point."
   (interactive "P")
   (require 'dokument)
+  (require 'helpful)
   (let* ((sym (symbol-at-point))
          (value (cond
-                 ((fboundp sym) (symbol-function sym))
+                 ((fboundp sym)
+                  ;; TODO: fix functions defined in C.
+                  (let ((def (helpful--definition sym t)))
+                    (read (helpful--source sym t (car def) (cadr def)))))
                  ((boundp sym) (symbol-value sym)))))
     (if arg
         (with-current-buffer (get-buffer-create "*Inspect*")
@@ -4769,7 +4773,7 @@ initial search query."
 
 (bind-key "t" #'jens/tail-message-buffer messages-buffer-mode-map)
 
-(global-set-key (kbd "<f12>") #'jens/inspect-variable-at-point)
+(global-set-key (kbd "<f12>") #'jens/inspect-symbol-at-point)
 
 (global-set-key (kbd "C-<escape>") #'jens/shortcut/body)
 
