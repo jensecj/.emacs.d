@@ -2446,7 +2446,8 @@ If DIR is nil, download to current directory."
   (:map org-extra-map
         ("u" . #'orgflow-visit-linked-url)
         ("f" . #'orgflow-visit-linked-file)
-        ("i" . #'orgflow-insert-nearby-file-link)
+        ("i" . #'orgflow-insert-link-to-nearby-file)
+        ("R" . #'orgflow-refile-to-nearby-file)
         ("n" . #'orgflow-visit-nearby-file)
         ("t" . #'orgflow-visit-tagged-heading)
         ("h" . #'orgflow-visit-nearby-heading)
@@ -2462,7 +2463,6 @@ If DIR is nil, download to current directory."
   (:map org-extra-map
         ("*" . #'org-extra-rate)
         ("r" . #'org-extra-refile-here)
-        ("R" . #'org-extra-refile-to-open-org-file)
         ("c" . #'org-extra-copy-url-at-point)))
 
 (use-package dev-extra :demand t)
