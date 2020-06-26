@@ -4296,11 +4296,13 @@ re-enable afterwards."
 (use-package which-key
   :straight t
   :diminish which-key-mode
-  :commands (which-key-mode
-             which-key-setup-side-window-bottom)
   :config
   (setq which-key-separator "  ")
   (setq which-key-max-description-length 30)
+  (setq which-key-show-early-on-C-h t)
+  (setq which-key-idle-delay 1)
+  (setq which-key-idle-secondary-delay 0.05)
+
   (which-key-setup-side-window-bottom)
   (which-key-mode +1))
 
