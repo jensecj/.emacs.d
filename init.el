@@ -365,10 +365,6 @@ equality of computed checksum and arg."
 ;; don't blink the cursor
 (blink-cursor-mode -1)
 
-;; always highlight current line
-(setq global-hl-line-sticky-flag t)
-(global-hl-line-mode +1)
-
 ;; allow pasting selection outside of Emacs
 (setq select-enable-clipboard t)
 
@@ -835,6 +831,11 @@ seconds."
        ((s-matches-p indented-line-regex prev-line) (indent-line-to indent-column)))))
 
   (setq-mode-local makefile-mode indent-line-function #'make-mode/indent))
+
+(use-package hl-line
+  :config
+  (setq global-hl-line-sticky-flag t)
+  (global-hl-line-mode +1))
 
 (use-package dired
   :defer t
