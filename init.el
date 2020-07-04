@@ -2832,6 +2832,8 @@ _t_: go to today-file
 (use-package systemd :straight t :defer t)
 (use-package nginx-mode :straight t :defer t)
 
+(use-package elpher
+  :straight t)
 
 (use-package rust-mode
   :straight t
