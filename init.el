@@ -988,7 +988,20 @@ Works well being called from a terminal:
 ;;;;; minor modes
 
 (use-package hi-lock :diminish hi-lock-mode)
-(use-package outline :diminish outline-minor-mode)
+
+(use-package outline
+  :diminish outline-minor-mode
+  :config
+  (setq outline-blank-line t)
+  :custom-face
+  (outline-1 ((t (:weight bold))))
+  (outline-2 ((t (:weight bold))))
+  (outline-3 ((t (:weight bold))))
+  (outline-4 ((t (:weight bold))))
+  (outline-5 ((t (:weight bold))))
+  (outline-6 ((t (:weight bold))))
+  (outline-7 ((t (:weight bold))))
+  (outline-8 ((t (:weight bold)))))
 
 (use-package display-fill-column-indicator
   :hook ((text-mode prog-mode) . display-fill-column-indicator-mode)
@@ -3637,7 +3650,8 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package outshine
   :straight t
   :diminish outshine-mode
-  :hook ((emacs-lisp-mode) . outshine-mode)
+  :after outline
+  :hook (emacs-lisp-mode . outshine-mode)
   :bind
   (:map outshine-mode-map
         ("M-<up>" . nil)
@@ -3669,7 +3683,7 @@ in the same file."
   ;; fontify the entire outshine-heading, including the comment
   ;; characters (;;;)
   (if (not (fn-checksum #'outshine-fontify-headlines
-                        "77bb9734c4c082edc89a0270eb79ac77"))
+                        "193d058ba86f3b7127329ffe35b702cf"))
       (log-warning "`outshine-fontify-headlines' changed definition, ignoring patch.")
     (advice-patch #'outshine-fontify-headlines
                   '(font-lock-new-keywords
@@ -3691,28 +3705,11 @@ in the same file."
                       (,heading-7-regexp 1 'outshine-level-7 t)
                       (,heading-8-regexp 1 'outshine-level-8 t)))))
   :custom-face
-  (outshine-level-1 ((t (:inherit outline-1 :background nil :weight bold :foreground "#DFAF8F"))))
-  (outshine-level-2 ((t (:inherit outline-2 :background nil :weight bold))))
-  (outshine-level-3 ((t (:inherit outline-3 :background nil :weight bold))))
-  (outshine-level-4 ((t (:inherit outline-4 :background nil :weight bold))))
-  (outshine-level-5 ((t (:inherit outline-5 :background nil :weight bold)))))
-
-(use-package outline-minor-faces
-  ;; required by `backline'
-  :straight t
-  :custom-face
-  (outline-minor-1 ((t (:inherit outshine-level-1))))
-  (outline-minor-2 ((t (:inherit outshine-level-2))))
-  (outline-minor-3 ((t (:inherit outshine-level-3))))
-  (outline-minor-4 ((t (:inherit outshine-level-4))))
-  (outline-minor-5 ((t (:inherit outshine-level-5)))))
-
-(use-package backline
-  :straight t
-  :after outshine
-  :config
-  ;; highlight the entire line with outline-level face, even if collapsed.
-  (advice-add #'outline-flag-region :after 'backline-update))
+  (outshine-level-1 ((t (:inherit outline-1))))
+  (outshine-level-2 ((t (:inherit outline-2))))
+  (outshine-level-3 ((t (:inherit outline-3))))
+  (outshine-level-4 ((t (:inherit outline-4))))
+  (outshine-level-5 ((t (:inherit outline-5)))))
 
 (use-package flycheck
   :straight t
