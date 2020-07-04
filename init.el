@@ -1603,6 +1603,8 @@ If METHOD does not exist, do nothing."
    ("<C-S-up>" . nil)
    ("<C-S-down>" . nil)
    ("C-c C-o" . nil))
+  :init
+  (setq org-modules '(org-bibtex org-docview org-info))
   :config
   (defvar org-extra-map (make-sparse-keymap)
     "Extra keymap for `org-mode'.")
@@ -1610,6 +1612,8 @@ If METHOD does not exist, do nothing."
   ;;;;;;;;;;;;;;;;;;;;;;
   ;; general settings ;;
   ;;;;;;;;;;;;;;;;;;;;;;
+
+  (setq org-archive-save-context-info '(time file olpath itags))
 
   (setq org-catch-invisible-edits 'show-and-error)
   (setq org-log-done 'time)
@@ -1622,16 +1626,16 @@ If METHOD does not exist, do nothing."
   (setq org-edit-src-content-indentation 0)
 
   (setq org-use-speed-commands t)
+  (setq org-adapt-indentation nil) ; don't indent things
+  (setq org-tags-column  (- fill-column))
+  (setq org-ellipsis "᠁")
+  (setq org-cycle-separator-lines 1)    ; show single spaces between entries
 
   (setq org-speed-commands-user
         ;; don't move the point when using speed-commands...
         '(("o" . (lambda () (save-excursion (org-open-at-point))))))
 
-  (setq org-adapt-indentation nil) ; don't indent things
-
   (add-to-list 'org-cycle-hook #'org-cycle-hide-drawers) ; don't expand org drawers on cycling
-
-  (setq org-archive-save-context-info '(time file olpath itags))
 
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -1696,12 +1700,11 @@ If METHOD does not exist, do nothing."
   (add-hook 'org-after-todo-statistics-hook #'jens/org-summary-todo)
 
   ;; `$ $' is a pair for latex-math in org-mode
-  (setq org-extra-electric-pairs '((?\$ . ?\$)))
+  (defvar org-extra-electric-pairs '((?\$ . ?\$)))
 
-  (defun jens/org-add-electric-pairs ()
-    (setq-local electric-pair-pairs (-concat org-extra-electric-pairs electric-pair-pairs)))
-
-  (add-hook 'org-mode-hook #'jens/org-add-electric-pairs)
+  (setq-mode-local org-mode
+                   electric-pair-pairs
+                   (append org-extra-electric-pairs electric-pair-pairs))
 
   ;;;;;;;;;;;;;;;;;;;;;;
   ;; helper functions ;;
@@ -1727,6 +1730,9 @@ If METHOD does not exist, do nothing."
   ;;               org-latex-pdf-process
   ;;               '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
   ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  :custom-face
+  (org-ellipsis ((t (:foreground nil :underline nil)))))
+
 (use-package reftex
   :straight t
   :after org-mode)
