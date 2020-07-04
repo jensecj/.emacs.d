@@ -2632,7 +2632,7 @@ If DIR is nil, download to current directory."
    ("t" . today-capture-elfeed-at-point))
   :config
   (setq today-directory "~/vault/journal/")
-  (setq today-file "~/vault/org/today.org")
+  (setq today-file "~/vault/inbox/today.org")
   (setq today-inbox-file "~/vault/inbox/inbox.org")
 
   (defhydra today-refile-pl-hydra (:foreign-keys run)
@@ -4657,7 +4657,7 @@ initial search query."
 (bind-key* "\e\ei" (xi (find-file "~/vault/inbox/inbox.org")))
 (bind-key* "\e\ek" (xi (find-file "~/vault/org/tracking.org")))
 (bind-key* "\e\em" (xi (find-file "~/vault/org/roadmap.org")))
-(bind-key* "\e\et" (xi (find-file "~/vault/org/today.org")))
+(bind-key* "\e\et" (xi (find-file "~/vault/inbox/today.org")))
 (bind-key* "\e\er" (xi (find-file "~/vault/org/read.org")))
 (bind-key* "\e\ew" (xi (find-file "~/vault/org/watch.org")))
 (bind-key* "\e\ec" (xi (find-file "~/.emacs.d/init.el")))
