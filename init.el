@@ -1287,10 +1287,12 @@ If METHOD does not exist, do nothing."
   ;; clean the list every 5 minutes
   (setq recentf-auto-cleanup 300)
 
+  (defun silent-recentf-save ()
+    (shut-up
+      (recentf-save-list)))
+
   ;; save recentf file every 30s, but don't bother us about it
-  (setq recentf-auto-save-timer
-        (run-with-idle-timer 30 t (lambda ()
-                                    (shut-up (recentf-save-list)))))
+  (run-with-idle-timer 30 t #'silent-recentf-save)
 
   (defun path-colorize-tail (path face)
     (let ((last-part (-last-item (f-split path))))
