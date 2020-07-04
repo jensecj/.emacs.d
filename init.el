@@ -2920,7 +2920,10 @@ _t_: go to today-file
 
 (use-package forge
   :straight t
-  :after magit)
+  :after magit
+  :config
+  (add-to-list 'forge-owned-accounts `(,(get-secret 'user-github-account) . ()))
+  )
 
 (use-package magithub
   ;; https://github.com/vermiculus/magithub/blob/9fb9c653d0dad3da7ccff3ae321fa6e54c08f41b/magithub.el#L223
