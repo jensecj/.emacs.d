@@ -3093,6 +3093,12 @@ clipboard."
   (defalias #'describe-symbol #'helpful-symbol)
   (defalias #'describe-key #'helpful-key))
 
+(use-package elisp-demos
+  :straight t
+  :after helpful
+  :config
+  (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
+
 (use-package inform
   ;; hyperlinks of symbols (functions, variables, etc.) in Info to their documentation.
   :straight t)
@@ -4177,12 +4183,6 @@ title and duration."
     "Transpose things"
     ("f" #'paxedit-transpose-forward "forward")
     ("b" #'paxedit-transpose-backward "backward")))
-
-(use-package elisp-demos
-  :straight t
-  :after helpful
-  :config
-  (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 (use-package iedit
   :straight t
