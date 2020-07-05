@@ -2918,7 +2918,13 @@ _t_: go to today-file
   (setq git-commit-summary-max-length fill-column)
   (setq git-commit-style-convention-checks nil) ; don't warn about long or multiline messages
 
-  (add-hook 'git-commit-mode-hook #'flyspell-prog-mode))
+  ;; disable hl-line-mode in magit, it messes with diffs
+  (add-hook 'magit-mode-hook
+            (fn
+             (make-variable-buffer-local 'global-hl-line-mode)
+             (setq global-hl-line-mode nil)))
+
+  (add-hook 'git-commit-mode-hook #'flyspell-prog-mode)
 
 (use-package forge
   :straight t
