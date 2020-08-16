@@ -1560,6 +1560,9 @@ If METHOD does not exist, do nothing."
    :map org-mode-map
    ("M-<next>" . org-move-subtree-down)
    ("M-<prior>" . org-move-subtree-up)
+   ("M-<right>" . org-demote-subtree)
+   ("M-<left>" . org-promote-subtree)
+   ("C-c C-q" . jens/org-tag)
    ;; unbind things that are used for other things
    ([(tab)] . nil)
    ("C-a" . nil)
