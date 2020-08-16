@@ -3626,12 +3626,13 @@ if BACKWARDS is non-nil, jump backwards instead."
   :straight t
   :diminish highlight-thing-mode
   :config
-  (setq highlight-thing-ignore-list '("nil" "t"))
+  (setq highlight-thing-ignore-list '("nil" "t" "*"))
   (setq highlight-thing-delay-seconds 0.4)
   (setq highlight-thing-case-sensitive-p nil)
   (setq highlight-thing-exclude-thing-under-point nil)
   (setq highlight-thing-limit-to-region-in-large-buffers-p t)
   (setq highlight-thing-narrow-region-lines 30)
+  (add-to-list* 'highlight-thing-excluded-major-modes '(notmuch-show-mode notmuch-search-mode))
   (global-highlight-thing-mode +1)
   :custom-face
   (highlight-thing ((t (:background "#5f5f5f" :weight bold)))))
