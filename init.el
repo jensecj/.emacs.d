@@ -4414,11 +4414,7 @@ paste for multi-term mode."
   :straight t
   :demand t
   :diminish ivy-mode
-  :commands (ivy-read
-             ivy-mode
-             ivy-pop-view-action
-             ivy-default-view-name
-             ivy--get-window)
+  :commands (ivy-read)
   :bind
   (("C-x C-b" . ivy-switch-buffer)
    ("C-c C-r" . ivy-resume)
@@ -4443,6 +4439,7 @@ paste for multi-term mode."
   :straight t
   :after ivy
   :defer 1
+  :defer t
   :diminish counsel-mode
   :functions jens/counsel-read-file-name
   :commands (counsel-mode counsel--find-file-matcher)
@@ -4454,17 +4451,23 @@ paste for multi-term mode."
    ("C-x C-i" . counsel-imenu)
    ("C-x i" . counsel-outline)
    ("M-æ" . counsel-mark-ring)
+   ("M-y" . counsel-yank-pop)
    ("M-x" . counsel-M-x)
    ("M-b" . counsel-bookmark)
    :map help-map
-   ("l" . counsel-find-library)
-   :map org-mode-map
-   ("C-c C-q" . counsel-org-tag))
+   ("l" . counsel-find-library))
   :init
   (setenv "FZF_DEFAULT_COMMAND" "fd --type f --hidden --follow --exclude .git")
   :config
   (setq counsel-outline-display-style 'path)
   (setq counsel-outline-face-style 'verbatim)
+
+  (add-to-list* 'ivy-prescient-sort-commands
+                '(counsel-outline
+                  counsel-imenu
+                  counsel-mark-ring
+                  counsel-yank-pop)
+                t)
 
   (setq counsel-fzf-cmd "fzf -i -x -f \"%s\"")
 
@@ -4487,7 +4490,7 @@ paste for multi-term mode."
       (deactivate-mark)
       (counsel-rg initial-input default-directory)))
 
-  (counsel-mode))
+  (counsel-mode +1))
 
 (use-package counsel-tramp :straight t :defer t)
 
@@ -4502,8 +4505,8 @@ initial search query."
     (if (region-active-p)
         (let ((query (buffer-substring-no-properties (region-beginning) (region-end))))
           (deactivate-mark)
-          (swiper query))
-      (call-interactively #'swiper)))
+          (swiper-isearch query))
+      (call-interactively #'swiper-isearch)))
   :custom-face
   (swiper-line-face ((t (:foreground nil :background "#292929" :height 110)))))
 
