@@ -1196,7 +1196,12 @@ number input"
   :commands fringe-mode
   :config
   (define-fringe-bitmap 'empty-fringe-bitmap [0] 1 1 'center)
-  (set-fringe-mode '(5 . 5))
+  (setf (alist-get 'truncation fringe-indicator-alist)
+        '(empty-line empty-line))
+  (setf (alist-get 'continuation fringe-indicator-alist)
+        '(vertical-bar vertical-bar))
+
+  (set-fringe-mode '(4 . 4))
   :custom-face
   (fringe ((t (:background "#3f3f3f")))))
 
