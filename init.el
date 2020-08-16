@@ -982,7 +982,7 @@ Works well being called from a terminal:
 (use-package display-fill-column-indicator
   :hook ((text-mode prog-mode) . display-fill-column-indicator-mode)
   :custom-face
-  (fill-column-indicator ((t (:foreground ,(zenburn-get "zenburn-bg+05") :background nil)))))
+  (fill-column-indicator ((t (:foreground ,(zent 'bg+05) :background nil)))))
 
 (use-package ispell
   :defer t
@@ -2802,11 +2802,11 @@ _t_: go to todays file
 
   (load-theme 'zenburn t)
   :custom-face
-  (cursor ((t (:foreground ,(zenburn-get "zenburn-fg-1") :background ,(zenburn-get "zenburn-fg")))))
+  (cursor ((t (:background ,(zent 'grey)))))
   (region ((t (:background  "#2B2B2B"))))
-  (mode-line ((t (:box nil :background  "#2B2B2B"))))
-  (header-line ((t (:box nil))))
+  (mode-line ((t (:box nil :background "#2B2B2B"))))
   (mode-line-inactive ((t (:box nil))))
+  (header-line ((t (:box nil))))
   (hl-line ((t (:background "gray30"))))
   (highlight ((t (:background nil :foreground nil)))))
 
@@ -2922,6 +2922,11 @@ _t_: go to todays file
              (setq global-hl-line-mode nil)))
 
   (add-hook 'git-commit-mode-hook #'flyspell-prog-mode)
+  :custom-face
+  (magit-diff-added ((t (:background ,(zent 'green-4)))))
+  (magit-diff-added-highlight ((t (:background ,(zent 'green-3)))))
+  (magit-diff-removed ((t (:background ,(zent 'red-5)))))
+  (magit-diff-removed-highlight ((t (:background ,(zent 'red-4))))))
 
 (use-package forge
   :straight t
@@ -3200,7 +3205,7 @@ clipboard."
   (add-to-list* 'notmuch-archive-tags '("+archived" "-deleted"))
 
   (defface notmuch-search-muted-face
-    `((t (:foreground ,(zenburn-get "zenburn-bg+3"))))
+    `((t (:foreground ,(zent 'grey-1))))
     "Face used in search modes for muted threads.")
 
   (add-to-list 'notmuch-search-line-faces
@@ -3453,12 +3458,12 @@ if BACKWARDS is non-nil, jump backwards instead."
   (define-key notmuch-search-mode-map (kbd "C-c C-l") #'org-store-link)
 
   :custom-face
-  (notmuch-search-flagged-face ((t (:background ,(zenburn-get "zenburn-blue-5") :extend t))))
+  (notmuch-search-flagged-face ((t (:background ,(zent 'blue-5) :extend t))))
   (notmuch-wash-cited-text ((t (:inherit font-lock-comment-face))))
-  (notmuch-wash-toggle-button ((t (:foreground ,(zenburn-get "zenburn-yellow") :background ,(zenburn-get "zenburn-bg")))))
-  (notmuch-message-summary-face ((t (:background ,(zenburn-get "zenburn-bg-1") :height 105 :extend t))))
-  (notmuch-search-unread-face ((t (:weight bold :foreground ,(zenburn-get "zenburn-yellow")))))
-  (notmuch-tag-deleted ((t (:foreground ,(zenburn-get "zenburn-red") :underline "red" :strike-through nil))))
+  (notmuch-wash-toggle-button ((t (:foreground ,(zent 'yellow) :background ,(zent 'bg)))))
+  (notmuch-message-summary-face ((t (:background ,(zent 'bg-1) :extend t))))
+  (notmuch-search-unread-face ((t (:weight bold :foreground ,(zent 'yellow)))))
+  (notmuch-tag-deleted ((t (:foreground ,(zent 'red) :underline "red" :strike-through nil))))
   (notmuch-tag-face ((t (:foreground "#11ff11")))))
 
 ;;;; extensions to built-in packages
@@ -3958,8 +3963,8 @@ of (command . word) to be used by `flyspell-do-correct'."
 
   (setq flyspell-correct-interface #'frog-menu-flyspell-correct)
   :custom-face
-  (frog-menu-border ((t (:background ,(zenburn-get "zenburn-bg-1")))))
-  (frog-menu-posframe-background-face ((t (:background ,(zenburn-get "zenburn-bg-1"))))))
+  (frog-menu-border ((t (:background ,(zent 'bg-1)))))
+  (frog-menu-posframe-background-face ((t (:background ,(zent 'bg-1))))))
 
 (use-package spinner
   :straight t
@@ -4239,11 +4244,11 @@ re-enable afterwards."
 
   (advice-add #'avy-goto-char :around #'jens/avy-disable-highlight-thing)
   :custom-face
-  (avy-background-face ((t (:foreground "grey50" :background ,(zenburn-get "zenburn-bg-1") :extend t))))
-  (avy-lead-face ((t (:background ,(zenburn-get "zenburn-bg-1")))))
-  (avy-lead-face-0 ((t (:background ,(zenburn-get "zenburn-bg-1")))))
-  (avy-lead-face-1 ((t (:background ,(zenburn-get "zenburn-bg-1")))))
-  (avy-lead-face-2 ((t (:background ,(zenburn-get "zenburn-bg-1"))))))
+  (avy-background-face ((t (:foreground ,(zent 'grey+3) :background ,(zent 'bg-1) :extend t))))
+  (avy-lead-face ((t (:background ,(zent 'bg-1)))))
+  (avy-lead-face-0 ((t (:background ,(zent 'bg-1)))))
+  (avy-lead-face-1 ((t (:background ,(zent 'bg-1)))))
+  (avy-lead-face-2 ((t (:background ,(zent 'bg-1))))))
 
 (use-package avy-zap
   :straight t
