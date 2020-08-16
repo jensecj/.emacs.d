@@ -120,9 +120,15 @@
   :straight (dash :host github :repo "magnars/dash.el"
                   :fork (:host github :repo "jensecj/dash.el"))
   :config
-  (defun -flatmap (fn list)
-    "(-flatten (-map FN LIST))."
-    (-flatten (-map fn list))))
+  (defun -flatmap (f list)
+    (-flatten (-map f list)))
+
+  (defun -mapcar (f list)
+    (-map f (-map #'car list)))
+
+  (defun -mapcdr (f list)
+    (-map f (-map #'cdr list)))
+  )
 
 (use-package dash-functional :straight t :demand t)
 
