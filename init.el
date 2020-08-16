@@ -4176,7 +4176,12 @@ title and duration."
 
 (use-package iedit
   :straight t
-  :bind* ("C-;" . iedit-mode))
+  :bind
+  (("C-;" . iedit-mode)
+   :map iedit-mode-keymap
+   ("<return>" . iedit-quit))
+  :custom-face
+  (iedit-occurrence ((t (:box t)))))
 
 (use-package multiple-cursors
   :straight t
