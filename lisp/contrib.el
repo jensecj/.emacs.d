@@ -59,17 +59,9 @@ Use `setf' to change the element."
 
 ;;;;; misc
 
-(defun -mapcar (fn &rest lists)
-  "Map FN to the car of each list in LISTS."
-  (cond
-   ((null lists) nil)
-   ((null (car lists)) nil)
-   ((listp lists)
-    (cons
-     (apply fn (-map #'car lists))
-     (apply #'-mapcar fn (-map #'cdr lists))))))
 ;; (defalias '-> #'thread-first) # TODO: benchmark against dash
 ;; (defalias '->> #'thread-last)
+(defalias 'flatten #'flatten-list)      ;FIXME: don't remove nil elements
 
 (defun deleteq (ELT LIST)
   "Delete ELT from LIST, in-place."
