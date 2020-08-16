@@ -4064,24 +4064,23 @@ title and duration."
   (defun jens/smart-jump-find-references-with-rg ()
     "Use `rg' to find references."
     (interactive)
-    (if (fboundp 'rg)
-        (progn
-          (if (not (fboundp 'smart-jump-refs-search-rg))
-              (rg-define-search smart-jump-refs-search-rg
-                "Search for references for QUERY in all files in
+    (unless (fboundp 'rg)
+      (message "Install `rg' to use `smart-jump-simple-find-references-with-rg'."))
+
+    (if (not (fboundp 'smart-jump-refs-search-rg))
+        (rg-define-search smart-jump-refs-search-rg
+          "Search for references for QUERY in all files in
                 the current project."
-                :dir project
-                :files current))
+          :dir project
+          :files current))
 
-          (smart-jump-refs-search-rg
-           (cond ((use-region-p)
-                  (buffer-substring-no-properties (region-beginning)
-                                                  (region-end)))
-                 ((symbol-at-point)
-                  (substring-no-properties
-                   (symbol-name (symbol-at-point)))))))
-
-      (message "Install `rg' to use `smart-jump-simple-find-references-with-rg'.")))
+    (smart-jump-refs-search-rg
+     (cond ((use-region-p)
+            (buffer-substring-no-properties (region-beginning)
+                                            (region-end)))
+           ((symbol-at-point)
+            (substring-no-properties
+             (symbol-name (symbol-at-point)))))))
 
   (defun jens/select-rg-window nil
     "Select the `rg' buffer, if visible."
