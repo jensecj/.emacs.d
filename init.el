@@ -1419,6 +1419,13 @@ If METHOD does not exist, do nothing."
     (previous-error)
     (jens/goto-error-hydra/body)))
 
+(use-package url
+  :config
+  ;; don't store cookies.
+  (setq url-cookie-file nil)
+  (setq url-cookie-trusted-urls nil)
+  (setq url-cookie-confirmation t))
+
 (use-package browse-url
   :defer t
   :bind
