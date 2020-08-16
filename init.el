@@ -1686,6 +1686,19 @@ If METHOD does not exist, do nothing."
   ;; helper functions ;;
   ;;;;;;;;;;;;;;;;;;;;;;
 
+  (defun jens/org-tag ()
+    "Tag current headline with available tags from the buffer"
+    (interactive)
+    (let* ((completions (org-get-buffer-tags))
+           (tags (org-get-local-tags))
+           (pick (completing-read (format "%s: " tags) completions)))
+      (if (member pick tags)
+          (setq tags (delete pick tags))
+        (push pick tags))
+      (save-excursion
+        (org-back-to-heading t)
+        (org-set-tags tags))))
+
   (defun jens/toggle-org-babel-safe ()
     "Toggle whether it is safe to eval babel code blocks in the current buffer."
     (interactive)
