@@ -921,7 +921,7 @@ Works well being called from a terminal:
 
 (use-package eww
   :defer t
-  :after browse-url
+  :requires browse-url
   :bind (("M-s M-o" . #'eww/open-url-at-point)
          ("M-s M-w" . #'eww/search-region)
          ("M-s M-d" . #'eww/download-url-at-point)
