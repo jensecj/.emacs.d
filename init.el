@@ -1603,7 +1603,7 @@ If METHOD does not exist, do nothing."
   (setq org-adapt-indentation nil) ; don't indent things
   (setq org-tags-column 0)
   (setq org-tags-sort-function #'org-string-collate-lessp)
-  (setq org-ellipsis "᠁")
+  (setq org-ellipsis "⋯")
   (setq org-cycle-separator-lines 1)    ; show single spaces between entries
 
   (setq org-speed-commands-user
