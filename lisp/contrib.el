@@ -23,7 +23,6 @@
 (defalias '@ 'progn)
 
 ;;;;; regular expressions
-
 (defalias 'regexp-search-forward 're-search-forward)
 (defalias 'regexp-search-backward 're-search-backward)
 (defalias 'regexp-replace 'replace-regexp)
@@ -47,6 +46,14 @@
 (defalias 'file-copy 'copy-file)
 
 ;;;; macros
+(defmacro map-elt* (coll &rest keys)
+  "Access a nested element in COLL, following KEYS.
+
+Use `setf' to change the element."
+  (let ((form `(map-elt ,coll ,(pop keys))))
+    (while keys
+      (setq form `(map-elt ,form ,(pop keys))))
+    form))
 
 ;;;; functions
 
