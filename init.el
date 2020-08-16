@@ -67,6 +67,14 @@
 
 (add-hook 'server-after-make-frame-hook #'jens/init-fonts)
 
+(defvar idle-with-no-active-frames-functions '())
+(defun jens/idle-with-no-active-frames ()
+  (when (and (server-running-p)
+             (string= (map-elt (frame-parameters (selected-frame)) 'name) "F1"))
+    (run-hooks 'idle-with-no-active-frames-functions)))
+
+(run-with-idle-timer 30 t #'jens/idle-with-no-active-frames)
+
 ;;;; fundamental third-party packages
 
 (log-info "Loading fundamental third-party packages")
