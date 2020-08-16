@@ -2048,7 +2048,7 @@ otherwise the current line is saved."
   (save-mark-and-excursion
     (if (region-active-p)
         (kill-ring-save (region-beginning) (region-end))
-      (kill-ring-save (line-beginning-position) (+ 1 (line-end-position))))))
+      (kill-ring-save (line-beginning-position) (line-end-position)))))
 
 (defun jens/kill-region-or-current-line (arg)
   "If a region is active then it is killed, otherwise the current
