@@ -3176,7 +3176,7 @@ clipboard."
   ;; TODO: setup notmuch for multiple mail-profiles
   ;; see https://www.djcbsoftware.nl/code/mu/mu4e/Contexts-example.html
   :straight t
-  :defer
+  :defer t
   :bind
   (:map notmuch-show-mode-map
         ("B" . #'jens/notmuch-show-list-links)
@@ -3196,8 +3196,9 @@ clipboard."
   (setq notmuch-fcc-dirs "sent +sent -new -unread")
   (setq notmuch-column-control 1.0)
   (setq notmuch-wash-wrap-lines-length fill-column)
-  (setq notmuch-wash-citation-lines-prefix 20)
+  (setq notmuch-wash-citation-lines-prefix 10)
   (setq notmuch-wash-citation-lines-suffix 0)
+  (setq notmuch-wash-citation-regexp (rx bol (0+ space) (optional (1+ alpha)) ">" (0+ any) eol))
   (setq notmuch-wash-button-signature-hidden-format "\n[ signature -- click to show ]")
   (setq notmuch-wash-button-signature-visible-format "\n[ signature -- click to hide ]")
   (setq notmuch-wash-button-citation-hidden-format "[ %d more lines -- click to show ]")
@@ -3286,6 +3287,12 @@ clipboard."
   (setq notmuch-message-headers-visible nil)
   (remove-hook 'notmuch-show-hook #'notmuch-show-turn-on-visual-line-mode)
 
+  (defun notmuch-show/update-header-line ()
+    "Set the `header-line' to the subject of the current message."
+    (setq header-line-format (map-elt* (notmuch-show-get-message-properties) :headers :Subject)))
+
+  (advice-add 'notmuch-show-command-hook :after #'notmuch-show/update-header-line)
+
   (setq notmuch-show-max-text-part-size 10000) ; collapse text-parts over 10000 characters
 
   (defun notmuch-show/format-headerline-date (&rest args)
@@ -3319,7 +3326,6 @@ Inserts information about senders, and the mail subject into eldoc."
   (easy-eldoc notmuch-show-mode-hook notmuch-show/eldoc)
 
   (add-hook 'notmuch-show-mode-hook #'augment-mode)
-
 
   (defun notmuch-show/view-mime-part-at-point-in-mode ()
     "Open MIME-part at point in a specific major-mode."
@@ -3372,7 +3378,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   ;; TODO: upstream this
   ;; don't indent headerline if content is not indented
-  (if (not (fn-checksum #'notmuch-show-insert-headerline "3fe006fc96276830f7b5309cd6502a45"))
+  (if (not (fn-checksum #'notmuch-show-insert-headerline "f89c0c2425d8396249b8f0a71773ae34"))
       (log-warning "#'notmuch-show-insert-headerline changed definition, skipping patch")
     (advice-patch #'notmuch-show-insert-headerline
                   '(if notmuch-show-indent-content
@@ -3381,7 +3387,7 @@ if BACKWARDS is non-nil, jump backwards instead."
                   '(notmuch-show-spaces-n (* notmuch-show-indent-messages-width depth))))
 
   ;; make sure that messages end in a newline, just like the newline after the header.
-  (if (not (fn-checksum #'notmuch-show-insert-msg "8aeeebe6781a195fc1ee53fea1a0575e"))
+  (if (not (fn-checksum #'notmuch-show-insert-msg "a42006989de105de67934a5683c8a026"))
       (log-warning "#'notmuch-show-insert-msg changed definition, skipping patch.")
     (advice-patch #'notmuch-show-insert-msg
                   '(progn
@@ -3392,7 +3398,7 @@ if BACKWARDS is non-nil, jump backwards instead."
                      (insert "\n"))))
 
   ;; only show text/plain part by default
-  (if (not (fn-checksum #'notmuch-show-insert-bodypart "e46448fdf4e2e29eeeb4761cd692f5bb"))
+  (if (not (fn-checksum #'notmuch-show-insert-bodypart "6226e62ae95cf9218a88ea095ee1ff52"))
       (log-warning "#'notmuch-show-insert-bodypart changed definition, skipping patch.")
     (advice-patch #'notmuch-show-insert-bodypart
                   '(or (notmuch-match-content-type mime-type "multipart/*")
