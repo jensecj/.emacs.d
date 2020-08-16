@@ -3120,6 +3120,8 @@ clipboard."
 
 (use-package vdiff
   :straight t
+  :defer t
+  :commands (vdiff-files vdiff-files3)
   :bind
   (:map diff-mode-map
         ("V" . #'vdiff/from-diff))
@@ -3135,6 +3137,7 @@ clipboard."
 
 (use-package vdiff-magit
   :straight t
+  :after magit
   :bind
   (:map magit-mode-map
         ("e" . #'vdiff-magit-dwim)
