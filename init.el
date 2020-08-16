@@ -2996,7 +2996,8 @@ _t_: go to todays file
 
 (use-package elfeed
   :straight t
-  :defer
+  :defer t
+  :defines elfeed-search-mode-map
   :commands (elfeed elfeed-search-selected jens/load-elfeed)
   :functions jens/elfeed-copy-link-at-point
   :bind
@@ -3150,7 +3151,6 @@ clipboard."
 
 (use-package erc
   :defer t
-  :after auth-source-pass
   :commands (erc-tls erc/start)
   :config
   (setq erc-rename-buffers t)
@@ -4065,7 +4065,7 @@ title and duration."
 (use-package amx
   :straight t
   :config
-  (amx-mode))
+  (amx-mode +1))
 
 (use-package prescient
   :straight t
@@ -4354,7 +4354,6 @@ re-enable afterwards."
 (use-package wgrep
   :straight t
   :defer t
-  :after grep
   :bind
   (("C-S-g" . rgrep)
    :map grep-mode-map
@@ -4472,11 +4471,8 @@ paste for multi-term mode."
 
 (use-package counsel
   :straight t
-  :after ivy
-  :defer 1
   :defer t
   :diminish counsel-mode
-  :functions jens/counsel-read-file-name
   :commands (counsel-mode counsel--find-file-matcher)
   :bind
   (("C-S-s" . jens/ripgrep)
