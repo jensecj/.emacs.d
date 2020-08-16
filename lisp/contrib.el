@@ -68,6 +68,8 @@ Use `setf' to change the element."
     (cons
      (apply fn (-map #'car lists))
      (apply #'-mapcar fn (-map #'cdr lists))))))
+;; (defalias '-> #'thread-first) # TODO: benchmark against dash
+;; (defalias '->> #'thread-last)
 
 (defun deleteq (ELT LIST)
   "Delete ELT from LIST, in-place."

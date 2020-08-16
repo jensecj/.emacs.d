@@ -6,6 +6,7 @@
 ;; Keywords: format, reformat, clean, buffer
 ;; Package-Version: 20190526
 ;; Version: 0.1.0
+;; Package-Requires: ((emacs "25.1") (dash "2.14.1") (ht "2.3"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -59,7 +60,6 @@
                   (message "cleanup %s: %s" i e)
                   (funcall e))
                 (ht-get struere-backends major-mode struere-default-fns))
-
   (message "buffer cleaned"))
 
 (provide 'struere)

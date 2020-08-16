@@ -1,10 +1,10 @@
 ;;; highlight-bookmarks.el --- Toggling highlight-bookmarks state of buffers. -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018 Jens Christian Jensen
+;; Copyright (C) 2020 Jens Christian Jensen
 
 ;; Author: Jens Christian Jensen <jensecj@gmail.com>
 ;; Keywords: highlighting, bookmarks
-;; Package-Version: 20190208
+;; Package-Version: 20200626
 ;; Version: 0.3
 ;; Package-Requires: ((emacs "25.1") (ov "1.0.6") (dash "2.14.1") (f "0.20.0"))
 
@@ -60,6 +60,7 @@
                  (string= current-file (car o)))
              (hb--all-bookmarks))))
 
+;; TODO: make into minor-mode, use jit-lock
 ;;;###autoload
 (defun highlight-bookmarks-in-this-buffer (&rest _args)
   (interactive)

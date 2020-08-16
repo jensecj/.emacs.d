@@ -43,6 +43,7 @@
 
 (defun dev--edit-header (header)
   "Edit HEADER interactively."
+  ;; TODO: create new header if it does not exist?
   (when-let* ((contents (dev--get-header header))
               (new (completing-read (format "%s: " header) nil nil nil contents)))
     (dev--set-header header new)))

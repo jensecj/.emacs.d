@@ -269,6 +269,7 @@
    ((listp atom-or-list) (-map fn atom-or-list))
    (t (funcall fn atom-or-list))))
 
+;; TODO: fix #'transpose, `-mapcar' is wrong in this context
 (defun transpose (&rest lists)
   (apply #'-mapcar #'-list lists))
 
@@ -453,6 +454,8 @@ equality of computed checksum and arg."
 ;; use spaces instead of tabs
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
+
+;; TODO: fix indentation, set default indent in text-modes to 0
 ;; this messes with less things when indenting,
 ;; tabs are converted to spaces automatically
 (setq-default indent-line-function 'insert-tab)
@@ -483,6 +486,9 @@ equality of computed checksum and arg."
 ;; keep a lot more undo history (expressed in bytes)
 (setq undo-limit (* 10 1024 1024))
 (setq undo-strong-limit (* 30 1024 1024))
+
+;; TODO: maybe set amalgamating-undo-limit?, see if it replaces `jens/pop-to-mark-command'
+;; (setq amalgamating-undo-limit 50)
 
 ;; remember a lot of messages
 (setq message-log-max 50000)
@@ -3343,6 +3349,7 @@ if BACKWARDS is non-nil, jump backwards instead."
     (interactive)
     (notmuch-show/goto-message-with-tag "unread" 'backwards))
 
+  ;; TODO: upstream this
   ;; don't indent headerline if content is not indented
   (if (not (fn-checksum #'notmuch-show-insert-headerline "3fe006fc96276830f7b5309cd6502a45"))
       (log-warning "#'notmuch-show-insert-headerline changed definition, skipping patch")
@@ -4826,8 +4833,12 @@ initial search query."
 
 ;; TODO: get buffer string without `with-current-buffer', to speed things up?
 ;; TODO: colorize message/compile buffer
-;; TODO: add separator in compile mode
+;; TODO: add separator (^L / newline?) in compile mode
 ;; TODO: test with ert?
+;; TODO: maybe autoinsert? https://www.gnu.org/software/emacs/manual/html_node/autotype/Autoinserting.html
+;; TODO: look at doom-emacs completion
+;; TODO: notify someone about the auto-revert + tramp hangs
+;; TODO: figure out how to default username on tramp ssh access using .ssh/config User entry
 
 (provide 'init)
 ;;; init.el ends here
