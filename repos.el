@@ -16,10 +16,10 @@
  ("~/.emacs.d/straight/repos/straight-ui.el/")
  ("~/.emacs.d/straight/repos/augment.el/")
  ("~/.emacs.d/straight/repos/orgflow.el/")
+ ("~/.emacs.d/straight/repos/org-proplines.el/")
 
  ("~/vault/org/")
  ("~/vault/courses/")
- ("~/vault/knowledge-base/")
  ("~/vault/projects/clojure/microblog/")
  ("~/vault/projects/code-challenges/")
  ("~/vault/projects/java/flatlab/")
