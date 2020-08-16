@@ -2712,19 +2712,14 @@ _l_: list all archived files
 _f_: refile hydra
 _g_: move entry to today-file
 
-_t_: go to today-file
+_t_: go to todays file
 "
     ("c" #'today-capture-hydra/body :exit t)
-
     ("a" #'today-archive-done-todos :exit t)
-
-    ("t" #'today :exit t)
-    ("T" #'today-visit-todays-file :exit t)
+    ("t" #'today-visit-todays-file :exit t)
     ("l" #'today-list :exit t)
     ("f" #'today-refile-hydra/body :exit t)
-
     ("g" #'today-move-to-today)
-
     ("q" nil "quit")))
 
 (use-package dokument
