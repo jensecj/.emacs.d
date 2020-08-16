@@ -687,7 +687,7 @@ seconds."
 
 ;; load theme colors early, so they can be used for customizing other packages
 (use-package zent-theme
-  :load-path "lisp/zent-theme.el"
+  :straight (zent-theme :type git :repo "git@github.com:jensecj/zent-theme.el.git")
   :functions zent
   :config
   ;; (load-theme 'zent t)
