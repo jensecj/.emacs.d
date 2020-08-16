@@ -2824,7 +2824,9 @@ _t_: go to todays file
 (use-package nginx-mode :straight t :defer t)
 
 (use-package elpher
-  :straight t)
+  :straight t
+  :config
+  (setq elpher-bookmarks-file (no-littering-expand-etc-file-name "elpher-bookmarks")))
 
 (use-package rust-mode
   :straight t
