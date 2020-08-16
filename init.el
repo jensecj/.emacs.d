@@ -1623,16 +1623,17 @@ If METHOD does not exist, do nothing."
      (python . t)
      (gnuplot . t)))
 
-  (let* ((ditaa-dir "/usr/share/java/ditaa/")
-         (ditaa-jar
-          (-as-> (f-entries ditaa-dir) es
-                 (-filter (lambda (e)
-                            (and
-                             (s-starts-with-p "ditaa" (f-filename e))
-                             (f-ext-p e "jar")))
-                          es)
-                 (car es))))
-    (setq org-ditaa-jar-path ditaa-jar))
+  (when (f-exists-p "/usr/share/java/ditaa/")
+    (let* ((ditaa-dir "/usr/share/java/ditaa/")
+           (ditaa-jar
+            (-as-> (f-entries ditaa-dir) es
+                   (-filter (lambda (e)
+                              (and
+                               (string-prefix-p "ditaa" (f-filename e))
+                               (f-ext-p e "jar")))
+                            es)
+                   (car es))))
+      (setq org-ditaa-jar-path ditaa-jar)))
 
   ;; try to get non-fuzzy latex fragments
   (plist-put org-format-latex-options :scale 1.6)
