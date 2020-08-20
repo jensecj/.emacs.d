@@ -3040,7 +3040,7 @@ _t_: go to todays file
 
   (defun jens/elfeed-select-emacs-after-browse-url (fn &rest args)
     "Activate the emacs-window"
-    (let* ((emacs-window (shell-command-to-string "xdotool getactivewindow"))
+    (let* ((emacs-window (shell-command-to-string "xdo id"))
            (active-window "")
            (counter 0))
       (apply fn args)
@@ -3049,8 +3049,8 @@ _t_: go to todays file
                   (< counter 15))
         (sleep-for 0.2)
         (incf counter)
-        (setq active-window (shell-command-to-string "xdotool getactivewindow"))
-        (shell-command-to-string (format "xdotool windowactivate %s" emacs-window)))))
+        (setq active-window (shell-command-to-string "xdo id"))
+        (shell-command-to-string (format "xdo activate %s" emacs-window)))))
 
   (advice-add #'elfeed-search-browse-url :around #'jens/elfeed-select-emacs-after-browse-url)
 
