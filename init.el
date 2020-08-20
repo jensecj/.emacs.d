@@ -4309,8 +4309,8 @@ re-enable afterwards."
   :config
   (setq undo-tree-visualizer-diff t)
   (setq undo-tree-auto-save-history t)
-  (setq undo-tree-history-directory-alist `(("." . ,no-littering-var-directory)))
-  (global-undo-tree-mode))
+  (setq undo-tree-history-directory-alist `(("." . ,(concat no-littering-var-directory "undo-tree/"))))
+  (global-undo-tree-mode +1))
 
 (use-package goto-chg
   :straight t
