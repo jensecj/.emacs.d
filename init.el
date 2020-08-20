@@ -2385,7 +2385,7 @@ Requires the system tools `tokei' and `jq'."
          (all-files (-flatten (-map (lambda (p) (f-glob p)) full-paths)))
          (all-files (s-join " " all-files))
          (cloc-cmd "tokei -o json")
-         (format-cmd "jq '.inner.Elisp.code'")
+         (format-cmd "jq '.Elisp.code'")
          (final-cmd (format "%s %s | %s" cloc-cmd all-files format-cmd))
          (lines-of-code (s-trim (shell-command-to-string final-cmd))))
     lines-of-code))
