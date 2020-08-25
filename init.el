@@ -451,6 +451,9 @@ equality of computed checksum and arg."
 ;; select the help window after spawning it
 (setq help-window-select t)
 
+;; show eldoc help for the thing at-point
+(setq help-at-pt-display-when-idle t)
+
 ;; undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
 
