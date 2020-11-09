@@ -3779,6 +3779,11 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package centered-cursor-mode :straight t :defer t)
 (use-package rainbow-mode :straight t :defer t :diminish rainbow-mode) ;; highlight color-strings (hex, etc.)
 
+(use-package visual-fill-column
+  :straight t
+  :config
+  (add-hook 'visual-fill-column-mode-hook #'visual-line-mode))
+
 (use-package outshine
   :straight t
   :diminish outshine-mode
