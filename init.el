@@ -2999,7 +2999,10 @@ _t_: go to todays file
   :hook (magit-status-mode . magit-todos-mode)
   :commands magit-todos-mode
   :config
-  (setq magit-todos-exclude-globs '("var/*" "venv/*")))
+  (transient-append-suffix 'magit-status-jump '(0 0 -1)
+    '("T " "Todos" magit-todos-jump-to-todos))
+
+  (setq magit-todos-exclude-globs '("var/*" "venv/*" "vendor/*")))
 
 (use-package auctex
   :straight t
