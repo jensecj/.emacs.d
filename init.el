@@ -1714,10 +1714,41 @@ If METHOD does not exist, do nothing."
   ;; helper functions ;;
   ;;;;;;;;;;;;;;;;;;;;;;
 
+  (setq org-global-tags
+        '("academia"
+          "ai"
+          "career"
+          "china"
+          "climate"
+          "deep_learning"
+          "economy"
+          "eu"
+          "functional"
+          "history"
+          "investing"
+          "libre"
+          "linux"
+          "math"
+          "netsec"
+          "networking"
+          "philosophy"
+          "politics"
+          "programming"
+          "plt"
+          "research"
+          "science"
+          "software"
+          "systems_design"
+          "tech"
+          "usa"
+          "webdev"
+          "work"))
+
   (defun jens/org-tag ()
     "Tag current headline with available tags from the buffer"
     (interactive)
-    (let* ((completions (org-get-buffer-tags))
+    (let* ((completions (-uniq (-concat (-flatten (org-get-buffer-tags))
+                                        org-global-tags)))
            (tags (org-get-local-tags))
            (pick (completing-read (format "%s: " tags) completions)))
       (if (member pick tags)
