@@ -3346,7 +3346,7 @@ clipboard."
     (let* ((args (car args))
            (date (nth 1 args))
            (new-date (format-time-string
-                      "%Y-%m-%d %H:%M"
+                      "%Y-%m-%d %H:%M %z"
                       (encode-time (parse-time-string date)))))
       (list (nth 0 args) new-date (nth 2 args) (nth 3 args))))
 
