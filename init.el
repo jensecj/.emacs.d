@@ -1495,8 +1495,9 @@ If METHOD does not exist, do nothing."
   (setq message-sendmail-extra-arguments '("--read-envelope-from"))
   (setq message-sendmail-f-is-evil t)
   (setq message-fill-column fill-column)
-
   (setq mail-signature nil)
+  (setq message-citation-line-function #'message-insert-formatted-citation-line)
+  (setq message-citation-line-format "On %b %d, %Y, at %H:%M, %f wrote:\n")
 
   (require 'async)
   (defun async-sendmail-send-it ()
