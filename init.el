@@ -3979,8 +3979,12 @@ in the same file."
   :demand t
   :config
   (setq shackle-rules
-        '(((rx "*undo-tree*") :regexp t :select t :align right :inhibit-window-quit t)
+        '(((rx "*helpful*") :regexp t :select t :same t :inhibit-window-quit t)
+          ((rx "-clojuredocs*") :select t :same t :inhibit-window-quit t)
+          ((rx (or "*Apropos*" "*Info*" "*Help*")) :select t :same t :inhibit-window-quit t)
+          ((rx "*undo-tree*") :regexp t :select t :align right :inhibit-window-quit t)
           ((rx "*xref*") :regexp t :same t :inhibit-window-quit t)))
+
   (shackle-mode +1))
 
 (use-package projectile
