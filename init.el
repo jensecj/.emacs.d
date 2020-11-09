@@ -3237,9 +3237,9 @@ clipboard."
         :map notmuch-message-mode-map
         ("C-c C-a" . mail-add-attachment)
         :map notmuch-show-part-map
-        ("V" . #'notmuch-show/view-mime-part-at-point-in-mode))
+        ("V" . #'notmuch-show/view-mime-part-at-point))
   :config
-  (setq notmuch-fcc-dirs "sent +sent -new -unread")
+  (setq notmuch-fcc-dirs "sent +sent +new -unread")
   (setq notmuch-column-control 1.0)
   (setq notmuch-wash-wrap-lines-length fill-column)
   (setq notmuch-wash-citation-lines-prefix 10)
