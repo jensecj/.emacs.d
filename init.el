@@ -1848,7 +1848,8 @@ If METHOD does not exist, do nothing."
   (let ((remote-method (file-remote-p default-directory 'method))
         (remote-user (file-remote-p default-directory 'user))
         (remote-host (file-remote-p default-directory 'host))
-        (remote-localname (file-remote-p filename 'localname)))
+        (remote-localname (file-remote-p filename 'localname))
+        (auth-sources '())) ;; HACK: don't query auth-source
     (find-file (format "/%s:root@%s:%s"
                        (or remote-method "sudoedit")
                        (or remote-host "localhost")
