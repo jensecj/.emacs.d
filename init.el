@@ -3549,7 +3549,10 @@ if BACKWARDS is non-nil, jump backwards instead."
   (notmuch-message-summary-face ((t (:background ,(zent 'bg-1) :extend t))))
   (notmuch-search-unread-face ((t (:weight bold :foreground ,(zent 'yellow)))))
   (notmuch-tag-deleted ((t (:foreground ,(zent 'red) :underline "red" :strike-through nil))))
-  (notmuch-tag-face ((t (:foreground "#11ff11")))))
+  (notmuch-tag-face ((t (:foreground "#11ff11"))))
+  (notmuch-crypto-signature-good ((t (:background ,(zent 'green+1)))))
+  (notmuch-crypto-signature-bad ((t (:background ,(zent 'red-6)))))
+  (notmuch-crypto-signature-unknown ((t (:background ,(zent 'blue-4))))))
 
 ;;;; extensions to built-in packages
 
