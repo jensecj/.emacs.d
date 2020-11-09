@@ -4837,18 +4837,9 @@ initial search query."
 
 (global-set-key (kbd "C-c g") #'revert-buffer)
 
-;; Scroll the buffer without moving the point (unless we over-move)
-(bind-key*
- "C-<up>"
- (lambda ()
-   (interactive)
-   (scroll-down 5)))
-
-(bind-key*
- "C-<down>"
- (lambda ()
-   (interactive)
-   (scroll-up 5)))
+;; Scroll the buffer without moving the point (unless we over-shoot)
+(bind-key* "C-<up>" (xi (scroll-down 5)))
+(bind-key* "C-<down>" (xi (scroll-up 5)))
 
 ;; dont use the mouse
 (unbind-key "<down-mouse-1>")
