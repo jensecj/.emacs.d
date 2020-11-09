@@ -3283,6 +3283,7 @@ clipboard."
           (:blank t)
           (:name "emacs-devel" :key "ld" :query "tag:lists/emacs-devel" :sort-order newest-first)
           (:name "emacs-help"  :key "lh" :query "tag:lists/emacs-help" :sort-order newest-first)
+          (:name "gemini"      :key "lg" :query "tag:lists/gemini" :sort-order newest-first)
           (:blank t)
           (:name "builds"   :key "B" :query "tag:builds" :sort-order newest-first)
           (:name "bills"    :key "b" :query "tag:bills" :sort-order newest-first)
