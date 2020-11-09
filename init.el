@@ -930,7 +930,9 @@ Works well being called from a terminal:
          ("M-s M-d" . #'eww/download-url-at-point)
          ("M-s M-D" . #'eww/delete-cookies)
          ("M-s M-s" . #'eww-list-buffers)
-         ("M-s M-c" . #'url-cookie-list))
+         ("M-s M-c" . #'url-cookie-list)
+         :map eww-mode-map
+         ("q" . #'eww/quit))
   :config
   (setq eww-download-directory (expand-file-name "~/downloads"))
 
@@ -962,7 +964,12 @@ Works well being called from a terminal:
     "Delete all eww cookies."
     (interactive)
     (message "deleting cookies...")
-    (url-cookie-delete-cookies)))
+    (url-cookie-delete-cookies))
+
+  (defun eww/quit ()
+    (interactive)
+    (eww/delete-cookies)
+    (quit-window)))
 
 ;;;;; minor modes
 
