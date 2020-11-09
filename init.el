@@ -3509,6 +3509,30 @@ if BACKWARDS is non-nil, jump backwards instead."
     (unless (notmuch-show/message-has-tag-p "unread")
       (notmuch-show/goto-next-unread-message)))
 
+  ;;;;;;;;;;;;;
+  ;; message ;;
+  ;;;;;;;;;;;;;
+
+  (defun notmuch-message-mode-setup ()
+    (auto-fill-mode -1)
+    (visual-line-mode +1)
+    (visual-fill-column-mode +1))
+
+  (add-hook 'notmuch-message-mode-hook #'notmuch-message-mode-setup)
+
+  (defun notmuch-cite-function (&rest _args)
+    (let ((from (mail-header-from message-reply-headers))
+	        (date (mail-header-date message-reply-headers))
+          (cc (message-fetch-field "Cc")))
+      (insert
+       (concat
+        (when from (format "> From: %s\n" from))
+        (when date (format "> Date: %s\n" date))
+        (when cc (format "> Cc: %s\n" cc))))
+      (newline)))
+
+  (setq message-citation-line-function #'notmuch-cite-function)
+
   ;;;;;;;;;;;;
   ;; extras ;;
   ;;;;;;;;;;;;
