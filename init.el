@@ -751,7 +751,7 @@ seconds."
 (use-package scheme
   :defer t
   :mode ("\\.scm\\'" . scheme-mode)
-  :config (setq scheme-program-name "csi -:c"))
+  :config)
 
 (use-package python
   :defer t
@@ -3641,7 +3641,20 @@ if BACKWARDS is non-nil, jump backwards instead."
   :defer t
   :hook (scheme-mode . geiser-mode)
   :config
+  (setq geiser-chicken-binary "chicken-csi")
   (setq geiser-active-implementations '(chicken)))
+
+(use-package chicken
+  :download"https://code.call-cc.org/cgi-bin/gitweb.cgi?p=chicken-core.git;a=blob_plain;f=misc/chicken.el"
+  :after scheme-mode
+  :config
+  (setq scheme-program-name "chicken-csi -:c")
+  (setq scheme-compiler-name "chicken-csc")
+
+  (defun jens/chicken-compile-this-file ()
+    (interactive)
+    (shell-command-to-string (format "%s %s" scheme-compiler-name (buffer-file-name))))
+  )
 
 (use-package elpy
   :straight t
