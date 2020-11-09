@@ -4835,6 +4835,8 @@ initial search query."
 
 (global-set-key (kbd "C-x b") 'ibuffer)
 
+(global-set-key (kbd "C-c g") #'revert-buffer)
+
 ;; Scroll the buffer without moving the point (unless we over-move)
 (bind-key*
  "C-<up>"
