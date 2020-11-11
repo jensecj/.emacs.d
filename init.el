@@ -457,7 +457,7 @@ equality of computed checksum and arg."
 ;; undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
 
-;; move windows with S-<arrow>
+;; select windows with S-<arrow>
 (windmove-default-keybindings 'shift)
 
 ;; use spaces instead of tabs
@@ -1186,13 +1186,14 @@ number input"
                        (sym-name (car parts))
                        (sym (intern sym-name))
                        (args (cadr parts))
+                       (plain-args (substring args 1 (- (length args) 1)))
                        (doc (and (fboundp sym) (documentation sym 'raw)))
                        (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
                        (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
                   (cond
                    ((string= args "()") (format "(%s)" sym-name))
                    (t (format "(%s %s)\t\t%s" sym-name
-                              (substring args 1 (- (length args) 1))
+                              plain-args
                               short-doc))))
               eldoc-msg)))))
     (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message))
@@ -1664,7 +1665,7 @@ If METHOD does not exist, do nothing."
       (setq org-ditaa-jar-path ditaa-jar)))
 
   ;; try to get non-fuzzy latex fragments
-  (plist-put org-format-latex-options :scale 1.6)
+  (plist-put org-format-latex-options :scale 1)
   (setq org-preview-latex-default-process 'dvisvgm)
 
   (setq org-html-head
@@ -3053,7 +3054,7 @@ _t_: go to todays file
   :config
   (require 'today)
 
-  (setq elfeed-search-filter "@12-month-ago +unread ")
+  (setq elfeed-search-filter "@12-month-ago +unread")
 
   (setq elfeed-search-trailing-width 25)
 
@@ -3263,8 +3264,7 @@ clipboard."
     `((t (:foreground ,(zent 'grey-1))))
     "Face used in search modes for muted threads.")
 
-  (add-to-list 'notmuch-search-line-faces
-               '("muted" . notmuch-search-muted-face))
+  (add-to-list 'notmuch-search-line-faces '("muted" . notmuch-search-muted-face))
 
   (defun notmuch/excl (query &rest tags)
     "Exclude TAGS from QUERY."
@@ -4425,15 +4425,6 @@ re-enable afterwards."
   (mapc (lambda (s) (diminish (cdr s))) beginend-modes)
   (beginend-global-mode))
 
-(use-package fold-this
-  :straight t
-  :bind
-  (([(meta shift h)] . fold-this-unfold-all)
-   ("M-h" . fold-this)
-   (:map emacs-lisp-mode-map ("M-h" . fold-this-sexp)))
-  :custom-face
-  (fold-this-overlay ((t (:foreground nil :background "#5f5f5f")))))
-
 (use-package which-key
   :straight t
   :diminish which-key-mode
@@ -4605,7 +4596,7 @@ paste for multi-term mode."
         (propertize "\n------------------------------------------\n"
                     'face `(:foreground "#111111")))
 
-  (setq counsel-rg-base-command "rg --hidden --glob='!.git' -S --no-heading --line-number --color never %s .")
+  (setq counsel-rg-base-command "rg --hidden --max-columns 200 --glob='!.git' --no-heading --line-number --color never %s .")
 
   (defun jens/ripgrep ()
     "Interactively search the current directory. Jump to result using ivy."
@@ -4833,7 +4824,7 @@ initial search query."
 (global-set-key (kbd "C-M-n") #'forward-paragraph)
 (global-set-key (kbd "C-M-p") #'backward-paragraph)
 
-(global-set-key (kbd "C-x b") 'ibuffer)
+(global-set-key (kbd "C-x b") #'ibuffer)
 
 (global-set-key (kbd "C-c g") #'revert-buffer)
 
