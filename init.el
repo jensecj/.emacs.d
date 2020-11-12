@@ -2997,7 +2997,13 @@ _t_: go to todays file
   :after magit
   :config
   (add-to-list 'forge-owned-accounts `(,(get-secret 'user-github-account) . ()))
-  )
+  ;; setup augment.el, see (forge-bug-reference-setup)
+  (transient-append-suffix 'magit-status-jump '(0 0 -1)
+    '("I " "Issues" forge-jump-to-issues))
+
+  (transient-append-suffix 'magit-status-jump '(0 0 -1)
+    '("P " "Pull-requests" forge-jump-to-pullreqs)))
+
 
 (use-package magithub
   ;; https://github.com/vermiculus/magithub/blob/9fb9c653d0dad3da7ccff3ae321fa6e54c08f41b/magithub.el#L223
