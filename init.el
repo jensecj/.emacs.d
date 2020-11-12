@@ -28,6 +28,7 @@
 (tooltip-mode -1)
 
 ;; user directories/files
+(defconst user-home-directory (getenv "HOME"))
 (defconst user-elpa-directory (locate-user-emacs-file "elpa/"))
 (defconst user-straight-directory (locate-user-emacs-file "straight/"))
 (defconst user-lisp-directory (locate-user-emacs-file "lisp/"))
