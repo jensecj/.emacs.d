@@ -575,6 +575,21 @@ times."
                    source-directory))
   (dir-locals-set-directory-class (file-truename dir) 'read-only))
 
+(defun jens/ensure-read-only ()
+  "Ensure that files opened from some common paths are read-only by default"
+  (when-let ((paths (list (expand-file-name "elpa/" user-emacs-directory)
+                          (expand-file-name "straight/" user-emacs-directory)
+                          (expand-file-name "vendor/" user-emacs-directory)
+                          (expand-file-name "var/" user-emacs-directory)
+                          (expand-file-name "etc/" user-emacs-directory)
+                          (expand-file-name "emacs/src" user-home-directory)
+                          (expand-file-name "emacs/build" user-home-directory)))
+             (dir (f-dirname buffer-file-name)))
+    (when (-any? (lambda (p) (f-descendant-of-p dir p)) paths)
+      (read-only-mode +1))))
+
+(add-hook 'find-file-hook #'jens/ensure-read-only)
+
 ;; package.el should ignore elpa/ files being read-only
 (advice-add #'package-install :around
             (lambda (fn &rest args)
