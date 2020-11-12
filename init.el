@@ -2503,6 +2503,17 @@ If DIR is nil, download to current directory."
                "https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/NEWS")))
 
 
+(defun screenshot-frame-to-svg ()
+  "Save a screenshot of the current frame as an SVG image. Saves
+to a temp file and puts the filename in the kill ring."
+  (interactive)
+  (let* ((filename (make-temp-file "Emacs" nil ".svg"))
+         (data (x-export-frames nil 'svg)))
+    (with-temp-file filename
+      (insert data))
+    (kill-new filename)
+    (message filename)))
+
 (defun jens/render-control-chars ()
   "Render common control characters, such as ^L and ^M."
   (interactive)
