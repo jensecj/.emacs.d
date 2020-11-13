@@ -1179,8 +1179,6 @@ number input"
 
   (setq eldoc-idle-delay 0.2)
 
-  (defface eldoc-highlight-&s-face '((t ())) "")
-
   (defun jens/eldoc-highlight-&s (doc)
     "Highlight &keywords in elisp eldoc arglists."
     (condition-case nil
@@ -1189,47 +1187,32 @@ number input"
           (goto-char (point-min))
 
           (while (re-search-forward "&optional\\|&rest\\|&key" nil 't)
-            (set-text-properties (match-beginning 0) (match-end 0) (list 'face 'eldoc-highlight-&s-face)))
+            (set-text-properties (match-beginning 0) (match-end 0) (list 'face 'font-lock-preprocessor-face)))
 
           (buffer-string))
       (error doc)))
-  (advice-add #'elisp-eldoc-documentation-function :filter-return #'jens/eldoc-highlight-&s)
 
-  (setq lispy-modes
-        (-concat '(lisp-mode lisp-interaction-mode inferior-lisp-mode)
-                 '(clojure-mode clojurec-mode clojurescript-mode inf-clojure-mode cider-repl-mode)
-                 '(emacs-lisp-mode eshell-mode inferior-emacs-lisp-mode)
-                 '(common-lisp-mode slime-repl-mode)
-                 '(scheme-mode geiser-repl-mode inferior-scheme-mode scheme-interaction-mode)))
+  (advice-add #'elisp-get-fnsym-args-string :filter-return #'jens/eldoc-highlight-&s)
 
   (with-eval-after-load 'dokument
-    (defun jens/lispify-eldoc-message (eldoc-msg)
+    (defun jens/eldoc-add-short-doc (orig &rest args)
       "Change the format of eldoc messages for functions to `(fn args)'."
-      (shut-up
-        (save-window-excursion
-          (save-mark-and-excursion
-            (if (and eldoc-msg
-                     (member major-mode lispy-modes))
-                (let* ((parts (s-split ": " eldoc-msg))
-                       (sym-name (car parts))
-                       (sym (intern sym-name))
-                       (args (cadr parts))
-                       (plain-args (substring args 1 (- (length args) 1)))
-                       (doc (and (fboundp sym) (documentation sym 'raw)))
-                       (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
-                       (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
-                  (cond
-                   ((string= args "()") (format "(%s)" sym-name))
-                   (t (format "(%s %s)\t\t%s" sym-name
-                              plain-args
-                              short-doc))))
-              eldoc-msg)))))
-    (advice-add #' elisp-get-fnsym-args-string :filter-return #'jens/lispify-eldoc-message))
+      (save-window-excursion
+        (save-mark-and-excursion
+          (let ((sym (car args))
+                (eldoc-args (apply orig args)))
+            (let* ((doc (and (fboundp sym) (documentation sym 'raw)))
+                   (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
+                   (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
+              (format "%s\t\t%s" (or eldoc-args "") (or short-doc "")))))))
+
+    (jens/eldoc-add-short-doc #'elisp-get-fnsym-args-string 'insert)
+
+    (advice-add #'elisp-get-fnsym-args-string :around #'jens/eldoc-add-short-doc))
 
   (global-eldoc-mode +1)
   :custom-face
-  (eldoc-highlight-function-argument ((t (:inherit font-lock-warning-face))))
-  (eldoc-highlight-&s-face ((t (:inherit font-lock-preprocessor-face)))))
+  (eldoc-highlight-function-argument ((t (:inherit font-lock-warning-face)))))
 
 (use-package fringe
   :commands fringe-mode
