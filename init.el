@@ -713,8 +713,17 @@ seconds."
 ;; load theme colors early, so they can be used for customizing other packages
 (use-package zent-theme
   :straight (zent-theme :type git :repo "git@github.com:jensecj/zent-theme.el.git")
+  :demand t
   :functions zent
   :config
+  (custom-set-faces
+   `(default ((t (:foreground ,(zent 'grey+3)))))
+   `(internal-border ((t (:foreground ,(zent 'grey-1)))))
+   `(vertical-border ((t (:foreground ,(zent 'grey-1)))))
+   `(window-divider             ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
+   `(window-divider-first-pixel ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
+   `(window-divider-last-pixel  ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
+   )
   ;; (load-theme 'zent t)
   )
 
@@ -2825,9 +2834,7 @@ _t_: go to todays file
   (with-eval-after-load 'company
     (bind-key "C-+" #'dokument-company-menu-selection-quickhelp company-active-map))
 
-  (dokument-use-defaults)
-  :custom-face
-  (internal-border ((t (:background "#777777")))))
+  (dokument-use-defaults))
 
 (use-package replace-at-point
   :straight (replace-at-point :repo "git@github.com:jensecj/replace-at-point.el.git")
