@@ -607,7 +607,7 @@ times."
   :config
   (setq authinfo-mode)                  ; TODO: make sure reveal-mode hooks to the files
   (setq authinfo-hidden (rx (or "password" "secret")))
-  (setq auth-sources `(,(expand-file-name "~/vault/.authinfo.gpg")))
+  (setq auth-sources (list (expand-file-name "~/vault/.authinfo.gpg")))
   (setq auth-source-save-behavior nil))
 
 (use-package auth-source-pass
@@ -2612,7 +2612,7 @@ to a temp file and puts the filename in the kill ring."
 
   (defun notmuch-mojn/cache-mail-key ()
     (unless (gpg/key-in-cache-p "pass")
-      (gpg/cache-key user-gpg-mail-key)))
+      (gpg/cache-key user-passwordstore-key)))
 
   (add-hook 'notmuch-mojn-pre-fetch-hook #'notmuch-mojn/cache-mail-key)
   (add-hook 'message-send-hook #'notmuch-mojn/cache-mail-key)
