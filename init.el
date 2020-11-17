@@ -718,11 +718,18 @@ seconds."
   :config
   (custom-set-faces
    `(default ((t (:foreground ,(zent 'grey+3)))))
+   `(cursor ((t (:background ,(zent 'grey)))))
+   `(region ((t (:background  ,(zent 'bg-1)))))
    `(internal-border ((t (:foreground ,(zent 'grey-1)))))
    `(vertical-border ((t (:foreground ,(zent 'grey-1)))))
    `(window-divider             ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
    `(window-divider-first-pixel ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
    `(window-divider-last-pixel  ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
+   `(mode-line ((t (:box nil :background ,(zent 'bg-1)))))
+   `(mode-line-inactive ((t (:box nil))))
+   `(header-line ((t (:box nil))))
+   `(hl-line ((t (:background ,(zent 'grey-2)))))
+   `(highlight ((t (:background nil :foreground nil))))
    )
   ;; (load-theme 'zent t)
   )
@@ -2871,7 +2878,10 @@ _t_: go to todays file
 (use-package zenburn-theme
   :straight t
   :demand t
+  :after zent
   :config
+  (setq zenburn-add-font-lock-keywords t)
+
   ;; replace wavy-underlines with straight ones in all faces
   (mapatoms (lambda (atom)
               (let ((underline nil))
@@ -2884,15 +2894,7 @@ _t_: go to todays file
                   (set-face-attribute atom nil
                                       :underline underline)))))
 
-  (load-theme 'zenburn t)
-  :custom-face
-  (cursor ((t (:background ,(zent 'grey)))))
-  (region ((t (:background  "#2B2B2B"))))
-  (mode-line ((t (:box nil :background "#2B2B2B"))))
-  (mode-line-inactive ((t (:box nil))))
-  (header-line ((t (:box nil))))
-  (hl-line ((t (:background "gray30"))))
-  (highlight ((t (:background nil :foreground nil)))))
+  (load-theme 'zenburn t))
 
 ;;;; major modes and extentions
 
