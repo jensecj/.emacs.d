@@ -1643,7 +1643,7 @@ If METHOD does not exist, do nothing."
   (setq org-adapt-indentation nil) ; don't indent things
   (setq org-tags-column 0)
   (setq org-tags-sort-function #'org-string-collate-lessp)
-  (setq org-ellipsis "⋯")
+  (setq org-ellipsis "――")
   (setq org-cycle-separator-lines 1)    ; show single spaces between entries
 
   (setq org-speed-commands-user
@@ -1792,7 +1792,7 @@ If METHOD does not exist, do nothing."
   ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   :custom-face
   (org-tag ((t (:foreground ,(zent 'fg-05)))))
-  (org-ellipsis ((t (:foreground nil :underline nil)))))
+  (org-ellipsis ((t (:foreground ,(zent 'fg-05) :underline nil)))))
 
 (use-package reftex
   :straight t
