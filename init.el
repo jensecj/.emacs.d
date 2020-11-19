@@ -1226,7 +1226,7 @@ number input"
 
   (advice-add #'elisp-get-fnsym-args-string :filter-return #'jens/eldoc-highlight-&s)
 
-  (with-eval-after-load 'dokument
+  (with-eval-after-load 'dokument-elisp
     (defun jens/eldoc-add-short-doc (orig &rest args)
       "Change the format of eldoc messages for functions to `(fn args)'."
       (save-window-excursion
