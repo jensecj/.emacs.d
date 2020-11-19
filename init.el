@@ -1009,7 +1009,7 @@ Works well being called from a terminal:
   (defun eww/open-url-at-point ()
     "Open link at point in eww."
     (interactive)
-    (when-let ((url (or (car (eww-suggested-uris)) (jens/get-url-at-point)))
+    (when-let ((url (or (car (eww-suggested-uris)) (url/get-url-at-point)))
                (buf (get-buffer-create "*eww*")))
       (view-buffer-other-window buf)
       (eww url)))
@@ -1504,7 +1504,7 @@ If METHOD does not exist, do nothing."
   :config
   (setq browse-url-firefox-program "firefox-developer-edition")
 
-  (defun jens/get-url-at-point ()
+  (defun url/get-url-at-point ()
     "Return the url at point, if any."
     (or
      (thing-at-point 'url t)
@@ -1517,7 +1517,7 @@ If METHOD does not exist, do nothing."
   (defun jens/open-url-at-point ()
     "Open the URL-at-point, dwim."
     (interactive)
-    (browse-url (jens/get-url-at-point))))
+    (browse-url (url/get-url-at-point))))
 
 (use-package shr
   :defer t
