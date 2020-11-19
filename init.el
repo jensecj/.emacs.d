@@ -2586,7 +2586,9 @@ to a temp file and puts the filename in the kill ring."
         ("b" . #'orgflow-visit-backlinks))
   :config
   (setq orgflow-section-sizes '(40 40))
-  (setq orgflow-directory (fn (or default-directory (cdr (project-current))))))
+  (setq orgflow-directory (fn (or default-directory (cdr (project-current)))))
+
+  (add-to-list 'org-speed-commands-user '("R" . orgflow-refile-to-nearby-file)))
 
 (use-package org-proplines
   :straight (org-proplines :type git :repo "git@github.com:jensecj/org-proplines.el.git")
