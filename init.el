@@ -1620,7 +1620,7 @@ If METHOD does not exist, do nothing."
 (use-package org
   :ensure org-plus-contrib
   :pin org
-  :defer t
+  :demand t
   :commands (org-indent-region
              org-indent-line
              org-babel-do-load-languages
