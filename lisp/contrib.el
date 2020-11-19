@@ -105,14 +105,15 @@ With `prefix-arg', insert the UUID at point in the current buffer."
 Alternatively the return type is defined by FORMAT
 Valid formats are `seconds', `minutes', `hours', and `days'."
   (let* ((time-struct (nth 5 (file-attributes (file-truename filename))))
-         (secs (float-time (time-subtract (current-time) time-struct)))
-         (output (cl-case format
-                   ('seconds secs)
-                   ('minutes (/ secs 60))
-                   ('hours (/ secs 60 60))
-                   ('days (/ secs 60 60 24))
-                   (t secs))))
-    (floor output)))
+         (delta_secs (float-time (time-subtract (current-time) time-struct))))
+    (cl-case format
+      ('raw time-struct)
+      ('date (format-time-string "%Y-%m-%d" time-struct))
+      ('seconds delta_secs)
+      ('minutes (floor (/ delta_secs 60)))
+      ('hours (floor (/ delta_secs 60 60)))
+      ('days (floor (/ delta_secs 60 60 24)))
+      (t delta_secs))))
 
 ;;;;; syntax-ppss accessors
 
