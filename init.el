@@ -2890,7 +2890,7 @@ _t_: go to todays file
 (use-package zenburn-theme
   :straight t
   :demand t
-  :after zent
+  :requires zent-theme
   :config
   (setq zenburn-add-font-lock-keywords t)
 
