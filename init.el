@@ -2934,7 +2934,16 @@ _t_: go to todays file
 
 (use-package elpher
   :straight t
+  :bind (("M-s M-e" . #'elpher/open-url-at-point))
   :config
+  (defun elpher/open-url-at-point ()
+    (interactive)
+    (let ((url (or
+                (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)))
+                (url/get-url-at-point))))
+      (view-buffer-other-window "*elpher*")
+      (elpher-go url)))
+
   (setq elpher-bookmarks-file (no-littering-expand-etc-file-name "elpher-bookmarks")))
 
 (use-package rust-mode
