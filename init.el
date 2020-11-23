@@ -3337,9 +3337,13 @@ clipboard."
         ("s" . #'notmuch/search)
         :map notmuch-message-mode-map
         ("C-c C-a" . mail-add-attachment)
+        ("M-i" . #'notmuch/change-identity)
+        ("M-t" . #'notmuch/set-recipient)
         :map notmuch-show-part-map
         ("V" . #'notmuch-show/view-mime-part-at-point))
   :config
+  (load-secrets)
+  (setq notmuch-identities user-mail-identities)
   (setq notmuch-fcc-dirs "sent +sent +new -unread")
   (setq notmuch-column-control 1.0)
   (setq notmuch-wash-wrap-lines-length fill-column)
@@ -3355,6 +3359,15 @@ clipboard."
 
   (add-to-list 'notmuch-show-insert-text/plain-hook
                #'notmuch-wash-convert-inline-patch-to-part)
+  (defun notmuch/set-recipient ()
+    (interactive)
+    (message-goto-to))
+
+  (defun notmuch/change-identity ()
+    (interactive)
+    (let ((id (completing-read "identity: " notmuch-identities)))
+      (message-replace-header "From" id)))
+
   ;; notmuch-message-forwarded-tags
   ;; notmuch-draft-tags
   ;; notmuch-message-replied-tags
@@ -3368,13 +3381,17 @@ clipboard."
 
   (defun notmuch/excl (query &rest tags)
     "Exclude TAGS from QUERY."
-    (let* ((default-excludes '("archived" "lists" "builds" "draft" "sent"))
+    (let* ((default-excludes '("archived" "lists" "builds" "draft" "sent" "deleted"))
            (all-tags (-concat default-excludes tags))
            (excludes (s-join " " (-map (lambda (tag) (format "and not tag:%s" tag)) all-tags))))
       (format "%s %s" query excludes)))
 
   (setq notmuch-saved-searches
-        `((:name "unread"  :key "u" :query ,(notmuch/excl "tag:unread") :sort-order newest-first)
+        `((:name "subst"   :key "ps" :query "to:jens@subst.net" :sort-order newest-first)
+          (:name "posteo"  :key "pp" :query "to:jensecj@posteo.net" :sort-order newest-first)
+          (:name "gmail"   :key "pg" :query "to:jensecj@gmail.com" :sort-order newest-first)
+          (:blank t)
+          (:name "unread"  :key "u" :query ,(notmuch/excl "tag:unread") :sort-order newest-first)
           (:name "today"   :key "t" :query ,(notmuch/excl "date:today..") :sort-order newest-first)
           (:name "7 days"  :key "W" :query ,(notmuch/excl "date:7d..") :sort-order newest-first)
           (:name "30 days" :key "M" :query ,(notmuch/excl "date:30d..") :sort-order newest-first)
@@ -3460,6 +3477,8 @@ clipboard."
     (let ((links (notmuch-show--gather-urls)))
       (if links
           (browse-url (completing-read "Links: " links)))))
+
+  (add-to-list 'ivy-prescient-sort-commands #'jens/notmuch-show-list-links t)
 
   (defun notmuch-show/eldoc ()
     "Simple eldoc handler for `notmuch-show-mode'.
@@ -3632,6 +3651,38 @@ if BACKWARDS is non-nil, jump backwards instead."
       (newline)))
 
   (setq message-citation-line-function #'notmuch-cite-function)
+
+  ;; When a message is sent to one of my ID's, i want to reply from that ID,
+  ;; otherwise force choosing an identity
+  (defun notmuch-show/reply-setup (f &rest args)
+    (let ((from (notmuch-show-get-from))
+          (to (notmuch-show-get-to)))
+
+      ;; here, we are in a notmuch-show buffer
+      (apply f args)
+      ;; here, we are in a new message-buffer
+
+      (message-remove-header "From")
+
+      (dolist (id notmuch-identities)
+        (if (string-match (regexp-quote to) id)
+            (message-replace-header "From" id)))
+
+      (set-buffer-modified-p nil)))
+
+  (advice-add #'notmuch-mua-reply :around #'notmuch-show/reply-setup)
+
+  (defun notmuch-show/new-mail-setup (&rest args)
+    (message-remove-header "From")
+    (set-buffer-modified-p nil))
+
+  (advice-add #'notmuch-mua-mail :after #'notmuch-show/new-mail-setup)
+
+  (defun notmuch-message/ensure-sender ()
+    (when (not (message-field-value "From"))
+      (error "Message has no sender!")))
+
+  (add-hook 'notmuch-mua-send-hook #'notmuch-message/ensure-sender)
 
   ;;;;;;;;;;;;
   ;; extras ;;
