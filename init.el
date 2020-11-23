@@ -1528,9 +1528,15 @@ If METHOD does not exist, do nothing."
   (setq shr-discard-aria-hidden t)
   (setq shr-cookie-policy nil))
 
+(use-package mml
+  :config
+  (setq mml-secure-smime-sign-with-sender t)
+  (setq mml-secure-openpgp-sign-with-sender t))
+
 (use-package sendmail
   :after notmuch
   :config
+  (setq mail-specify-envelope-from t)
   (setq mail-envelope-from 'header)
   (setq sendmail-program "msmtp")
 
