@@ -598,7 +598,7 @@ times."
               (file buffer-file-name)
               (dir (f-dirname file)))
     (let ((includes '())
-          (excludes '(".*-autoloads\\.el")))
+          (excludes '("\.git/" ".*-autoloads\\.el")))
       (when (or
              (-any? (lambda (p) (f-descendant-of-p dir p)) paths)
              (-any? (lambda (p) (string-match p file)) includes))
