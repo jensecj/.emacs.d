@@ -3802,10 +3802,39 @@ if BACKWARDS is non-nil, jump backwards instead."
      elpy-module-company
      elpy-module-eldoc
      elpy-module-pyvenv)))
+(use-package flycheck-pycheckers
+  :straight t
+  :config
+  (setq flycheck-pycheckers-checkers '(pylint flake8 mypy3 bandit))
+  (add-to-list* 'flycheck-pycheckers-ignore-codes
+                '("W1203" ;; dont use f-strings in logging
+                  "W1201" ;; use lazy % in logging functions
+                  "E501" ;; line too long
+                  "C0301" ;; line too long
+                  "W0611" ;; DUPLICATE: unused import
+                  "C0410" ;; DUPLICATE: multiple import on one line
+                  "E999" ;; DUPLICATE: invalid syntax
+                  "F821" ;; DUPLICATE: undefined variable
+                  "C0303" ;; DUPLICATE: trailing whitespace
+                  "B101" ;; asserts are compiled out
+                  "E0602" ;; DUPLICATE: undefined variable
+                  "E203" ;; whitespace before :
+                  "C0321" ;; DUPLICATE: multiple statements on one line
+                  "E711" ;; DUPLICATE: comparison to none should be "is none"
+                  "F841" ;; DUPLICATE: local variable never used
+                  ))
+  ;; TODO: update flycheck-pycheckers-venv-root using project.el?
+  ;; (pop flycheck-pycheckers-ignore-codes)
+
+  (with-eval-after-load 'flycheck
+    (add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup)))
 
 (use-package blacken
   :straight t
-  :after python-mode)
+  :after python-mode
+  :config
+  (setq blacken-line-length 'fill))
+
 
 (use-package highlight-defined
   :straight t
