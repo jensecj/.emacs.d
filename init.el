@@ -812,13 +812,14 @@ seconds."
 
 (use-package cc-mode
   :bind
+  ("C-d" . nil)
   (:map java-mode-map
         ("C-c C-c" . projectile-compile-project))
   (:map c++-mode-map
         ("C-c C-c" . projectile-compile-project)
         ("C-c n" . clang-format-buffer))
   :config
-  (dolist (k '("\M-," "\M-." "\M--"))
+  (dolist (k '("\M-," "\M-." "\M--" "\C-d"))
     (bind-key k nil c-mode-base-map)))
 
 (use-package make-mode
