@@ -3981,7 +3981,31 @@ in the same file."
 (use-package flycheck
   :straight t
   :defer t
+  :hook ((python-mode) . flycheck-mode)
   :config
+
+  (setq flycheck-display-errors-delay 0.4)
+  (defun jens/flycheck-error-list-make-last-column (args)
+    "Transform messages from pycheckers to report correct checker."
+    (cl-destructuring-bind (msg checker) args
+      (when (eq checker 'python-pycheckers)
+        (let ((idx (regexp-search-in-string ": " msg)))
+          (setq checker (intern (substring msg 0 idx)))
+          (setq msg (substring msg (+ idx 2)))))
+      (list msg checker)))
+
+  (advice-add #'flycheck-error-list-make-last-column
+              :filter-args
+              #'jens/flycheck-error-list-make-last-column)
+
+  (setq flycheck-error-list-format
+        `[("File" 8)
+          ("Line" 3 flycheck-error-list-entry-< :right-align t)
+          ("Col" 2 nil :right-align t)
+          ("Level" 8 flycheck-error-list-entry-level-<)
+          ("ID" 6 t)
+          ("Message" 0 t)])
+
   (defun magnars/adjust-flycheck-automatic-syntax-eagerness ()
     "Adjust how often we check for errors based on if there are any.
   This lets us fix any errors as quickly as possible, but in a
@@ -3998,7 +4022,43 @@ in the same file."
 
   ;; Remove newline checks, since they would trigger an immediate check
   ;; when we want the idle-change-delay to be in effect while editing.
-  (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled)))
+  ;; (setq-default flycheck-check-syntax-automatically '(save idle-change new-line mode-enabled))
+
+  (define-fringe-bitmap 'jens/flycheck-fringe-indicator
+    (vector #b00110000
+            #b01111000
+            #b01111000
+            #b00110000))
+
+  (let ((bitmap 'jens/flycheck-fringe-indicator))
+    (flycheck-define-error-level 'info
+      :severity 0
+      :overlay-category 'flycheck-info-overlay
+      :fringe-bitmap bitmap
+      :error-list-face 'flycheck-error-list-info
+      :fringe-face 'flycheck-fringe-info)
+
+    (flycheck-define-error-level 'warning
+      :severity 1
+      :overlay-category 'flycheck-warning-overlay
+      :fringe-bitmap bitmap
+      :error-list-face 'flycheck-error-list-warning
+      :fringe-face 'flycheck-fringe-warning)
+
+    (flycheck-define-error-level 'error
+      :severity 2
+      :overlay-category 'flycheck-error-overlay
+      :fringe-bitmap bitmap
+      :error-list-face 'flycheck-error-list-error
+      :fringe-face 'flycheck-fringe-error))
+
+  :custom-face
+  (flycheck-error-list-filename ((t (:bold normal))))
+  (flycheck-info ((t (:underline (:color ,(zent 'blue))))))
+  (flycheck-warning ((t (:underline (:color ,(zent 'yellow))))))
+  (flycheck-error ((t (:weight bold :underline (:color ,(zent 'red))))))
+  (flycheck-error-list-id-with-explainer ((t (:inherit flycheck-error-list-id :box nil))))
+  (flycheck-error-list-highlight ((t (:background ,(zent 'bg-1) :extend t)))))
 
 (use-package yasnippet
   :straight t
