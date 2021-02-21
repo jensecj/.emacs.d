@@ -3844,6 +3844,16 @@ if BACKWARDS is non-nil, jump backwards instead."
   (highlight-defined-function-name-face ((t (:foreground ,(zent 'function)))))
   (highlight-defined-builtin-function-name-face ((t (:foreground ,(zent 'built-in))))))
 
+(use-package highlight-numbers
+  :straight t
+  :hook (prog-mode . highlight-numbers-mode)
+  :custom-face
+  (highlight-numbers-number ((t (:foreground ,(zent 'number))))))
+
+(use-package highlight-escape-sequences
+  :straight t
+  :delight " hes")
+
 (use-package highlight-thing
   :straight t
   :diminish highlight-thing-mode
