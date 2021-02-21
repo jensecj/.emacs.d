@@ -1575,7 +1575,10 @@ If METHOD does not exist, do nothing."
        (lambda (&optional _ignore)
          (message "Delivering message to %s...done" to)))))
 
-  (setq message-send-mail-function 'async-sendmail-send-it))
+  ;; make sendmail errors buffer read-only and view-mode
+  ;; FIXME: error: "failed with exit value 78", because gpg-key not cached?
+  ;; (setq message-send-mail-function 'async-sendmail-send-it)
+  (setq message-send-mail-function 'sendmail-send-it))
 
 ;;;;; org-mode
 
