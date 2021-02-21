@@ -653,7 +653,10 @@ times."
   (defun gpg/key-in-cache-p (key)
     "Return whether KEY is in the GPG-agents cache."
     ;; TODO: check if key is in gpg-agent cache entirely in elisp
-    (when-let ((keys (s-split " " (s-trim (shell-command-to-string "gpg-cached")))))
+    (when-let ((keys (->> (shell-command-to-string "gpg-cached")
+                          (s-trim)
+                          (s-replace-regexp (rx "[" (or "S" "E" "C") "]") "")
+                          (s-split " "))))
       (member key keys)))
 
   (defun gpg/cache-key (key)
