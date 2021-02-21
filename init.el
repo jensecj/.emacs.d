@@ -4798,8 +4798,6 @@ paste for multi-term mode."
 
   (counsel-mode +1))
 
-(use-package counsel-tramp :straight t :defer t)
-
 (use-package swiper
   :straight t
   :bind ("C-s" . jens/swiper)
@@ -4835,29 +4833,6 @@ initial search query."
   :config
   (require 'flyspell))
 
-(use-package synosaurus
-  :straight t
-  :config
-  (setq synosaurus-backend #'synosaurus-backend-wordnet)
-
-  (defun jens/synosaurus-word-at-point ()
-    "Suggest synonyms for the word at point, using `wordnet' as a thesaurus."
-    (interactive)
-    (let* ((word (thing-at-point 'word))
-           (bounds (bounds-of-thing-at-point 'word))
-           (synonyms (when word (-uniq (-flatten (funcall synosaurus-backend word)))))
-           (pick))
-      (setq pick
-            (cond
-             ((not word) (message "No word at point"))
-             ((not synonyms) (message "No synonyms found for '%s'" word))
-             (t (completing-read "Synonyms: " synonyms))))
-      (when pick
-        (save-mark-and-excursion
-          (delete-region (car bounds) (cdr bounds))
-          (goto-char (car bounds))
-          (insert pick))))))
-
 (use-package so-long
   :straight (so-long :type git :repo "https://git.savannah.gnu.org/git/so-long.git/")
   :demand t
@@ -4865,12 +4840,6 @@ initial search query."
   :config
   (setq so-long-threshold 500)
   (so-long-enable))
-
-(use-package treemacs
-  :straight t
-  :defer t
-  :config
-  (treemacs-resize-icons 15))
 
 (use-package posframe
   :straight t
@@ -4931,12 +4900,6 @@ initial search query."
           ;; replace the candidate with the pick
           (delete-region (car bounds) (cdr bounds))
           (insert pick))))))
-
-(use-package company-lsp
-  :straight t
-  :defer t
-  :config
-  (push 'company-lsp company-backends))
 
 (use-package company-flx
   :straight t
