@@ -740,6 +740,8 @@ seconds."
    `(header-line ((t (:box nil))))
    `(hl-line ((t (:background ,(zent 'grey-2)))))
    `(highlight ((t (:background nil :foreground nil))))
+   `(font-lock-function-name-face ((t (:foreground ,(zent 'function)))))
+   `(font-lock-builtin-face ((t (:foreground ,(zent 'built-in) :weight semi-bold))))
    )
   ;; (load-theme 'zent t)
   )
@@ -943,7 +945,7 @@ seconds."
 (use-package ediff
   :defer t
   :config
-  (setq ediff-window-setup-function 'ediff-setup-windows)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
   (setq ediff-split-window-function 'split-window-vertically))
 
 (use-package diff
@@ -1261,7 +1263,7 @@ number input"
   (setf (alist-get 'continuation fringe-indicator-alist)
         '(vertical-bar vertical-bar))
 
-  (set-fringe-mode '(4 . 4))
+  (set-fringe-mode '(6 . 4))
   :custom-face
   (fringe ((t (:background "#3f3f3f")))))
 
@@ -2845,7 +2847,8 @@ _t_: go to todays file
              dokument-company-menu-selection-quickhelp
              dokument-use-defaults)
   :config
-  (setq dokument--posframe-font "Source Code Pro Semibold")
+  ;; TODO: what if this is nil?
+  (setq dokument--posframe-font (map-elt default-frame-alist 'font))
 
   (with-eval-after-load 'company
     (bind-key "C-+" #'dokument-company-menu-selection-quickhelp company-active-map))
@@ -2895,13 +2898,10 @@ _t_: go to todays file
   (mapatoms (lambda (atom)
               (let ((underline nil))
                 (when (and (facep atom)
-                           (setq underline
-                                 (face-attribute atom
-                                                 :underline))
+                           (setq underline (face-attribute atom :underline))
                            (eq (plist-get underline :style) 'wave))
                   (plist-put underline :style 'line)
-                  (set-face-attribute atom nil
-                                      :underline underline)))))
+                  (set-face-attribute atom nil :underline underline)))))
 
   (load-theme 'zenburn t))
 
@@ -3043,7 +3043,6 @@ _t_: go to todays file
 
   (transient-append-suffix 'magit-status-jump '(0 0 -1)
     '("P " "Pull-requests" forge-jump-to-pullreqs)))
-
 
 (use-package magithub
   ;; https://github.com/vermiculus/magithub/blob/9fb9c653d0dad3da7ccff3ae321fa6e54c08f41b/magithub.el#L223
@@ -4214,10 +4213,10 @@ in the same file."
 ;;;; misc packages
 
 (use-package flx :straight t) ;; fuzzy searching for ivy, etc.
-(use-package rg :straight t :after wgrep) ;; ripgrep in emacs
-(use-package org-ql :straight (org-ql :type git :host github :repo "alphapapa/org-ql") :defer t)
+(use-package rg :straight t :defer t) ;; ripgrep in emacs
+(use-package org-ql :straight t :defer t)
 (use-package gist :straight t :defer t) ;; work with github gists
-(use-package popup :straight t)
+
 (use-package dumb-jump
   :straight t
   :defer t
@@ -4603,15 +4602,14 @@ re-enable afterwards."
 
 (use-package beginend
   :straight t
-  :defer t
+  :demand t
   :diminish beginend-global-mode
-  :commands beginend-global-mode
   :bind (("M-<" . beginning-of-buffer)
          ("M->" . end-of-buffer))
   :config
   ;; diminish all the `beginend' modes
   (mapc (lambda (s) (diminish (cdr s))) beginend-modes)
-  (beginend-global-mode))
+  (beginend-global-mode +1))
 
 (use-package which-key
   :straight t
@@ -4664,6 +4662,7 @@ re-enable afterwards."
 (use-package vterm
   :defer t
   :straight (vterm :type git :host github :repo "akermu/emacs-libvterm")
+  :bind ("C-z" . vterm)
   :init
   (add-to-list 'load-path (expand-file-name "~/software/emacs-libvterm"))
   :config
@@ -4754,8 +4753,8 @@ paste for multi-term mode."
    ("C-x d" . counsel-dired)
    ("C-x C-f" . counsel-find-file)
    ("C-S-f" . counsel-fzf)
-   ("C-x C-i" . counsel-imenu)
-   ("C-x i" . counsel-outline)
+   ("C-x i" . counsel-imenu)
+   ("C-x C-i" . counsel-outline)
    ("M-æ" . counsel-mark-ring)
    ("M-y" . counsel-yank-pop)
    ("M-x" . counsel-M-x)
@@ -4870,10 +4869,10 @@ initial search query."
 
   (setq company-backends
         '(company-elisp
+          company-capf
           company-semantic
           company-clang
           company-cmake
-          company-capf
           company-files
           (company-dabbrev-code company-gtags company-etags company-keywords)
           company-dabbrev))
