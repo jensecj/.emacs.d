@@ -3879,20 +3879,6 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package relint :straight t :defer t :commands (relint-current-buffer relint-file relint-directory))
 (use-package flycheck-package :straight t :defer t :commands (flycheck-package-setup))
 
-(use-package ggtags
-  :straight t
-  :defer t
-  :delight " ggtags "
-  :hook (c++-mode . ggtags-mode)
-  :custom-face
-  (ggtags-highlight ((t ()))))
-
-;; language server for c++
-(use-package ccls
-  :ensure t
-  :hook ((c++-mode . #'lsp))
-  :commands (lsp))
-
 (use-package clang-format :straight t :defer t)
 
 (use-package flymake-shellcheck
@@ -3921,7 +3907,6 @@ if BACKWARDS is non-nil, jump backwards instead."
 ;;;; minor modes
 
 (use-package git-timemachine :straight t :defer t)
-(use-package centered-cursor-mode :straight t :defer t)
 (use-package rainbow-mode :straight t :defer t :diminish rainbow-mode) ;; highlight color-strings (hex, etc.)
 
 (use-package visual-fill-column
@@ -4477,8 +4462,6 @@ title and duration."
   :defer t
   :bind ("C-x C-y" . browse-kill-ring)
   :config (setq browse-kill-ring-quit-action 'save-and-restore))
-
-(use-package browse-at-remote :straight t :defer t)
 
 (use-package avy
   :straight t
