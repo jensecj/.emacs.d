@@ -1036,6 +1036,10 @@ Works well being called from a terminal:
 
 (use-package hi-lock :diminish hi-lock-mode)
 
+(use-package xref
+  :config
+  (setq xref-search-program 'ripgrep))
+
 (use-package outline
   :diminish outline-minor-mode
   :config
