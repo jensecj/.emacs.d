@@ -3259,26 +3259,22 @@ clipboard."
 
 (use-package erc
   :defer t
-  :commands (erc-tls erc/start)
   :config
   (setq erc-rename-buffers t)
   (setq erc-interpret-mirc-color t)
   (setq erc-prompt ">")
   (setq erc-track-enable-keybindings nil)
+  (setq erc-timestamp-only-if-changed-flag nil)
   (setq erc-insert-timestamp-function 'erc-insert-timestamp-left)
   (setq erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
-  (setq erc-user-full-name user-full-name)
+  (setq erc-join-buffer 'buffer)
 
-  (erc-hl-nicks-enable)
 
-  (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs" "##java")))
 
-  (defun erc/start ()
-    (interactive)
-    (erc-tls :server "irc.freenode.net"
-             :port 6697
-             :nick "jensecj"
-             :password (auth-source-pass-get 'secret "irc/freenode/jensecj"))))
+  :custom-face
+  (erc-timestamp-face ((t (:foreground ,(zent 'fg-1)))))
+  (erc-input-face ((t (:foreground ,(zent 'fg)))))
+  (erc-prompt-face ((t (:background nil :extend t)))))
 
 (use-package notmuch
   ;; TODO: setup notmuch for multiple mail-profiles
