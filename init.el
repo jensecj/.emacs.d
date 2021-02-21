@@ -46,7 +46,6 @@
 ;; setup package archives
 (setq package-archives
       '(("gnu" . "https://elpa.gnu.org/packages/")
-        ("melpa-stable" . "https://stable.melpa.org/packages/")
         ("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")))
 
@@ -128,8 +127,7 @@
     (-map f (-map #'car list)))
 
   (defun -mapcdr (f list)
-    (-map f (-map #'cdr list)))
-  )
+    (-map f (-map #'cdr list))))
 
 (use-package dash-functional :straight t :demand t)
 
@@ -165,13 +163,13 @@
            ":download wants a url (a string)"))))))
 
   (defun use-package-handler/:download (name _keyword url rest state)
-    (flet ((download-file (url path)
-                          (let ((dir (f-dirname path)))
-                            (when (not (f-exists-p dir))
-                              (f-mkdir dir))
-                            (condition-case _ex
-                                (url-copy-file url path)
-                              (error '())))))
+    (cl-flet ((download-file (url path)
+                             (let ((dir (f-dirname path)))
+                               (when (not (f-exists-p dir))
+                                 (f-mkdir dir))
+                               (condition-case _ex
+                                   (url-copy-file url path)
+                                 (error '())))))
       (let* ((file (url-unhex-string (f-filename url)))
              (dir user-vendor-directory)
              (path (f-join dir file)))
@@ -1113,7 +1111,7 @@ Works well being called from a terminal:
 
   (show-paren-mode +1)
   :custom-face
-  (show-paren-match-expression ((t (:foreground nil :background "#353535")))))
+  (show-paren-match-expression ((t (:foreground nil :background ,(zent 'bg-1))))))
 
 (use-package abbrev ;; auto-replace common abbreviations
   :diminish abbrev-mode
@@ -1229,14 +1227,15 @@ number input"
   (with-eval-after-load 'dokument-elisp
     (defun jens/eldoc-add-short-doc (orig &rest args)
       "Change the format of eldoc messages for functions to `(fn args)'."
-      (save-window-excursion
-        (save-mark-and-excursion
-          (let ((sym (car args))
-                (eldoc-args (apply orig args)))
-            (let* ((doc (and (fboundp sym) (documentation sym 'raw)))
-                   (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
-                   (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
-              (format "%s\t\t%s" (or eldoc-args "") (or short-doc "")))))))
+      (shut-up
+        (save-window-excursion
+          (save-mark-and-excursion
+            (let ((sym (car args))
+                  (eldoc-args (apply orig args)))
+              (let* ((doc (and (fboundp sym) (documentation sym 'raw)))
+                     (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
+                     (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
+                (format "%s\t\t%s" (or eldoc-args "") (or short-doc ""))))))))
 
     (jens/eldoc-add-short-doc #'elisp-get-fnsym-args-string 'insert)
 
@@ -1764,65 +1763,17 @@ If METHOD does not exist, do nothing."
   ;; helper functions ;;
   ;;;;;;;;;;;;;;;;;;;;;;
 
-  (setq org-global-tags
-        '("academia"
-          "ai"
-          "books"
-          "career"
-          "china"
-          "crypto"
-          "privacy"
-          "investing"
-          "life"
-          "climate"
-          "cloud"
-          "cicd"
-          "databases"
-          "microsoft"
-          "esoteric"
-          "economics"
-          "postmortem"
-          "deep_learning"
-          "data_structures"
-          "economy"
-          "eu"
-          "foss"
-          "functional"
-          "fintech"
-          "visualization"
-          "hardware"
-          "history"
-          "industry"
-          "investing"
-          "libre"
-          "linux"
-          "machine_learning"
-          "math"
-          "netsec"
-          "networks"
-          "philosophy"
-          "plt"
-          "politics"
-          "programming"
-          "research"
-          "science"
-          "software"
-          "statistics"
-          "startup"
-          "systems_design"
-          "tech"
-          "usa"
-          "webdev"
-          "work"
-          "java"
-          "cpp"
-          "finance"
-          "biology"
-          "mooc"
-          "compsci"
-          "golang"
-          "clojure"
-          ))
+  (defvar org-global-tags
+    '(
+      "academia" "ai" "devops" "books" "backup" "career" "china" "crypto" "privacy"
+      "investing" "life" "climate" "cloud" "cicd" "databases" "microsoft" "esoteric"
+      "economics" "postmortem" "deep_learning" "data_structures" "economy" "eu" "foss"
+      "functional" "fintech" "visualization" "hardware" "history" "industry" "investing"
+      "libre" "linux" "machine_learning" "math" "netsec" "networks" "philosophy" "plt"
+      "politics" "programming" "research" "science" "software" "statistics" "startup"
+      "systems_design" "tech" "usa" "webdev" "work" "java" "cpp" "finance" "biology" "mooc"
+      "compsci" "golang" "clojure" "altweb"
+      ))
 
   (defun jens/org-tag ()
     "Tag current headline with available tags from the buffer"
@@ -2450,18 +2401,18 @@ current line."
   "Toggle tailing the *Message* buffer every time something is written to it."
   (interactive)
   (unless (fboundp 'tmb/message-buffer-goto-end)
-    (defun tmb/message-buffer-goto-end (res)
+    (defun tmb/message-buffer-goto-end (&rest args)
       (dolist (w (get-buffer-window-list "*Messages*"))
         (with-selected-window w
           (set-window-point w (point-max))))
-      res))
+      args))
 
   (unless (boundp 'tail-message-buffer-mode)
     (define-minor-mode tail-message-buffer-mode
       "Tail the *Messages* buffer every time something calls `message'."
       nil " tail" (make-keymap)
       (if (bound-and-true-p tail-message-buffer-mode)
-          (advice-add #'message :filter-args #'tmb/message-buffer-goto-end)
+          (advice-add #'message :after #'tmb/message-buffer-goto-end)
         (advice-remove #'message #'tmb/message-buffer-goto-end))))
 
   (with-current-buffer (get-buffer "*Messages*")
@@ -2508,7 +2459,7 @@ Requires the system tools `tokei' and `jq'."
          (all-files (-flatten (-map (lambda (p) (f-glob p)) full-paths)))
          (all-files (s-join " " all-files))
          (cloc-cmd "tokei -o json")
-         (format-cmd "jq '.Elisp.code'")
+         (format-cmd "jq '.\"Emacs Lisp\".code'")
          (final-cmd (format "%s %s | %s" cloc-cmd all-files format-cmd))
          (lines-of-code (s-trim (shell-command-to-string final-cmd))))
     lines-of-code))
@@ -2681,7 +2632,7 @@ to a temp file and puts the filename in the kill ring."
   (remove-hook 'notmuch-mojn-post-refresh-hook #'notmuch-mojn-mute-retag-messages)
 
   (defun notmuch-mojn/cache-mail-key ()
-    (unless (gpg/key-in-cache-p "pass")
+    (unless (gpg/key-in-cache-p user-passwordstore-key)
       (gpg/cache-key user-passwordstore-key)))
 
   (add-hook 'notmuch-mojn-pre-fetch-hook #'notmuch-mojn/cache-mail-key)
@@ -3831,12 +3782,11 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   (defun jens/chicken-compile-this-file ()
     (interactive)
-    (shell-command-to-string (format "%s %s" scheme-compiler-name (buffer-file-name))))
-  )
+    (shell-command-to-string (format "%s %s" scheme-compiler-name (buffer-file-name)))))
 
 (use-package elpy
   :straight t
-  :defer t
+  :after python-mode
   :delight " elpy"
   :commands (elpy-goto-definition)
   :hook (python-mode . elpy-mode)
@@ -3857,14 +3807,14 @@ if BACKWARDS is non-nil, jump backwards instead."
   :diminish highlight-defined-mode
   :hook (emacs-lisp-mode . highlight-defined-mode)
   :custom-face
-  (highlight-defined-function-name-face ((t (:foreground "#BDE0F3"))))
-  (highlight-defined-builtin-function-name-face ((t (:foreground "#BFBFBF")))))
+  (highlight-defined-function-name-face ((t (:foreground ,(zent 'function)))))
+  (highlight-defined-builtin-function-name-face ((t (:foreground ,(zent 'built-in))))))
 
 (use-package highlight-thing
   :straight t
   :diminish highlight-thing-mode
   :config
-  (setq highlight-thing-ignore-list '("nil" "t" "*"))
+  (setq highlight-thing-ignore-list '("nil" "t" "*" "-" "_"))
   (setq highlight-thing-delay-seconds 0.4)
   (setq highlight-thing-case-sensitive-p nil)
   (setq highlight-thing-exclude-thing-under-point nil)
@@ -3873,7 +3823,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (add-to-list* 'highlight-thing-excluded-major-modes '(notmuch-show-mode notmuch-search-mode))
   (global-highlight-thing-mode +1)
   :custom-face
-  (highlight-thing ((t (:background "#5f5f5f" :weight bold)))))
+  (highlight-thing ((t (:background ,(zent 'bg+2) :weight bold)))))
 
 (use-package fontify-face
   :straight t
@@ -3939,7 +3889,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   :straight t
   :diminish outshine-mode
   :after outline
-  :hook (emacs-lisp-mode . outshine-mode)
+  :hook (prog-mode . outshine-mode)
   :bind
   (:map outshine-mode-map
         ("M-<up>" . nil)
@@ -3971,7 +3921,7 @@ in the same file."
   ;; fontify the entire outshine-heading, including the comment
   ;; characters (;;;)
   (if (not (fn-checksum #'outshine-fontify-headlines
-                        "193d058ba86f3b7127329ffe35b702cf"))
+                        "f046c978b2fffbaa7f0d75d67da7b9ca"))
       (log-warning "`outshine-fontify-headlines' changed definition, ignoring patch.")
     (advice-patch #'outshine-fontify-headlines
                   '(font-lock-new-keywords
@@ -4008,7 +3958,7 @@ in the same file."
   This lets us fix any errors as quickly as possible, but in a
   clean buffer we're an order of magnitude laxer about checking."
     (setq flycheck-idle-change-delay
-          (if flycheck-current-errors 0.3 3.0)))
+          (if flycheck-current-errors 0.3 1.5)))
 
   ;; Each buffer gets its own idle-change-delay because of the
   ;; buffer-sensitive adjustment above.
@@ -4467,7 +4417,7 @@ title and duration."
 
 (use-package multiple-cursors
   :straight t
-  :bind
+  :bind*
   (("C-d" . mc/mark-next-like-this)
    ("C-S-d" . mc/mark-previous-like-this)
    ("C-M-a" . mc/mark-all-like-this))
@@ -5039,6 +4989,8 @@ initial search query."
 
 (bind-key* "C-M-k" #'jens/copy-sexp-at-point)
 (bind-key* "M-K" #'jens/kill-sexp-at-point)
+
+(bind-key* "M-a" #'jens/eval-and-replace)
 
 (bind-key* "M-r" #'jens/goto-repo)
 
