@@ -463,6 +463,8 @@ equality of computed checksum and arg."
 ;; show eldoc help for the thing at-point
 (setq help-at-pt-display-when-idle t)
 
+(setq idle-update-delay 0.5)
+
 ;; undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
 
