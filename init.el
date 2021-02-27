@@ -575,16 +575,6 @@ times."
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
 
-;; create read-only directory class
-(dir-locals-set-class-variables
- 'read-only
- '((nil . ((buffer-read-only . t)))))
-
-;; start some files in read-only buffers by default
-(dolist (dir (list user-elpa-directory
-                   user-vendor-directory
-                   source-directory))
-  (dir-locals-set-directory-class (file-truename dir) 'read-only))
 
 (defun jens/ensure-read-only ()
   "Ensure that files opened from some common paths are read-only by default"
@@ -4559,14 +4549,6 @@ re-enable afterwards."
   :bind
   (("M-e" . er/expand-region)
    ("C-M-e" . er/contract-region)))
-
-(use-package change-inner
-  :straight t
-  :bind
-  (("M-i" . copy-inner)
-   ("M-o" . copy-outer)
-   ("M-I" . change-inner)
-   ("M-O" . change-outer)))
 
 (use-package move-text
   :straight t
