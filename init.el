@@ -2910,7 +2910,6 @@ _t_: go to todays file
 
 ;;;; major modes and extentions
 
-(use-package lsp-mode :straight t :defer t)
 (use-package cmake-mode :straight t :defer t :mode "\\CmakeLists.txt\\'")
 (use-package yaml-mode :straight t :defer t :mode ("\\.yaml\\'" "\\.yml\\'"))
 (use-package toml-mode :straight t :defer t :mode ("\\.toml\\'"))
@@ -4857,6 +4856,34 @@ initial search query."
   (eros-mode +1))
 
 ;;;; auto completion
+
+(use-package lsp-mode
+  :straight t
+  :defer t
+  :hook ((lsp-mode . lsp-enable-which-key-integration))
+  :config
+  (setq lsp-eldoc-render-all t)
+  (setq lsp-completion-enable-additional-text-edit nil)
+  (setq lsp-headerline-breadcrumb-enable nil)
+  :custom-face
+  (lsp-face-highlight-read ((t (:underline nil)))))
+
+(use-package lsp-ui
+  :disabled t
+  :straight t
+  :after lsp-mode
+  :config
+  (setq lsp-ui-sideline-show-hover nil)
+  (setq lsp-ui-sideline-show-symbol nil)
+  (setq lsp-ui-sideline-show-diagnostics nil)
+  (setq lsp-ui-sideline-show-code-actions nil)
+  (setq lsp-ui-sideline-code-actions-prefix "> ")
+  :custom-face
+  (lsp-ui-sideline-code-action ((t (:foreground ,(zent 'fg) :background ,(zent 'bg-05))))))
+
+(use-package lsp-java
+  :straight t
+  :after lsp-mode)
 
 (use-package company
   :straight t
