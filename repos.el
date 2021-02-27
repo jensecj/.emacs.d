@@ -1,5 +1,6 @@
 (
  ("~/.dotfiles/")
+ ("~/.dotfiles/bin/usr/local/bin")
 
  ("~/.emacs.d/init.el")
  ("~/.emacs.d/lisp/org-extra.el")
@@ -19,11 +20,13 @@
  ("~/.emacs.d/straight/repos/org-proplines.el/")
 
  ("~/vault/org/")
+ ("~/vault/inbox/")
  ("~/vault/courses/")
  ("~/vault/projects/clojure/microblog/")
  ("~/vault/projects/code-challenges/")
  ("~/vault/projects/java/flatlab/")
  ("~/vault/projects/python/jackup/")
+ ("~/vault/projects/python/arkiv/")
  ("~/vault/projects/rust/jepa/")
  ("~/vault/projects/rust/jelp/")
  ("~/vault/projects/rust/jeml/")
