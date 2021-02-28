@@ -3188,6 +3188,12 @@ clipboard."
   :config
   (pdf-tools-install 'no-query 'skip-dependencies))
 
+(use-package pdf-continuous-scroll-mode
+  :straight (pdf-continuous-scroll-mode
+             :host github
+             :repo "dalanicolai/pdf-continuous-scroll-mode.el")
+  :hook (pdf-view-mode . pdf-continuous-scroll-mode))
+
 (use-package helpful
   ;; replacement for *help* buffers that provides more contextual information.
   :straight t
