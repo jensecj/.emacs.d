@@ -3897,23 +3897,6 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   (setq outshine-speed-commands-user '(("g" . counsel-outline)))
 
-  (defun jens/outshine-refile-region ()
-    "Refile the contents of the active region to another heading
-in the same file."
-    (interactive)
-    (if (not (use-region-p))
-        (message "No active region to refile")
-      (let ((content (buffer-substring (region-beginning) (region-end)))
-            (settings (cdr (assq major-mode counsel-outline-settings))))
-        (ivy-read "refile to: " (counsel-outline-candidates settings)
-                  :action (lambda (x)
-                            (save-excursion
-                              (kill-region (region-beginning) (region-end))
-                              (goto-char (cdr x))
-                              (forward-line)
-                              (insert content)
-                              (newline)))))))
-
   ;; fontify the entire outshine-heading, including the comment
   ;; characters (;;;)
   (if (not (fn-checksum #'outshine-fontify-headlines
@@ -4273,51 +4256,7 @@ of (command . word) to be used by `flyspell-do-correct'."
 (use-package org-web-tools
   :straight t
   :defer t
-  :after (org s)
-  :config
-  (require 'subr-x)
-
-  (defun jens/website-title-from-url (url)
-    "Get the website title from a url."
-    (let* ((html (org-web-tools--get-url url))
-           (title (org-web-tools--html-title html))
-           (title (s-replace "[" "(" title))
-           (title (s-replace "]" ")" title)))
-      title))
-
-  (defun jens/youtube-duration-from-url (url)
-    "Get the duration of a youtube video, requires system tool
-`youtube-dl'."
-    (let ((raw-duration (shell-command-to-string
-                         (format "%s '%s'"
-                                 "youtube-dl --get-duration"
-                                 url))))
-      (if (<= (length raw-duration) 10)
-          (s-trim raw-duration)
-        "?")))
-
-  (defun jens/youtube-url-to-org-link (url)
-    "Return an org-link from a youtube url, including video title
-and duration."
-    (let* ((title (jens/website-title-from-url url))
-           (duration (jens/youtube-duration-from-url url))
-           (title (replace-regexp-in-string " - YouTube$" "" title))
-           (title (format "(%s) %s" duration title))
-           (org-link (org-make-link-string url title)))
-      org-link))
-
-  (defun jens/youtube-url-to-org-link-at-point ()
-    "Convert youtube-url-at-point to an org-link, including video
-title and duration."
-    (interactive)
-    (save-excursion
-      (if-let ((url (thing-at-point 'url)))
-          (let ((bounds (bounds-of-thing-at-point 'url))
-                (org-link (jens/youtube-url-to-org-link url)))
-            (delete-region (car bounds) (cdr bounds))
-            (goto-char (car bounds))
-            (insert org-link))
-        (error "No url at point")))))
+  :after (org s))
 
 (use-package help-fns+
   :download "https://www.emacswiki.org/emacs/download/help-fns%2b.el"
