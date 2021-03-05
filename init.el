@@ -4757,7 +4757,14 @@ initial search query."
   (swiper-line-face ((t (:foreground nil :background "#292929" :height 110)))))
 
 (use-package bookmark+
-  :straight (bookmark+ :type git :host github :repo "emacsmirror/bookmark-plus")
+  :download ("https://www.emacswiki.org/emacs/download/bookmark%2b.el"
+             "https://www.emacswiki.org/emacs/download/bookmark%2b-mac.el"
+             "https://www.emacswiki.org/emacs/download/bookmark%2b-bmu.el"
+             "https://www.emacswiki.org/emacs/download/bookmark%2b-1.el"
+             "https://www.emacswiki.org/emacs/download/bookmark%2b-key.el"
+             "https://www.emacswiki.org/emacs/download/bookmark%2b-lit.el"
+             "https://www.emacswiki.org/emacs/download/bookmark%2b-doc.el"
+             "https://www.emacswiki.org/emacs/download/bookmark%2b-chg.el")
   :config
   (advice-add #'bookmark-jump :around
               (lambda (fn &rest args)
