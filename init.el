@@ -149,43 +149,47 @@
   :straight (ts :host github :repo "alphapapa/ts.el"))
 
 (progn ;; add `:download' keyword to `use-package' to easily download files
-  ;; TODO: make `:download' work with list of strings, see `:load-path'?
   (defun use-package-normalize/:download (_name-symbol keyword args)
     (use-package-only-one (symbol-name keyword) args
       (lambda (_label arg)
         (cond
          ((stringp arg) arg)
-         ((symbolp arg) (symbol-name arg))
+         ((and (listp arg) (-all-p #'stringp arg)) arg)
          (t
           (use-package-error
-           ":download wants a url (a string)"))))))
+           ":download wants a url (a string), or a list of urls"))))))
 
-  (defun use-package-handler/:download (name _keyword url rest state)
-    (cl-flet ((download-file (url path)
-                             (let ((dir (f-dirname path)))
-                               (when (not (f-exists-p dir))
-                                 (f-mkdir dir))
-                               (condition-case _ex
-                                   (url-copy-file url path)
-                                 (error '())))))
-      (let* ((file (url-unhex-string (f-filename url)))
-             (dir user-vendor-directory)
-             (path (f-join dir file)))
-        (if (f-exists-p path)
-            (let ((days (file-age path 'days)))
-              (if (< days 100)
-                  (message "%s already exists, skipping download. (%s days old)" file days)
-                (message "updating %s. (%s days old)" file days)
-                (let* ((archive-name (format "%s--%s.%s" (f-base file) (file-age path 'date) (f-ext file)))
-                       (archive-path (f-join dir archive-name)))
-                  (f-move path archive-path))
-                (download-file url path)))
-          (message "%s does not exist, downloading %s to %s" file url path)
-          (download-file url path))
-        (use-package-concat
-         (use-package-process-keywords name rest state)))))
+  (defun use-package-handler/:download (name _keyword urls rest state)
+    (cl-labels ((download-file (url path)
+                               (let ((dir (f-dirname path)))
+                                 (when (not (f-exists-p dir))
+                                   (f-mkdir dir))
+                                 (condition-case _ex
+                                     (url-copy-file url path)
+                                   (error '()))))
+                (handle-url (url)
+                            (let* ((file (url-unhex-string (f-filename url)))
+                                   (dir user-vendor-directory)
+                                   (path (f-join dir file)))
+                              (if (f-exists-p path)
+                                  (let ((days (file-age path 'days)))
+                                    (if (< days 100)
+                                        (message "%s already exists, skipping download. (%s days old)" file days)
+                                      (message "updating %s. (%s days old)" file days)
+                                      (let* ((archive-name (format "%s.%s" (f-base file) (f-ext file)))
+                                             (archive-path (f-join dir archive-name)))
+                                        (f-move path archive-path))
+                                      (download-file url path)))
+                                (message "%s does not exist, downloading %s to %s" file url path)
+                                (download-file url path))
+                              (use-package-concat
+                               (use-package-process-keywords name rest state)))))
+      (if (stringp urls)
+          (handle-url urls)
+        (dolist (u urls)
+          (handle-url u)))))
 
-  (add-to-list 'use-package-keywords :download))
+  (add-to-list 'use-package-keywords :download 'append))
 
 (use-package advice-patch ;; easy way to patch packages
   :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"
