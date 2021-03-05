@@ -2738,63 +2738,6 @@ to a temp file and puts the filename in the kill ring."
   (setq today-file "~/vault/inbox/today.org")
   (setq today-inbox-file "~/vault/inbox/inbox.org")
 
-  (defhydra today-refile-pl-hydra (:foreign-keys run)
-    "
-^Bindings^        ^ ^
-^^^^^^^^-------------------
-_r_: Rust        _g_: Git
-_c_: C/C++       _l_: Lisp
-_C_: Clojure     _m_: ML
-_p_: Python      ^ ^
-_j_: Java        ^ ^
-"
-    ("c" (today-refile today-file "C/C++"))
-    ("C" (today-refile today-file "Clojure"))
-    ("g" (today-refile today-file "Git"))
-    ("j" (today-refile today-file "Java"))
-    ("l" (today-refile today-file "Lisp"))
-    ("m" (today-refile today-file "ML"))
-    ("p" (today-refile today-file "Python"))
-    ("r" (today-refile today-file "Rust"))
-
-    ("x" today-refile-hydra/body "Refile entries" :exit t)
-    ("z" org-refile-goto-last-stored "Jump to last refile")
-    ("q" nil "quit"))
-
-  (defhydra today-refile-hydra (:foreign-keys run)
-    "
-^Bindings^         ^ ^                     ^ ^                         ^ ^                   ^ ^
-^^^^^^^^-------------------------------------------------------------------------------------------------
- _a_: AI            _d_: DevOps            _n_: Next                    _S_: Statistics     _x_: PL-Hydra
- _A_: Algorithms    _e_: Emacs             _o_: Other Talks             _t_: Tech Talks
- _b_: Business      _l_: Linux             _p_: Programming             _T_: TED Talks
- _c_: Climate       _m_: Machine Learning  _P_: Programming Languages   _w_: Work
- _C_: Courses       _M_: Math              _s_: Computer Science        _W_: Web
-"
-    ("a" (today-refile today-file "AI"))
-    ("A" (today-refile today-file "Algorithms"))
-    ("b" (today-refile today-file "Business"))
-    ("c" (today-refile today-file "Climate"))
-    ("C" (today-refile today-file "Courses"))
-    ("d" (today-refile today-file "DevOps"))
-    ("e" (today-refile today-file "Emacs"))
-    ("l" (today-refile today-file "Linux"))
-    ("m" (today-refile today-file "Machine Learning"))
-    ("M" (today-refile today-file "Math"))
-    ("n" (today-refile today-file "Next"))
-    ("o" (today-refile today-file "Other Talks"))
-    ("p" (today-refile today-file "Programming"))
-    ("P" (today-refile today-file "Programming Languages"))
-    ("s" (today-refile today-file "Computer Science"))
-    ("S" (today-refile today-file "Statistics"))
-    ("t" (today-refile today-file "Tech Talks"))
-    ("T" (today-refile today-file "TED Talks"))
-    ("w" (today-refile today-file "Work"))
-    ("W" (today-refile today-file "Web"))
-
-    ("x" today-refile-pl-hydra/body "Refile programming languages" :exit t)
-    ("z" org-refile-goto-last-stored "Jump to last refile")
-    ("q" nil "quit"))
 
   (defhydra today-capture-hydra (:foreign-keys run)
     "
