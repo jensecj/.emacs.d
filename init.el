@@ -194,7 +194,7 @@
   (add-to-list 'use-package-keywords :download 'append))
 
 (use-package advice-patch ;; easy way to patch packages
-  :download "https://raw.githubusercontent.com/emacsmirror/advice-patch/master/advice-patch.el"
+  :straight t
   :demand t
   :config
   (advice-add #'advice-patch :before
@@ -4303,11 +4303,11 @@ title and duration."
         (error "No url at point")))))
 
 (use-package help-fns+
-  :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/help-fns%2B.el"
+  :download "https://www.emacswiki.org/emacs/download/help-fns%2b.el"
   :demand t)
 
 (use-package pp+
-  :download "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/pp%2b.el"
+  :download "https://www.emacswiki.org/emacs/download/pp%2b.el"
   :demand t
   :bind (("M-:" . #'pp-eval-expression)))
 
