@@ -1062,6 +1062,19 @@ Works well being called from a terminal:
   :demand t
   :config
   (setq so-long-threshold 500)
+
+  (add-to-list* 'so-long-minor-modes
+                '(highlight-thing-mode
+                  rainbow-mode
+                  highlight-numbers-mode
+                  augment-mode
+                  augment-prog-mode)
+                'append)
+
+  (add-to-list* 'so-long-variable-overrides
+                '((global-augment-mode . nil))
+                'append)
+
   (so-long-enable))
 
 (use-package ispell
