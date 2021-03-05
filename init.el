@@ -129,8 +129,6 @@
   (defun -mapcdr (f list)
     (-map f (-map #'cdr list))))
 
-(use-package dash-functional :straight t :demand t)
-
 (use-package s ;; string things, s-trim, s-replace, etc.
   :demand t
   :straight (s :host github :repo "magnars/s.el"
