@@ -4624,55 +4624,10 @@ re-enable afterwards."
   :config
   (setq vterm-max-scrollback 10000))
 
-(use-package multi-libvterm
-  :after vterm
-  :straight (multi-libvterm :type git :repo "https://github.com/suonlight/multi-libvterm.git")
-  :bind (("C-z" . multi-libvterm)))
-
-(use-package multi-term
-  :disabled t
+(use-package multi-vterm
   :straight t
-  :defer t
-  :commands (multi-term-get-buffer
-             multi-term-internal)
-  :bind* (("C-z" . jens/multi-term)
-          :map term-raw-map
-          ("C-c C-j" . term-line-mode)
-          :map term-mode-map
-          ("C-c C-k" . term-char-mode))
-  :config
-  (setq multi-term-program "/bin/zsh")
-  ;; (setq term-bind-key-alist '()) ;; clear the binds list, defaulting to emacs binds
-  (setq term-buffer-maximum-size 10000)
-
-  (defun jens/term-paste (&optional string)
-    "Paste a string to the process of the current buffer, fixes
-paste for multi-term mode."
-    (interactive)
-    (process-send-string
-     (get-buffer-process (current-buffer))
-     (if string string (current-kill 0))))
-  (define-key term-raw-map (kbd "C-y") 'jens/term-paste)
-  ;; (add-to-list 'term-bind-key-alist '("<C-left>" . term-send-backward-word))
-  ;; (add-to-list 'term-bind-key-alist '("<C-right>" . term-send-forward-word))
-  ;; (add-to-list 'term-bind-key-alist '("<C-backspace>" . (lambda () (interactive) (term-send-raw-string "\C-h")))) ;; backwards-kill-word
-  ;; (add-to-list 'term-bind-key-alist '("<C-del>" . (lambda () (interactive) (term-send-raw-string "\e[3;5~")))) ;; forwards-kill-word
-
-  (defun jens/multi-term (&optional open-term-in-background)
-    "Create new term buffer."
-    (interactive)
-    (let ((term-buffer)
-          (buffer-new-name (concat "*" default-directory "*")))
-      ;; Set buffer.
-      (setq term-buffer (multi-term-get-buffer current-prefix-arg))
-      (setq multi-term-buffer-list (nconc multi-term-buffer-list (list term-buffer)))
-      (set-buffer term-buffer)
-      ;; Internal handle for `multi-term' buffer.
-      (multi-term-internal)
-      ;; Switch buffer
-      (if (not open-term-in-background)
-          (switch-to-buffer term-buffer))
-      (rename-buffer buffer-new-name))))
+  :after vterm
+  :bind (("C-z" . multi-vterm)))
 
 (use-package ivy
   :straight t
