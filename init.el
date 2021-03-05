@@ -165,7 +165,9 @@
                                  (when (not (f-exists-p dir))
                                    (f-mkdir dir))
                                  (condition-case _ex
-                                     (url-copy-file url path)
+                                     (progn
+                                       (url-copy-file url path)
+                                       (byte-compile-file path))
                                    (error '()))))
                 (handle-url (url)
                             (let* ((file (url-unhex-string (f-filename url)))
@@ -176,7 +178,8 @@
                                     (if (< days 100)
                                         (message "%s already exists, skipping download. (%s days old)" file days)
                                       (message "updating %s. (%s days old)" file days)
-                                      (let* ((archive-name (format "%s.%s" (f-base file) (f-ext file)))
+                                      (let* ((archive-date (file-age path 'date))
+                                             (archive-name (format "%s--%s.%s" (f-base file) archive-date (f-ext file)))
                                              (archive-path (f-join dir archive-name)))
                                         (f-move path archive-path))
                                       (download-file url path)))
