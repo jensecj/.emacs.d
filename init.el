@@ -705,7 +705,7 @@ seconds."
               (when (buffer-modified-p buffer)
                 (save-buffer))
               (kill-buffer buffer)
-              (incf buffers-killed))))))
+              (cl-incf buffers-killed))))))
     (unless (zerop buffers-killed)
       (message "%s .gpg buffer(s) saved and killed" buffers-killed))))
 
@@ -775,7 +775,7 @@ seconds."
           (skip-syntax-backward "-")
           (backward-char 2)
           (if (looking-at (rx ?\\ eol))
-              (incf col)))
+              (cl-incf col)))
 
         (save-excursion
           ;; dont indent the terminating line of a block
@@ -3098,7 +3098,7 @@ _t_: go to todays file
       (while (and (not (string= active-window emacs-window))
                   (< counter 15))
         (sleep-for 0.2)
-        (incf counter)
+        (cl-incf counter)
         (setq active-window (shell-command-to-string "xdo id"))
         (shell-command-to-string (format "xdo activate %s" emacs-window)))))
 
