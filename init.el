@@ -1039,6 +1039,10 @@ Works well being called from a terminal:
   :config
   (setq xref-search-program 'ripgrep))
 
+(use-package flymake
+  :config
+  (setq flymake-fringe-indicator-position 'right-fringe))
+
 (use-package outline
   :diminish outline-minor-mode
   :config
@@ -1279,9 +1283,9 @@ number input"
   (setf (alist-get 'continuation fringe-indicator-alist)
         '(vertical-bar vertical-bar))
 
-  (set-fringe-mode '(6 . 4))
+  (set-fringe-mode '(4 . 4))
   :custom-face
-  (fringe ((t (:background "#3f3f3f")))))
+  (fringe ((t (:background ,(zent 'bg))))))
 
 ;;;;; misc packages
 
@@ -3946,8 +3950,9 @@ in the same file."
   :defer t
   :hook ((python-mode) . flycheck-mode)
   :config
-
   (setq flycheck-display-errors-delay 0.4)
+  (setq flycheck-indication-mode 'right-fringe)
+
   (defun jens/flycheck-error-list-make-last-column (args)
     "Transform messages from pycheckers to report correct checker."
     (cl-destructuring-bind (msg checker) args
@@ -3988,10 +3993,22 @@ in the same file."
   ;; (setq-default flycheck-check-syntax-automatically '(save idle-change new-line mode-enabled))
 
   (define-fringe-bitmap 'jens/flycheck-fringe-indicator
-    (vector #b00110000
-            #b01111000
-            #b01111000
-            #b00110000))
+    (vector #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000))
 
   (let ((bitmap 'jens/flycheck-fringe-indicator))
     (flycheck-define-error-level 'info
