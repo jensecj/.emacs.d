@@ -1052,6 +1052,12 @@ Works well being called from a terminal:
   :custom-face
   (fill-column-indicator ((t (:foreground ,(zent 'bg+05) :background nil)))))
 
+(use-package so-long
+  :demand t
+  :config
+  (setq so-long-threshold 500)
+  (so-long-enable))
+
 (use-package ispell
   :defer t
   :config
@@ -4819,14 +4825,6 @@ initial search query."
   :commands flyspell-correct-at-point
   :config
   (require 'flyspell))
-
-(use-package so-long
-  :straight (so-long :type git :repo "https://git.savannah.gnu.org/git/so-long.git/")
-  :demand t
-  :commands so-long-enable
-  :config
-  (setq so-long-threshold 500)
-  (so-long-enable))
 
 (use-package posframe
   :straight t
