@@ -3808,7 +3808,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq highlight-thing-exclude-thing-under-point nil)
   (setq highlight-thing-limit-to-region-in-large-buffers-p t)
   (setq highlight-thing-narrow-region-lines 30)
-  (add-to-list* 'highlight-thing-excluded-major-modes '(notmuch-show-mode notmuch-search-mode))
+  (add-to-list* 'highlight-thing-excluded-major-modes '(pdf-view-mode doc-view-mode notmuch-show-mode notmuch-search-mode))
   (global-highlight-thing-mode +1)
   :custom-face
   (highlight-thing ((t (:background ,(zent 'bg+2) :weight bold)))))
