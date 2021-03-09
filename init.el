@@ -3084,6 +3084,12 @@ _t_: Go to todays file
     :group 'elfeed-faces)
   (push '(aggregate aggregate-elfeed-face) elfeed-search-face-alist)
 
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger :feed-url "sachachua\\.com"
+                                :entry-title '("^Weekly review:")
+                                :add 'junk
+                                :remove 'unread))
+
   (defun elfeed/load-feeds ()
     (interactive)
     (let* ((feeds-file (locate-user-emacs-file "elfeeds.el"))
