@@ -4626,14 +4626,18 @@ re-enable afterwards."
   :straight t
   :bind ("C-s" . swiper/search)
   :config
+  (add-to-list 'ivy-prescient-sort-commands #'swiper t)
+
   (defun swiper/search ()
     "If region is active, use it as initial query"
     (interactive)
-    (if (region-active-p)
-        (let ((query (buffer-substring-no-properties (region-beginning) (region-end))))
-          (deactivate-mark)
-          (swiper-isearch query))
-      (call-interactively #'swiper-isearch)))
+    (let ((fn #'swiper))
+      (if (region-active-p)
+          (let ((query (buffer-substring-no-properties (region-beginning) (region-end))))
+            (deactivate-mark)
+            (funcall fn query))
+        (call-interactively fn))))
+
   :custom-face
   (swiper-line-face ((t (:foreground nil :background ,(zent 'bg-1) :underline nil :extend t)))))
 
