@@ -4562,10 +4562,11 @@ re-enable afterwards."
   (setq ivy-use-virtual-buffers t)
   (setq ivy-re-builders-alist '((t . ivy--regex-plus)))
   (setq ivy-on-del-error-function nil)
+  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
 
   (ivy-mode +1)
   :custom-face
-  (ivy-current-match ((t (:foreground nil :background "#292929" :height 110 :underline nil)))))
+  (ivy-current-match ((t (:foreground nil :background ,(zent 'bg-1) :underline nil :extend t)))))
 
 (use-package counsel
   :straight t
@@ -4634,7 +4635,7 @@ re-enable afterwards."
           (swiper-isearch query))
       (call-interactively #'swiper-isearch)))
   :custom-face
-  (swiper-line-face ((t (:foreground nil :background "#292929" :height 110)))))
+  (swiper-line-face ((t (:foreground nil :background ,(zent 'bg-1) :underline nil :extend t)))))
 
 (use-package bookmark+
   :download ("https://www.emacswiki.org/emacs/download/bookmark%2b.el"
