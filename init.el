@@ -250,7 +250,7 @@
 ;; TODO: move to contrib.el?
 (log-info "Defining fundamental defuns")
 
-(defmacro comment (&rest _args) "Ignore everything inside this sexp.")
+(defmacro comment (&rest _) "ignore everything inside this sexp" nil)
 
 (defmacro xi (&rest body)
   "Convenience macro for creating no-argument interactive lambdas."
