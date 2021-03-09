@@ -4714,7 +4714,7 @@ re-enable afterwards."
   :straight t
   :defer t
   :diminish company-mode
-  :hook (emacs-lisp-mode . company-mode)
+  :hook ((python-mode java-mode emacs-lisp-mode) . company-mode)
   :bind
   (("<backtab>" . #'completion-at-point)
    ("M-<tab>" . #'company/complete))
