@@ -1931,34 +1931,6 @@ With prefix ARG, ask for file to open."
     (goto-char p)
     (save-buffer)))
 
-(defun jens/inspect-symbol-at-point (&optional arg)
-  "Inspect symbol at point."
-  (interactive "P")
-  (require 'dokument)
-  (require 'helpful)
-  (let* ((sym (symbol-at-point))
-         (value (cond
-                 ((fboundp sym)
-                  ;; TODO: fix functions defined in C.
-                  (let ((def (helpful--definition sym t)))
-                    (read (helpful--source sym t (car def) (cadr def)))))
-                 ((boundp sym) (symbol-value sym)))))
-    (if arg
-        (with-current-buffer (get-buffer-create "*Inspect*")
-          (let ((inhibit-read-only t))
-            (erase-buffer)
-            (pp value (current-buffer))
-            (emacs-lisp-mode)
-            (goto-char (point-min)))
-          (view-buffer-other-window (current-buffer)))
-
-      ;; TODO: don't use `dap' posframe, create a posframe for all-purpose emacs things
-
-      (funcall dokument-display-fn
-               (dokument-elisp--fontify-as-code
-                (with-output-to-string
-                  (pp value)))))))
-
 ;;;;; files
 
 (defun jens/byte-compile-this-file ()
@@ -2784,7 +2756,8 @@ _t_: go to todays file
   :straight (dokument :repo "git@github.com:jensecj/dokument.el.git")
   :demand t
   :bind
-  (("C-+" . dokument))
+  (("C-+" . dokument)
+   ("<f12>" . dokument/inspect-symbol-at-point))
   :commands (dokument
              dokument-company-menu-selection-quickhelp
              dokument-use-defaults)
@@ -2794,6 +2767,33 @@ _t_: go to todays file
 
   (with-eval-after-load 'company
     (bind-key "C-+" #'dokument-company-menu-selection-quickhelp company-active-map))
+
+  (defun dokument/inspect-symbol-at-point (&optional arg)
+    "Inspect symbol at point."
+    (interactive "P")
+    (require 'dokument)
+    (require 'helpful)
+    (let* ((sym (symbol-at-point))
+           (value (cond
+                   ((fboundp sym)
+                    ;; TODO: fix functions defined in C.
+                    (let ((def (helpful--definition sym t)))
+                      (read (helpful--source sym t (car def) (cadr def)))))
+                   ((boundp sym) (symbol-value sym)))))
+      (if arg
+          (with-current-buffer (get-buffer-create "*Inspect*")
+            (let ((inhibit-read-only t))
+              (erase-buffer)
+              (pp value (current-buffer))
+              (emacs-lisp-mode)
+              (goto-char (point-min)))
+            (view-buffer-other-window (current-buffer)))
+
+        ;; TODO: set max width on popup-frame
+        (funcall dokument-display-fn
+                 (dokument-elisp--fontify-as-code
+                  (with-output-to-string
+                    (pp value)))))))
 
   (dokument-use-defaults))
 
