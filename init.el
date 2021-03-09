@@ -207,8 +207,8 @@
 (use-package bind-key :straight t :demand t)
 (use-package diminish :straight t :demand t)
 (use-package delight :straight t :demand t)
-(use-package hydra :straight t :demand t)
 (use-package shut-up :straight t :demand t)
+(use-package hydra :straight t :demand t)
 (use-package ov :straight t :demand t)
 
 (use-package async
@@ -2556,7 +2556,7 @@ to a temp file and puts the filename in the kill ring."
         ("b" . #'orgflow-visit-backlinks))
   :config
   (setq orgflow-section-sizes '(40 40))
-  (setq orgflow-directory (fn (or default-directory (cdr (project-current)))))
+  (setq orgflow-directory (fn (or default-directory (project-root (project-current)))))
 
   (add-to-list 'org-speed-commands-user '("R" . orgflow-refile-to-nearby-file)))
 
@@ -2943,8 +2943,6 @@ _t_: go to todays file
   :defer t
   :bind
   (("C-x m" . magit-status)
-   :map magit-file-mode-map
-   ("C-x g" . nil)
    :map magit-mode-map
    ("C-c C-a" . magit-commit-amend)
    ("<tab>" . magit-section-cycle))
@@ -2964,6 +2962,7 @@ _t_: go to todays file
 
   (add-hook 'git-commit-mode-hook #'flyspell-prog-mode)
   :custom-face
+  (magit-diff-hunk-heading ((t (:background ,(zent 'bg-1)))))
   (magit-diff-added ((t (:background ,(zent 'green-4)))))
   (magit-diff-added-highlight ((t (:background ,(zent 'green-3)))))
   (magit-diff-removed ((t (:background ,(zent 'red-5)))))
@@ -3051,7 +3050,7 @@ _t_: go to todays file
   :config
   (require 'today)
 
-  (setq elfeed-search-filter "@12-month-ago +unread")
+  (setq elfeed-search-filter "@100-month-ago +unread")
 
   (setq elfeed-search-trailing-width 25)
 
@@ -3059,18 +3058,22 @@ _t_: go to todays file
     "face for youtube.com entries"
     :group 'elfeed-faces)
   (push '(youtube youtube-elfeed-face) elfeed-search-face-alist)
+
   (defface reddit-elfeed-face '((t :foreground "#9FC59F"))
     "face for reddit.com entries"
     :group 'elfeed-faces)
   (push '(reddit reddit-elfeed-face) elfeed-search-face-alist)
+
   (defface blog-elfeed-face '((t :foreground "#DCA3A3"))
     "face for blog entries"
     :group 'elfeed-faces)
   (push '(blog blog-elfeed-face) elfeed-search-face-alist)
+
   (defface emacs-elfeed-face '((t :foreground "#94BFF3"))
     "face for emacs entries"
     :group 'elfeed-faces)
   (push '(emacs emacs-elfeed-face) elfeed-search-face-alist)
+
   (defface aggregate-elfeed-face '((t :foreground "#948FF3"))
     "face for aggregate entries"
     :group 'elfeed-faces)
@@ -3078,7 +3081,9 @@ _t_: go to todays file
 
   (defun elfeed/load-feeds ()
     (interactive)
-    (setq elfeed-feeds (jens/load-from-file (locate-user-emacs-file "elfeeds.el"))))
+    (let* ((feeds-file (locate-user-emacs-file "elfeeds.el"))
+           (feeds (jens/load-from-file feeds-file)))
+      (setq elfeed-feeds feeds)))
 
   (elfeed/load-feeds)
 
@@ -3811,7 +3816,11 @@ if BACKWARDS is non-nil, jump backwards instead."
 ;;;; minor modes
 
 (use-package git-timemachine :straight t :defer t)
-(use-package rainbow-mode :straight t :defer t :diminish rainbow-mode) ;; highlight color-strings (hex, etc.)
+(use-package rainbow-mode
+  ;; highlight color-strings (hex, etc.)
+  :straight t
+  :defer t
+  :diminish rainbow-mode)
 
 (use-package visual-fill-column
   :straight t
@@ -3837,7 +3846,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   ;; fontify the entire outshine-heading, including the comment
   ;; characters (;;;)
   (if (not (fn-checksum #'outshine-fontify-headlines
-                        "f046c978b2fffbaa7f0d75d67da7b9ca"))
+                        "f07111ba85e2f076788ee39af3805516"))
       (log-warning "`outshine-fontify-headlines' changed definition, ignoring patch.")
     (advice-patch #'outshine-fontify-headlines
                   '(font-lock-new-keywords
@@ -3955,7 +3964,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   :custom-face
   (flycheck-error-list-filename ((t (:bold normal))))
   (flycheck-info ((t (:underline (:color ,(zent 'blue))))))
-  (flycheck-warning ((t (:underline (:color ,(zent 'yellow))))))
+  (flycheck-warning ((t (:background nil :underline (:color ,(zent 'yellow))))))
   (flycheck-error ((t (:weight bold :underline (:color ,(zent 'red))))))
   (flycheck-error-list-id-with-explainer ((t (:inherit flycheck-error-list-id :box nil))))
   (flycheck-error-list-highlight ((t (:background ,(zent 'bg-1) :extend t)))))
@@ -4874,8 +4883,6 @@ re-enable afterwards."
 (bind-key* "M-r" #'jens/goto-repo)
 
 (bind-key "t" #'jens/tail-message-buffer messages-buffer-mode-map)
-
-(global-set-key (kbd "<f12>") #'jens/inspect-symbol-at-point)
 
 (global-set-key (kbd "C-<escape>") #'jens/shortcut/body)
 
