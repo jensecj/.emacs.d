@@ -1786,7 +1786,7 @@ If METHOD does not exist, do nothing."
     '(
       "academia" "ai" "devops" "books" "backup" "career" "china" "crypto" "privacy"
       "investing" "life" "climate" "cloud" "cicd" "databases" "microsoft" "esoteric"
-      "economics" "postmortem" "deep_learning" "data_structures" "economy" "eu" "foss"
+      "economics" "postmortem" "deep_learning" "data_structures" "eu" "foss"
       "functional" "fintech" "visualization" "hardware" "history" "industry" "investing"
       "libre" "linux" "machine_learning" "math" "netsec" "networks" "philosophy" "plt"
       "politics" "programming" "research" "science" "software" "statistics" "startup"
