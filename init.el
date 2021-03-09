@@ -2737,19 +2737,23 @@ _H_: capture task from clipboard to this buffer
     "
 ^Today^
 ^^^^^^^^------------------------------
-_c_: Capture
+_c_: Capture hydra
 _a_: Archive completed todos
-_l_: list all archived files
-_f_: refile hydra
-_g_: move entry to today-file
+_l_: List all archived files
+_g_: Move entry to today-file
 
-_t_: go to todays file
+_T_: Update title at point
+_L_: Update LOC property at point
+
+_t_: Go to todays file
 "
     ("c" #'today-capture-hydra/body :exit t)
     ("a" #'today-archive-done-todos :exit t)
     ("t" #'today-visit-todays-file :exit t)
     ("l" #'today-list :exit t)
-    ("f" #'today-refile-hydra/body :exit t)
+    ("T" #'today-capture-update-title-at-point)
+    ("L" #'today-capture-add-property-loc-at-point)
+    ("D" #'today-capture-add-property-video-duration-at-point)
     ("g" #'today-move-to-today)
     ("q" nil "quit")))
 
