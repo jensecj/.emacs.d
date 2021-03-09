@@ -2704,10 +2704,11 @@ to a temp file and puts the filename in the kill ring."
   :commands (today-hydra/body
              today-capture-elfeed-at-point)
   :bind
-  (("C-x t" . today-hydra/body)
-   :map elfeed-search-mode-map
-   ("t" . today-capture-elfeed-at-point))
+  (("C-x t" . today-hydra/body))
   :config
+  (with-eval-after-load 'elfeed
+    (bind-key "t" #'today-capture-elfeed-at-point elfeed-search-mode-map))
+
   (setq today-directory "~/vault/journal/")
   (setq today-file "~/vault/inbox/today.org")
   (setq today-inbox-file "~/vault/inbox/inbox.org")
