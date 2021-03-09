@@ -4595,13 +4595,13 @@ re-enable afterwards."
   (add-to-list* 'ivy-prescient-sort-commands
                 '(counsel-outline
                   counsel-imenu
+                  counsel-grep
                   counsel-mark-ring
                   counsel-yank-pop)
                 t)
 
   (setq counsel-fzf-cmd "fzf -i -x -f \"%s\"")
 
-  (setq counsel-yank-pop-height 25)
   (add-to-list 'ivy-height-alist '(counsel-yank-pop . 10))
 
   (setq counsel-yank-pop-separator
