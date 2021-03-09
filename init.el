@@ -925,19 +925,7 @@ seconds."
     (let ((this-line (buffer-substring (line-beginning-position) (line-end-position))))
       (if (s-matches-p (dired-marker-regexp) this-line)
           (dired-unmark arg)
-        (dired-mark arg))))
-
-  (defun jens/dired-show-readme ()
-    "Popup readme in a temporary view-buffer."
-    (interactive)
-    (when-let* ((dir (dired-current-directory))
-                (files (f-entries dir))
-                (readme (-first
-                         (lambda (e) (s-match "readme\..*$" e))
-                         files)))
-      (view-buffer-other-window
-       (find-file-noselect readme)
-       nil #'kill-buffer-if-not-modified))))
+        (dired-mark arg)))))
 
 (use-package ediff
   :defer t
@@ -1397,7 +1385,6 @@ If METHOD does not exist, do nothing."
       (t 'font-lock-builtin-face))))
 
   (defun path-colorize (path)
-    ""
     (cond
      ((file-remote-p path)
       (let* ((remote-part (file-remote-p path))
@@ -2057,14 +2044,6 @@ not in the overlay-map"
 ;;    ("b" . ,(xi (message "b")))
 ;;    ("c" . ,(xi (message "c")))
 ;;    ("d" . ,(xi (message "d")))))
-
-(defun jens/try-require (feature)
-  "Try to require FEATURE, if an exception is thrown, log it."
-  (condition-case ex
-      (progn
-        (log-info (format "= Requiring \"%s\" " (symbol-name feature)))
-        (require feature))
-    ('error (log-warning (format "@ Error requiring \"%s\": %s" (symbol-name feature) ex)))))
 
 (defun jens/eval-and-replace ()
   "Replace the preceding sexp with its value."
@@ -2880,7 +2859,6 @@ _t_: go to todays file
 (use-package markdown-mode :straight t :defer t :mode ("\\.md\\'" "\\.card\\'"))
 (use-package scss-mode :straight t :defer t :mode "\\.scss\\'")
 (use-package tuareg :straight t :defer t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
-(use-package restclient :straight t :defer t)
 (use-package json-mode :straight t :defer t :hook ((json-mode . flycheck-mode)))
 (use-package ini-mode :straight t :defer t)
 (use-package systemd :straight t :defer t)
@@ -2922,12 +2900,9 @@ _t_: go to todays file
   :straight t
   :defer t
   :after (company-mode cider clj-refactor)
-  :functions jens/company-clojure-quickhelp-at-point
   :commands (cider-create-doc-buffer
              cider-try-symbol-at-point)
   :bind
-  (:map clojure-mode-map
-        ("C-+" . jens/company-clojure-quickhelp-at-point))
   :config
   (unbind-key "M-," clojure-mode-map)
   (unbind-key "M-." clojure-mode-map)
@@ -3700,43 +3675,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   (diredp-file-name ((t (:foreground "#DCDCCC"))))
   (diredp-dir-name ((t (:foreground "#8CD0D3")))))
 
-(use-package slime
-  :defer t
-  :straight t
-  :after macrostep
-  :commands (jens/qlot-slime slime-start)
-  :bind (:map slime-mode-map
-              ("C-x C-e" . jens/slime-eval-last-sexp))
-  :config
-  (setq inferior-lisp-program "sbcl")
-  (setq slime-contribs '(slime-fancy))
-
-  (defun jens/slime-eval-last-sexp ()
-    "Show the result of evaluating the last-sexp in an overlay."
-    (interactive)
-    (slime-eval-async
-     `(swank:eval-and-grab-output ,(slime-last-expression))
-     (lambda (result)
-       (cl-destructuring-bind (output value) result
-         (let ((string (s-replace "\n" " " (concat output value))))
-           (message string)
-           (eros--eval-overlay string (point))))))
-    (slime-sync))
-
-  (defun jens/qlot-slime (directory)
-    "Start Common Lisp REPL using project-local libraries via
-`roswell' and `qlot'."
-    (interactive (list (read-directory-name "Project directory: ")))
-    (slime-start
-     :program "~/.roswell/bin/qlot"
-     :program-args '("exec" "ros" "-S" "." "run")
-     :directory directory
-     :name 'qlot
-     :env (list (concat "PATH="
-                        (mapconcat 'identity exec-path ":"))
-                (concat "QUICKLISP_HOME="
-                        (file-name-as-directory directory) "quicklisp/")))))
-
 (use-package geiser
   :straight t
   :defer t
@@ -3869,7 +3807,6 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 (use-package ox-pandoc :straight t :defer t :after org)
 (use-package ox-asciidoc :straight t :defer t :after org)
-(use-package org-ref :straight t :defer t)
 
 ;;;; minor modes
 
