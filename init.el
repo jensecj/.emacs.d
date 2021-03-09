@@ -679,16 +679,16 @@ times."
   :config
   (setenv "GPG_AGENT_INFO" nil)
 
-  (defun jens/pinentry-reset ()
+  (defun pinentry/reset ()
     "Reset the `pinentry' service."
     (interactive)
     (pinentry-stop)
     (pinentry-start))
 
-  (jens/pinentry-reset)
+  (pinentry/reset)
 
   ;; need to reset the pinentry from time to time, otherwise it stops working?
-  (setq jens/gpg-reset-timer (run-with-timer 0 (* 60 45) #'jens/pinentry-reset)))
+  (setq pinentry/gpg-reset-timer (run-with-timer 0 (* 60 45) #'pinentry/reset)))
 
 (defun jens/kill-idle-gpg-buffers ()
   "Kill .gpg buffers after they have not been used for 120
@@ -878,13 +878,13 @@ seconds."
 
 (use-package dired
   :defer t
-  :commands (dired jens/dired-toggle-mark)
+  :commands (dired dired/toggle-mark)
   :bind
   (("C-x C-d" . dired-jump)
    :map dired-mode-map
    ("c" . dired-do-copy)
    ("C-." . dired-omit-mode)
-   ("SPC" . jens/dired-toggle-mark)
+   ("SPC" . dired/toggle-mark)
    ("C-+" . dired-create-empty-file))
   :config
   ;; pull in extra functionality for dired
@@ -906,7 +906,7 @@ seconds."
                 (filename-and-process 70 -1))
           (mark " " (name 16 -1) " " filename)))
 
-  (defun jens/dired-sort ()
+  (defun dired/sort ()
     "Sort dired listings with directories first."
     (save-excursion
       (let (buffer-read-only)
@@ -914,12 +914,12 @@ seconds."
         (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
       (set-buffer-modified-p nil)))
 
-  (advice-add #'dired-readin :after #'jens/dired-sort)
+  (advice-add #'dired-readin :after #'dired/sort)
 
   ;; use bigger fringes in dired-mode
   (add-hook 'dired-mode-hook (lambda () (setq left-fringe-width 10)))
 
-  (defun jens/dired-toggle-mark (arg)
+  (defun dired/toggle-mark (arg)
     "Toggle mark on the current line."
     (interactive "P")
     (let ((this-line (buffer-substring (line-beginning-position) (line-end-position))))
@@ -1009,7 +1009,7 @@ Works well being called from a terminal:
   (defun eww/open-url-at-point ()
     "Open link at point in eww."
     (interactive)
-    (when-let ((url (or (car (eww-suggested-uris)) (url/get-url-at-point)))
+    (when-let ((url (or (car (eww-suggested-uris)) (browse-url/get-url-at-point)))
                (buf (get-buffer-create "*eww*")))
       (view-buffer-other-window buf)
       (eww url)))
@@ -1108,13 +1108,13 @@ Works well being called from a terminal:
   :demand t
   :diminish whitespace-mode
   :config
-  (defun jens/show-trailing-whitespace ()
+  (defun whitespace/show-trailing ()
     "Show trailing whitespace in buffer."
     (interactive)
     (setq show-trailing-whitespace t)
     (whitespace-mode +1))
 
-  (add-hook* '(text-mode-hook prog-mode-hook) #'jens/show-trailing-whitespace))
+  (add-hook* '(text-mode-hook prog-mode-hook) #'whitespace/show-trailing))
 
 (use-package elec-pair ;; insert parens-type things in pairs
   :demand t
@@ -1191,9 +1191,9 @@ Works well being called from a terminal:
 (use-package display-line-numbers
   :defer t
   :commands display-line-numbers-mode
-  :bind ("M-g M-g" . jens/goto-line-with-feedback)
+  :bind ("M-g M-g" . display-line-numbers/goto-line-with-feedback)
   :config
-  (defun jens/goto-line-with-feedback ()
+  (defun display-line-numbers/goto-line-with-feedback ()
     "Show line numbers temporarily, while prompting for the line
 number input"
     (interactive)
@@ -1205,23 +1205,23 @@ number input"
 
 (use-package smerge-mode ;; easily handle merge conflicts
   :bind
-  (:map smerge-mode-map ("C-c ^" . jens/smerge/body))
+  (:map smerge-mode-map ("C-c ^" . smerge/hydra/body))
   :config
-  (defhydra jens/smerge ()
+  (defhydra smerge/hydra ()
     "Move between buffers."
     ("n" #'smerge-next "next")
     ("p" #'smerge-prev "previous")
     ("u" #'smerge-keep-upper "keep upper")
     ("l" #'smerge-keep-lower "keep lower"))
 
-  (defun jens/enable-smerge-if-diff-buffer ()
+  (defun smerge/enable-if-diff-buffer ()
     "Enable Smerge-mode if the current buffer is showing a diff."
     (save-excursion
       (goto-char (point-min))
       (when (re-search-forward "^<<<<<<< " nil t)
         (smerge-mode +1))))
 
-  (add-hook* '(find-file-hook after-revert-hook) #'jens/enable-smerge-if-diff-buffer))
+  (add-hook* '(find-file-hook after-revert-hook) #'smerge/enable-if-diff-buffer))
 
 (use-package eldoc
   ;; show useful contextual information in the echo-area
@@ -1238,7 +1238,7 @@ number input"
 
   (setq eldoc-idle-delay 0.2)
 
-  (defun jens/eldoc-highlight-&s (doc)
+  (defun eldoc/highlight-&s (doc)
     "Highlight &keywords in elisp eldoc arglists."
     (condition-case nil
         (with-temp-buffer
@@ -1251,10 +1251,10 @@ number input"
           (buffer-string))
       (error doc)))
 
-  (advice-add #'elisp-get-fnsym-args-string :filter-return #'jens/eldoc-highlight-&s)
+  (advice-add #'elisp-get-fnsym-args-string :filter-return #'eldoc/highlight-&s)
 
   (with-eval-after-load 'dokument-elisp
-    (defun jens/eldoc-add-short-doc (orig &rest args)
+    (defun eldoc/add-short-doc (orig &rest args)
       "Change the format of eldoc messages for functions to `(fn args)'."
       (shut-up
         (save-window-excursion
@@ -1266,9 +1266,9 @@ number input"
                      (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
                 (format "%s\t\t%s" (or eldoc-args "") (or short-doc ""))))))))
 
-    (jens/eldoc-add-short-doc #'elisp-get-fnsym-args-string 'insert)
+    (eldoc/add-short-doc #'elisp-get-fnsym-args-string 'insert)
 
-    (advice-add #'elisp-get-fnsym-args-string :around #'jens/eldoc-add-short-doc))
+    (advice-add #'elisp-get-fnsym-args-string :around #'eldoc/add-short-doc))
 
   (global-eldoc-mode +1)
   :custom-face
@@ -1332,8 +1332,8 @@ If METHOD does not exist, do nothing."
 
 (use-package recentf ;; save a list of recently visited files.
   :demand t
-  :commands (recentf-mode jens/recentf)
-  :bind (("C-x f" . jens/recentf))
+  :commands (recentf-mode recentf/with-colors)
+  :bind (("C-x f" . recentf/with-colors))
   :config
   ;; TODO: maybe move to var directory?
   (setq recentf-save-file
@@ -1350,12 +1350,12 @@ If METHOD does not exist, do nothing."
   ;; clean the list every 5 minutes
   (setq recentf-auto-cleanup 300)
 
-  (defun silent-recentf-save ()
+  (defun recentf/silent-save ()
     (shut-up
       (recentf-save-list)))
 
   ;; save recentf file every 30s, but don't bother us about it
-  (run-with-idle-timer 30 t #'silent-recentf-save)
+  (run-with-idle-timer 30 t #'recentf/silent-save)
 
   (defun path-colorize-tail (path face)
     (let ((last-part (-last-item (f-split path))))
@@ -1418,7 +1418,7 @@ If METHOD does not exist, do nothing."
 
   (add-hook 'dired-after-readin-hook #'recentf/track-opened-file)
 
-  (defun jens/recentf ()
+  (defun recentf/with-colors ()
     "Show list of recently visited files, colorized by type."
     (interactive)
     (let* ((recent-files (mapcar #'substring-no-properties recentf-list))
@@ -1432,22 +1432,22 @@ If METHOD does not exist, do nothing."
                                 (find-file-other-window f)
                               (find-file f))))
                 :require-match t
-                :caller 'jens/recentf)))
+                :caller 'recentf/with-colors)))
 
-  (defun jens/recentf-cleanup (orig-fun &rest args)
+  (defun recentf/cleanup (orig-fun &rest args)
     "Silence `recentf-auto-cleanup'."
     (shut-up (apply orig-fun args)))
 
-  (advice-add #'recentf-cleanup :around #'jens/recentf-cleanup)
+  (advice-add #'recentf-cleanup :around #'recentf/cleanup)
   (recentf-mode +1))
 
 (use-package replace
   :defer t
   :bind
-  (("C-c r" . jens/replace)
-   ("C-c q" . jens/query-replace))
+  (("C-c r" . replace/replace)
+   ("C-c q" . replace/query-replace))
   :config
-  (defun jens/--replace (fn)
+  (defun replace/--replace (fn)
     "Get replace arguments and delegate to replace FN."
     (let ((from (if (use-region-p)
                     (buffer-substring (region-beginning) (region-end))
@@ -1457,15 +1457,15 @@ If METHOD does not exist, do nothing."
       (save-excursion
         (funcall fn from to nil (point-min) (point-max)))))
 
-  (defun jens/replace ()
+  (defun replace/replace ()
     "Replace occurrence of regexp in the entire buffer."
     (interactive)
-    (jens/--replace #'replace-regexp))
+    (replace/--replace #'replace-regexp))
 
-  (defun jens/query-replace ()
+  (defun replace/query-replace ()
     "Interactively replace occurrence of regexp in the entire buffer."
     (interactive)
-    (jens/--replace #'query-replace-regexp)))
+    (replace/--replace #'query-replace-regexp)))
 
 (use-package semantic
   ;; semantic analysis in supported modes (cpp, java, etc.)
@@ -1487,9 +1487,9 @@ If METHOD does not exist, do nothing."
 
 (use-package compile
   :bind
-  (("M-g n" . jens/next-error)
-   ("M-g p" . jens/previous-error))
-  :commands (jens/next-error jens/previous-error)
+  (("M-g M-n" . compile/next-error)
+   ("M-g M-p" . compile/previous-error)
+   ("M-g M-e" . compile/goto-error-hydra/body))
   :config
   ;; don't keep asking for the commands
   (setq compilation-read-command nil)
@@ -1501,22 +1501,22 @@ If METHOD does not exist, do nothing."
   (require 'ansi-color)
   (add-hook* '(compilation-filter-hook shell-mode-hook) #'ansi-color-for-comint-mode-on)
 
-  (defhydra jens/goto-error-hydra ()
+  (defhydra compile/goto-error-hydra ()
     "Hydra for navigating between errors."
     ("n" #'next-error "next error")
     ("p" #'previous-error "previous error"))
 
-  (defun jens/next-error ()
+  (defun compile/next-error ()
     "Go to next error in buffer, and start goto-error-hydra."
     (interactive)
     (next-error)
-    (jens/goto-error-hydra/body))
+    (compile/goto-error-hydra/body))
 
-  (defun jens/previous-error ()
+  (defun compile/previous-error ()
     "Go to previous error in buffer, and start goto-error-hydra."
     (interactive)
     (previous-error)
-    (jens/goto-error-hydra/body)))
+    (compile/goto-error-hydra/body)))
 
 (use-package url
   :config
@@ -1528,11 +1528,11 @@ If METHOD does not exist, do nothing."
 (use-package browse-url
   :defer t
   :bind
-  ("C-c C-o" . #'jens/open-url-at-point)
+  ("C-c C-o" . #'browse-url/open-url-at-point)
   :config
   (setq browse-url-firefox-program "firefox-developer-edition")
 
-  (defun url/get-url-at-point ()
+  (defun browse-url/get-url-at-point ()
     "Return the url at point, if any."
     (or
      (thing-at-point 'url t)
@@ -1542,10 +1542,10 @@ If METHOD does not exist, do nothing."
      ;; bug-links from bug-reference-mode
      (-any (lambda (o) (overlay-get o 'bug-reference-url)) (overlays-at (point)))))
 
-  (defun jens/open-url-at-point ()
+  (defun browse-url/open-url-at-point ()
     "Open the URL-at-point, dwim."
     (interactive)
-    (browse-url (url/get-url-at-point))))
+    (browse-url (browse-url/get-url-at-point))))
 
 (use-package shr
   :defer t
@@ -1671,7 +1671,7 @@ If METHOD does not exist, do nothing."
    ("M-<prior>" . org-move-subtree-up)
    ("M-<right>" . org-demote-subtree)
    ("M-<left>" . org-promote-subtree)
-   ("C-c C-q" . jens/org-tag)
+   ("C-c C-q" . org/add-tag)
    ;; unbind things that are used for other things
    ([(tab)] . nil)
    ("C-a" . nil)
@@ -1777,12 +1777,12 @@ If METHOD does not exist, do nothing."
   ;; advice ;;
   ;;;;;;;;;;;;
 
-  (defun jens/org-summary-todo (n-done n-not-done)
+  (defun org/complete-todo-entries (n-done n-not-done)
     "Switch entry to DONE when all sub-entries are done, to TODO otherwise."
     (let (org-log-done org-log-states)   ; turn off logging
       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
-  (add-hook 'org-after-todo-statistics-hook #'jens/org-summary-todo)
+  (add-hook 'org-after-todo-statistics-hook #'org/complete-todo-entries)
 
   ;; `$ $' is a pair for latex-math in org-mode
   (defvar org-extra-electric-pairs '((?\$ . ?\$)))
@@ -1807,7 +1807,7 @@ If METHOD does not exist, do nothing."
       "compsci" "golang" "clojure" "altweb"
       ))
 
-  (defun jens/org-tag ()
+  (defun org/add-tag ()
     "Tag current headline with available tags from the buffer"
     (interactive)
     (let* ((completions (-uniq (-concat (-flatten (org-get-buffer-tags))
@@ -1821,13 +1821,13 @@ If METHOD does not exist, do nothing."
         (org-back-to-heading t)
         (org-set-tags tags))))
 
-  (defun jens/toggle-org-babel-safe ()
+  (defun org/toggle-babel-safe ()
     "Toggle whether it is safe to eval babel code blocks in the current buffer."
     (interactive)
     (set (make-variable-buffer-local 'org-confirm-babel-evaluate)
          (not org-confirm-babel-evaluate)))
 
-  (defun jens/org-indent ()
+  (defun org/indent ()
     "Indent line or region in org-mode."
     (interactive)
     (if (region-active-p)
@@ -1865,7 +1865,7 @@ If METHOD does not exist, do nothing."
   :config
   (setq org-contacts-files user-contacts-files)
 
-  (defun jens/org-contacts ()
+  (defun org-contacts/get-contacts ()
     "Return all contacts from `org-contacts', in 'NAME <EMAIL>' format."
     (let ((data (-map #'caddr (org-contacts-db))))
       (-map
@@ -1875,7 +1875,7 @@ If METHOD does not exist, do nothing."
            (format "%s <%s>" (or name "") (or email ""))))
        data)))
 
-  (add-to-list 'notmuch-mojn-candidate-functions #'jens/org-contacts))
+  (add-to-list 'notmuch-mojn-candidate-functions #'org-contacts/get-contacts))
 
 (use-package org-agenda
   :defer t
@@ -2689,7 +2689,7 @@ to a temp file and puts the filename in the kill ring."
   :defer t
   :bind (("C-c n" . struere-buffer))
   :config
-  (struere-add 'org-mode #'jens/org-indent)
+  (struere-add 'org-mode #'org/indent)
   (struere-add 'python-mode #'blacken-buffer))
 
 (use-package augment
@@ -2894,7 +2894,7 @@ _t_: go to todays file
     (interactive)
     (let ((url (or
                 (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)))
-                (url/get-url-at-point))))
+                (browse-url/get-url-at-point))))
       (view-buffer-other-window "*elpher*")
       (elpher-go url)))
 
@@ -3067,12 +3067,12 @@ _t_: go to todays file
   :straight t
   :defer t
   :defines elfeed-search-mode-map
-  :commands (elfeed elfeed-search-selected jens/load-elfeed)
-  :functions jens/elfeed-copy-link-at-point
+  :commands (elfeed elfeed-search-selected elfeed/load-feeds)
+  :functions elfeed/copy-link-at-point
   :bind
   (:map elfeed-search-mode-map
-        ("c" . jens/elfeed-copy-link-at-point)
-        ("V" . jens/elfeed-play-video-at-point))
+        ("c" . elfeed/copy-link-at-point)
+        ("V" . elfeed/play-video-at-point))
   :config
   (require 'today)
 
@@ -3101,13 +3101,13 @@ _t_: go to todays file
     :group 'elfeed-faces)
   (push '(aggregate aggregate-elfeed-face) elfeed-search-face-alist)
 
-  (defun jens/load-elfeed ()
+  (defun elfeed/load-feeds ()
     (interactive)
     (setq elfeed-feeds (jens/load-from-file (locate-user-emacs-file "elfeeds.el"))))
 
-  (jens/load-elfeed)
+  (elfeed/load-feeds)
 
-  (defun jens/elfeed-select-emacs-after-browse-url (fn &rest args)
+  (defun elfeed/-focus-emacs-after-browse-url (fn &rest args)
     "Activate the emacs-window"
     (let* ((emacs-window (shell-command-to-string "xdo id"))
            (active-window "")
@@ -3121,9 +3121,9 @@ _t_: go to todays file
         (setq active-window (shell-command-to-string "xdo id"))
         (shell-command-to-string (format "xdo activate %s" emacs-window)))))
 
-  (advice-add #'elfeed-search-browse-url :around #'jens/elfeed-select-emacs-after-browse-url)
+  (advice-add #'elfeed-search-browse-url :around #'elfeed/-focus-emacs-after-browse-url)
 
-  (defun jens/elfeed-play-video-at-point ()
+  (defun elfeed/play-video-at-point ()
     "Attempt to play the video link of the elfeed entry at point."
     (interactive)
     (letrec ((entry (car (elfeed-search-selected)))
@@ -3132,7 +3132,7 @@ _t_: go to todays file
       (start-process "mpv-ytdl" mpv-buf "mpv" "--ytdl-format=bestvideo[width<=1920][height<=1080]" "--ytdl" link)
       (view-buffer-other-window mpv-buf)))
 
-  (defun jens/elfeed-copy-link-at-point ()
+  (defun elfeed/copy-link-at-point ()
     "Copy the link of the elfeed entry at point to the
 clipboard."
     (interactive)
@@ -3250,7 +3250,7 @@ clipboard."
   :defer t
   :bind
   (:map notmuch-show-mode-map
-        ("B" . #'jens/notmuch-show-list-links)
+        ("B" . #'notmuch/show-list-links)
         ("N" . #'notmuch-show/goto-next-unread-message)
         ("P" . #'notmuch-show/goto-previous-unread-message)
         :map notmuch-search-mode-map
@@ -3394,14 +3394,14 @@ clipboard."
               :filter-args
               #'notmuch-show/format-headerline-date)
 
-  (defun jens/notmuch-show-list-links ()
+  (defun notmuch/show-list-links ()
     "List links in the current message, if one is selected, browse to it."
     (interactive)
     (let ((links (notmuch-show--gather-urls)))
       (if links
           (browse-url (completing-read "Links: " links)))))
 
-  (add-to-list 'ivy-prescient-sort-commands #'jens/notmuch-show-list-links t)
+  (add-to-list 'ivy-prescient-sort-commands #'notmuch/show-list-links t)
 
   (defun notmuch-show/eldoc ()
     "Simple eldoc handler for `notmuch-show-mode'.
@@ -3752,7 +3752,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq scheme-program-name "chicken-csi -:c")
   (setq scheme-compiler-name "chicken-csc")
 
-  (defun jens/chicken-compile-this-file ()
+  (defun chicken/compile-this-file ()
     (interactive)
     (shell-command-to-string (format "%s %s" scheme-compiler-name (buffer-file-name)))))
 
@@ -3936,7 +3936,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq flycheck-display-errors-delay 0.4)
   (setq flycheck-indication-mode 'right-fringe)
 
-  (defun jens/flycheck-error-list-make-last-column (args)
+  (defun flycheck/error-list-make-last-column (args)
     "Transform messages from pycheckers to report correct checker."
     (cl-destructuring-bind (msg checker) args
       (when (eq checker 'python-pycheckers)
@@ -3947,7 +3947,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   (advice-add #'flycheck-error-list-make-last-column
               :filter-args
-              #'jens/flycheck-error-list-make-last-column)
+              #'flycheck/error-list-make-last-column)
 
   (setq flycheck-error-list-format
         `[("File" 8)
@@ -3957,7 +3957,7 @@ if BACKWARDS is non-nil, jump backwards instead."
           ("ID" 6 t)
           ("Message" 0 t)])
 
-  (defun magnars/adjust-flycheck-automatic-syntax-eagerness ()
+  (defun flycheck/adjust-flycheck-automatic-syntax-eagerness ()
     "Adjust how often we check for errors based on if there are any.
   This lets us fix any errors as quickly as possible, but in a
   clean buffer we're an order of magnitude laxer about checking."
@@ -3969,13 +3969,13 @@ if BACKWARDS is non-nil, jump backwards instead."
   (make-variable-buffer-local 'flycheck-idle-change-delay)
 
   (add-hook 'flycheck-after-syntax-check-hook
-            #'magnars/adjust-flycheck-automatic-syntax-eagerness)
+            #'flycheck/adjust-flycheck-automatic-syntax-eagerness)
 
   ;; Remove newline checks, since they would trigger an immediate check
   ;; when we want the idle-change-delay to be in effect while editing.
   ;; (setq-default flycheck-check-syntax-automatically '(save idle-change new-line mode-enabled))
 
-  (define-fringe-bitmap 'jens/flycheck-fringe-indicator
+  (define-fringe-bitmap 'flycheck--fringe-indicator
     (vector #b11000000
             #b11000000
             #b11000000
@@ -3993,7 +3993,7 @@ if BACKWARDS is non-nil, jump backwards instead."
             #b11000000
             #b11000000))
 
-  (let ((bitmap 'jens/flycheck-fringe-indicator))
+  (let ((bitmap 'flycheck--fringe-indicator))
     (flycheck-define-error-level 'info
       :severity 0
       :overlay-category 'flycheck-info-overlay
@@ -4105,18 +4105,18 @@ if BACKWARDS is non-nil, jump backwards instead."
   :after diff-hl
   :defer t
   :config
-  (defun jens/empty-fringe-bitmap (&rest _args)
+  (defun create-empty-fringe-bitmap (&rest _args)
     "Always use the clean empty BMP for fringe display"
     'empty-fringe-bitmap)
 
   ;; Use clean fringe style for highlighting
-  (setq diff-hl-fringe-bmp-function #'jens/empty-fringe-bitmap)
+  (setq diff-hl-fringe-bmp-function #'create-empty-fringe-bitmap)
 
   (if (not (fn-checksum #'diff-hl-dired-highlight-items
                         "e06f15da2bf831295e015c9c82f11539"))
       (message "`diff-hl-dired-highlight-items' changed definition, ignoring patch.")
     (advice-patch #'diff-hl-dired-highlight-items
-                  'jens/empty-fringe-bitmap
+                  'create-empty-fringe-bitmap
                   'diff-hl-fringe-bmp-from-type)))
 
 (use-package hl-todo
@@ -4233,25 +4233,25 @@ of (command . word) to be used by `flyspell-do-correct'."
 (use-package spinner
   :straight t
   :config
-  (defun jens/package-spinner-start (&rest _arg)
+  (defun spinner/package-spinner-start (&rest _arg)
     "Create and start package-spinner."
     (when-let ((buf (get-buffer "*Packages*")))
       (with-current-buffer buf
         (spinner-start 'progress-bar 2))))
 
-  (defun jens/package-spinner-stop (&rest _arg)
+  (defun spinner/package-spinner-stop (&rest _arg)
     "Stop the package-spinner."
     (when-let ((buf (get-buffer "*Packages*")))
       (with-current-buffer (get-buffer "*Packages*")
         (spinner-stop))))
 
   ;; create a spinner when launching `list-packages' and waiting for archive refresh
-  (advice-add #'list-packages :after #'jens/package-spinner-start)
-  (add-hook 'package--post-download-archives-hook #'jens/package-spinner-stop)
+  (advice-add #'list-packages :after #'spinner/package-spinner-start)
+  (add-hook 'package--post-download-archives-hook #'spinner/package-spinner-stop)
 
   ;; create a spinner when updating packages using `U x'
-  (advice-add #'package-menu--perform-transaction :before #'jens/package-spinner-start)
-  (advice-add #'package-menu--perform-transaction :after #'jens/package-spinner-stop))
+  (advice-add #'package-menu--perform-transaction :before #'spinner/package-spinner-start)
+  (advice-add #'package-menu--perform-transaction :after #'spinner/package-spinner-stop))
 
 (use-package org-web-tools
   :straight t
@@ -4293,15 +4293,15 @@ of (command . word) to be used by `flyspell-do-correct'."
   :defer t
   :commands (smart-jump-register
              smart-jump-simple-find-references)
-  :functions (jens/smart-jump-find-references-with-rg
+  :functions (smart-jump/find-references-with-rg
               smart-jump-refs-search-rg
-              jens/select-rg-window)
+              smart-jump/select-rg-window)
   :bind*
   (("M-." . smart-jump-go)
    ("M-," . smart-jump-back)
    ("M--" . smart-jump-references))
   :config
-  (defun jens/smart-jump-find-references-with-rg ()
+  (defun smart-jump/find-references-with-rg ()
     "Use `rg' to find references."
     (interactive)
     (unless (fboundp 'rg)
@@ -4322,11 +4322,11 @@ of (command . word) to be used by `flyspell-do-correct'."
             (substring-no-properties
              (symbol-name (symbol-at-point)))))))
 
-  (defun jens/select-rg-window nil
+  (defun smart-jump/select-rg-window nil
     "Select the `rg' buffer, if visible."
     (select-window (get-buffer-window (get-buffer "*rg*"))))
 
-  (setq smart-jump-find-references-fallback-function #'jens/smart-jump-find-references-with-rg)
+  (setq smart-jump-find-references-fallback-function #'smart-jump/find-references-with-rg)
 
   (smart-jump-register :modes '(clojure-mode rust-mode))
 
@@ -4345,7 +4345,7 @@ of (command . word) to be used by `flyspell-do-correct'."
    :pop-fn #'xref-pop-marker-stack
    :refs-fn #'smart-jump-simple-find-references
    :should-jump (lambda () (bound-and-true-p elpy-mode))
-   :heuristic #'jens/select-rg-window)
+   :heuristic #'smart-jump/select-rg-window)
 
   (smart-jump-register
    :modes 'c++-mode
@@ -4353,7 +4353,7 @@ of (command . word) to be used by `flyspell-do-correct'."
    :pop-fn 'pop-tag-mark
    :refs-fn #'smart-jump-simple-find-references
    :should-jump t
-   :heuristic #'jens/select-rg-window
+   :heuristic #'smart-jump/select-rg-window
    :order 4)
 
   (smart-jump-register
@@ -4451,7 +4451,7 @@ of (command . word) to be used by `flyspell-do-correct'."
   :config
   (setq avy-background 't)
 
-  (defun jens/avy-disable-highlight-thing (fn &rest args)
+  (defun avy/disable-highlight-thing (fn &rest args)
     "Disable `highlight-thing-mode' when avy-goto mode is active,
 re-enable afterwards."
     (let ((toggle (bound-and-true-p highlight-thing-mode)))
@@ -4460,7 +4460,7 @@ re-enable afterwards."
           (apply fn args)
         (when toggle (highlight-thing-mode +1)))))
 
-  (advice-add #'avy-goto-char :around #'jens/avy-disable-highlight-thing)
+  (advice-add #'avy-goto-char :around #'avy/disable-highlight-thing)
   :custom-face
   (avy-background-face ((t (:foreground ,(zent 'grey+3) :background ,(zent 'bg-1) :extend t))))
   (avy-lead-face ((t (:background ,(zent 'bg-1)))))
@@ -4616,7 +4616,7 @@ re-enable afterwards."
   :diminish counsel-mode
   :commands (counsel-mode counsel--find-file-matcher)
   :bind
-  (("C-S-s" . jens/ripgrep)
+  (("C-S-s" . counsel/ripgrep)
    ("C-x d" . counsel-dired)
    ("C-x C-f" . counsel-find-file)
    ("C-S-f" . counsel-fzf)
@@ -4652,7 +4652,7 @@ re-enable afterwards."
 
   (setq counsel-rg-base-command "rg --hidden --max-columns 200 --glob='!.git' --no-heading --line-number --color never %s .")
 
-  (defun jens/ripgrep ()
+  (defun counsel/ripgrep ()
     "Interactively search the current directory. Jump to result using ivy."
     (interactive)
     (let ((counsel-ag-base-command counsel-rg-base-command)
@@ -4666,11 +4666,10 @@ re-enable afterwards."
 
 (use-package swiper
   :straight t
-  :bind ("C-s" . jens/swiper)
+  :bind ("C-s" . swiper/search)
   :config
-  (defun jens/swiper ()
-    "If region is active, use the contents of the region as the
-initial search query."
+  (defun swiper/search ()
+    "If region is active, use it as initial query"
     (interactive)
     (if (region-active-p)
         (let ((query (buffer-substring-no-properties (region-beginning) (region-end))))
@@ -4756,7 +4755,7 @@ initial search query."
   :hook (emacs-lisp-mode . company-mode)
   :bind
   (("<backtab>" . #'completion-at-point)
-   ("M-<tab>" . #'jens/complete))
+   ("M-<tab>" . #'company/complete))
   :config
   (setq company-search-regexp-function 'company-search-flex-regexp)
   (setq company-require-match nil)
@@ -4776,7 +4775,7 @@ initial search query."
   (setq company-idle-delay nil)
   (setq company-tooltip-idle-delay nil)
 
-  (defun jens/complete ()
+  (defun company/complete ()
     "Show company completions using ivy."
     (interactive)
     (unless company-candidates
