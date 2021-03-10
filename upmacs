@@ -95,7 +95,7 @@
      ((null pkgs) (error "no package(s) provided"))
      (t
       (dolist (pkg pkgs)
-        (straight-pull-package pkg)
+        (straight-pull-package-and-deps pkg)
         (straight-rebuild-package pkg))))))
 
 (defun upmacs-update-all ()
