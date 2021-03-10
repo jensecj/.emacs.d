@@ -3301,6 +3301,34 @@ clipboard."
 
   (add-to-list 'notmuch-show-insert-text/plain-hook
                #'notmuch-wash-convert-inline-patch-to-part)
+
+  (defun notmuch/regexify (&rest lines)
+    (let ((sep "[ \n]*"))
+      (cl-flet ((line-to-regex (line)
+                               (->> line
+                                    (s-collapse-whitespace)
+                                    (string-replace " " sep)
+                                    (s-prepend sep)
+                                    (s-append sep))))
+        (let ((regex-lines (-map #'line-to-regex lines)))
+          (s-join sep regex-lines)))))
+
+  (setq notmuch-common-preambles
+        `((rms . ,(notmuch/regexify "[> ]* [[[ To any NSA and FBI agents reading my email: please consider    ]]]"
+                                    "[> ]* [[[ whether defending the US Constitution against all enemies,     ]]]"
+                                    "[> ]* [[[ foreign or domestic, requires you to follow Snowden's example. ]]]"))
+
+          (fsf . ,(notmuch/regexify "*Please consider adding <info@fsf.org> to your address book,"
+                                    "which will ensure that our messages reach you and not your spam box.*"))))
+
+  (defun notmuch/wash-common-preambles (_msg _depth)
+    (dolist (pre notmuch-common-preambles)
+      (goto-char (point-min))
+      (when (re-search-forward (cdr pre) nil t)
+        (replace-match ""))))
+
+  (add-hook 'notmuch-show-insert-text/plain-hook #'notmuch/wash-common-preambles)
+
   (defun notmuch/set-recipient ()
     (interactive)
     (message-goto-to))
