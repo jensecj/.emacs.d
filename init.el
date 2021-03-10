@@ -3396,7 +3396,7 @@ clipboard."
     (if (member mode '(show tree search))
         (let ((mode-map (intern (format "notmuch-%s-mode-map" mode)))
               (fn (intern (format "notmuch-%s-add-tag" mode))))
-          (define-key mode-map key (lambda () (interactive) (funcall fn tags))))
+          (bind-key key (lambda () (interactive) (funcall fn tags)) mode-map))
       (error "%s is not a proper notmuch mode" mode)))
 
   ;; delete mail in all modes with "d"
