@@ -2956,7 +2956,7 @@ _t_: Go to todays file
 
   (add-hook 'git-commit-mode-hook #'flyspell-prog-mode)
   :custom-face
-  (magit-diff-hunk-heading ((t (:background ,(zent 'bg-1)))))
+  (magit-diff-context-highlight ((t (:background ,(zent 'bg+1)))))
   (magit-diff-added ((t (:background ,(zent 'green-4)))))
   (magit-diff-added-highlight ((t (:background ,(zent 'green-3)))))
   (magit-diff-removed ((t (:background ,(zent 'red-5)))))
