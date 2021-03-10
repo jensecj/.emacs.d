@@ -33,7 +33,7 @@
 (defconst user-straight-directory (locate-user-emacs-file "straight/"))
 (defconst user-lisp-directory (locate-user-emacs-file "lisp/"))
 (defconst user-vendor-directory (locate-user-emacs-file "vendor/"))
-(defconst user-secrets-file (locate-user-emacs-file "secrets.el.gpg"))
+(defconst user-secrets-file (locate-user-emacs-file "secrets.el"))
 
 (defconst user-mail-directory "~/private/mail")
 (defconst user-contacts-files '("~/vault/contacts.org.gpg"))
@@ -622,18 +622,22 @@ times."
 
 (use-package auth-source-pass
   ;; :straight t  ; TODO: is auth-source-pass now part of emacs?
-  :commands (auth-source-pass-enable auth-source-pass-get)
+  :commands (get-secret auth-source-pass-enable auth-source-pass-get)
   :config
   (auth-source-pass-enable)
-  ;; using authinfo.gpg
-  ;; (letrec ((auth (auth-source-search :host "freenode"))
-  ;;          (user (plist-get (car auth) :user))
-  ;;          (secret (plist-get (car auth) :secret)))
-  ;;   (message (format "user: %s, secret: %s" user (funcall secret))))
 
-  ;; using password-store
-  ;; (auth-source-pass-get 'secret "irc/freenode/jensecj")
-  )
+  (defun load-secrets ()
+    (if (file-exists-p user-secrets-file)
+        (with-temp-buffer
+          (insert-file-contents user-secrets-file)
+          (read (current-buffer)))
+      (error "secrets file does not exist")))
+
+  (defun get-secret (secret)
+    (cond
+     ((symbolp secret) (alist-get secret (load-secrets)))
+     ((stringp secret) (auth-source-pass-get 'secret secret))
+     (t (message "secret not found")))))
 
 (use-package epa-file
   :demand t
@@ -2303,20 +2307,6 @@ current line."
      ((f-file? pick) (find-file pick))
      (t (message "unable to locate repo: %s" pick)))))
 
-(defun load-secrets ()
-  "Load secrets from `user-secrets-file'`"
-  (interactive)
-  (shut-up
-    (with-temp-buffer
-      (insert-file-contents user-secrets-file)
-      (eval-buffer))))
-
-(defun get-secret (secret)
-  "Get a secret from `user-secrets-file'`."
-  (load-secrets)
-  (when (boundp secret)
-    (symbol-value secret)))
-
 (defun jens/--headings-org-level-1 ()
   "Return list of level 1 heading in an org-buffer."
   (require 'org-ql)
@@ -2604,7 +2594,6 @@ to a temp file and puts the filename in the kill ring."
          ("G" . notmuch-mojn-fetch-mail)))
   :commands notmuch-mojn
   :config
-  (load-secrets)
   (require 'notmuch nil 'noerror)
 
   ;; TODO: action for adding contact to org-contacts?
@@ -2615,8 +2604,9 @@ to a temp file and puts the filename in the kill ring."
   (remove-hook 'notmuch-mojn-post-refresh-hook #'notmuch-mojn-mute-retag-messages)
 
   (defun notmuch-mojn/cache-mail-key ()
-    (unless (gpg/key-in-cache-p user-passwordstore-key)
-      (gpg/cache-key user-passwordstore-key)))
+    (let ((passwordstore-key (get-secret 'user-passwordstore-key)))
+      (unless (gpg/key-in-cache-p passwordstore-key)
+        (gpg/cache-key passwordstore-key))))
 
   (add-hook 'notmuch-mojn-pre-fetch-hook #'notmuch-mojn/cache-mail-key)
   (add-hook 'message-send-hook #'notmuch-mojn/cache-mail-key)
@@ -3257,8 +3247,7 @@ clipboard."
         :map notmuch-show-part-map
         ("V" . #'notmuch-show/view-mime-part-at-point))
   :config
-  (load-secrets)
-  (setq notmuch-identities user-mail-identities)
+  (setq notmuch-identities (get-secret 'user-mail-identities))
   (setq notmuch-fcc-dirs "sent +sent +new -unread")
   (setq notmuch-column-control 1.0)
   (setq notmuch-wash-wrap-lines-length fill-column)
