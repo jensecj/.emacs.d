@@ -57,6 +57,7 @@
   (msg "help:             show usage")
   (msg "ls, list:         list all straight packages")
   (msg "update <pkg(s)>:  update specific package(s)")
+  (msg "rebuild <pkg(s)>: rebuild specific package(s)")
   (msg "update-all:       update all packages"))
 
 (defun upmacs-list ()
@@ -104,6 +105,24 @@
         (msg "failed to update %s" failed-packages)
       (msg "updated all packages."))))
 
+(defun upmacs-rebuild ()
+  "Rebuild one or more packages by name."
+  (let* ((pkgs ()))
+    (while argv
+      (add-to-list 'pkgs (pop argv) 'append))
+    (cond
+     ((null pkgs) (error "no package(s) provided"))
+     (t
+      (dolist (pkg pkgs)
+        (straight-rebuild-package pkg))))))
+
+(defun upmacs-rebuild-all ()
+  "Rebuild all packages"
+  (let ((failed-packages (straight-rebuild-all)))
+    (if failed-packages
+        (msg "failed to rebuild %s" failed-packages)
+      (msg "rebuilt all packages."))))
+
 (defun upmacs-freeze ()
   "List all packages and their most recent commit."
   (let ((pkgs (f-directories straight-repo-dir)))
@@ -130,6 +149,8 @@
         ((or "ls" "list") (upmacs-list))
         ((or "rm" "remove") (upmacs-remove))
         ((or "install" "update") (upmacs-update))
+        ((or "build" "rebuild") (upmacs-rebuild))
+        ((or "build-all" "rebuild-all") (upmacs-update-all))
         ("update-all" (upmacs-update-all))
         ("freeze" (upmacs-freeze))
         ((or "deps" "depends") (upmacs-dependencies))
