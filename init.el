@@ -645,8 +645,7 @@ times."
   :config
   (setq epg-pinentry-mode 'loopback)
 
-  (shut-up
-    (epa-file-enable))
+  (shut-up (epa-file-enable))
 
   (defun gpg/key-in-cache-p (key)
     "Return whether KEY is in the GPG-agents cache."
@@ -730,7 +729,7 @@ seconds."
   (custom-set-faces
    `(default ((t (:foreground ,(zent 'grey+3)))))
    `(cursor ((t (:background ,(zent 'grey)))))
-   `(region ((t (:background  ,(zent 'bg-1)))))
+   `(region ((t (:foreground nil :background ,(zent 'bg-1)))))
    `(internal-border ((t (:foreground ,(zent 'grey-1)))))
    `(vertical-border ((t (:foreground ,(zent 'grey-1)))))
    `(window-divider             ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
@@ -2521,11 +2520,6 @@ to a temp file and puts the filename in the kill ring."
 
 ;;;; packages
 
-(use-package epdh
-  :straight (emacs-package-dev-handbook
-             :host github :repo "alphapapa/emacs-package-dev-handbook"
-             :fork (:host github :repo "jensecj/emacs-package-dev-handbook")))
-
 (log-info "Loading homemade packages")
 
 (use-package buf ;; buffer extentions
@@ -2822,6 +2816,11 @@ _t_: Go to todays file
 ;;; third-party packages
 
 (log-info "Loading third-party packages")
+
+(use-package epdh
+  :straight (emacs-package-dev-handbook
+             :host github :repo "alphapapa/emacs-package-dev-handbook"
+             :fork (:host github :repo "jensecj/emacs-package-dev-handbook")))
 
 ;;;; themes
 (use-package zenburn-theme
@@ -3627,15 +3626,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   :config
   (setq dired-subtree-use-backgrounds nil))
 
-(use-package dired-rsync
-  :straight t
-  :after dired
-  :bind
-  (:map dired-mode-map
-        ("C" . dired-rsync))
-  :config
-  (setq dired-rsync-options "-azz --info=progress2"))
-
 (use-package dired-rainbow
   :straight t
   :after dired
@@ -3663,7 +3653,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 ;; FIXME: does not load properly, only after calling one of the bound keys
 (use-package dired+
-  :straight (dired+ :type git :host github :repo "emacsmirror/dired-plus")
+  :download "https://www.emacswiki.org/emacs/download/dired%2b.el"
   :after dired
   :bind
   (:map dired-mode-map
@@ -4048,8 +4038,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 (use-package diff-hl-dired
   ;; git highlighting for dired-mode, installed as part of `diff-hl'
-  :after diff-hl
-  :defer t
+  :after (dired diff-hl)
   :config
   (defun create-empty-fringe-bitmap (&rest _args)
     "Always use the clean empty BMP for fringe display"
