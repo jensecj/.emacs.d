@@ -4143,16 +4143,8 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 ;;;; misc packages
 
-(use-package flx :straight t) ;; fuzzy searching for ivy, etc.
 (use-package rg :straight t :defer t) ;; ripgrep in emacs
 (use-package gist :straight t :defer t) ;; work with github gists
-
-(use-package dumb-jump
-  :straight t
-  :defer t
-  :config
-  (setq dumb-jump-selector 'ivy)
-  (setq dumb-jump-prefer-searcher 'rg))
 
 (use-package auto-compile
   :straight t
@@ -4197,12 +4189,18 @@ if BACKWARDS is non-nil, jump backwards instead."
   :demand t
   :bind (("M-:" . #'pp-eval-expression)))
 
+(use-package flx
+  ;; fuzzy searching for ivy, etc.
+  :straight t)
+
 (use-package amx
+  ;; extends M-x, augments ivy
   :straight t
   :config
   (amx-mode +1))
 
 (use-package prescient
+  ;; functionality to sort candidates
   :straight t
   :demand t)
 
@@ -4217,6 +4215,13 @@ if BACKWARDS is non-nil, jump backwards instead."
   :after (prescient company)
   :config
   (company-prescient-mode +1))
+
+(use-package dumb-jump
+  :straight t
+  :defer t
+  :config
+  (setq dumb-jump-selector 'ivy)
+  (setq dumb-jump-prefer-searcher 'rg))
 
 (use-package smart-jump
   :straight t
@@ -4774,9 +4779,6 @@ re-enable afterwards."
 
 (bind-key* "C-c C-SPC" #'pop-to-mark-command)
 
-;; don't close emacs
-(unbind-key "C-x C-c")
-
 (define-key help-map (kbd "M-f") #'find-function)
 (define-key help-map (kbd "M-v") #'find-variable)
 (define-key help-map (kbd "b") #'describe-bindings)
@@ -4801,6 +4803,9 @@ re-enable afterwards."
 (bind-key* "C-<up>" (xi (scroll-down 5)))
 (bind-key* "C-<down>" (xi (scroll-up 5)))
 
+;; don't close emacs
+(unbind-key "C-x C-c")
+
 ;; dont use the mouse
 (unbind-key "<down-mouse-1>")
 (unbind-key "<down-mouse-2>")
@@ -4815,15 +4820,12 @@ re-enable afterwards."
 (unbind-key "M-<down-mouse-2>")
 (unbind-key "M-<down-mouse-3>")
 
-;; Disable suspend-frame
+;; don't suspend-frame
 (unbind-key "C-x C-z")
 
 ;; Make Home and End go to the top and bottom of the buffer, we have C-a/e for lines
 (bind-key* "<home>" 'beginning-of-buffer)
 (bind-key* "<end>" 'end-of-buffer)
-
-;; Completion that uses many different methods to find options.
-(global-set-key (kbd "C-.") 'hippie-expand)
 
 ;;; epilogue
 
@@ -4840,7 +4842,7 @@ re-enable afterwards."
                "recover-this-file"
                ;; show warning messages that occurred during init
                (group bol "!")
-               ;; lines containing the word `warning'
+               ;; lines containing the word `warning' or `error'
                (group bol (0+ any) "warning" (0+ any) eol)
                (group bol (0+ any) "error" (0+ any) eol))))
          (messages (with-current-buffer "*Messages*" (buffer-string)))
