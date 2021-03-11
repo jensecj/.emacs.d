@@ -3455,16 +3455,6 @@ if BACKWARDS is non-nil, jump backwards instead."
     (interactive)
     (notmuch-show/goto-message-with-tag "unread" 'backwards))
 
-  ;; TODO: upstream this
-  ;; don't indent headerline if content is not indented
-  (if (not (fn-checksum #'notmuch-show-insert-headerline "f89c0c2425d8396249b8f0a71773ae34"))
-      (log-warning "#'notmuch-show-insert-headerline changed definition, skipping patch")
-    (advice-patch #'notmuch-show-insert-headerline
-                  '(if notmuch-show-indent-content
-                       (notmuch-show-spaces-n (* notmuch-show-indent-messages-width depth))
-                     "")
-                  '(notmuch-show-spaces-n (* notmuch-show-indent-messages-width depth))))
-
   ;; make sure that messages end in a newline, just like the newline after the header.
   (if (not (fn-checksum #'notmuch-show-insert-msg "8aeeebe6781a195fc1ee53fea1a0575e"))
       (log-warning "#'notmuch-show-insert-msg changed definition, skipping patch.")
