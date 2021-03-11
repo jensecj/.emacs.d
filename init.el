@@ -332,28 +332,6 @@
   "Remove all advice from symbol SYM."
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
-(defun add-one-shot-hook (hook fn &optional append local)
-  "Add FN to HOOK, and remove it after is has triggered once."
-  (let ((sym (gensym "one-shot-hook-")))
-    (fset sym
-          (lambda ()
-            (remove-hook hook sym local)
-            (funcall fn)))
-    (add-hook hook sym append local)))
-
-(defun add-one-shot-hook* (hooks fns &optional append local)
-  "Add FNS to HOOKS, and remove them after triggering once."
-  (apply* (-cut add-one-shot-hook <> <> append local) hooks fns))
-
-(defmacro before-next-command (&rest body)
-  "Execute BODY before the next command is run.
-
-Inside BODY `this-command' is bound to the command that is about
-to run and `this-command-keys' returns the key pressed."
-  `(add-one-shot-hook 'pre-command-hook
-                      (lambda () ,@body)))
-
-
 (defun fn-checksum (fn &optional checksum)
   "Return a string md5 checksum of FN, or, given CHECKSUM, test
 equality of computed checksum and arg."
@@ -1880,12 +1858,6 @@ If METHOD does not exist, do nothing."
 
 ;;;;; convenience
 
-(defun jens/clean-view ()
-  "Create a scratch buffer, and make it the only buffer visible."
-  (interactive)
-  (buf-jump-to-empty-scratch-buffer)
-  (delete-other-windows))
-
 (defun jens/clone-buffer ()
   "Open a clone of the current buffer."
   (interactive)
@@ -1993,34 +1965,6 @@ With prefix ARG, ask for file to open."
 
 ;;;;; lisp
 
-(defun jens/one-shot-keybinding (key command)
-  "Set a keybinding that disappear once you press a key that is
-not in the overlay-map"
-  (set-transient-map
-   (let ((map (make-sparse-keymap)))
-     (define-key map (kbd key) command)
-     map) t))
-;; example
-;; (jens/one-shot-keybinding "a" (xi (forward-line -1)))
-
-(defun jens/one-shot-keymap (key-command-pairs)
-  "Set a keybinding that disappear once you press a key that is
-not in the overlay-map"
-  (set-transient-map
-   (let ((map (make-sparse-keymap)))
-     (dolist (kvp key-command-pairs)
-       (let ((key (car kvp))
-             (cmd (cdr kvp)))
-         (define-key map (kbd key) cmd)))
-     map) t))
-
-;; example:
-;; (jens/one-shot-keymap
-;;  `(("a" . ,(xi (message "a")))
-;;    ("b" . ,(xi (message "b")))
-;;    ("c" . ,(xi (message "c")))
-;;    ("d" . ,(xi (message "d")))))
-
 (defun jens/eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
@@ -2052,16 +1996,6 @@ not in the overlay-map"
       (delete-region (region-beginning) (region-end))
       (insert dashed)
       (goto-char p))))
-
-(defun jens/foreach-line-in-region (fn &optional beg end)
-  "Call FN on each line in region (BEG END)."
-  (let ((beg (or beg (region-beginning)))
-        (end (or end (region-end))))
-    (goto-char beg)
-    (beginning-of-line)
-    (while (< (point) end)
-      (funcall fn)
-      (forward-line))))
 
 (defun jens/save-to-file (data filename)
   "Save lisp object DATA to FILENAME."
@@ -2737,25 +2671,6 @@ to a temp file and puts the filename in the kill ring."
                   (,(rx (or "U.S.A.?" "U.S.?" "america")) . "usa")
                   (,(rx (or space punct) (or (seq "E" (opt ".") "U" (opt "."))
                                              (seq "europe" (opt "an") (opt "union")))) . "eu")))
-
-  (defhydra today-capture-hydra (:foreign-keys run)
-    "
-^Capture^
-^^^^^^^^------------------------------
-_r_: capture read task
-_R_: capture read task from clipboard
-_w_: capture watch task
-_W_: capture watch task from clipboard
-_H_: capture task from clipboard to this buffer
-"
-    ("r" (lambda () (interactive) (today-capture-link-with-task 'read)))
-    ("R" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'read)))
-    ("w" (lambda () (interactive) (today-capture-link-with-task 'watch)))
-    ("W" (lambda () (interactive) (today-capture-link-with-task-from-clipboard 'watch)))
-
-    ("H" #'today-capture-here-from-clipboard)
-
-    ("q" nil "quit"))
 
   (defhydra today-hydra (:foreign-keys run)
     "
