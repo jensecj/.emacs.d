@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: fn
+# key: fn
+# --
+(defn $1 [$2]
+  ""
+  $0
+  )
