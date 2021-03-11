@@ -3456,7 +3456,7 @@ if BACKWARDS is non-nil, jump backwards instead."
     (notmuch-show/goto-message-with-tag "unread" 'backwards))
 
   ;; make sure that messages end in a newline, just like the newline after the header.
-  (if (not (fn-checksum #'notmuch-show-insert-msg "8aeeebe6781a195fc1ee53fea1a0575e"))
+  (if (not (fn-checksum #'notmuch-show-insert-msg "a4034680fd0b23eb0c464c7fc632e0d7"))
       (log-warning "#'notmuch-show-insert-msg changed definition, skipping patch.")
     (advice-patch #'notmuch-show-insert-msg
                   '(progn
@@ -3467,7 +3467,7 @@ if BACKWARDS is non-nil, jump backwards instead."
                      (insert "\n"))))
 
   ;; only show text/plain part by default
-  (if (not (fn-checksum #'notmuch-show-insert-bodypart "e46448fdf4e2e29eeeb4761cd692f5bb"))
+  (if (not (fn-checksum #'notmuch-show-insert-bodypart"0a5f4201858462717c33186d2579e9b1"))
       (log-warning "#'notmuch-show-insert-bodypart changed definition, skipping patch.")
     (advice-patch #'notmuch-show-insert-bodypart
                   '(or (notmuch-match-content-type mime-type "multipart/*")
