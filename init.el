@@ -2576,12 +2576,12 @@ to a temp file and puts the filename in the kill ring."
   :commands (blog-publish
              blog-find-posts-file))
 
-(use-package struere
+(use-package cleanup
   :defer t
-  :bind (("C-c n" . struere-buffer))
+  :bind (("C-c n" . cleanup-buffer))
   :config
-  (struere-add 'org-mode #'org/indent)
-  (struere-add 'python-mode #'blacken-buffer))
+  (cleanup-add 'org-mode #'org/indent)
+  (cleanup-add 'python-mode #'blacken-buffer))
 
 (use-package augment
   :straight (augment :type git :repo "git@github.com:jensecj/augment.el")

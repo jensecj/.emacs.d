@@ -1,12 +1,12 @@
-;;; struere.el --- Simple tool for re-structuring buffers. -*- lexical-binding: t; -*-
+;;; cleanup.el --- Simply clean a buffer. -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019 Jens Christian Jensen
+;; Copyright (C) 2021 Jens C. Jensen
 
-;; Author: Jens Christian Jensen <jensecj@gmail.com>
+;; Author: Jens C. Jensen <jensecj@subst.net>
 ;; Keywords: format, reformat, clean, buffer
-;; Package-Version: 20190526
+;; Package-Version: 20210311
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "25.1") (dash "2.14.1") (ht "2.3"))
+;; Package-Requires: ((emacs "28.0.50") (dash "2.18.1") (ht "2.3"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -28,38 +28,41 @@
 (require 'ht)
 (require 'dash)
 
-(defvar struere-default-fns
+(defvar cleanup-default-fns
   (list #'whitespace-cleanup
-        (lambda () (indent-region (window-start) (window-end))))
-  "List of functions to cleanup a buffer if no backend is added.")
+        #'cleanup-indent-entire-buffer)
+  "List of functions to clean a buffer if no backend is added.")
 
-(defvar struere-backends (ht)
+(defvar cleanup-backends (ht)
   "Backends with functions to use for cleaning up buffers.")
 
-(defun struere--add (mode fn)
-  "Add MODE->FN mapping to the backends."
-  (assert (atom mode))
-  (assert (functionp fn))
-  (let ((val (ht-get struere-backends mode '())))
-    (ht-set struere-backends mode (-snoc val fn))))
+(defun cleanup-indent-entire-buffer ()
+  "Indent entire buffer."
+  (indent-region (point-min) (point-max)))
 
-(defun struere-add (modes fns)
+(defun cleanup--add (mode fn)
+  "Add MODE->FN mapping to the backends."
+  (cl-assert (atom mode))
+  (cl-assert (functionp fn))
+  (let ((val (ht-get cleanup-backends mode '())))
+    (ht-set cleanup-backends mode (-snoc val fn))))
+
+(defun cleanup-add (modes fns)
   "Add MODES->FNS mappings to backends."
   (cond
    ((consp modes)
-    (dolist (m modes) (struere-add m fns)))
+    (dolist (m modes) (cleanup-add m fns)))
    ((and (consp fns) (not (functionp fns)))
-    (dolist (f fns) (struere-add modes f)))
+    (dolist (f fns) (cleanup-add modes f)))
    ((and (atom modes) (functionp fns))
-    (struere--add modes fns))))
+    (cleanup--add modes fns))))
 
-(defun struere-buffer ()
+(defun cleanup-buffer ()
   "Apply backends for current mode, or use the default functions."
   (interactive)
-  (-map-indexed (lambda (i e)
-                  (message "cleanup %s: %s" i e)
-                  (funcall e))
-                (ht-get struere-backends major-mode struere-default-fns))
+  (message "cleaning buffer")
+  (dolist (f (ht-get cleanup-backends major-mode cleanup-default-fns))
+    (funcall f))
   (message "buffer cleaned"))
 
-(provide 'struere)
+(provide 'cleanup)
