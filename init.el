@@ -2697,23 +2697,30 @@ to a temp file and puts the filename in the kill ring."
     "
 ^Today^
 ^^^^^^^^------------------------------
-_c_: Capture hydra
 _a_: Archive completed todos
 _l_: List all archived files
 _g_: Move entry to today-file
 
-_T_: Update title at point
-_L_: Update LOC property at point
+_c_: Capture here from clipboard
+
+_T_: Update title
+_D_: Update publish date property
+_V_: Update video duration property
+_L_: Update LOC property
 
 _t_: Go to todays file
 "
-    ("c" #'today-capture-hydra/body :exit t)
     ("a" #'today-archive-done-todos :exit t)
     ("t" #'today-visit-todays-file :exit t)
     ("l" #'today-list :exit t)
+
+    ("c" #'today-capture-here-from-clipboard)
+
     ("T" #'today-capture-update-title-at-point)
     ("L" #'today-capture-add-property-loc-at-point)
-    ("D" #'today-capture-add-property-video-duration-at-point)
+    ("D" #'today-capture-add-property-archive-date-at-point)
+    ("V" #'today-capture-add-property-video-duration-at-point)
+
     ("g" #'today-move-to-today)
     ("q" nil "quit")))
 
