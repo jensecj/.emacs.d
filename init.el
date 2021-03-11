@@ -277,7 +277,6 @@
          (> (length a) (length b))
        1))
    lists))
-
 ;; (longest-list 'i '(1 2 3) 'z '(a b c) '(æ ø å))
 
 (defun broadcast (&rest args)
@@ -286,7 +285,6 @@
      (lambda (a) (atom a))
      (lambda (a) (-repeat max-width a))
      args)))
-
 ;; (broadcast 'a '(1 2 3) 'z '(a b c) '(æ ø å))
 
 ;; TODO: fix #'transpose, `-mapcar' is wrong in this context
@@ -1701,17 +1699,17 @@ If METHOD does not exist, do nothing."
      (python . t)
      (gnuplot . t)))
 
-  (when (f-exists-p "/usr/share/java/ditaa/")
-    (let* ((ditaa-dir "/usr/share/java/ditaa/")
-           (ditaa-jar
-            (-as-> (f-entries ditaa-dir) es
-                   (-filter (lambda (e)
-                              (and
-                               (string-prefix-p "ditaa" (f-filename e))
-                               (f-ext-p e "jar")))
-                            es)
-                   (car es))))
-      (setq org-ditaa-jar-path ditaa-jar)))
+  (when-let* ((ditaa-dir "/usr/share/java/ditaa/")
+              (_ (f-exists-p ditaa-dir))
+              (ditaa-jar
+               (-as-> (f-entries ditaa-dir) es
+                      (-filter (lambda (e)
+                                 (and
+                                  (string-prefix-p "ditaa" (f-filename e))
+                                  (f-ext-p e "jar")))
+                               es)
+                      (car es))))
+    (setq org-ditaa-jar-path ditaa-jar))
 
   ;; try to get non-fuzzy latex fragments
   (plist-put org-format-latex-options :scale 1)
@@ -1850,6 +1848,8 @@ If METHOD does not exist, do nothing."
   :defer t
   ;; TODO: have a look at https://github.com/alphapapa/org-super-agenda
   )
+
+(use-package org-ql :straight t :defer t)
 
 ;;; homemade
 ;;;; defuns
@@ -3630,30 +3630,18 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq frog-menu-min-col-padding 4)
   (setq frog-menu-format 'vertical)
 
-  (defun frog-menu-flyspell-correct (candidates word)
-    "Run `frog-menu-read' for the given CANDIDATES.
-
-List of CANDIDATES is given by flyspell for the WORD.
-
-Return selected word to use as a replacement or a tuple
-of (command . word) to be used by `flyspell-do-correct'."
+  (defun frog-menu/flyspell-correct (candidates word)
     (interactive)
-    (let* ((corrects (if flyspell-sort-corrections
-                         (sort candidates 'string<)
-                       candidates))
-           (actions `(("C-s" "Save word"         (save    . ,word))
-                      ("C-a" "Accept (session)"  (session . ,word))
-                      ("C-b" "Accept (buffer)"   (buffer  . ,word))
-                      ("C-c" "Skip"              (skip    . ,word))))
-           (prompt   (format "Dictionary: [%s]"  (or ispell-local-dictionary
-                                                     ispell-dictionary
-                                                     "default")))
-           (res      (frog-menu-read prompt corrects actions)))
-      (unless res
-        (error "Quit"))
-      res))
+    (let* ((actions `(("C-s" "Save word" (save . ,word))
+                      ("C-a" "Accept (session)" (session . ,word))
+                      ("C-b" "Accept (buffer)" (buffer . ,word))
+                      ("C-c" "Skip" (skip . ,word))))
+           (prompt (format "Dictionary: [%s]" (or ispell-local-dictionary
+                                                  ispell-dictionary
+                                                  "default"))))
+      (frog-menu-read prompt candidates actions)))
 
-  (setq flyspell-correct-interface #'frog-menu-flyspell-correct)
+  (setq flyspell-correct-interface #'frog-menu/flyspell-correct)
   :custom-face
   (frog-menu-border ((t (:background ,(zent 'bg-1)))))
   (frog-menu-posframe-background-face ((t (:background ,(zent 'bg-1))))))
@@ -4157,7 +4145,6 @@ of (command . word) to be used by `flyspell-do-correct'."
 
 (use-package flx :straight t) ;; fuzzy searching for ivy, etc.
 (use-package rg :straight t :defer t) ;; ripgrep in emacs
-(use-package org-ql :straight t :defer t)
 (use-package gist :straight t :defer t) ;; work with github gists
 
 (use-package dumb-jump
