@@ -1951,6 +1951,7 @@ With prefix ARG, ask for file to open."
   (insert " ")
   (backward-delete-char 1)
   (save-buffer))
+(bind-key* "C-x C-t" 'jens/touch-buffer-file)
 
 (defun jens/reopen-this-file ()
   "Reopen the current file."
@@ -1974,6 +1975,7 @@ With prefix ARG, ask for file to open."
              (current-buffer))
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
+(bind-key* "M-a" #'jens/eval-and-replace)
 
 (defun jens/remove-text-properties-region (beg end)
   "Remove text properties from text in region between BEG and END."
@@ -2015,12 +2017,14 @@ With prefix ARG, ask for file to open."
   (condition-case nil
       (forward-sexp -1)
     (error (backward-char))))
+(bind-key* "M-<prior>" #'jens/sexp-up)
 
 (defun jens/sexp-down ()
   (interactive)
   (condition-case nil
       (forward-sexp 1)
     (error (forward-char))))
+(bind-key* "M-<next>" #'jens/sexp-down)
 
 (defun jens/open-line-below ()
   "Insert a line below the current line, indent it, and move to
@@ -2046,12 +2050,14 @@ the beginning of that line."
     (beginning-of-line-text)
     (when (eq pt (point))
       (beginning-of-line))))
+(bind-key* "C-a" 'jens/smart-beginning-of-line)
 
 (defun jens/kill-to-beginning-of-line ()
   "Kill from <point> to the beginning of the current line."
   (interactive)
   (kill-region (save-excursion (beginning-of-line) (point))
                (point)))
+(bind-key* "C-S-k" 'jens/kill-to-beginning-of-line)
 
 (defun jens/save-region-or-current-line (_arg)
   "If a region is active then it is saved to the `kill-ring',
@@ -2061,6 +2067,7 @@ otherwise the current line is saved."
     (if (region-active-p)
         (kill-ring-save (region-beginning) (region-end))
       (kill-ring-save (line-beginning-position) (line-end-position)))))
+(bind-key* "M-w" 'jens/save-region-or-current-line)
 
 (defun jens/kill-region-or-current-line (arg)
   "If a region is active then it is killed, otherwise the current
@@ -2070,11 +2077,13 @@ line is killed."
       (kill-region (region-beginning) (region-end))
     (save-excursion
       (kill-whole-line arg))))
+(bind-key* "C-w" 'jens/kill-region-or-current-line)
 
 (defun jens/clean-current-line ()
   "Delete the contents of the current line."
   (interactive)
   (delete-region (line-beginning-position) (line-end-position)))
+(bind-key* "C-M-w" 'jens/clean-current-line)
 
 (defun jens/join-region ()
   "Join all lines in a region into a single line."
@@ -2096,6 +2105,7 @@ current line, placing it after."
   (if (region-active-p)
       (jens/join-region)
     (join-line -1)))
+(bind-key* "M-j" 'jens/join-region-or-line)
 
 (defun jens/join-line-down ()
   "Pull the line above down to the end of this line."
@@ -2108,6 +2118,7 @@ current line, placing it after."
         (end-of-line)
         (save-excursion (insert " " (s-chomp (current-kill 0))))
         (just-one-space)))))
+(bind-key* "M-J" 'jens/join-line-down)
 
 (defun jens/wrap-region (b e text-begin text-end)
   "Wrap region from B to E with TEXT-BEGIN and TEXT-END."
@@ -2128,6 +2139,7 @@ currently is), otherwise comment or uncomment the current line."
   (if (region-active-p)
       (comment-or-uncomment-region (region-beginning) (region-end))
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+(bind-key* "C-c c" 'jens/comment-uncomment-region-or-line)
 
 ;;;;; misc
 
@@ -2172,6 +2184,7 @@ current line."
    (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]")
    nil nil (if (= 0 (current-column)) 2 1))
   (back-to-indentation))
+(bind-key* "s-n" 'jens/goto-next-line-with-same-indentation)
 
 (defun jens/goto-prev-line-with-same-indentation ()
   "Jump to a previous line with the same indentation level as the
@@ -2181,6 +2194,7 @@ current line."
   (re-search-backward
    (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
   (back-to-indentation))
+(bind-key* "s-p" 'jens/goto-prev-line-with-same-indentation)
 
 (defun jens/function-def-string (fnsym)
   "Return function definition of FNSYM as a string."
@@ -2207,12 +2221,14 @@ current line."
   (interactive)
   (let ((sexp (thing-at-point 'sexp t)))
     (kill-new sexp)))
+(bind-key* "C-M-k" #'jens/copy-sexp-at-point)
 
 (defun jens/kill-sexp-at-point ()
   "Kill the sexp at point."
   (interactive)
   (let ((bounds (bounds-of-thing-at-point 'sexp)))
     (delete-region (car bounds) (cdr bounds))))
+(bind-key* "M-K" #'jens/kill-sexp-at-point)
 
 (defun jens/copy-buffer-file-path ()
   "Copy the current buffers file path to the clipboard."
@@ -2240,6 +2256,7 @@ current line."
      ((f-directory? pick) (dired pick))
      ((f-file? pick) (find-file pick))
      (t (message "unable to locate repo: %s" pick)))))
+(bind-key* "M-r" #'jens/goto-repo)
 
 (defun jens/--headings-org-level-1 ()
   "Return list of level 1 heading in an org-buffer."
@@ -2287,16 +2304,19 @@ current line."
   ("n" #'notmuch-mojn "notmuch")
   ("e" #'elfeed "elfeed")
   ("c" #'buf-jump-to-empty-scratch-buffer "new *scratch*"))
+(bind-key "C-<escape>" #'jens/shortcut/body)
 
 (defun jens/buffer-carousel-previous ()
   (interactive)
   (previous-buffer)
   (jens/buffer-carousel-hydra/body))
+(bind-key "C-x <left>" #'jens/buffer-carousel-previous)
 
 (defun jens/buffer-carousel-next ()
   (interactive)
   (next-buffer)
   (jens/buffer-carousel-hydra/body))
+(bind-key "C-x <right>" #'jens/buffer-carousel-next)
 
 (defhydra jens/buffer-carousel-hydra ()
   "Move between buffers."
@@ -2326,6 +2346,7 @@ current line."
     (if (not (bound-and-true-p tail-message-buffer-mode))
         (tail-message-buffer-mode +1)
       (tail-message-buffer-mode -1))))
+(bind-key "t" #'jens/tail-message-buffer messages-buffer-mode-map)
 
 ;; auto-tail the *Messages* buffer by default
 (jens/tail-message-buffer)
@@ -4821,50 +4842,6 @@ re-enable afterwards."
 
 ;; Completion that uses many different methods to find options.
 (global-set-key (kbd "C-.") 'hippie-expand)
-
-;;;; for homemade things
-
-;; Better C-a
-(bind-key* "C-a" 'jens/smart-beginning-of-line)
-
-(bind-key* "M-<prior>" #'jens/sexp-up)
-(bind-key* "M-<next>" #'jens/sexp-down)
-
-;; Join lines (pull the below line up to this one, or the above one down)
-(bind-key* "M-j" 'jens/join-region-or-line)
-(bind-key* "M-J" 'jens/join-line-down)
-
-;; Comment/uncomment block
-(bind-key* "C-c c" 'jens/comment-uncomment-region-or-line)
-
-;; Enable backwards killing of lines
-(bind-key* "C-S-k" 'jens/kill-to-beginning-of-line)
-
-;; Force save a file, mnemonic is C-x TOUCH
-(global-set-key (kbd "C-x C-t") 'jens/touch-buffer-file)
-
-;; Copy current line / region
-(bind-key* "M-w" 'jens/save-region-or-current-line)
-(bind-key* "C-w" 'jens/kill-region-or-current-line)
-(bind-key* "C-M-w" 'jens/clean-current-line)
-
-;; jump between indentation levels
-(bind-key* "s-n" 'jens/goto-next-line-with-same-indentation)
-(bind-key* "s-p" 'jens/goto-prev-line-with-same-indentation)
-
-(bind-key* "C-M-k" #'jens/copy-sexp-at-point)
-(bind-key* "M-K" #'jens/kill-sexp-at-point)
-
-(bind-key* "M-a" #'jens/eval-and-replace)
-
-(bind-key* "M-r" #'jens/goto-repo)
-
-(bind-key "t" #'jens/tail-message-buffer messages-buffer-mode-map)
-
-(global-set-key (kbd "C-<escape>") #'jens/shortcut/body)
-
-(bind-key "C-x <left>" #'jens/buffer-carousel-previous)
-(bind-key "C-x <right>" #'jens/buffer-carousel-next)
 
 ;;; epilogue
 
