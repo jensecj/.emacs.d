@@ -3206,6 +3206,10 @@ clipboard."
   (erc-input-face ((t (:foreground ,(zent 'fg)))))
   (erc-prompt-face ((t (:background nil :extend t)))))
 
+(use-package erc-hl-nicks
+  :straight t
+  :after erc)
+
 (use-package notmuch
   ;; TODO: setup notmuch for multiple mail-profiles
   ;; see https://www.djcbsoftware.nl/code/mu/mu4e/Contexts-example.html
@@ -3610,10 +3614,49 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 ;;;; extensions to built-in packages
 
-(use-package erc-hl-nicks
+(use-package flyspell-correct
   :straight t
-  :defer t
-  :commands erc-hl-nicks-enable)
+  :after flyspell
+  :bind
+  (:map flyspell-mode-map
+        ("C-," . flyspell-correct-at-point))
+  :commands flyspell-correct-at-point)
+
+(use-package frog-menu
+  :straight t
+  :after flyspell-correct
+  :config
+  (setq frog-menu-avy-padding t)
+  (setq frog-menu-min-col-padding 4)
+  (setq frog-menu-format 'vertical)
+
+  (defun frog-menu-flyspell-correct (candidates word)
+    "Run `frog-menu-read' for the given CANDIDATES.
+
+List of CANDIDATES is given by flyspell for the WORD.
+
+Return selected word to use as a replacement or a tuple
+of (command . word) to be used by `flyspell-do-correct'."
+    (interactive)
+    (let* ((corrects (if flyspell-sort-corrections
+                         (sort candidates 'string<)
+                       candidates))
+           (actions `(("C-s" "Save word"         (save    . ,word))
+                      ("C-a" "Accept (session)"  (session . ,word))
+                      ("C-b" "Accept (buffer)"   (buffer  . ,word))
+                      ("C-c" "Skip"              (skip    . ,word))))
+           (prompt   (format "Dictionary: [%s]"  (or ispell-local-dictionary
+                                                     ispell-dictionary
+                                                     "default")))
+           (res      (frog-menu-read prompt corrects actions)))
+      (unless res
+        (error "Quit"))
+      res))
+
+  (setq flyspell-correct-interface #'frog-menu-flyspell-correct)
+  :custom-face
+  (frog-menu-border ((t (:background ,(zent 'bg-1)))))
+  (frog-menu-posframe-background-face ((t (:background ,(zent 'bg-1))))))
 
 (use-package dired-filter :straight t :after dired)
 (use-package dired-collapse :straight t :after dired)
@@ -4130,42 +4173,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
 
-(use-package frog-menu
-  :straight t
-  :after flyspell-correct
-  :config
-  (setq frog-menu-avy-padding t)
-  (setq frog-menu-min-col-padding 4)
-  (setq frog-menu-format 'vertical)
-
-  (defun frog-menu-flyspell-correct (candidates word)
-    "Run `frog-menu-read' for the given CANDIDATES.
-
-List of CANDIDATES is given by flyspell for the WORD.
-
-Return selected word to use as a replacement or a tuple
-of (command . word) to be used by `flyspell-do-correct'."
-    (interactive)
-    (let* ((corrects (if flyspell-sort-corrections
-                         (sort candidates 'string<)
-                       candidates))
-           (actions `(("C-s" "Save word"         (save    . ,word))
-                      ("C-a" "Accept (session)"  (session . ,word))
-                      ("C-b" "Accept (buffer)"   (buffer  . ,word))
-                      ("C-c" "Skip"              (skip    . ,word))))
-           (prompt   (format "Dictionary: [%s]"  (or ispell-local-dictionary
-                                                     ispell-dictionary
-                                                     "default")))
-           (res      (frog-menu-read prompt corrects actions)))
-      (unless res
-        (error "Quit"))
-      res))
-
-  (setq flyspell-correct-interface #'frog-menu-flyspell-correct)
-  :custom-face
-  (frog-menu-border ((t (:background ,(zent 'bg-1)))))
-  (frog-menu-posframe-background-face ((t (:background ,(zent 'bg-1))))))
-
 (use-package spinner
   :straight t
   :config
@@ -4636,15 +4643,6 @@ re-enable afterwards."
                 (let ((pm (point-marker)))
                   (apply fn args)
                   (xref-push-marker-stack pm)))))
-
-(use-package flyspell-correct
-  :straight t
-  :bind
-  (:map flyspell-mode-map
-        ("C-," . flyspell-correct-at-point))
-  :commands flyspell-correct-at-point
-  :config
-  (require 'flyspell))
 
 (use-package posframe
   :straight t
