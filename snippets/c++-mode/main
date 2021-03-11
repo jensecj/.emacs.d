@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: main
+# key: main
+# --
+#include <iostream>
+
+using namespace std;
+
+int main () {
+  $0
+}
