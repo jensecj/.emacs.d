@@ -127,7 +127,14 @@
     (-map f (-map #'car list)))
 
   (defun -mapcdr (f list)
-    (-map f (-map #'cdr list))))
+    (-map f (-map #'cdr list)))
+
+  (defun -mapply (fn atom-or-list)
+    "If ATOM-OR-LIST is a list, map FN over it, otherwise apply FN."
+    (cond
+     ((listp atom-or-list) (-map fn atom-or-list))
+     (t (funcall fn atom-or-list))))
+  )
 
 (use-package s ;; string things, s-trim, s-replace, etc.
   :demand t
@@ -281,12 +288,6 @@
      args)))
 
 ;; (broadcast 'a '(1 2 3) 'z '(a b c) '(æ ø å))
-
-(defun -mapply (fn atom-or-list)
-  "If ATOM-OR-LIST is a list, map FN over it, otherwise apply FN."
-  (cond
-   ((listp atom-or-list) (-map fn atom-or-list))
-   (t (funcall fn atom-or-list))))
 
 ;; TODO: fix #'transpose, `-mapcar' is wrong in this context
 (defun transpose (&rest lists)
