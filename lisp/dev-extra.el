@@ -2,11 +2,11 @@
 
 ;; Copyright (C) 2020 Jens Christian Jensen
 
-;; Author: Jens Christian Jensen <jensecj@gmail.com>
+;; Author: Jens Christian Jensen <jensecj@subst.net>
 ;; Keywords: elisp, packages
-;; Package-Version: 20200505
+;; Package-Version: 20210312
 ;; Version: 0.2.0
-;; Package-Requires: ((emacs "28.0.0.5"))
+;; Package-Requires: ((emacs "28.0.0.5")(dash "2.18.1")(s "1.12.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
