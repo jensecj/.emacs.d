@@ -3808,7 +3808,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   :straight t
   :diminish highlight-thing-mode
   :config
-  (setq highlight-thing-ignore-list '("nil" "t" "*" "-" "_"))
+  (add-to-list* 'highlight-thing-ignore-list '("nil" "t" "*" "**" "***" "****" "-" "_"))
   (setq highlight-thing-delay-seconds 0.4)
   (setq highlight-thing-case-sensitive-p nil)
   (setq highlight-thing-exclude-thing-under-point nil)
