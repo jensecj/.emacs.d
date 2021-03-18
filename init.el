@@ -2663,11 +2663,18 @@ to a temp file and puts the filename in the kill ring."
   (setq today-inbox-file "~/vault/inbox/inbox.org")
 
   (add-to-list* 'today-capture-auto-handlers
-                `((,(rx (or "emacswiki.org")) . read)
-                  (,(rx (or "teddit.net")) . read)
+                `(("emacswiki\\.org" . read)
+                  ("github\\.com" . plain)
+                  ("github\\.io" . read)
+                  ("lwn\\.net" . read)
+                  ("towardsdatascience\\.com" . read)
+                  ("teddit\\.net" . read)
                   (,(rx (or "news.ycombinator.com" "lobste.rs")) . read)
-                  (,(rx (or "lwn.net")) . read)
-                  (,(rx (or "subscriptions.gir.st" "invidio.us" "invidious.snopyta.org")) . watch)))
+                  (,(rx (or "twitch.tv"
+                            "vimeo.com"
+                            "subscriptions.gir.st"
+                            "invidio.us"
+                            "invidious.snopyta.org")) . watch)))
 
   (add-to-list* 'today-capture-auto-tags
                 `((,(rx (or "emacs" "elisp")) . "emacs")
