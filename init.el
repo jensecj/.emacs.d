@@ -451,9 +451,6 @@
 ;; undo/redo window configuration with C-c <left>/<right>
 (winner-mode 1)
 
-;; select windows with S-<arrow>
-(windmove-default-keybindings 'shift)
-
 ;; use spaces instead of tabs
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
@@ -1162,6 +1159,17 @@ Works well being called from a terminal:
   :diminish subword-mode
   :config
   (global-subword-mode +1))
+
+(use-package windmove
+  ;; select windows with S-<arrow>
+  :config
+  (windmove-default-keybindings 'shift)
+
+  (defun windmove/silent-select (orig &rest args)
+    "Windmove uses user-errors to flood the echo area, silence them"
+    (ignore-errors (apply orig args)))
+
+  (advice-add #'windmove-do-window-select :around #'windmove/silent-select))
 
 (use-package saveplace ;; save point position between sessions
   :demand t
