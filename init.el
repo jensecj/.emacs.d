@@ -952,9 +952,46 @@ Works well being called from a terminal:
     (interactive)
     (delete-other-windows (diff old new))))
 
+(use-package url
+  :config
+  ;; don't store cookies.
+  (setq url-cookie-file nil)
+  (setq url-cookie-trusted-urls nil)
+  (setq url-cookie-confirmation nil))
+
+(use-package shr
+  :defer t
+  :config
+  (setq shr-use-colors nil)
+  (setq shr-use-fonts nil)
+  (setq shr-width fill-column)
+  (setq shr-discard-aria-hidden t)
+  (setq shr-cookie-policy nil))
+
+(use-package browse-url
+  :defer t
+  :bind
+  ("C-c C-o" . #'browse-url/open-url-at-point)
+  :config
+  (setq browse-url-firefox-program "firefox-developer-edition")
+
+  (defun browse-url/get-url-at-point ()
+    "Return the url at point, if any."
+    (or
+     (thing-at-point 'url t)
+     (shr-url-at-point nil)
+     (org-extra-url-at-point)
+     (if (fboundp 'augment-at-point) (augment-at-point)) ;url from augment
+     ;; bug-links from bug-reference-mode
+     (-any (lambda (o) (overlay-get o 'bug-reference-url)) (overlays-at (point)))))
+
+  (defun browse-url/open-url-at-point ()
+    "Open the URL-at-point, dwim."
+    (interactive)
+    (browse-url (browse-url/get-url-at-point))))
+
 (use-package eww
   :defer t
-  :requires browse-url
   :bind (("M-s M-o" . #'eww/open-url-at-point)
          ("M-s M-w" . #'eww/search-region)
          ("M-s M-d" . #'eww/download-url-at-point)
@@ -1486,44 +1523,6 @@ If METHOD does not exist, do nothing."
     (interactive)
     (previous-error)
     (compile/goto-error-hydra/body)))
-
-(use-package url
-  :config
-  ;; don't store cookies.
-  (setq url-cookie-file nil)
-  (setq url-cookie-trusted-urls nil)
-  (setq url-cookie-confirmation t))
-
-(use-package browse-url
-  :defer t
-  :bind
-  ("C-c C-o" . #'browse-url/open-url-at-point)
-  :config
-  (setq browse-url-firefox-program "firefox-developer-edition")
-
-  (defun browse-url/get-url-at-point ()
-    "Return the url at point, if any."
-    (or
-     (thing-at-point 'url t)
-     (shr-url-at-point nil)
-     (org-extra-url-at-point)
-     (if (fboundp 'augment-at-point) (augment-at-point)) ;url from augment
-     ;; bug-links from bug-reference-mode
-     (-any (lambda (o) (overlay-get o 'bug-reference-url)) (overlays-at (point)))))
-
-  (defun browse-url/open-url-at-point ()
-    "Open the URL-at-point, dwim."
-    (interactive)
-    (browse-url (browse-url/get-url-at-point))))
-
-(use-package shr
-  :defer t
-  :config
-  (setq shr-use-colors nil)
-  (setq shr-use-fonts nil)
-  (setq shr-width fill-column)
-  (setq shr-discard-aria-hidden t)
-  (setq shr-cookie-policy nil))
 
 (use-package mml
   :config
