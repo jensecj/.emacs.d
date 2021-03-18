@@ -330,16 +330,18 @@
   "Remove all advice from symbol SYM."
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
-(defun fn-checksum (fn &optional checksum)
-  "Return a string md5 checksum of FN, or, given CHECKSUM, test
-equality of computed checksum and arg."
-  ;; TODO: does advicing change a functions checksum?
-  (let* ((def (symbol-function fn))
-         (str (prin1-to-string def))
-         (hash (md5 str)))
-    (if checksum
-        (string= hash checksum)
-      hash)))
+(defun checksum-fn (fsym)
+  (let* ((def (symbol-function fsym))
+         (str (prin1-to-string def)))
+    (md5 str)))
+
+(defun checksum (sym)
+  "Return a string md5 checksum of SYM."
+  (cond
+   ((functionp sym) (checksum-fn sym))
+   ((symbolp sym) (md5 (symbol-value sym)))
+   ((stringp sym) (md5 sym))
+   (t (error "Dont know how to checksum %s (%s)" sym (type-of sym)))))
 
 ;;; built-in
 ;;;; settings
@@ -3460,7 +3462,8 @@ if BACKWARDS is non-nil, jump backwards instead."
     (notmuch-show/goto-message-with-tag "unread" 'backwards))
 
   ;; make sure that messages end in a newline, just like the newline after the header.
-  (if (not (fn-checksum #'notmuch-show-insert-msg "a4034680fd0b23eb0c464c7fc632e0d7"))
+  (if (not (string= (checksum #'notmuch-show-insert-msg)
+                    "a4034680fd0b23eb0c464c7fc632e0d7"))
       (log-warning "#'notmuch-show-insert-msg changed definition, skipping patch.")
     (advice-patch #'notmuch-show-insert-msg
                   '(progn
@@ -3471,7 +3474,8 @@ if BACKWARDS is non-nil, jump backwards instead."
                      (insert "\n"))))
 
   ;; only show text/plain part by default
-  (if (not (fn-checksum #'notmuch-show-insert-bodypart"0a5f4201858462717c33186d2579e9b1"))
+  (if (not (string= (checksum #'notmuch-show-insert-bodypart)
+                    "0a5f4201858462717c33186d2579e9b1"))
       (log-warning "#'notmuch-show-insert-bodypart changed definition, skipping patch.")
     (advice-patch #'notmuch-show-insert-bodypart
                   '(or (notmuch-match-content-type mime-type "multipart/*")
@@ -3867,8 +3871,8 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   ;; fontify the entire outshine-heading, including the comment
   ;; characters (;;;)
-  (if (not (fn-checksum #'outshine-fontify-headlines
-                        "f07111ba85e2f076788ee39af3805516"))
+  (if (not (string=(checksum #'outshine-fontify-headlines)
+                   "f07111ba85e2f076788ee39af3805516"))
       (log-warning "`outshine-fontify-headlines' changed definition, ignoring patch.")
     (advice-patch #'outshine-fontify-headlines
                   '(font-lock-new-keywords
@@ -4079,8 +4083,8 @@ if BACKWARDS is non-nil, jump backwards instead."
   ;; Use clean fringe style for highlighting
   (setq diff-hl-fringe-bmp-function #'create-empty-fringe-bitmap)
 
-  (if (not (fn-checksum #'diff-hl-dired-highlight-items
-                        "e06f15da2bf831295e015c9c82f11539"))
+  (if (not (string= (checksum #'diff-hl-dired-highlight-items)
+                    "e06f15da2bf831295e015c9c82f11539"))
       (message "`diff-hl-dired-highlight-items' changed definition, ignoring patch.")
     (advice-patch #'diff-hl-dired-highlight-items
                   'create-empty-fringe-bitmap
