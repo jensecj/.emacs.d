@@ -627,8 +627,8 @@ times."
   (setq auth-source-save-behavior nil))
 
 (use-package auth-source-pass
-  ;; :straight t  ; TODO: is auth-source-pass now part of emacs?
   :commands (get-secret auth-source-pass-enable auth-source-pass-get)
+  :after auth-source
   :config
   (auth-source-pass-enable)
 
@@ -643,7 +643,10 @@ times."
     (cond
      ((symbolp secret) (alist-get secret (load-secrets)))
      ((stringp secret) (auth-source-pass-get 'secret secret))
-     (t (message "secret not found")))))
+     (t (message "secret not found"))))
+
+  (setq user-full-name (get-secret 'user-full-name))
+  (setq user-mail-address (get-secret 'user-mail-address)))
 
 (use-package epa-file
   :demand t
