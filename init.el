@@ -4080,6 +4080,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 (use-package rg :straight t :defer t) ;; ripgrep in emacs
 (use-package gist :straight t :defer t) ;; work with github gists
+(use-package edit-indirect :straight t)
 
 (use-package auto-compile
   :straight t
