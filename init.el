@@ -854,18 +854,6 @@ seconds."
 (use-package hl-line
   :config
   (setq global-hl-line-sticky-flag t)
-
-  (setq hl-line-overlay-priority -50)
-
-  (defun hl-line/set-priority (&rest r)
-    (when global-hl-line-overlay
-      (overlay-put global-hl-line-overlay 'priority hl-line-overlay-priority))
-    (when hl-line-overlay
-      (overlay-put hl-line-overlay 'priority hl-line-overlay-priority)))
-
-  (advice-add #'global-hl-line-highlight :after #'hl-line/set-priority)
-  (advice-add #'hl-line-highlight :after #'hl-line/set-priority)
-
   (global-hl-line-mode +1))
 
 (use-package dired
