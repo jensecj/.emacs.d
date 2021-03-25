@@ -2672,9 +2672,6 @@ _t_: Go to todays file
              dokument-company-menu-selection-quickhelp
              dokument-use-defaults)
   :config
-  ;; TODO: what if this is nil?
-  (setq dokument-frame-font (map-elt default-frame-alist 'font))
-
   (with-eval-after-load 'company
     (bind-key "C-+" #'dokument-company-menu-selection-quickhelp company-active-map))
 
