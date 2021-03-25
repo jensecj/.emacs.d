@@ -437,8 +437,8 @@
 
 ;; make re-centering more intuitive
 (setq recenter-positions '(top middle bottom))
-(global-set-key (kbd "C-l") #'recenter-top-bottom)
-(global-set-key (kbd "C-S-L") #'move-to-window-line-top-bottom)
+(bind-key* "C-l" #'recenter-top-bottom)
+(bind-key* "C-S-L" #'move-to-window-line-top-bottom)
 
 ;; use UTF-8
 (setq locale-coding-system 'utf-8)
@@ -3200,8 +3200,8 @@ clipboard."
   (setq vdiff-auto-refine t)
   (setq vdiff-only-highlight-refinements t)
 
-  (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map)
-  (define-key vdiff-3way-mode-map (kbd "C-c") vdiff-mode-prefix-map)
+  (bind-key "C-c" vdiff-mode-prefix-map vdiff-mode-map)
+  (bind-key "C-c" vdiff-mode-prefix-map vdiff-3way-mode-map)
 
   (defun vdiff/from-diff ()
     (interactive)
@@ -3634,8 +3634,8 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   ;; TODO: fix these so org-store-link stores link to the message at ;; point in search mode.
   (require 'org-notmuch)
-  (define-key notmuch-show-mode-map (kbd "C-c C-l") #'org-store-link)
-  (define-key notmuch-search-mode-map (kbd "C-c C-l") #'org-store-link)
+  (bind-key "C-c C-l" #'org-store-link notmuch-show-mode-map)
+  (bind-key "C-c C-l" #'org-store-link notmuch-search-mode-map)
 
   :custom-face
   (notmuch-search-flagged-face ((t (:background ,(zent 'blue-5) :extend t))))
@@ -4817,25 +4817,25 @@ re-enable afterwards."
 
 (bind-key* "C-c C-SPC" #'pop-to-mark-command)
 
-(define-key help-map (kbd "M-f") #'find-function)
-(define-key help-map (kbd "M-v") #'find-variable)
-(define-key help-map (kbd "b") #'describe-bindings)
+(bind-key "M-f" #'find-function help-map)
+(bind-key "M-v" #'find-variable help-map)
+(bind-key "b" #'describe-bindings help-map)
 
 ;; Evaluate the current buffer/region
-(global-set-key (kbd "C-c C-k") 'eval-buffer)
-(global-set-key (kbd "C-c k") 'eval-region)
+(bind-key* "C-c C-k" 'eval-buffer)
+(bind-key* "C-c k" 'eval-region)
 
 ;; Casing words/regions
-(global-set-key (kbd "M-u") #'upcase-dwim)
-(global-set-key (kbd "M-l") #'downcase-dwim)
-(global-set-key (kbd "M-c") #'capitalize-dwim)
+(bind-key* "M-u" #'upcase-dwim)
+(bind-key* "M-l" #'downcase-dwim)
+(bind-key* "M-c" #'capitalize-dwim)
 
-(global-set-key (kbd "C-M-n") #'forward-paragraph)
-(global-set-key (kbd "C-M-p") #'backward-paragraph)
+(bind-key* "C-M-n" #'forward-paragraph)
+(bind-key* "C-M-p" #'backward-paragraph)
 
-(global-set-key (kbd "C-x b") #'ibuffer)
+(bind-key* "C-x b" #'ibuffer)
 
-(global-set-key (kbd "C-c g") #'revert-buffer)
+(bind-key* "C-c g" #'revert-buffer)
 
 ;; Scroll the buffer without moving the point (unless we over-shoot)
 (bind-key* "C-<up>" (xi (scroll-down 5)))
