@@ -2133,18 +2133,6 @@ current line, placing it after."
         (just-one-space)))))
 (bind-key* "M-J" 'jens/join-line-down)
 
-(defun jens/wrap-region (b e text-begin text-end)
-  "Wrap region from B to E with TEXT-BEGIN and TEXT-END."
-  (interactive "r\nsStart text: \nsEnd text: ")
-  (if (use-region-p)
-      (save-restriction
-        (narrow-to-region b e)
-        (goto-char (point-max))
-        (insert text-end)
-        (goto-char (point-min))
-        (insert text-begin))
-    (message "wrap-region: Error! invalid region!")))
-
 (defun jens/comment-uncomment-region-or-line ()
   "If region is active, comment or uncomment it (based on what it
 currently is), otherwise comment or uncomment the current line."
@@ -2169,16 +2157,6 @@ currently is), otherwise comment or uncomment the current line."
             (reqs (-map #'car (package-desc-reqs (car d)))))
         (when (-contains-p reqs package)
           (push pkg-name res))))))
-
-(defun jens/insert-todays-date ()
-  "Insert the current date at point."
-  (interactive)
-  (insert (format-time-string "%Y-%m-%d")))
-
-(defun jens/insert-todays-date-compact ()
-  "Insert the current date at point, in a compact format."
-  (interactive)
-  (insert (format-time-string "%Y%m%d")))
 
 (defun jens/goto-msg-buffer ()
   "View the *Messages* buffer, return to previous buffer when
@@ -2208,26 +2186,6 @@ current line."
    (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
   (back-to-indentation))
 (bind-key* "s-p" 'jens/goto-prev-line-with-same-indentation)
-
-(defun jens/function-def-string (fnsym)
-  "Return function definition of FNSYM as a string."
-  (let* ((buffer-point (condition-case nil (find-definition-noselect fnsym nil) (error nil)))
-         (new-buf (car buffer-point))
-         (new-point (cdr buffer-point)))
-    (cond (buffer-point
-           ;; try to get original definition
-           (with-current-buffer new-buf
-             (save-excursion
-               (goto-char new-point)
-               (buffer-substring-no-properties (point) (save-excursion (end-of-defun) (point))))))
-          ;; fallback: just print the functions definition
-          (t (concat (prin1-to-string (symbol-function fnsym)) "\n")))))
-
-(defun jens/function-def-org-code-block (fnsym)
-  "Return function definition of FNSYM as an org code-block."
-  (concat "#+begin_src emacs-lisp\n"
-          (jens/function-def-string fnsym)
-          "#+end_src"))
 
 (defun jens/copy-sexp-at-point ()
   "Save the `symbol-at-point' to the `kill-ring'."
@@ -2270,47 +2228,6 @@ current line."
      ((f-file? pick) (find-file pick))
      (t (message "unable to locate repo: %s" pick)))))
 (bind-key* "M-r" #'jens/goto-repo)
-
-(defun jens/--headings-org-level-1 ()
-  "Return list of level 1 heading in an org-buffer."
-  (require 'org-ql)
-  (let* ((level-1-entries (org-ql (buffer-file-name) (level 1)))
-         (cleaned-entries (-map (lambda (e) (cadr e)) level-1-entries))
-         (headings (-map (lambda (h)
-                           (cons (plist-get h ':raw-value)
-                                 (plist-get h ':begin)))
-                         cleaned-entries)))
-    headings))
-
-(defun jens/--headings-comment-boxes ()
-  "Return list of comment-boxes in the current file."
-  ;; TODO: use comment-box syntax to collect comment boxes from different modes,
-  ;; not just emacs-lisp syntax
-  (let* ((semi-line '((1+ ";") "\n"))
-         (desc-line '(";;" (1+ (or alnum whitespace)) ";;" "\n"))
-         (box (eval `(rx (and line-start ,@desc-line))))
-         (content (buffer-substring-no-properties (point-min) (point-max)))
-         (boxes (s-match-strings-all box content))
-         (boxes (-map #'car boxes))
-         (boxes (-map #'s-trim boxes))
-         (positions (s-matched-positions-all box content))
-         (positions (-map #'cdr positions))
-         (headings (-zip boxes positions)))
-    headings))
-
-(defun jens/headings ()
-  "Jump to a heading in the current file."
-  (interactive)
-  (let* ((headings (-remove #'null
-                            (-flatten
-                             (-cons*
-                              (jens/--headings-comment-boxes)
-                              (when (derived-mode-p 'org-mode)
-                                (jens/--headings-org-level-1))))))
-         (_ (sort headings (lambda (a b) (< (cdr a) (cdr b)))))
-         (ivy-sort-functions-alist nil)
-         (pick (completing-read "jump to heading: " headings nil t)))
-    (goto-char (cdr (assoc pick headings)))))
 
 (defhydra jens/shortcut (:exit t)
   ("m" #'jens/goto-msg-buffer "*messages*")
@@ -2364,17 +2281,6 @@ current line."
 ;; auto-tail the *Messages* buffer by default
 (jens/tail-message-buffer)
 
-(defun jens/toggle-focus ()
-  "Toggle left and right window margins, centering `fill-column' lines."
-  (interactive)
-  (let ((margins (window-margins))
-        (width (or 100 fill-column)))
-    (if (and (null (car margins)) (null (cdr margins)))
-        (let* ((win-width (window-width (selected-window)))
-               (margin (/ (- win-width width) 2)))
-          (set-window-margins (selected-window) margin margin))
-      (set-window-margins (selected-window) 0 0))))
-
 (defun jens/emacs-init-loc ()
   "Total lines of emacs-lisp code in my emacs configuration.
 
@@ -2425,13 +2331,6 @@ If DIR is nil, download to current directory."
           (url-copy-file url path overwrite)
           path)
       (error 'file-already-exists))))
-
-(defun jens/list-active-minor-modes ()
-  "List all active minor modes."
-  (interactive)
-  (let ((modes (--filter (and (boundp it) (symbol-value it)) minor-mode-list)))
-    (ivy-read "Active Minor Modes: " modes
-              :action (lambda (m) (dokument-other-buffer m)))))
 
 (defun jens/diff (a b)
   "Diff A with B, either should be a location of a document, local or remote."
