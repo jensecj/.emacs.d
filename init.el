@@ -401,6 +401,9 @@
 ;; don't blink the cursor
 (blink-cursor-mode -1)
 
+;; don't try to scroll smoothly, it does not work
+(pixel-scroll-mode -1)
+
 ;; allow pasting selection outside of Emacs
 (setq select-enable-clipboard t)
 
