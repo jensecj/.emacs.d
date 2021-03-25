@@ -3776,6 +3776,14 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 ;;;; minor modes
 
+(use-package tree-sitter
+  :straight t
+  :hook (after-init . global-tree-sitter-mode))
+
+(use-package tree-sitter-langs
+  :straight t
+  :after tree-sitter)
+
 (use-package git-timemachine :straight t :defer t)
 (use-package rainbow-mode
   ;; highlight color-strings (hex, etc.)
