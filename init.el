@@ -2449,13 +2449,19 @@ If DIR is nil, download to current directory."
         (b (read-file-name "File B: " (f-dirname (buffer-file-name)))))
     (jens/diff a b)))
 
-(defun jens/diff-emacs-news ()
+(defun jens/read-emacs-news ()
   "Check what's new in NEWS."
   (interactive)
-  (let* ((news-files (f-glob "NEWS*" (expand-file-name "~/emacs/src/etc/")))
-         (news-file (completing-read "news file: " news-files nil t)))
-    (jens/diff news-file
-               "https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/NEWS")))
+  (let* ((news-dir (f-join source-directory "etc"))
+         (news-files (cons "UPSTREAM" (f-glob "NEWS*" news-dir)))
+         (pick (completing-read "news file: " news-files nil t)))
+    (view-file-other-window
+     (if (string= pick "UPSTREAM")
+         (jens/download-file
+          "https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/NEWS"
+          (concat "NEWS" "_" (uuid))
+          temporary-file-directory)
+       (f-join news-dir pick)))))
 
 
 (defun screenshot-frame-to-svg ()
