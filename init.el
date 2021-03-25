@@ -230,6 +230,35 @@
       ,(if callback
            `(lambda (res) (funcall ,callback res))))))
 
+;; load theme colors early, so they can be used for customizing other packages
+(use-package zent-theme
+  :straight (zent-theme :type git :repo "git@github.com:jensecj/zent-theme.el.git")
+  :demand t
+  :functions zent
+  :config
+
+  ;; TODO: create complementary color theme based on zenburn
+  (custom-set-faces
+   `(default ((t (:foreground ,(zent 'grey+3)))))
+   `(cursor ((t (:background ,(zent 'grey)))))
+   `(region ((t (:foreground nil :background ,(zent 'bg-1)))))
+   `(internal-border ((t (:foreground ,(zent 'grey-1)))))
+   `(vertical-border ((t (:foreground ,(zent 'grey-1)))))
+   `(window-divider             ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
+   `(window-divider-first-pixel ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
+   `(window-divider-last-pixel  ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
+   `(mode-line ((t (:box nil :background ,(zent 'bg-1)))))
+   `(mode-line-inactive ((t (:box nil))))
+   `(header-line ((t (:box nil))))
+   `(hl-line ((t (:background ,(zent 'grey-2)))))
+   `(highlight ((t (:background nil :foreground nil))))
+   `(font-lock-function-name-face ((t (:foreground ,(zent 'function)))))
+   `(font-lock-builtin-face ((t (:foreground ,(zent 'grey+2) :weight semi-bold))))
+   `(dired-flagged ((t (:background ,(zent 'red-2) :extend t))))
+   )
+  ;; (load-theme 'zent t)
+  )
+
 ;;;; cache, temp files, etc.
 
 (log-info "Setting up cache / temp-files / etc.")
@@ -697,31 +726,6 @@ seconds."
 
 (log-info "Configuring built-in packages")
 
-;; load theme colors early, so they can be used for customizing other packages
-(use-package zent-theme
-  :straight (zent-theme :type git :repo "git@github.com:jensecj/zent-theme.el.git")
-  :demand t
-  :functions zent
-  :config
-  (custom-set-faces
-   `(default ((t (:foreground ,(zent 'grey+3)))))
-   `(cursor ((t (:background ,(zent 'grey)))))
-   `(region ((t (:foreground nil :background ,(zent 'bg-1)))))
-   `(internal-border ((t (:foreground ,(zent 'grey-1)))))
-   `(vertical-border ((t (:foreground ,(zent 'grey-1)))))
-   `(window-divider             ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
-   `(window-divider-first-pixel ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
-   `(window-divider-last-pixel  ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
-   `(mode-line ((t (:box nil :background ,(zent 'bg-1)))))
-   `(mode-line-inactive ((t (:box nil))))
-   `(header-line ((t (:box nil))))
-   `(hl-line ((t (:background ,(zent 'grey-2)))))
-   `(highlight ((t (:background nil :foreground nil))))
-   `(font-lock-function-name-face ((t (:foreground ,(zent 'function)))))
-   `(font-lock-builtin-face ((t (:foreground ,(zent 'built-in) :weight semi-bold))))
-   )
-  ;; (load-theme 'zent t)
-  )
 
 ;;;;; major-modes
 
