@@ -3201,6 +3201,9 @@ clipboard."
   (:map diff-mode-map
         ("V" . #'vdiff/from-diff))
   :config
+  (setq vdiff-auto-refine t)
+  (setq vdiff-only-highlight-refinements t)
+
   (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map)
   (define-key vdiff-3way-mode-map (kbd "C-c") vdiff-mode-prefix-map)
 
