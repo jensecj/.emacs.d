@@ -36,6 +36,14 @@
   (insert (format "-*- mode: %s -*-\n"  (s-chop-suffix "-mode" (symbol-name major-mode))))
   (comment-line -1))
 
+(defun indset--file-local-variables ()
+  "Insert standard file local variables."
+  ;; TODO: does not work, errors with "local variables list not terminated properly..."
+  (goto-char (point-max))
+  (insert
+   (format
+    "\n%s Local Variables:\n%s variable: 'value\n%s end:\n" comment-start comment-start comment-start)))
+
 (defun indset--package-header ()
   "Insert standard elisp package header."
   (interactive)
@@ -94,6 +102,7 @@
     (shebang-env . "#!/usr/bin/env ")
     (shebang-python . "#!/usr/bin/env python")
     (current-file . (lambda () (insert (buffer-file-name))))
+    (file-local-variables . indset--file-local-variables)
     (pi . indset--calc-pi)
     (package-header . indset--package-header)
     (new-package . indset--new-package)
