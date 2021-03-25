@@ -491,11 +491,6 @@
 ;; use spaces instead of tabs
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
-
-;; TODO: fix indentation, set default indent in text-modes to 0
-;; this messes with less things when indenting,
-;; tabs are converted to spaces automatically
-(setq-default indent-line-function 'insert-tab)
 (electric-indent-mode +1)
 
 ;; show me empty lines after buffer end
