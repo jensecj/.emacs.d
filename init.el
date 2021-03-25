@@ -526,7 +526,8 @@
 ;; allow processes to read big chuncks of process output at a time
 (setq read-process-output-max (* 1024 1024))
 
-(setq auto-window-vscroll nil)
+;; try to show "tall-lines" (images, etc.) properly
+(setq auto-window-vscroll t)
 
 ;; if moving the point more than 10 lines away,
 ;; center point in the middle of the window, otherwise be conservative.
@@ -535,6 +536,7 @@
 ;; only scroll the current line when moving outside window-bounds
 (setq auto-hscroll-mode 'current-line)
 
+;; scroll faster, may cause temporary incorrect font-locking
 (setq fast-but-imprecise-scrolling t)
 
 ;; save clipboard from other programs to kill-ring
@@ -1006,6 +1008,8 @@ Works well being called from a terminal:
          :map eww-mode-map
          ("q" . #'eww/quit))
   :config
+  (require 'browse-url)
+
   (setq eww-download-directory (expand-file-name "~/downloads"))
 
   (defun eww/search-region ()
@@ -1152,7 +1156,7 @@ Works well being called from a terminal:
 
   (show-paren-mode +1)
   :custom-face
-  (show-paren-match-expression ((t (:foreground nil :background ,(zent 'bg-1))))))
+  (show-paren-match-expression ((t (:foreground nil :background ,(zent 'bg-05))))))
 
 (use-package abbrev ;; auto-replace common abbreviations
   :diminish abbrev-mode
@@ -1251,6 +1255,9 @@ number input"
   :diminish eldoc-mode
   :commands (easy-eldoc)
   :config
+  (setq eldoc-echo-area-display-truncation-message nil)
+  (setq eldoc-idle-delay 0.2)
+
   (defmacro easy-eldoc (hook fn)
     "Add FN to `eldoc-documentation-function' in HOOK."
     (let ((name (intern (format "easy-eldoc-%s-%s" (symbol-name hook) (symbol-name fn)))))
@@ -1258,8 +1265,6 @@ number input"
          (defun ,name ()
            (set (make-local-variable 'eldoc-documentation-function) #',fn))
          (add-hook ',hook #',name))))
-
-  (setq eldoc-idle-delay 0.2)
 
   (defun eldoc/highlight-&s (doc)
     "Highlight &keywords in elisp eldoc arglists."
@@ -2466,7 +2471,7 @@ If DIR is nil, download to current directory."
   "Save a screenshot of the current frame as an SVG image. Saves
 to a temp file and puts the filename in the kill ring."
   (interactive)
-  (let* ((filename (make-temp-file "Emacs" nil ".svg"))
+  (let* ((filename (make-temp-file "emacs" nil ".svg"))
          (data (x-export-frames nil 'svg)))
     (with-temp-file filename
       (insert data))
@@ -2489,7 +2494,11 @@ to a temp file and puts the filename in the kill ring."
 
   (redraw-frame))
 
-(add-hook* '(special-mode-hook view-mode-hook) #'jens/render-control-chars)
+(add-hook* '(special-mode-hook
+             view-mode-hook
+             diff-mode-hook
+             outline-mode-hook)
+           #'jens/render-control-chars)
 
 ;;;; packages
 
@@ -2617,7 +2626,6 @@ to a temp file and puts the filename in the kill ring."
   (("M-v" . views-hydra/body))
   :config
   (defhydra views-hydra (:exit t)
-    ""
     ("s" #'views-switch "switch")
     ("p" #'views-push "push")
     ("k" #'views-pop "pop")))
@@ -2753,6 +2761,7 @@ _t_: Go to todays file
   :demand t
   :bind
   (("C-+" . dokument)
+   :map emacs-lisp-mode-map
    ("<f12>" . dokument/inspect-symbol-at-point))
   :commands (dokument
              dokument-company-menu-selection-quickhelp
@@ -4066,8 +4075,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   :hook
   ((magit-post-refresh . diff-hl-magit-post-refresh)
    (prog-mode . diff-hl-mode)
-   (org-mode . diff-hl-mode)
-   (dired-mode . diff-hl-dired-mode-unless-remote))
+   (org-mode . diff-hl-mode))
   :config
   (setq diff-hl-dired-extra-indicators t)
   (setq diff-hl-draw-borders nil)
@@ -4095,8 +4103,9 @@ if BACKWARDS is non-nil, jump backwards instead."
   (diff-hl-dired-ignored ((t (:background "#2b2b2b")))))
 
 (use-package diff-hl-dired
-  ;; git highlighting for dired-mode, installed as part of `diff-hl'
+  ;; git highlighting for dired-mode, part of `diff-hl'
   :after (dired diff-hl)
+  :hook (dired-mode . diff-hl-dired-mode-unless-remote)
   :config
   (defun create-empty-fringe-bitmap (&rest _args)
     "Always use the clean empty BMP for fringe display"
@@ -4377,7 +4386,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 (use-package iedit
   :straight t
-  :bind
+  :bind*
   (("C-;" . iedit-mode)
    :map iedit-mode-keymap
    ("<return>" . iedit-quit))
@@ -4406,11 +4415,12 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package avy
   :straight t
   :defer t
-  :bind
+  :bind*
   (("C-ø" . avy-goto-char)
    ("C-'" . avy-goto-line))
   :config
-  (setq avy-background 't)
+  (setq avy-background t)
+  (setq avy-single-candidate-jump nil)
 
   (defun avy/disable-highlight-thing (fn &rest args)
     "Disable `highlight-thing-mode' when avy-goto mode is active,
@@ -4423,8 +4433,8 @@ re-enable afterwards."
 
   (advice-add #'avy-goto-char :around #'avy/disable-highlight-thing)
   :custom-face
-  (avy-background-face ((t (:foreground ,(zent 'grey+3) :background ,(zent 'bg-1) :extend t))))
-  (avy-lead-face ((t (:background ,(zent 'bg-1)))))
+  (avy-background-face ((t (:foreground ,(zent 'grey-1) :background ,(zent 'bg-1) :extend t))))
+  (avy-lead-face ((t (:underline t :background ,(zent 'bg-1)))))
   (avy-lead-face-0 ((t (:background ,(zent 'bg-1)))))
   (avy-lead-face-1 ((t (:background ,(zent 'bg-1)))))
   (avy-lead-face-2 ((t (:background ,(zent 'bg-1))))))
@@ -4493,6 +4503,7 @@ re-enable afterwards."
   (setq which-key-show-early-on-C-h t)
   (setq which-key-idle-delay 1)
   (setq which-key-idle-secondary-delay 0.05)
+  (setq which-key-show-transient-maps t)
 
   (which-key-setup-side-window-bottom)
   (which-key-mode +1))
@@ -4612,7 +4623,7 @@ re-enable afterwards."
         (propertize "\n------------------------------------------\n"
                     'face `(:foreground "#111111")))
 
-  (setq counsel-rg-base-command "rg --hidden --max-columns 200 --glob='!.git' --no-heading --line-number --color never %s .")
+  (setq counsel-rg-base-command "rg --hidden --max-columns 200 --glob='!{.git/*,var/auto-save/*,var/backup/*,var/temp/*,var/pcache/*}' --no-heading --line-number --color never %s .")
 
   (defun counsel/ripgrep ()
     "Interactively search the current directory. Jump to result using ivy."
