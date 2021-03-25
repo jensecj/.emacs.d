@@ -1746,6 +1746,8 @@ If METHOD does not exist, do nothing."
   ;; exporting ;;
   ;;;;;;;;;;;;;;;
 
+  (setq org-export-use-babel nil)
+
   (require 'ox-latex)
   (add-to-list 'org-latex-packages-alist '("" "minted"))
   (setq org-latex-listings 'minted)
@@ -1772,6 +1774,9 @@ If METHOD does not exist, do nothing."
   (setq-mode-local org-mode
                    electric-pair-pairs
                    (append org-extra-electric-pairs electric-pair-pairs))
+
+  ;; update images after evaluation
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
   ;;;;;;;;;;;;;;;;;;;;;;
   ;; helper functions ;;
