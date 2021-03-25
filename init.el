@@ -1922,14 +1922,14 @@ With prefix ARG, ask for file to open."
 
 ;;;;; files
 
-(defun jens/byte-compile-this-file ()
+(defun byte-compile-this-file ()
   "Byte compile the current buffer."
   (interactive)
   (if (f-exists? (concat (f-no-ext (buffer-file-name)) ".elc"))
       (byte-recompile-file (buffer-file-name))
     (byte-compile-file (buffer-file-name))))
 
-(defun jens/rename-current-buffer-file ()
+(defun rename-this-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
   (let ((name (buffer-name))
@@ -1946,7 +1946,7 @@ With prefix ARG, ask for file to open."
           (message "File '%s' successfully renamed to '%s'"
                    name (file-name-nondirectory new-name)))))))
 
-(defun jens/delete-current-buffer-file ()
+(defun delete-this-file ()
   "Remove the file of the current buffer and kill the buffer."
   (interactive)
   (let ((filename (buffer-file-name))
@@ -1958,15 +1958,15 @@ With prefix ARG, ask for file to open."
         (kill-buffer buffer)
         (message "deleted '%s'" filename)))))
 
-(defun jens/touch-buffer-file ()
+(defun touch-this-file ()
   "Touches the current buffer, marking it as dirty."
   (interactive)
   (insert " ")
   (backward-delete-char 1)
   (save-buffer))
-(bind-key* "C-x C-t" 'jens/touch-buffer-file)
+(bind-key* "C-x C-t" 'touch-this-file)
 
-(defun jens/reopen-this-file ()
+(defun reopen-this-file ()
   "Reopen the current file."
   (interactive)
   (let ((file (buffer-file-name)))
