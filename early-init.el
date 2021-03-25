@@ -3,12 +3,18 @@
 ;; precompute one big autoloads file, makes loading them faster
 (setq package-quickstart t)
 
+;; don't show inscructions on who to exit new frames
+(setq server-client-instructions nil)
+
+;; ignore the systems .Xresources
+(advice-add #'x-apply-session-resources :override #'ignore)
+
 ;; try to minimize garbage-collection during initialization. And disable file
 ;; visiting modes autoloading when visiting init-files.
 (let ((normal-gc-cons-threshold (* 30 1024 1024))
-      (init-gc-cons-threshold (* 128 1024 1024))
+      (init-gc-cons-threshold (* 256 1024 1024))
       (normal-gc-cons-percentage 0.1)
-      (init-gc-cons-percentage 0.7)
+      (init-gc-cons-percentage 0.75)
       (normal-file-name-handler-alist file-name-handler-alist))
   (setq gc-cons-threshold init-gc-cons-threshold)
   (setq gc-cons-percentage init-gc-cons-percentage)
