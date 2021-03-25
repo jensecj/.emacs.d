@@ -1044,6 +1044,10 @@ Works well being called from a terminal:
   :config
   (setq xref-search-program 'ripgrep))
 
+(use-package pulse
+  :custom-face
+  (pulse-highlight-start-face ((t (:foreground ,(zent 'black) :background ,(zent 'white))))))
+
 (use-package flymake
   :config
   (setq flymake-fringe-indicator-position 'right-fringe))
