@@ -401,6 +401,7 @@
 
 ;; answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
+(setq use-short-answers t)
 
 ;; make re-centering more intuitive
 (setq recenter-positions '(top middle bottom))
