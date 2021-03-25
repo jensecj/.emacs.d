@@ -4052,25 +4052,15 @@ if BACKWARDS is non-nil, jump backwards instead."
   :bind
   (("M-p c" . projectile-compile-project)
    ("M-p t" . projectile-test-project)
-   ("M-p r" . projectile-run-project))
+   ("M-p r" . projectile-run-project)
+   ("M-p f" . projectile-find-file)
+   ("M-p d" . projectile-dired-other-window)
+   ("M-p T" . projectile-toggle-between-implementation-and-test))
   :config
   (setq projectile-completion-system 'ivy)
   (setq projectile-enable-caching t)
 
-  (projectile-register-project-type
-   'ant
-   '("build.xml")
-   :compile "ant build"
-   :test "ant test"
-   :run "ant run")
-
   (projectile-mode +1))
-
-(use-package counsel-projectile
-  :straight t
-  :after (counsel projectile)
-  :commands counsel-projectile-mode
-  :config (counsel-projectile-mode))
 
 (use-package keyfreq
   :straight t
