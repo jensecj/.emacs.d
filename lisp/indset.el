@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2020 Jens Christian Jensen
 
-;; Author: Jens Christian Jensen <jensecj@gmail.com>
+;; Author: Jens Christian Jensen <jensecj@subst.net>
 ;; URL:
 ;; Keywords:
 ;; Package-Version: 20200623
@@ -85,15 +85,15 @@
     (buffer-name))))
 
 (defvar indset-alist
-  '((date . (lambda () (format-time-string "%Y-%m-%d")))
-    (date-compact . (lambda () (format-time-string "%Y%m%d")))
-    (datetime . (lambda () (format-time-string "%Y-%m-%d %H:%M:%S")))
-    (timestamp . (lambda () (float-time)))
+  '((date . (lambda () (insert (format-time-string "%Y-%m-%d"))))
+    (date-compact . (lambda () (insert (format-time-string "%Y%m%d"))))
+    (datetime . (lambda () (insert (format-time-string "%Y-%m-%d %H:%M:%S"))))
+    (timestamp . (lambda () (insert (float-time))))
     (shebang-sh . "#!/bin/sh")
     (shebang-bash . "#!/bin/bash")
     (shebang-env . "#!/usr/bin/env ")
     (shebang-python . "#!/usr/bin/env python")
-    (current-file . (lambda () (buffer-file-name)))
+    (current-file . (lambda () (insert (buffer-file-name))))
     (pi . indset--calc-pi)
     (package-header . indset--package-header)
     (new-package . indset--new-package)
@@ -106,7 +106,7 @@ inserted as-is.")
 
 (defun indset ()
   (interactive)
-  (when-let* ((pick (intern (completing-read "pick: " indset-alist nil t)))
+  (when-let* ((pick (intern (completing-read "pick: " (-map #'car indset-alist) nil t)))
               (el (cdr (assoc pick indset-alist))))
     (if (functionp el)
         (save-excursion (funcall el))
