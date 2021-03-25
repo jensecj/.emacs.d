@@ -4488,7 +4488,7 @@ re-enable afterwards."
 
 (use-package counsel
   :straight t
-  :defer t
+  :demand t
   :diminish counsel-mode
   :commands (counsel-mode counsel--find-file-matcher)
   :bind
