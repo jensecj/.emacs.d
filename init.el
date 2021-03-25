@@ -1879,7 +1879,7 @@ If METHOD does not exist, do nothing."
         (p (point)))
     (with-current-buffer newbuf
       (insert content))
-    (switch-to-buffer newbuf)
+    (switch-to-buffer-other-window newbuf)
     (goto-char p)))
 
 (defun jens/sudo-find-file (filename)
