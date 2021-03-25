@@ -3906,10 +3906,9 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   (setq outshine-speed-commands-user '(("g" . counsel-outline)))
 
-  ;; fontify the entire outshine-heading, including the comment
-  ;; characters (;;;)
-  (if (not (string=(checksum #'outshine-fontify-headlines)
-                   "f07111ba85e2f076788ee39af3805516"))
+  ;; fontify the entire outshine-heading, including the comment characters (;;;)
+  (if (not (string= (checksum #'outshine-fontify-headlines)
+                    "f046c978b2fffbaa7f0d75d67da7b9ca"))
       (log-warning "`outshine-fontify-headlines' changed definition, ignoring patch.")
     (advice-patch #'outshine-fontify-headlines
                   '(font-lock-new-keywords
@@ -4121,7 +4120,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq diff-hl-fringe-bmp-function #'create-empty-fringe-bitmap)
 
   (if (not (string= (checksum #'diff-hl-dired-highlight-items)
-                    "e06f15da2bf831295e015c9c82f11539"))
+                    "73443aee23460cf2d2396a0ff5cb2a5e"))
       (message "`diff-hl-dired-highlight-items' changed definition, ignoring patch.")
     (advice-patch #'diff-hl-dired-highlight-items
                   'create-empty-fringe-bitmap
