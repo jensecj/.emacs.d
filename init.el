@@ -4696,16 +4696,6 @@ re-enable afterwards."
 
 ;;;; for built-in things
 
-;; handle special keys
-(define-key key-translation-map [S-dead-circumflex] "^")
-(define-key key-translation-map [dead-tilde] "~")
-(define-key key-translation-map [S-dead-grave] "´")
-(define-key key-translation-map [dead-acute] "`")
-(define-key key-translation-map [dead-diaeresis] "¨")
-
-;; Insert tilde with a single keystroke
-(global-set-key (kbd "<menu>") (xi (insert "~")))
-
 ;; Easily mark the entire buffer
 (bind-key* "C-x a" 'mark-whole-buffer)
 
