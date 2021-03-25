@@ -73,7 +73,8 @@
 
 ;;; Code:
 "
-    (buffer-name)
+    (or (ignore-errors (file-name-nondirectory (buffer-file-name)))
+        (buffer-name))
     (format-time-string "%Y")
     (user-full-name)
     (user-full-name)
