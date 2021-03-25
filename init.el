@@ -19,7 +19,7 @@
 
 (log-info "Doing early initialization")
 
-;; turn off excess interface early in startup to avoid momentary display
+;; turn off excess interface elements
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (tab-bar-mode -1)
@@ -205,7 +205,7 @@
   :demand t
   :config
   (advice-add #'advice-patch :before
-              (lambda (symbol &rest args)
+              (lambda (symbol &rest _)
                 "Print what is patched."
                 (message "patching %s" symbol))))
 
@@ -286,7 +286,7 @@
 ;; TODO: move to contrib.el?
 (log-info "Defining fundamental defuns")
 
-(defmacro comment (&rest _) "ignore everything inside this sexp" nil)
+(defmacro comment (&rest _) "Ignore everything inside this sexp." nil)
 
 (defmacro xi (&rest body)
   "Convenience macro for creating no-argument interactive lambdas."
@@ -300,6 +300,7 @@
      ,@body))
 
 (defun longest-list (&rest lists)
+  "Return the longest list in LISTS."
   (-max-by
    (lambda (a b)
      (if (and (seqp a) (seqp b))
@@ -309,12 +310,13 @@
 ;; (longest-list 'i '(1 2 3) 'z '(a b c) '(æ ø å))
 
 (defun broadcast (&rest args)
+  "Broadcast all elements in ARGS to be of equal length."
   (let ((max-width (length (apply #'longest-list args))))
     (-map-when
      (lambda (a) (atom a))
      (lambda (a) (-repeat max-width a))
      args)))
-;; (broadcast 'a '(1 2 3) 'z '(a b c) '(æ ø å))
+(broadcast 'a '(1 2 3) 'z '(a b c) '(æ ø å)); => ((a a a) (1 2 3) (z z z) (a b c) (æ ø å))
 
 ;; TODO: fix #'transpose, `-mapcar' is wrong in this context
 (defun transpose (&rest lists)
@@ -335,7 +337,7 @@
   (apply* (-cut add-hook <> <> append local) hooks fns))
 
 (defun remove-hook* (hooks fns &optional local)
-  "Remove FNS from HOOKs."
+  "Remove FNS from HOOKS."
   (apply* (-cut remove-hook <> <> local) hooks fns))
 
 (defun advice-add* (syms where fns)
@@ -352,6 +354,7 @@
     (add-to-list list-var e append compare-fn)))
 
 (defmacro remove-from-list (list-var element &optional compare-fn)
+  "Remove ELEMENT from the list at LIST-VAR."
   (let ((compare-fn (or compare-fn #'equal)))
     `(setf ,list-var (seq-remove (lambda (e) (,compare-fn ,element e)) ,list-var))))
 
@@ -360,6 +363,7 @@
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
 (defun checksum-fn (fsym)
+  "Return a md5 checksum of the function FSYM."
   (let* ((def (symbol-function fsym))
          (str (prin1-to-string def)))
     (md5 str)))
@@ -570,8 +574,7 @@
 ;; moves. also, if the last command was a copy - skip past all the
 ;; expand-region cruft.
 (defun jens/pop-to-mark-command (orig-fun &rest args)
-  "Call ORIG-FUN until the cursor moves.  Try popping up to 10
-times."
+  "Call ORIG-FUN until the cursor has moved.  Try popping up to 10 times."
   (let ((p (point)))
     (dotimes (_ 10)
       (when (= p (point))
@@ -592,7 +595,7 @@ times."
 
 
 (defun jens/ensure-read-only ()
-  "Ensure that files opened from some common paths are read-only by default"
+  "Ensure that files opened from some common paths are read-only by default."
   (when-let* ((paths (list (expand-file-name "elpa/" user-emacs-directory)
                            (expand-file-name "straight/" user-emacs-directory)
                            (expand-file-name "vendor/" user-emacs-directory)
@@ -775,7 +778,7 @@ seconds."
           ;; dont indent the terminating line of a block
           (skip-syntax-forward "-")
           (if (looking-at (rx (or ?\] ?\} ?\))))
-              (decf col)))
+              (cl-decf col)))
 
         (indent-line-to (* col tab-width)))))
 
@@ -1086,7 +1089,7 @@ Works well being called from a terminal:
                 '((global-augment-mode . nil))
                 'append)
 
-  (so-long-enable))
+  (global-so-long-mode +1))
 
 (use-package ispell
   :defer t
@@ -1757,7 +1760,7 @@ If METHOD does not exist, do nothing."
   ;; advice ;;
   ;;;;;;;;;;;;
 
-  (defun org/complete-todo-entries (n-done n-not-done)
+  (defun org/complete-todo-entries (_ n-not-done)
     "Switch entry to DONE when all sub-entries are done, to TODO otherwise."
     (let (org-log-done org-log-states)   ; turn off logging
       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
@@ -1792,7 +1795,7 @@ If METHOD does not exist, do nothing."
     (interactive)
     (let* ((completions (-uniq (-concat (-flatten (org-get-buffer-tags))
                                         org-global-tags)))
-           (tags (org-get-local-tags))
+           (tags (org-get-tags))
            (pick (completing-read (format "%s: " tags) completions)))
       (if (member pick tags)
           (setq tags (delete pick tags))
@@ -1908,7 +1911,7 @@ With prefix ARG, ask for file to open."
     (goto-char place)
     (funcall mode)))
 
-(defun jens/sudo-save (&optional arg)
+(defun jens/sudo-save ()
   "Save the current buffer using sudo through TRAMP."
   (interactive)
   (let ((contents (buffer-string))
@@ -2082,14 +2085,14 @@ otherwise the current line is saved."
       (kill-ring-save (line-beginning-position) (line-end-position)))))
 (bind-key* "M-w" 'jens/save-region-or-current-line)
 
-(defun jens/kill-region-or-current-line (arg)
+(defun jens/kill-region-or-current-line ()
   "If a region is active then it is killed, otherwise the current
 line is killed."
-  (interactive "P")
+  (interactive)
   (if (region-active-p)
       (kill-region (region-beginning) (region-end))
     (save-excursion
-      (kill-whole-line arg))))
+      (kill-whole-line))))
 (bind-key* "C-w" 'jens/kill-region-or-current-line)
 
 (defun jens/clean-current-line ()
@@ -2366,7 +2369,7 @@ If DIR is nil, download to current directory."
 
 
 (defun screenshot-frame-to-svg ()
-  "Save a screenshot of the current frame as an SVG image. Saves
+  "Save a screenshot of the current frame as an SVG image.  Saves
 to a temp file and puts the filename in the kill ring."
   (interactive)
   (let* ((filename (make-temp-file "emacs" nil ".svg"))
@@ -3361,7 +3364,7 @@ Inserts information about senders, and the mail subject into eldoc."
              (if (eq major-mode 'org-mode)
                  (org-show-all))
              (view-buffer buf #'kill-buffer-if-not-modified)
-             (font-lock-fontify-buffer))))
+             (font-lock-ensure))))
        "text/plain")))
 
   (defun notmuch-show/message-has-tag-p (tag)
