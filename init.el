@@ -3553,6 +3553,108 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 ;;;; extensions to built-in packages
 
+(use-package flycheck
+  :straight t
+  :defer t
+  :hook ((python-mode) . flycheck-mode)
+  :config
+  (setq flycheck-display-errors-delay 0.4)
+  (setq flycheck-indication-mode 'right-fringe)
+
+  (defun flycheck/error-list-make-last-column (args)
+    "Transform messages from pycheckers to report correct checker."
+    (cl-destructuring-bind (msg checker) args
+      (when (eq checker 'python-pycheckers)
+        (let ((idx (regexp-search-in-string ": " msg)))
+          (setq checker (intern (substring msg 0 idx)))
+          (setq msg (substring msg (+ idx 2)))))
+      (list msg checker)))
+
+  (advice-add #'flycheck-error-list-make-last-column
+              :filter-args
+              #'flycheck/error-list-make-last-column)
+
+  (setq flycheck-error-list-format
+        `[("File" 8)
+          ("Line" 3 flycheck-error-list-entry-< :right-align t)
+          ("Col" 2 nil :right-align t)
+          ("Level" 8 flycheck-error-list-entry-level-<)
+          ("ID" 6 t)
+          ("Message" 0 t)])
+
+  (defun flycheck/adjust-flycheck-automatic-syntax-eagerness ()
+    "Adjust how often we check for errors based on if there are any.
+  This lets us fix any errors as quickly as possible, but in a
+  clean buffer we're an order of magnitude laxer about checking."
+    (setq flycheck-idle-change-delay
+          (if flycheck-current-errors 0.3 1.5)))
+
+  ;; Each buffer gets its own idle-change-delay because of the
+  ;; buffer-sensitive adjustment above.
+  (make-variable-buffer-local 'flycheck-idle-change-delay)
+
+  (add-hook 'flycheck-after-syntax-check-hook
+            #'flycheck/adjust-flycheck-automatic-syntax-eagerness)
+
+  ;; Remove newline checks, since they would trigger an immediate check
+  ;; when we want the idle-change-delay to be in effect while editing.
+  ;; (setq-default flycheck-check-syntax-automatically '(save idle-change new-line mode-enabled))
+
+  (define-fringe-bitmap 'flycheck--fringe-indicator
+    (vector #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000
+            #b11000000))
+
+  (let ((bitmap 'flycheck--fringe-indicator))
+    (flycheck-define-error-level 'info
+      :severity 0
+      :overlay-category 'flycheck-info-overlay
+      :fringe-bitmap bitmap
+      :error-list-face 'flycheck-error-list-info
+      :fringe-face 'flycheck-fringe-info)
+
+    (flycheck-define-error-level 'warning
+      :severity 1
+      :overlay-category 'flycheck-warning-overlay
+      :fringe-bitmap bitmap
+      :error-list-face 'flycheck-error-list-warning
+      :fringe-face 'flycheck-fringe-warning)
+
+    (flycheck-define-error-level 'error
+      :severity 2
+      :overlay-category 'flycheck-error-overlay
+      :fringe-bitmap bitmap
+      :error-list-face 'flycheck-error-list-error
+      :fringe-face 'flycheck-fringe-error))
+
+  :custom-face
+  (flycheck-error-list-filename ((t (:bold normal))))
+  (flycheck-info ((t (:underline (:color ,(zent 'blue))))))
+  (flycheck-warning ((t (:background nil :underline (:color ,(zent 'yellow))))))
+  (flycheck-error ((t (:weight bold :underline (:color ,(zent 'red))))))
+  (flycheck-error-list-id-with-explainer ((t (:inherit flycheck-error-list-id :box nil))))
+  (flycheck-error-list-highlight ((t (:background ,(zent 'bg-1) :extend t)))))
+
+(use-package flycheck-package :straight t :defer t :commands (flycheck-package-setup))
+
+(use-package flycheck-checkbashisms
+  :straight t
+  :config
+  (flycheck-checkbashisms-setup))
+
 (use-package flyspell-correct
   :straight t
   :after flyspell
@@ -3748,7 +3850,6 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 (use-package package-lint :straight t :defer t :commands (package-lint-current-buffer))
 (use-package relint :straight t :defer t :commands (relint-current-buffer relint-file relint-directory))
-(use-package flycheck-package :straight t :defer t :commands (flycheck-package-setup))
 
 (use-package clang-format :straight t :defer t)
 
@@ -3841,101 +3942,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   (outshine-level-3 ((t (:inherit outline-3))))
   (outshine-level-4 ((t (:inherit outline-4))))
   (outshine-level-5 ((t (:inherit outline-5)))))
-
-(use-package flycheck
-  :straight t
-  :defer t
-  :hook ((python-mode) . flycheck-mode)
-  :config
-  (setq flycheck-display-errors-delay 0.4)
-  (setq flycheck-indication-mode 'right-fringe)
-
-  (defun flycheck/error-list-make-last-column (args)
-    "Transform messages from pycheckers to report correct checker."
-    (cl-destructuring-bind (msg checker) args
-      (when (eq checker 'python-pycheckers)
-        (let ((idx (regexp-search-in-string ": " msg)))
-          (setq checker (intern (substring msg 0 idx)))
-          (setq msg (substring msg (+ idx 2)))))
-      (list msg checker)))
-
-  (advice-add #'flycheck-error-list-make-last-column
-              :filter-args
-              #'flycheck/error-list-make-last-column)
-
-  (setq flycheck-error-list-format
-        `[("File" 8)
-          ("Line" 3 flycheck-error-list-entry-< :right-align t)
-          ("Col" 2 nil :right-align t)
-          ("Level" 8 flycheck-error-list-entry-level-<)
-          ("ID" 6 t)
-          ("Message" 0 t)])
-
-  (defun flycheck/adjust-flycheck-automatic-syntax-eagerness ()
-    "Adjust how often we check for errors based on if there are any.
-  This lets us fix any errors as quickly as possible, but in a
-  clean buffer we're an order of magnitude laxer about checking."
-    (setq flycheck-idle-change-delay
-          (if flycheck-current-errors 0.3 1.5)))
-
-  ;; Each buffer gets its own idle-change-delay because of the
-  ;; buffer-sensitive adjustment above.
-  (make-variable-buffer-local 'flycheck-idle-change-delay)
-
-  (add-hook 'flycheck-after-syntax-check-hook
-            #'flycheck/adjust-flycheck-automatic-syntax-eagerness)
-
-  ;; Remove newline checks, since they would trigger an immediate check
-  ;; when we want the idle-change-delay to be in effect while editing.
-  ;; (setq-default flycheck-check-syntax-automatically '(save idle-change new-line mode-enabled))
-
-  (define-fringe-bitmap 'flycheck--fringe-indicator
-    (vector #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000
-            #b11000000))
-
-  (let ((bitmap 'flycheck--fringe-indicator))
-    (flycheck-define-error-level 'info
-      :severity 0
-      :overlay-category 'flycheck-info-overlay
-      :fringe-bitmap bitmap
-      :error-list-face 'flycheck-error-list-info
-      :fringe-face 'flycheck-fringe-info)
-
-    (flycheck-define-error-level 'warning
-      :severity 1
-      :overlay-category 'flycheck-warning-overlay
-      :fringe-bitmap bitmap
-      :error-list-face 'flycheck-error-list-warning
-      :fringe-face 'flycheck-fringe-warning)
-
-    (flycheck-define-error-level 'error
-      :severity 2
-      :overlay-category 'flycheck-error-overlay
-      :fringe-bitmap bitmap
-      :error-list-face 'flycheck-error-list-error
-      :fringe-face 'flycheck-fringe-error))
-
-  :custom-face
-  (flycheck-error-list-filename ((t (:bold normal))))
-  (flycheck-info ((t (:underline (:color ,(zent 'blue))))))
-  (flycheck-warning ((t (:background nil :underline (:color ,(zent 'yellow))))))
-  (flycheck-error ((t (:weight bold :underline (:color ,(zent 'red))))))
-  (flycheck-error-list-id-with-explainer ((t (:inherit flycheck-error-list-id :box nil))))
-  (flycheck-error-list-highlight ((t (:background ,(zent 'bg-1) :extend t)))))
 
 (use-package yasnippet
   :straight t
