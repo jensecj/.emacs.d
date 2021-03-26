@@ -4543,7 +4543,9 @@ re-enable afterwards."
       (deactivate-mark)
       (counsel-rg initial-input default-directory)))
 
-  (counsel-mode +1))
+  (counsel-mode +1)
+  :custom-face
+  (counsel-active-mode ((t (:foreground ,(zent 'green+2))))))
 
 (use-package swiper
   :straight t
