@@ -421,9 +421,8 @@
 (setq shift-select-mode nil)
 
 ;; always display text left-to-right
-(setq-default bidi-display-reordering nil) ; FIXME: non-nil values cause "Reordering buffer..."
-(setq bidi-inhibit-bpa t)
 (setq bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
 
 ;; fold characters in searches (e.g. 'a' matches 'â')
 (setq search-default-mode 'char-fold-to-regexp)
