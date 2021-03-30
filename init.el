@@ -294,11 +294,6 @@
      (interactive)
      ,@body))
 
-(defmacro fn (&rest body)
-  "Convenience macro for creating no-argument lambdas."
-  `(lambda ()
-     ,@body))
-
 (defun longest-list (&rest lists)
   "Return the longest list in LISTS."
   (-max-by
@@ -2426,7 +2421,7 @@ to a temp file and puts the filename in the kill ring."
         ("b" . #'orgflow-visit-backlinks))
   :config
   (setq orgflow-section-sizes '(40 40))
-  (setq orgflow-directory (fn (or default-directory (project-root (project-current)))))
+  (setq orgflow-directory (lambda () (or default-directory (project-root (project-current)))))
 
   (add-to-list 'org-speed-commands-user '("R" . orgflow-refile-to-nearby-file)))
 
@@ -2867,7 +2862,7 @@ _t_: Go to todays file
 
   ;; disable hl-line-mode in magit, it messes with diffs
   (add-hook 'magit-mode-hook
-            (fn
+            (lambda ()
              (make-variable-buffer-local 'global-hl-line-mode)
              (setq global-hl-line-mode nil)))
 
