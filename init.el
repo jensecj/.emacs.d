@@ -4634,6 +4634,8 @@ re-enable afterwards."
   (setq company-search-regexp-function 'company-search-flex-regexp)
   (setq company-require-match nil)
 
+  (setq company-frontends '(company-preview-if-just-one-frontend
+                            company-echo-metadata-frontend))
   (setq company-backends
         '(company-elisp
           company-capf
