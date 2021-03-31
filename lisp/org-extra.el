@@ -107,40 +107,6 @@ document."
               (url (substring line-string (match-beginning 0) (match-end 0))))
     (org-open-link-from-string url)))
 
-(defun org-extra--refile (file headline &optional arg)
-  (let ((pos (save-excursion
-               (find-file file)
-               (org-find-exact-headline-in-buffer headline))))
-    (org-refile arg nil (list headline file nil pos)))
-  (switch-to-buffer (current-buffer)))
-
-(defun org-extra-refile-here ()
-  "Refile entry-at-point to a headline in the current file."
-  (interactive)
-  ;; TODO: create new entry if pick is not in list
-  (let* ((entries (org-ql (current-buffer) (level 1)))
-         (headlines (-map
-                     (lambda (e)
-                       (plist-get (cadr e) ':raw-value))
-                     entries))
-         (pick (completing-read "Refile to: " headlines nil t)))
-    (if (org-at-heading-p)
-        (org-extra--refile (buffer-file-name) pick)
-      (message "Point is not at a refilable ting"))))
-
-(defun org-extra-refile-to-open-org-file ()
-  "Refile entry-at-point to another open org file."
-  (interactive)
-  (when-let* ((files (-select (lambda (b) (s-ends-with-p ".org" (buffer-file-name b))) (buffer-list)))
-              (buffers (-map (lambda (b) (buffer-name b)) files))
-              (pick (completing-read "" buffers))
-              (buffer (get-buffer pick)))
-    (org-extra-cut-subtree-at-point)
-    (with-current-buffer buffer
-      (goto-char (point-max))
-      (org-paste-subtree)
-      (save-buffer))))
-
 (defun org-extra-url-at-point-to-org-link ()
   "Convert the url-at-point to an org-link."
   (interactive)
@@ -159,16 +125,5 @@ document."
                 (rating (completing-read "rate: " values nil t)))
       (org-set-property "RATING" rating))))
 
-(defun org-extra-split-link (org-link)
-  "Split ORG-LINK, into a (title . url) pair."
-  (ignore-errors
-    (let* ((part (rx (0+ (or alpha digit punct space))))
-           (whole (rx "[[" (group (regexp part)) "][" (group (regexp part)) "]]"))
-           (match (s-match whole org-link)))
-      (cons (nth 1 match) (nth 2 match)))))
-
-(defun org-extra-link-title (org-link)
-  "Return the title part of ORG-LINK."
-  (car (org-extra-split-link org-link)))
 
 (provide 'org-extra)
