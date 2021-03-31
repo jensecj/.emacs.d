@@ -3829,10 +3829,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   :custom-face
   (highlight-numbers-number ((t (:foreground ,(zent 'number))))))
 
-(use-package highlight-escape-sequences
-  :straight t
-  :delight " hes")
-
 (use-package highlight-thing
   :straight t
   :diminish highlight-thing-mode
