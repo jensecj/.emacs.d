@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2020 Jens Christian Jensen
 
-;; Author: Jens Christian Jensen <jensecj@gmail.com>
+;; Author: Jens Christian Jensen <jensecj@subst.net>
 ;; URL:
 ;; Keywords:
 ;; Package-Requires ((emacs "28.0.50"))
@@ -58,6 +58,44 @@ Use `setf' to change the element."
 ;;;; functions
 
 ;;;;; misc
+
+(defun just-one-newline ()
+  "Collapse newlines around point, so only one remains."
+  (interactive)
+  (save-restriction
+    (save-match-data
+      (skip-chars-backward "\n")
+      (while (looking-at "\n\n\n")
+        (save-excursion
+          (delete-region (match-beginning 0) (match-end 0))
+          (insert "\n\n"))))))
+
+(defun collapse-whitespace ()
+  "Collapse whitespace around point.
+
+If point is in a region of whitespace which spans multiple lines,
+whitespace is collapsed into a single newline.
+
+If point is in a region of whitespace on a single line,
+whitespace is collapsed into a single space."
+  (interactive)
+  (let* ((space-chars " \t\r\n")
+         (start (+ (point) (skip-chars-backward space-chars)))
+         (end (+ (point) (skip-chars-forward space-chars))))
+    (cond
+     ;; point is in a region of whitespace spanning multiple lines
+     ((or (< start (line-beginning-position))
+          (> end (line-end-position)))
+      (delete-region start end)
+      (insert "\n"))
+     ;; point is in a region of whitespace on a single line
+     ((not (eq start end))
+      (delete-region start end)
+      (insert " "))
+     ;; otherwise, point is not in a region of whitespace
+     )))
+(advice-add #'collapse-whitespace :after #'indent-according-to-mode)
+(bind-key "M-<SPC>" #'collapse-whitespace)
 
 ;; (defalias '-> #'thread-first) # TODO: benchmark against dash
 ;; (defalias '->> #'thread-last)
