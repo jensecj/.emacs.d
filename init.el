@@ -4283,16 +4283,10 @@ if BACKWARDS is non-nil, jump backwards instead."
          (scheme-mode . paxedit-mode))
   :commands (paxedit-transpose-forward
              paxedit-transpose-backward)
-  :bind (("M-t" . paxedit-transpose-hydra/body)
-         ("M-k" . paxedit-kill)
+  :bind (("M-k" . paxedit-kill)
          ("M-K" . paxedit-copy)
          ("M-<prior>" . paxedit-backward-up)
-         ("M-<next>" . paxedit-backward-end))
-  :config
-  (defhydra paxedit-transpose-hydra ()
-    "Transpose things"
-    ("f" #'paxedit-transpose-forward "forward")
-    ("b" #'paxedit-transpose-backward "backward")))
+         ("M-<next>" . paxedit-backward-end)))
 
 (use-package iedit
   :straight t
