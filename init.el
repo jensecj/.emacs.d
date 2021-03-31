@@ -222,34 +222,16 @@
       ,(if callback
            `(lambda (res) (funcall ,callback res))))))
 
-;; load theme colors early, so they can be used for customizing other packages
+;;;; themes
+
 (use-package zent-theme
   :straight (zent-theme :type git :repo "git@github.com:jensecj/zent-theme.el.git")
   :demand t
   :functions zent
   :config
+  (load-theme 'zent t))
 
-  ;; TODO: create complementary color theme based on zenburn
-  (custom-set-faces
-   `(default ((t (:foreground ,(zent 'grey+3)))))
-   `(cursor ((t (:background ,(zent 'grey)))))
-   `(region ((t (:foreground nil :background ,(zent 'bg-1)))))
-   `(internal-border ((t (:foreground ,(zent 'grey-1)))))
-   `(vertical-border ((t (:foreground ,(zent 'grey-1)))))
-   `(window-divider             ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
-   `(window-divider-first-pixel ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
-   `(window-divider-last-pixel  ((t (:background ,(zent 'grey) :foreground ,(zent 'grey-1)))))
-   `(mode-line ((t (:box nil :background ,(zent 'bg-1)))))
-   `(mode-line-inactive ((t (:box nil))))
-   `(header-line ((t (:box nil))))
-   `(hl-line ((t (:background ,(zent 'grey-2)))))
-   `(highlight ((t (:background nil :foreground nil))))
-   `(font-lock-function-name-face ((t (:foreground ,(zent 'function)))))
-   `(font-lock-builtin-face ((t (:foreground ,(zent 'grey+2) :weight semi-bold))))
-   `(dired-flagged ((t (:background ,(zent 'red-2) :extend t))))
-   )
-  ;; (load-theme 'zent t)
-  )
+(use-package zenburn-theme :disabled t :straight t)
 
 ;;;; cache, temp files, etc.
 
@@ -1031,9 +1013,7 @@ Works well being called from a terminal:
   :config
   (setq xref-search-program 'ripgrep))
 
-(use-package pulse
-  :custom-face
-  (pulse-highlight-start-face ((t (:foreground ,(zent 'black) :background ,(zent 'white))))))
+(use-package pulse)
 
 (use-package flymake
   :config
@@ -1044,21 +1024,10 @@ Works well being called from a terminal:
   :config
   (setq outline-blank-line t)
   (setq outline-minor-mode-highlight t)
-  (setq outline-minor-mode-cycle t)
-  :custom-face
-  (outline-1 ((t (:weight bold))))
-  (outline-2 ((t (:weight bold))))
-  (outline-3 ((t (:weight bold))))
-  (outline-4 ((t (:weight bold))))
-  (outline-5 ((t (:weight bold))))
-  (outline-6 ((t (:weight bold))))
-  (outline-7 ((t (:weight bold))))
-  (outline-8 ((t (:weight bold)))))
+  (setq outline-minor-mode-cycle t))
 
 (use-package display-fill-column-indicator
-  :hook ((text-mode prog-mode) . display-fill-column-indicator-mode)
-  :custom-face
-  (fill-column-indicator ((t (:foreground ,(zent 'bg+05) :background nil)))))
+  :hook ((text-mode prog-mode) . display-fill-column-indicator-mode))
 
 (use-package so-long
   :demand t
@@ -1135,10 +1104,7 @@ Works well being called from a terminal:
   (setq show-paren-delay 0.1)
   (setq show-paren-style 'expression)
   (setq show-paren-when-point-inside-paren t)
-
-  (show-paren-mode +1)
-  :custom-face
-  (show-paren-match-expression ((t (:foreground nil :background ,(zent 'bg-05))))))
+  (show-paren-mode +1))
 
 (use-package abbrev ;; auto-replace common abbreviations
   :diminish abbrev-mode
@@ -1279,9 +1245,7 @@ number input"
 
   (advice-add #'elisp-get-fnsym-args-string :around #'eldoc/add-short-doc)
 
-  (global-eldoc-mode +1)
-  :custom-face
-  (eldoc-highlight-function-argument ((t (:inherit font-lock-warning-face)))))
+  (global-eldoc-mode +1))
 
 (use-package fringe
   :commands fringe-mode
@@ -1292,9 +1256,7 @@ number input"
   (setf (alist-get 'continuation fringe-indicator-alist)
         '(vertical-bar vertical-bar))
 
-  (set-fringe-mode '(4 . 4))
-  :custom-face
-  (fringe ((t (:background ,(zent 'bg))))))
+  (set-fringe-mode '(4 . 4)))
 
 ;;;;; misc packages
 
@@ -1816,9 +1778,7 @@ If METHOD does not exist, do nothing."
   ;;               org-latex-pdf-process
   ;;               '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
   ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-  :custom-face
-  (org-tag ((t (:foreground ,(zent 'fg-05)))))
-  (org-ellipsis ((t (:foreground ,(zent 'fg-05) :underline nil)))))
+  )
 
 (use-package reftex
   :straight t
@@ -2711,20 +2671,7 @@ _t_: Go to todays file
   :demand t
   :commands lowkey-mode-line-enable
   :config
-  (lowkey-mode-line-enable)
-  :custom-face
-  (lml-buffer-face ((t (:background "grey20"))))
-  (lml-buffer-face-inactive ((t (:background "grey20"))))
-  (lml-position-face ((t (:background "grey25"))))
-  (lml-position-face-inactive ((t (:background "grey20"))))
-  (lml-major-mode-face ((t (:background "grey30"))))
-  (lml-major-mode-face-inactive ((t (:background "grey20"))))
-  (lml-minor-modes-face ((t (:background "grey30"))))
-  (lml-minor-modes-face-inactive ((t (:background "grey20"))))
-  (lml-filler-face ((t (:background "grey30"))))
-  (lml-filler-face-inactive ((t (:background "grey20"))))
-  (lml-vc-face ((t (:background "grey20"))))
-  (lml-vc-face-inactive ((t (:background "grey20")))))
+  (lowkey-mode-line-enable))
 
 ;;; third-party packages
 
@@ -2734,25 +2681,6 @@ _t_: Go to todays file
   :straight (emacs-package-dev-handbook
              :host github :repo "alphapapa/emacs-package-dev-handbook"
              :fork (:host github :repo "jensecj/emacs-package-dev-handbook")))
-
-;;;; themes
-(use-package zenburn-theme
-  :straight t
-  :demand t
-  :requires zent-theme
-  :config
-  (setq zenburn-add-font-lock-keywords t)
-
-  ;; replace wavy-underlines with straight ones in all faces
-  (mapatoms (lambda (atom)
-              (let ((underline nil))
-                (when (and (facep atom)
-                           (setq underline (face-attribute atom :underline))
-                           (eq (plist-get underline :style) 'wave))
-                  (plist-put underline :style 'line)
-                  (set-face-attribute atom nil :underline underline)))))
-
-  (load-theme 'zenburn t))
 
 ;;;; major modes and extentions
 
@@ -2864,16 +2792,10 @@ _t_: Go to todays file
   ;; disable hl-line-mode in magit, it messes with diffs
   (add-hook 'magit-mode-hook
             (lambda ()
-             (make-variable-buffer-local 'global-hl-line-mode)
-             (setq global-hl-line-mode nil)))
+              (make-variable-buffer-local 'global-hl-line-mode)
+              (setq global-hl-line-mode nil)))
 
-  (add-hook 'git-commit-mode-hook #'flyspell-prog-mode)
-  :custom-face
-  (magit-diff-context-highlight ((t (:background ,(zent 'bg+1)))))
-  (magit-diff-added ((t (:background ,(zent 'green-4)))))
-  (magit-diff-added-highlight ((t (:background ,(zent 'green-3)))))
-  (magit-diff-removed ((t (:background ,(zent 'red-5)))))
-  (magit-diff-removed-highlight ((t (:background ,(zent 'red-4))))))
+  (add-hook 'git-commit-mode-hook #'flyspell-prog-mode))
 
 (use-package forge
   :straight t
@@ -3034,12 +2956,7 @@ clipboard."
       (with-temp-buffer
         (insert link)
         (clipboard-kill-ring-save (point-min) (point-max))
-        (message (format "copied %s to clipboard" link)))))
-
-  :custom-face
-  (elfeed-search-date-face ((t (:underline nil))))
-  (elfeed-search-unread-title-face ((t (:strike-through nil))))
-  (elfeed-search-title-face ((t (:strike-through t)))))
+        (message (format "copied %s to clipboard" link))))))
 
 (use-package pdf-tools
   :straight t
@@ -3133,11 +3050,8 @@ clipboard."
   (setq erc-join-buffer 'buffer)
 
 
+  )
 
-  :custom-face
-  (erc-timestamp-face ((t (:foreground ,(zent 'fg-1)))))
-  (erc-input-face ((t (:foreground ,(zent 'fg)))))
-  (erc-prompt-face ((t (:background nil :extend t)))))
 
 (use-package erc-hl-nicks
   :straight t
@@ -3534,20 +3448,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   ;; TODO: fix these so org-store-link stores link to the message at ;; point in search mode.
   (require 'org-notmuch)
   (bind-key "C-c C-l" #'org-store-link notmuch-show-mode-map)
-  (bind-key "C-c C-l" #'org-store-link notmuch-search-mode-map)
-
-  :custom-face
-  (notmuch-search-flagged-face ((t (:background ,(zent 'blue-5) :extend t))))
-  (notmuch-wash-cited-text ((t (:inherit font-lock-comment-face))))
-  (notmuch-wash-toggle-button ((t (:foreground ,(zent 'yellow) :background ,(zent 'bg)))))
-  (notmuch-message-summary-face ((t (:background ,(zent 'bg-1) :extend t))))
-  (notmuch-search-unread-face ((t (:weight bold :foreground ,(zent 'yellow)))))
-  (notmuch-tag-deleted ((t (:foreground ,(zent 'red) :underline "red" :strike-through nil))))
-  (notmuch-tag-face ((t (:foreground "#11ff11"))))
-  (notmuch-crypto-signature-good ((t (:background ,(zent 'green)))))
-  (notmuch-crypto-signature-good-key ((t (:background ,(zent 'green)))))
-  (notmuch-crypto-signature-bad ((t (:background ,(zent 'red-5)))))
-  (notmuch-crypto-signature-unknown ((t (:background ,(zent 'yellow-1))))))
+  (bind-key "C-c C-l" #'org-store-link notmuch-search-mode-map))
 
 ;;;; extensions to built-in packages
 
@@ -3636,15 +3537,7 @@ if BACKWARDS is non-nil, jump backwards instead."
       :overlay-category 'flycheck-error-overlay
       :fringe-bitmap bitmap
       :error-list-face 'flycheck-error-list-error
-      :fringe-face 'flycheck-fringe-error))
-
-  :custom-face
-  (flycheck-error-list-filename ((t (:bold normal))))
-  (flycheck-info ((t (:underline (:color ,(zent 'blue))))))
-  (flycheck-warning ((t (:background nil :underline (:color ,(zent 'yellow))))))
-  (flycheck-error ((t (:weight bold :underline (:color ,(zent 'red))))))
-  (flycheck-error-list-id-with-explainer ((t (:inherit flycheck-error-list-id :box nil))))
-  (flycheck-error-list-highlight ((t (:background ,(zent 'bg-1) :extend t)))))
+      :fringe-face 'flycheck-fringe-error)))
 
 (use-package flycheck-package :straight t :defer t :commands (flycheck-package-setup))
 
@@ -3680,10 +3573,7 @@ if BACKWARDS is non-nil, jump backwards instead."
                                                   "default"))))
       (frog-menu-read prompt candidates actions)))
 
-  (setq flyspell-correct-interface #'frog-menu/flyspell-correct)
-  :custom-face
-  (frog-menu-border ((t (:background ,(zent 'bg-1)))))
-  (frog-menu-posframe-background-face ((t (:background ,(zent 'bg-1))))))
+  (setq flyspell-correct-interface #'frog-menu/flyspell-correct))
 
 (use-package dired-filter :straight t :after dired)
 (use-package dired-collapse :straight t :after dired)
@@ -3733,13 +3623,7 @@ if BACKWARDS is non-nil, jump backwards instead."
         ("C-<down>" . nil))
   :config
   (toggle-diredp-find-file-reuse-dir +1)
-  (global-dired-hide-details-mode +1)
-  :custom-face
-  (diredp-omit-file-name ((t (:foreground "#afafaf" :inherit diredp-ignored-file-name :strike-through nil))))
-  (diredp-dir-heading ((t (:background "#4f4f4f"))))
-  (diredp-dir-priv ((t (:foreground "#8CD0D3"))))
-  (diredp-file-name ((t (:foreground "#DCDCCC"))))
-  (diredp-dir-name ((t (:foreground "#8CD0D3")))))
+  (global-dired-hide-details-mode +1))
 
 (use-package geiser
   :straight t
@@ -3810,16 +3694,11 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package highlight-defined
   :straight t
   :diminish highlight-defined-mode
-  :hook (emacs-lisp-mode . highlight-defined-mode)
-  :custom-face
-  (highlight-defined-function-name-face ((t (:foreground ,(zent 'function)))))
-  (highlight-defined-builtin-function-name-face ((t (:foreground ,(zent 'built-in))))))
+  :hook (emacs-lisp-mode . highlight-defined-mode))
 
 (use-package highlight-numbers
   :straight t
-  :hook (prog-mode . highlight-numbers-mode)
-  :custom-face
-  (highlight-numbers-number ((t (:foreground ,(zent 'number))))))
+  :hook (prog-mode . highlight-numbers-mode))
 
 (use-package highlight-thing
   :straight t
@@ -3832,9 +3711,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq highlight-thing-limit-to-region-in-large-buffers-p t)
   (setq highlight-thing-narrow-region-lines 30)
   (add-to-list* 'highlight-thing-excluded-major-modes '(pdf-view-mode doc-view-mode notmuch-show-mode notmuch-search-mode))
-  (global-highlight-thing-mode +1)
-  :custom-face
-  (highlight-thing ((t (:background ,(zent 'bg+2) :weight bold)))))
+  (global-highlight-thing-mode +1))
 
 (use-package fontify-face
   :straight t
@@ -3929,13 +3806,7 @@ if BACKWARDS is non-nil, jump backwards instead."
                       (,heading-5-regexp 1 'outshine-level-5 t)
                       (,heading-6-regexp 1 'outshine-level-6 t)
                       (,heading-7-regexp 1 'outshine-level-7 t)
-                      (,heading-8-regexp 1 'outshine-level-8 t)))))
-  :custom-face
-  (outshine-level-1 ((t (:inherit outline-1))))
-  (outshine-level-2 ((t (:inherit outline-2))))
-  (outshine-level-3 ((t (:inherit outline-3))))
-  (outshine-level-4 ((t (:inherit outline-4))))
-  (outshine-level-5 ((t (:inherit outline-5)))))
+                      (,heading-8-regexp 1 'outshine-level-8 t))))))
 
 (use-package yasnippet
   :straight t
@@ -3966,9 +3837,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package paren-face
   :straight t
   :config
-  (global-paren-face-mode +1)
-  :custom-face
-  (parenthesis ((t (:foreground "#a1a1a1")))))
+  (global-paren-face-mode +1))
 
 (use-package macrostep
   :straight t
@@ -4008,10 +3877,7 @@ if BACKWARDS is non-nil, jump backwards instead."
     ("p" #'diff-hl-previous-hunk "previous")
     ("l" #'diff-hl/last-hunk "last"))
 
-  (global-diff-hl-mode +1)
-  :custom-face
-  (diff-hl-dired-unknown ((t (:inherit diff-hl-dired-insert))))
-  (diff-hl-dired-ignored ((t (:background "#2b2b2b")))))
+  (global-diff-hl-mode +1))
 
 (use-package diff-hl-dired
   ;; git highlighting for dired-mode, part of `diff-hl'
@@ -4285,9 +4151,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   :bind*
   (("C-;" . iedit-mode)
    :map iedit-mode-keymap
-   ("<return>" . iedit-quit))
-  :custom-face
-  (iedit-occurrence ((t (:box t)))))
+   ("<return>" . iedit-quit)))
 
 (use-package multiple-cursors
   :straight t
@@ -4327,13 +4191,7 @@ re-enable afterwards."
           (apply fn args)
         (when toggle (highlight-thing-mode +1)))))
 
-  (advice-add #'avy-goto-char :around #'avy/disable-highlight-thing)
-  :custom-face
-  (avy-background-face ((t (:foreground ,(zent 'grey-1) :background ,(zent 'bg-1) :extend t))))
-  (avy-lead-face ((t (:underline t :background ,(zent 'bg-1)))))
-  (avy-lead-face-0 ((t (:background ,(zent 'bg-1)))))
-  (avy-lead-face-1 ((t (:background ,(zent 'bg-1)))))
-  (avy-lead-face-2 ((t (:background ,(zent 'bg-1))))))
+  (advice-add #'avy-goto-char :around #'avy/disable-highlight-thing))
 
 (use-package avy-zap
   :straight t
@@ -4475,9 +4333,7 @@ re-enable afterwards."
   (setq ivy-on-del-error-function nil)
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
 
-  (ivy-mode +1)
-  :custom-face
-  (ivy-current-match ((t (:foreground nil :background ,(zent 'bg-1) :underline nil :extend t)))))
+  (ivy-mode +1))
 
 (use-package counsel
   :straight t
@@ -4531,9 +4387,7 @@ re-enable afterwards."
       (deactivate-mark)
       (counsel-rg initial-input default-directory)))
 
-  (counsel-mode +1)
-  :custom-face
-  (counsel-active-mode ((t (:foreground ,(zent 'green+2))))))
+  (counsel-mode +1))
 
 (use-package swiper
   :straight t
@@ -4549,10 +4403,7 @@ re-enable afterwards."
           (let ((query (buffer-substring-no-properties (region-beginning) (region-end))))
             (deactivate-mark)
             (funcall fn query))
-        (call-interactively fn))))
-
-  :custom-face
-  (swiper-line-face ((t (:foreground nil :background ,(zent 'bg-1) :underline nil :extend t)))))
+        (call-interactively fn)))))
 
 (use-package bookmark+
   :download ("https://www.emacswiki.org/emacs/download/bookmark%2b.el"
@@ -4593,9 +4444,7 @@ re-enable afterwards."
   :config
   (setq lsp-eldoc-render-all t)
   (setq lsp-completion-enable-additional-text-edit nil)
-  (setq lsp-headerline-breadcrumb-enable nil)
-  :custom-face
-  (lsp-face-highlight-read ((t (:underline nil)))))
+  (setq lsp-headerline-breadcrumb-enable nil))
 
 (use-package lsp-ui
   :disabled t
@@ -4606,9 +4455,7 @@ re-enable afterwards."
   (setq lsp-ui-sideline-show-symbol nil)
   (setq lsp-ui-sideline-show-diagnostics nil)
   (setq lsp-ui-sideline-show-code-actions nil)
-  (setq lsp-ui-sideline-code-actions-prefix "> ")
-  :custom-face
-  (lsp-ui-sideline-code-action ((t (:foreground ,(zent 'fg) :background ,(zent 'bg-05))))))
+  (setq lsp-ui-sideline-code-actions-prefix "> "))
 
 (use-package lsp-java
   :straight t
