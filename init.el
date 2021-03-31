@@ -19,14 +19,6 @@
 
 (log-info "Doing early initialization")
 
-;; turn off excess interface elements
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(tab-bar-mode -1)
-(tab-line-mode -1)
-(scroll-bar-mode -1)
-(tooltip-mode -1)
-
 ;; user directories/files
 (defconst user-home-directory (getenv "HOME"))
 (defconst user-elpa-directory (locate-user-emacs-file "elpa/"))
