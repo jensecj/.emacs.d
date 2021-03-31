@@ -2420,12 +2420,15 @@ to a temp file and puts the filename in the kill ring."
         ("n" . #'orgflow-visit-nearby-file)
         ("t" . #'orgflow-visit-tagged-heading)
         ("h" . #'orgflow-visit-nearby-heading)
+        ("H" . #'orgflow-refile-here)
         ("b" . #'orgflow-visit-backlinks))
   :config
   (setq orgflow-section-sizes '(40 40))
   (setq orgflow-directory (lambda () (or default-directory (project-root (project-current)))))
 
-  (add-to-list 'org-speed-commands-user '("R" . orgflow-refile-to-nearby-file)))
+  (add-to-list* 'org-speed-commands-user
+                '(("R" . orgflow-refile-to-nearby-file)
+                  ("H" . orgflow-refile-here))))
 
 (use-package org-proplines
   :straight (org-proplines :type git :repo "git@github.com:jensecj/org-proplines.el.git")
