@@ -2582,12 +2582,16 @@ to a temp file and puts the filename in the kill ring."
   (setq today-file "~/vault/inbox/today.org")
   (setq today-inbox-file "~/vault/inbox/inbox.org")
 
+  (add-to-list* 'today-capture-url-transforms
+                `((,(rx (or "subscriptions.gir.st" "invidious.snopyta.org")) . "youtube.com")))
+
   (add-to-list* 'today-capture-auto-handlers
                 `(("emacswiki\\.org" . read)
                   ("github\\.com" . plain)
                   ("github\\.io" . read)
                   ("lwn\\.net" . read)
                   ("towardsdatascience\\.com" . read)
+                  ("wikipedia\\.org" . read)
                   ("teddit\\.net" . read)
                   (,(rx (or "news.ycombinator.com" "lobste.rs")) . read)
                   (,(rx (or "twitch.tv"
