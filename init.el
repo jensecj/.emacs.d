@@ -1271,22 +1271,21 @@ number input"
 
   (advice-add #'elisp-get-fnsym-args-string :filter-return #'eldoc/highlight-&s)
 
-  (with-eval-after-load 'dokument-elisp
-    (defun eldoc/add-short-doc (orig &rest args)
-      "Change the format of eldoc messages for functions to `(fn args)'."
-      (shut-up
-        (save-window-excursion
-          (save-mark-and-excursion
-            (let ((sym (car args))
-                  (eldoc-args (apply orig args)))
-              (let* ((doc (and (fboundp sym) (documentation sym 'raw)))
-                     (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
-                     (short-doc (when short-doc (dokument-elisp--fontify-as-doc short-doc))))
-                (format "%s\t\t%s" (or eldoc-args "") (or short-doc ""))))))))
+  (defun eldoc/add-short-doc (orig &rest args)
+    "Change the format of eldoc messages for functions to `(fn args)'."
+    (shut-up
+      (save-window-excursion
+        (save-mark-and-excursion
+          (let ((sym (car args))
+                (eldoc-args (apply orig args)))
+            (let* ((doc (and (fboundp sym) (documentation sym 'raw)))
+                   (short-doc (when doc (substring doc 0 (string-match "\n" doc))))
+                   (short-doc (when short-doc (propertize short-doc 'face font-lock-comment-face))))
+              (format "%s\t\t%s" (or eldoc-args "") (or short-doc ""))))))))
 
-    (eldoc/add-short-doc #'elisp-get-fnsym-args-string 'insert)
+  (eldoc/add-short-doc #'elisp-get-fnsym-args-string 'insert)
 
-    (advice-add #'elisp-get-fnsym-args-string :around #'eldoc/add-short-doc))
+  (advice-add #'elisp-get-fnsym-args-string :around #'eldoc/add-short-doc)
 
   (global-eldoc-mode +1)
   :custom-face
