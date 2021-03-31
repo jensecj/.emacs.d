@@ -1051,6 +1051,8 @@ Works well being called from a terminal:
   :diminish outline-minor-mode
   :config
   (setq outline-blank-line t)
+  (setq outline-minor-mode-highlight t)
+  (setq outline-minor-mode-cycle t)
   :custom-face
   (outline-1 ((t (:weight bold))))
   (outline-2 ((t (:weight bold))))
