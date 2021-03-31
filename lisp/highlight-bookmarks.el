@@ -2,11 +2,11 @@
 
 ;; Copyright (C) 2020 Jens Christian Jensen
 
-;; Author: Jens Christian Jensen <jensecj@gmail.com>
+;; Author: Jens Christian Jensen <jensecj@subst.net>
 ;; Keywords: highlighting, bookmarks
 ;; Package-Version: 20200626
 ;; Version: 0.3
-;; Package-Requires: ((emacs "25.1") (ov "1.0.6") (dash "2.14.1") (f "0.20.0"))
+;; Package-Requires: ((emacs "25.1") (ov "1.0.6") (dash "2.18.1") (f "0.20.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

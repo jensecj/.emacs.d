@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2020 Jens Christian Jensen
 
-;; Author: Jens Christian Jensen <jensecj@gmail.com>
+;; Author: Jens Christian Jensen <jensecj@subst.net>
 ;; URL:
 ;; Keywords: buffers
 ;; Package-Requires ((emacs "28.0.50"))

@@ -7,7 +7,7 @@
 ;; Keywords:
 ;; Package-Version: 20200623
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "28.0.0.5"))
+;; Package-Requires: ((emacs "28.0.50"))
 
 
 ;;; Commentary:

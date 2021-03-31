@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2020 Jens Christian Jensen
 
-;; Author: Jens Christian Jensen <jensecj@gmail.com>
+;; Author: Jens Christian Jensen <jensecj@subst.net>
 ;; Keywords: org-mode
 ;; Package-Version: 20200615
 ;; Version: 0.3.0
