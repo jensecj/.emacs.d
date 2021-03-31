@@ -744,6 +744,7 @@ seconds."
          ("\\.xinitrc\\'" . shell-script-mode)
          ("\\.PKGBUILD\\'" . shell-script-mode))
   :config
+  (add-to-list 'interpreter-mode-alist '("bb" . clojure-mode))
   (add-hook* 'sh-mode-hook '(flymake-mode flycheck-mode)))
 
 (use-package conf-mode
