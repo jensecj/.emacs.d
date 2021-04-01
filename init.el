@@ -242,7 +242,6 @@
 (use-package no-littering :straight t :demand t)
 
 (setq temporary-file-directory (no-littering-expand-var-file-name "temp/"))
-(setq bookmark-default-file (no-littering-expand-etc-file-name "bookmarks.el"))
 
 (let ((auto-save-dir (no-littering-expand-var-file-name "auto-save/")))
   (setq auto-save-file-name-transforms `((".*" ,auto-save-dir t)))
@@ -1110,7 +1109,6 @@ Works well being called from a terminal:
   :diminish abbrev-mode
   :hook (text-mode  . abbrev-mode)
   :config
-  (setq abbrev-file-name (no-littering-expand-etc-file-name "abbreviations.el"))
   (read-abbrev-file)
   (abbrev-mode +1))
 
@@ -1131,22 +1129,23 @@ Works well being called from a terminal:
 
   (advice-add #'windmove-do-window-select :around #'windmove/silent-select))
 
-(use-package saveplace ;; save point position between sessions
+(use-package saveplace
+  ;; save point position between sessions
   :demand t
   :config
-  (setq save-place-file (no-littering-expand-var-file-name "saveplaces"))
   (save-place-mode +1))
 
-(use-package savehist ;; persist some variables between sessions
+(use-package savehist
+  ;; persist some variables between sessions
   :demand t
   :config
-  (setq savehist-file (no-littering-expand-var-file-name "savehist"))
-  ;; save every minute
   (setq savehist-autosave-interval 60)
-  (setq savehist-additional-variables
-        '(kill-ring
-          search-ring
-          regexp-search-ring))
+  ;; TODO: add more entries to savehist
+  (add-to-list* 'savehist-additional-variables
+                '(kill-ring
+                  search-ring
+                  regexp-search-ring))
+
   ;; just keep all history
   (setq history-length t)
   (setq history-delete-duplicates t)
@@ -1276,12 +1275,11 @@ number input"
   :demand t
   :config (setq uniquify-buffer-name-style 'forward))
 
-(use-package tramp ;; easily access and edit files on remote machines
+(use-package tramp
+  ;; easily access and edit files on remote machines
   :defer t
   :config
   (setq tramp-verbose 6)
-
-  (setq tramp-persistency-file-name (no-littering-expand-var-file-name "tramp/"))
   (setq tramp-default-method "ssh")
 
   (defun tramp/get-method-parameter (method param)
@@ -1301,14 +1299,12 @@ If METHOD does not exist, do nothing."
             (setcar (cdr entry) newvalue)
           (setcdr (last method-params) '(param newvalue)))))))
 
-(use-package recentf ;; save a list of recently visited files.
+(use-package recentf
+  ;; save a list of recently visited files.
   :demand t
   :commands (recentf-mode recentf/with-colors)
   :bind (("C-x f" . recentf/with-colors))
   :config
-  ;; TODO: maybe move to var directory?
-  (setq recentf-save-file
-        (recentf-expand-file-name (no-littering-expand-etc-file-name "recentf.el")))
   (setq recentf-exclude
         `(,(regexp-quote
             (locate-user-emacs-file no-littering-var-directory))
@@ -2709,9 +2705,7 @@ _t_: Go to todays file
                 (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)))
                 (browse-url/get-url-at-point))))
       (view-buffer-other-window "*elpher*")
-      (elpher-go url)))
-
-  (setq elpher-bookmarks-file (no-littering-expand-etc-file-name "elpher-bookmarks")))
+      (elpher-go url))))
 
 (use-package rust-mode
   :straight t
@@ -4158,9 +4152,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   :bind*
   (("C-d" . mc/mark-next-like-this)
    ("C-S-d" . mc/mark-previous-like-this)
-   ("C-M-a" . mc/mark-all-like-this))
-  :init
-  (setq mc/list-file (no-littering-expand-etc-file-name "mc-lists.el")))
+   ("C-M-a" . mc/mark-all-like-this)))
 
 (use-package ace-mc
   :straight t
@@ -4229,7 +4221,6 @@ re-enable afterwards."
   :config
   (setq undo-tree-visualizer-diff t)
   (setq undo-tree-auto-save-history t)
-  (setq undo-tree-history-directory-alist `(("." . ,(concat no-littering-var-directory "undo-tree/"))))
   (global-undo-tree-mode +1))
 
 (use-package goto-chg
