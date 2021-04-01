@@ -2762,6 +2762,7 @@ _t_: Go to todays file
   (setq magit-section-visibility-indicator '("…", t))
   (setq git-commit-summary-max-length fill-column)
   (setq git-commit-style-convention-checks nil) ; don't warn about long or multiline messages
+  (setq magit-diff-refine-hunk t)
 
   ;; disable hl-line-mode in magit, it messes with diffs
   (add-hook 'magit-mode-hook
