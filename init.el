@@ -822,6 +822,15 @@ seconds."
   (setq global-hl-line-sticky-flag t)
   (global-hl-line-mode +1))
 
+(use-package ibuffer
+  :bind ("C-x b" . ibuffer)
+  :config
+  (setq ibuffer-formats
+        '((mark modified read-only " "
+                (name 60 -1 :left) " "
+                (filename-and-process 70 -1))
+          (mark " " (name 16 -1) " " filename))))
+
 (use-package dired
   :defer t
   :commands (dired dired/toggle-mark)
@@ -845,12 +854,6 @@ seconds."
   ;; always delete and copy recursively
   (setq dired-recursive-deletes 'always)
   (setq dired-recursive-copies 'always)
-
-  (setq ibuffer-formats
-        '((mark modified read-only " "
-                (name 60 -1 :left) " "
-                (filename-and-process 70 -1))
-          (mark " " (name 16 -1) " " filename)))
 
   (defun dired/sort ()
     "Sort dired listings with directories first."
@@ -4559,8 +4562,6 @@ re-enable afterwards."
 
 (bind-key* "C-M-n" #'forward-paragraph)
 (bind-key* "C-M-p" #'backward-paragraph)
-
-(bind-key* "C-x b" #'ibuffer)
 
 (bind-key* "C-c g" #'revert-buffer)
 
