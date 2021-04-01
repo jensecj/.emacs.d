@@ -486,6 +486,10 @@
 (setq undo-limit (* 10 1024 1024))
 (setq undo-strong-limit (* 30 1024 1024))
 
+;; just keep all history
+(setq history-length t)
+(setq history-delete-duplicates t)
+
 ;; TODO: maybe set amalgamating-undo-limit?, see if it replaces `jens/pop-to-mark-command'
 ;; (setq amalgamating-undo-limit 50)
 
@@ -1142,16 +1146,14 @@ Works well being called from a terminal:
   ;; persist some variables between sessions
   :demand t
   :config
+  (setq savehist-save-minibuffer-history t)
   (setq savehist-autosave-interval 60)
-  ;; TODO: add more entries to savehist
+
   (add-to-list* 'savehist-additional-variables
                 '(kill-ring
                   search-ring
                   regexp-search-ring))
 
-  ;; just keep all history
-  (setq history-length t)
-  (setq history-delete-duplicates t)
   (savehist-mode +1))
 
 (use-package autorevert
