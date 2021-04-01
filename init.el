@@ -1436,24 +1436,6 @@ If METHOD does not exist, do nothing."
     (interactive)
     (replace/--replace #'query-replace-regexp)))
 
-(use-package semantic
-  ;; semantic analysis in supported modes (cpp, java, etc.)
-  :disabled t
-  :defer t
-  :config
-  ;; persist the semantic parse database
-  (setq semanticdb-default-save-directory
-        (no-littering-expand-var-file-name "semantic/"))
-
-  (unless (file-exists-p semanticdb-default-save-directory)
-    (make-directory semanticdb-default-save-directory))
-
-  ;; save parsing results into a persistent database
-  (global-semanticdb-minor-mode -1)
-  ;; re-parse files on idle
-  (global-semantic-idle-scheduler-mode -1)
-  (semantic-mode -1))
-
 (use-package compile
   :bind
   (("M-g M-n" . compile/next-error)
@@ -2502,12 +2484,6 @@ to a temp file and puts the filename in the kill ring."
 (use-package fullscreen
   :defer t
   :bind ("M-f" . fullscreen-toggle))
-
-(use-package etmux
-  :straight (etmux :repo "git@github.com:jensecj/etmux.el.git")
-  :defer t
-  :commands (etmux-jackin etmux-spawn-here)
-  :bind (("C-S-Z" . etmux-spawn-here)))
 
 (use-package highlight-bookmarks
   :demand t
