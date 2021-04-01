@@ -4336,8 +4336,6 @@ re-enable afterwards."
    ("M-b" . counsel-bookmark)
    :map help-map
    ("l" . counsel-find-library))
-  :init
-  (setenv "FZF_DEFAULT_COMMAND" "fd --type f --hidden --follow --exclude .git")
   :config
   (setq counsel-outline-display-style 'path)
   (setq counsel-outline-face-style 'verbatim)
@@ -4350,7 +4348,11 @@ re-enable afterwards."
                   counsel-yank-pop)
                 t)
 
-  (setq counsel-fzf-cmd "fzf -i -x -f \"%s\"")
+  (setq counsel-fzf-cmd (s-join " "
+                                '("fd --type f --hidden --no-ignore --no-ignore-vcs --color never"
+                                  "--exclude '.git' --exclude 'var/backup/' --exclude 'var/auto-save/' --exclude 'var/undo-tree/'"
+                                  "--exclude 'eln-cache/' --exclude '.python-environments/'"
+                                  "\"%s\"")))
 
   (add-to-list 'ivy-height-alist '(counsel-yank-pop . 10))
 
