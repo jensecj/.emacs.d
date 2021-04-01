@@ -835,12 +835,22 @@ seconds."
                 (filename-and-process 70 -1))
           (mark " " (name 16 -1) " " filename))))
 
+(use-package bookmark
+  :config
+  (advice-add #'bookmark-jump :before
+              (lambda (&rest _)
+                "Push point to the marker-stack before jumping to bookmark."
+                (xref-push-marker-stack (point-marker)))))
+
 (use-package dired
   :defer t
   :commands (dired dired/toggle-mark)
   :bind
   (("C-x C-d" . dired-jump)
    :map dired-mode-map
+   ("<backspace>" . dired-up-directory)
+   ("<prior>" . dired/previous-5)
+   ("<next>" . dired/next-5)
    ("c" . dired-do-copy)
    ("C-." . dired-omit-mode)
    ("SPC" . dired/toggle-mark)
@@ -4386,14 +4396,7 @@ re-enable afterwards."
              "https://www.emacswiki.org/emacs/download/bookmark%2b-key.el"
              "https://www.emacswiki.org/emacs/download/bookmark%2b-lit.el"
              "https://www.emacswiki.org/emacs/download/bookmark%2b-doc.el"
-             "https://www.emacswiki.org/emacs/download/bookmark%2b-chg.el")
-  :config
-  (advice-add #'bookmark-jump :around
-              (lambda (fn &rest args)
-                "Push point to the marker-stack before jumping to bookmark."
-                (let ((pm (point-marker)))
-                  (apply fn args)
-                  (xref-push-marker-stack pm)))))
+             "https://www.emacswiki.org/emacs/download/bookmark%2b-chg.el"))
 
 (use-package posframe
   :straight t
