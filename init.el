@@ -1274,7 +1274,8 @@ number input"
              current-kill)
   :hook (org-mode . auto-fill-mode))
 
-(use-package uniquify ;; give buffers unique names
+(use-package uniquify
+  ;; give buffers unique names
   :demand t
   :config (setq uniquify-buffer-name-style 'forward))
 
@@ -3607,7 +3608,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq geiser-active-implementations '(chicken)))
 
 (use-package chicken
-  :download"https://code.call-cc.org/cgi-bin/gitweb.cgi?p=chicken-core.git;a=blob_plain;f=misc/chicken.el"
+  :download "https://code.call-cc.org/cgi-bin/gitweb.cgi?p=chicken-core.git;a=blob_plain;f=misc/chicken.el"
   :after scheme-mode
   :config
   (setq scheme-program-name "chicken-csi -:c")
@@ -3795,7 +3796,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   (yas-global-mode +1))
 
 (use-package smartparens
-  ;; TODO: replace this
   :straight t
   :defer t
   :bind (("M-<up>" .  sp-backward-barf-sexp)
