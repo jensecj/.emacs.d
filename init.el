@@ -522,10 +522,6 @@
 (setq initial-scratch-message "")
 (setq initial-major-mode 'emacs-lisp-mode)
 
-;; default regexp for files to hide in dired-omit-mode
-;; FIXME: this needs to be toplevel, otherwise dired+ fails to load...
-(setq-default dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\..+$\\|^\\..+$")
-
 ;; don't show trailing whitespace by default
 (setq-default show-trailing-whitespace nil)
 (setq whitespace-style '(face trailing))
@@ -861,6 +857,7 @@ seconds."
   (load-library "dired-aux")
 
   (setq dired-listing-switches "-agholXN")
+  (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\..+$\\|^\\..+$")
   (setq dired-create-destination-dirs 'always)
   (setq dired-hide-details-hide-symlink-targets nil)
   (setq dired-dwim-target t)
