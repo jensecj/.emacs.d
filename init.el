@@ -871,6 +871,7 @@ seconds."
   (setq dired-create-destination-dirs 'always)
   (setq dired-hide-details-hide-symlink-targets nil)
   (setq dired-dwim-target t)
+  (setq dired-mark-region t)
 
   ;; always delete and copy recursively
   (setq dired-recursive-deletes 'always)
