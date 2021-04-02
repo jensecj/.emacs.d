@@ -885,7 +885,18 @@ seconds."
     (let ((this-line (buffer-substring (line-beginning-position) (line-end-position))))
       (if (s-matches-p (dired-marker-regexp) this-line)
           (dired-unmark arg)
-        (dired-mark arg)))))
+        (dired-mark arg))))
+
+  (defun dired/next-5 ()
+    "Move up 5 lines."
+    (interactive)
+    (dired-next-line 5))
+
+  (defun dired/previous-5 ()
+    "Move down 5 lines."
+    (interactive)
+    (dired-next-line -5))
+
   (defun dired/wrap-move (fn &rest args)
     "Wrap around when moving point outside of top / bottom of dired buffer."
     (let ((arg (car args)))
