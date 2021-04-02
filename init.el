@@ -3850,6 +3850,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package paren-face
   :straight t
   :config
+  (setq paren-face-regexp "[][(){}]")
   (global-paren-face-mode +1))
 
 (use-package macrostep
