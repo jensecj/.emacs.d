@@ -59,6 +59,21 @@ Use `setf' to change the element."
 
 ;;;;; misc
 
+(defun sort-words-in-line-region ()
+  "Sort words in selected region iff on a single line."
+  (interactive)
+  (when (and (use-region-p)
+             (>= (region-beginning) (line-beginning-position))
+             (<= (region-end) (line-end-position)))
+    (when-let* ((content (buffer-substring (region-beginning) (region-end)))
+                (words (s-split " " content))
+                (sorted (sort words #'string<)))
+      (save-excursion
+        (deactivate-mark)
+        (delete-region (region-beginning) (region-end))
+        (goto-char (region-beginning))
+        (insert (s-join " " sorted))))))
+
 (defun just-one-newline ()
   "Collapse newlines around point, so only one remains."
   (interactive)
