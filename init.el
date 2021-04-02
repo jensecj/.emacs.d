@@ -4430,16 +4430,6 @@ re-enable afterwards."
             (funcall fn query))
         (call-interactively fn)))))
 
-(use-package bookmark+
-  :download ("https://www.emacswiki.org/emacs/download/bookmark%2b.el"
-             "https://www.emacswiki.org/emacs/download/bookmark%2b-mac.el"
-             "https://www.emacswiki.org/emacs/download/bookmark%2b-bmu.el"
-             "https://www.emacswiki.org/emacs/download/bookmark%2b-1.el"
-             "https://www.emacswiki.org/emacs/download/bookmark%2b-key.el"
-             "https://www.emacswiki.org/emacs/download/bookmark%2b-lit.el"
-             "https://www.emacswiki.org/emacs/download/bookmark%2b-doc.el"
-             "https://www.emacswiki.org/emacs/download/bookmark%2b-chg.el"))
-
 (use-package posframe
   :straight t
   :demand t
