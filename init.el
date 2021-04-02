@@ -3582,11 +3582,19 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   (setq flyspell-correct-interface #'frog-menu/flyspell-correct))
 
-(use-package dired-filter :straight t :after dired)
-(use-package dired-collapse :straight t :after dired)
+(use-package diredfl
+  :straight t
+  :after dired
+  :hook (dired-mode . diredfl-mode)
+  :config
+  (setq diredfl-ignore-compressed-flag nil))
+
+(use-package dired-filter
+  :straight dired-hacks
+  :after dired)
 
 (use-package dired-subtree
-  :straight t
+  :straight dired-hacks
   :after dired
   :bind
   (:map dired-mode-map
@@ -3595,8 +3603,8 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq dired-subtree-use-backgrounds nil))
 
 (use-package dired-rainbow
-  :straight t
-  :after dired
+  :straight dired-hacks
+  :after (dired zent-theme)
   :config
   (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
   (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
