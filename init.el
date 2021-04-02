@@ -856,8 +856,18 @@ seconds."
   (load-library "dired-x")
   (load-library "dired-aux")
 
-  (setq dired-listing-switches "-agholXN")
+  (defun dired/always-hide-details-information ()
+    "Always hide the top information line in dired buffers."
+    (add-to-invisibility-spec 'dired-hide-details-information))
+
+  (advice-add #'dired-hide-details-update-invisibility-spec
+              :after
+              #'dired/always-hide-details-information)
+
+  (add-hook* '(dired-mode-hook wdired-mode-hook) #'dired/always-hide-details-information)
+
   (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\..+$\\|^\\..+$")
+  (setq dired-listing-switches "-AgholXN --group-directories-first")
   (setq dired-create-destination-dirs 'always)
   (setq dired-hide-details-hide-symlink-targets nil)
   (setq dired-dwim-target t)
