@@ -886,6 +886,16 @@ seconds."
       (if (s-matches-p (dired-marker-regexp) this-line)
           (dired-unmark arg)
         (dired-mark arg)))))
+  (defun dired/wrap-move (fn &rest args)
+    "Wrap around when moving point outside of top / bottom of dired buffer."
+    (let ((arg (car args)))
+      (cond
+       ((and (< arg 0) (bobp)) (goto-char (point-max)))
+       ((and (> arg 0) (eobp)) (goto-char (point-min)))
+       (t (apply fn args)))))
+
+  (advice-add #'dired-next-line :around #'dired/wrap-move))
+
 
 (use-package ediff
   :defer t
