@@ -4001,11 +4001,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   :download "https://www.emacswiki.org/emacs/download/help-fns%2b.el"
   :demand t)
 
-(use-package pp+
-  :download "https://www.emacswiki.org/emacs/download/pp%2b.el"
-  :demand t
-  :bind (("M-:" . #'pp-eval-expression)))
-
 (use-package flx
   ;; fuzzy searching for ivy, etc.
   :straight t)
