@@ -3639,19 +3639,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   (dired-rainbow/def artifact        zent-cyan     ("class" "elc" "eln" "o" "out" "pyc"))
   )
 
-;; FIXME: does not load properly, only after calling one of the bound keys
-(use-package dired+
-  :download "https://www.emacswiki.org/emacs/download/dired%2b.el"
-  :after dired
-  :bind
-  (:map dired-mode-map
-        ("<backspace>" . diredp-up-directory-reuse-dir-buffer)
-        ("C-<up>" . nil)
-        ("C-<down>" . nil))
-  :config
-  (toggle-diredp-find-file-reuse-dir +1)
-  (global-dired-hide-details-mode +1))
-
 (use-package geiser
   :straight t
   :defer t
