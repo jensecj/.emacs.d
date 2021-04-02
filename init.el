@@ -1340,11 +1340,12 @@ If METHOD does not exist, do nothing."
   :commands (recentf-mode recentf/with-colors)
   :bind (("C-x f" . recentf/with-colors))
   :config
-  (setq recentf-exclude
-        `(,(regexp-quote
-            (locate-user-emacs-file no-littering-var-directory))
-          "COMMIT_EDITMSG"
-          (f-join user-mail-directory "*")))
+  (add-to-list* 'recentf-exclude
+                `("/tmp/*"
+                  ,(regexp-quote no-littering-var-directory)
+                  ,(f-join user-mail-directory "*")
+                  ,(regexp-quote temporary-file-directory)
+                  ))
 
   ;; save a bunch of recent items
   (setq recentf-max-saved-items 1000)
