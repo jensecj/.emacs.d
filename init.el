@@ -2374,6 +2374,10 @@ to a temp file and puts the filename in the kill ring."
 (use-package buf ;; buffer extentions
   :demand t)
 
+(use-package editsym
+  :demand t
+  :bind ("C-<f12>" . editsym-at-point))
+
 (use-package orgflow
   :straight (orgflow :type git :repo "git@github.com:jensecj/orgflow.el.git")
   :after org
@@ -3145,8 +3149,7 @@ clipboard."
   ;; notmuch-message-replied-tags
   (add-to-list* 'notmuch-archive-tags '("+archived" "-deleted"))
 
-  (defface notmuch-search-muted-face
-    `((t (:foreground ,(zent 'grey-1))))
+  (defface notmuch-search-muted-face `((t (:foreground ,zent-grey-1)))
     "Face used in search modes for muted threads.")
 
   (add-to-list 'notmuch-search-line-faces '("muted" . notmuch-search-muted-face))
