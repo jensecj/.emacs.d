@@ -3800,7 +3800,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   ;; fontify the entire outshine-heading, including the comment characters (;;;)
   (if (not (string= (checksum #'outshine-fontify-headlines)
-                    "f046c978b2fffbaa7f0d75d67da7b9ca"))
+                    "f07111ba85e2f076788ee39af3805516"))
       (log-warning "`outshine-fontify-headlines' changed definition, ignoring patch.")
     (advice-patch #'outshine-fontify-headlines
                   '(font-lock-new-keywords
@@ -3906,7 +3906,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq diff-hl-fringe-bmp-function #'create-empty-fringe-bitmap)
 
   (if (not (string= (checksum #'diff-hl-dired-highlight-items)
-                    "73443aee23460cf2d2396a0ff5cb2a5e"))
+                    "38a4236f8be21aeeb4ab18debf51673c"))
       (message "`diff-hl-dired-highlight-items' changed definition, ignoring patch.")
     (advice-patch #'diff-hl-dired-highlight-items
                   'create-empty-fringe-bitmap
