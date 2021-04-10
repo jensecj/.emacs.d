@@ -8,9 +8,10 @@
 (setq-default lexical-binding t)
 
 ;; some functions for logging
-(defun log-info (txt) (message "\n# %s" txt))
-(defun log-warning (txt) (message "! %s" txt))
-(defun log-success (txt) (message "@ %s" txt))
+(defmacro log-info (txt &rest args)    `(message ,(concat "\n " txt) ,@args))
+(defmacro log-warning (txt &rest args) `(message ,(concat "~ "  txt) ,@args))
+(defmacro log-error (txt &rest args)   `(message ,(concat "! "  txt) ,@args))
+(defmacro log-success (txt &rest args) `(message ,(concat "@ "  txt) ,@args))
 
 (log-info "Started initializing emacs!")
 
@@ -47,7 +48,7 @@
   "Setup font configuration for new frames."
   (let ((my-font "Source Code Pro Semibold 11"))
     (if (not (find-font (font-spec :name my-font)))
-        (log-warning (format "could not find font: %s" my-font))
+        (log-warning "could not find font: %s" my-font)
       (add-to-list 'default-frame-alist `(font . ,my-font))
       (set-frame-font my-font))
 
@@ -4641,10 +4642,10 @@ re-enable afterwards."
 
 ;;; epilogue
 
-(log-success (format "Configuration is %s lines of emacs-lisp. (excluding 3rd-parties)"
-                     (jens/emacs-init-loc)))
-(log-success (format "Initialized in %s, with %s garbage collections.\n"
-                     (emacs-init-time) gcs-done))
+(log-success "Configuration is %s lines of emacs-lisp. (excluding 3rd-parties)"
+             (jens/emacs-init-loc))
+(log-success "Initialized in %s, with %s garbage collections.\n"
+             (emacs-init-time) gcs-done)
 
 (defun jens/show-initial-important-messages ()
   "Show all lines in *Messages* matching a regex for important messages."
