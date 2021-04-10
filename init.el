@@ -1907,6 +1907,27 @@ With prefix ARG, ask for file to open."
     (goto-char p)
     (save-buffer)))
 
+(defun jens/visible-links ()
+  "return a list of all links visible in the current window."
+  (let ((links)
+        (link-regex (regexp-opt thing-at-point-uri-schemes))
+        (end (window-end)))
+    (save-excursion
+      (goto-char (window-start))
+      (while (re-search-forward link-regex end t)
+        (push (thing-at-point 'url) links)))
+    (-uniq links)))
+
+(defun jens/open-links ()
+  "interactively open a link visible in the current window."
+  (interactive)
+  (when-let* ((links (jens/visible-links))
+              (pick (ivy-read "" links
+                              :require-match t
+                              :sort t)))
+    (browse-url pick)))
+(bind-key "C-x C-l" #'jens/open-links)
+
 ;;;;; files
 
 (defun byte-compile-this-file ()
