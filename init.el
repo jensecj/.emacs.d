@@ -838,6 +838,7 @@ seconds."
 (use-package ibuffer
   :bind ("C-x b" . ibuffer)
   :config
+  (setq ibuffer-movement-cycle nil)
   (setq ibuffer-formats
         '((mark modified read-only " "
                 (name 60 -1 :left) " "
