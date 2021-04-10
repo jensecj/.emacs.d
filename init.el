@@ -2485,6 +2485,9 @@ to a temp file and puts the filename in the kill ring."
   :config
   (require 'notmuch nil 'noerror)
 
+  (setq notmuch-mojn-accounts-alist
+        (get-secret 'notmuch-mojn-accounts))
+
   ;; TODO: action for adding contact to org-contacts?
   ;; TODO: action for viewing a mail in org-mode
 
