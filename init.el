@@ -218,14 +218,10 @@
   :straight t
   :demand t
   :config
-  (advice-add #'advice-patch :before
-              (lambda (symbol &rest _)
-                "Print what is patched."
-                (message "patching %s" symbol)))
-
   (defun patch-add (name hash old new)
     (if (not (string= (checksum name) hash))
         (log-warning "%s changed definition, ignoring patch." name)
+      (message "patching %s" name)
       (advice-patch name new old))))
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
@@ -3364,26 +3360,24 @@ if BACKWARDS is non-nil, jump backwards instead."
     (notmuch-show/goto-message-with-tag "unread" 'backwards))
 
   ;; make sure that messages end in a newline, just like the newline after the header.
-  (if (not (string= (checksum #'notmuch-show-insert-msg)
-                    "a4034680fd0b23eb0c464c7fc632e0d7"))
-      (log-warning "#'notmuch-show-insert-msg changed definition, skipping patch.")
-    (advice-patch #'notmuch-show-insert-msg
-                  '(progn
-                     (unless (bolp)
-                       (insert "\n"))
-                     (insert "\n"))
-                  '(unless (bolp)
-                     (insert "\n"))))
+  (patch-add
+   #'notmuch-show-insert-msg
+   "a4034680fd0b23eb0c464c7fc632e0d7"
+   '(unless (bolp)
+      (insert "\n"))
+   '(progn
+      (unless (bolp)
+        (insert "\n"))
+      (insert "\n")))
 
   ;; only show text/plain part by default
-  (if (not (string= (checksum #'notmuch-show-insert-bodypart)
-                    "0a5f4201858462717c33186d2579e9b1"))
-      (log-warning "#'notmuch-show-insert-bodypart changed definition, skipping patch.")
-    (advice-patch #'notmuch-show-insert-bodypart
-                  '(or (notmuch-match-content-type mime-type "multipart/*")
-                       (notmuch-match-content-type mime-type "text/plain"))
-                  '(not (or (equal hide t)
-			                      (and long button)))))
+  (patch-add
+   #'notmuch-show-insert-bodypart
+   "0a5f4201858462717c33186d2579e9b1"
+   '(not (or (equal hide t)
+			       (and long button)))
+   '(or (notmuch-match-content-type mime-type "multipart/*")
+        (notmuch-match-content-type mime-type "text/plain")))
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; notmuch-search mode ;;
@@ -3849,28 +3843,27 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq outshine-speed-commands-user '(("g" . counsel-outline)))
 
   ;; fontify the entire outshine-heading, including the comment characters (;;;)
-  (if (not (string= (checksum #'outshine-fontify-headlines)
-                    "f07111ba85e2f076788ee39af3805516"))
-      (log-warning "`outshine-fontify-headlines' changed definition, ignoring patch.")
-    (advice-patch #'outshine-fontify-headlines
-                  '(font-lock-new-keywords
-                    `((,heading-1-regexp 0 'outshine-level-1 t)
-                      (,heading-2-regexp 0 'outshine-level-2 t)
-                      (,heading-3-regexp 0 'outshine-level-3 t)
-                      (,heading-4-regexp 0 'outshine-level-4 t)
-                      (,heading-5-regexp 0 'outshine-level-5 t)
-                      (,heading-6-regexp 0 'outshine-level-6 t)
-                      (,heading-7-regexp 0 'outshine-level-7 t)
-                      (,heading-8-regexp 0 'outshine-level-8 t)))
-                  '(font-lock-new-keywords
-                    `((,heading-1-regexp 1 'outshine-level-1 t)
-                      (,heading-2-regexp 1 'outshine-level-2 t)
-                      (,heading-3-regexp 1 'outshine-level-3 t)
-                      (,heading-4-regexp 1 'outshine-level-4 t)
-                      (,heading-5-regexp 1 'outshine-level-5 t)
-                      (,heading-6-regexp 1 'outshine-level-6 t)
-                      (,heading-7-regexp 1 'outshine-level-7 t)
-                      (,heading-8-regexp 1 'outshine-level-8 t))))))
+  (patch-add
+   #'outshine-fontify-headlines
+   "ee4638aaa657b4a8b440aa5bb28a3373"
+   '(font-lock-new-keywords
+     `((,heading-1-regexp 1 'outshine-level-1 t)
+       (,heading-2-regexp 1 'outshine-level-2 t)
+       (,heading-3-regexp 1 'outshine-level-3 t)
+       (,heading-4-regexp 1 'outshine-level-4 t)
+       (,heading-5-regexp 1 'outshine-level-5 t)
+       (,heading-6-regexp 1 'outshine-level-6 t)
+       (,heading-7-regexp 1 'outshine-level-7 t)
+       (,heading-8-regexp 1 'outshine-level-8 t)))
+   '(font-lock-new-keywords
+     `((,heading-1-regexp 0 'outshine-level-1 t)
+       (,heading-2-regexp 0 'outshine-level-2 t)
+       (,heading-3-regexp 0 'outshine-level-3 t)
+       (,heading-4-regexp 0 'outshine-level-4 t)
+       (,heading-5-regexp 0 'outshine-level-5 t)
+       (,heading-6-regexp 0 'outshine-level-6 t)
+       (,heading-7-regexp 0 'outshine-level-7 t)
+       (,heading-8-regexp 0 'outshine-level-8 t)))))
 
 (use-package yasnippet
   :straight t
@@ -3956,11 +3949,13 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq diff-hl-fringe-bmp-function #'create-empty-fringe-bitmap)
 
   (if (not (string= (checksum #'diff-hl-dired-highlight-items)
-                    "38a4236f8be21aeeb4ab18debf51673c"))
+                    ))
       (message "`diff-hl-dired-highlight-items' changed definition, ignoring patch.")
-    (advice-patch #'diff-hl-dired-highlight-items
-                  'create-empty-fringe-bitmap
-                  'diff-hl-fringe-bmp-from-type)))
+    (patch-add
+     #'diff-hl-dired-highlight-items
+     "38a4236f8be21aeeb4ab18debf51673c"
+     'diff-hl-fringe-bmp-from-type
+     'create-empty-fringe-bitmap)))
 
 (use-package hl-todo
   :straight t
