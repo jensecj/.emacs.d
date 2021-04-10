@@ -192,14 +192,40 @@
 
   (add-to-list 'use-package-keywords :download 'append))
 
-(use-package advice-patch ;; easy way to patch packages
+(defun checksum-fn (fsym)
+  "Return a md5 checksum of the function FSYM."
+  (let* ((def (symbol-function fsym))
+         (str (prin1-to-string def)))
+    (md5 str)))
+
+(defun checksum (sym)
+  "Return a string md5 checksum of SYM."
+  (cond
+   ((functionp sym) (checksum-fn sym))
+   ((symbolp sym) (md5 (symbol-value sym)))
+   ((stringp sym) (md5 sym))
+   (t (error "Dont know how to checksum %s (%s)" sym (type-of sym)))))
+
+(defun checksum-at-point ()
+  "Return the md5 checksum for the symbol-at-point."
+  (interactive)
+  (let ((hash (checksum (intern-soft (thing-at-point 'symbol)))))
+    (kill-new hash)
+    hash))
+
+(use-package advice-patch
   :straight t
   :demand t
   :config
   (advice-add #'advice-patch :before
               (lambda (symbol &rest _)
                 "Print what is patched."
-                (message "patching %s" symbol))))
+                (message "patching %s" symbol)))
+
+  (defun patch-add (name hash old new)
+    (if (not (string= (checksum name) hash))
+        (log-warning "%s changed definition, ignoring patch." name)
+      (advice-patch name new old))))
 
 ;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
 ;; extensions of `use-package', so we need to have those packages.
@@ -329,20 +355,6 @@
 (defun advice-nuke (sym)
   "Remove all advice from symbol SYM."
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
-
-(defun checksum-fn (fsym)
-  "Return a md5 checksum of the function FSYM."
-  (let* ((def (symbol-function fsym))
-         (str (prin1-to-string def)))
-    (md5 str)))
-
-(defun checksum (sym)
-  "Return a string md5 checksum of SYM."
-  (cond
-   ((functionp sym) (checksum-fn sym))
-   ((symbolp sym) (md5 (symbol-value sym)))
-   ((stringp sym) (md5 sym))
-   (t (error "Dont know how to checksum %s (%s)" sym (type-of sym)))))
 
 ;;; built-in
 ;;;; settings
