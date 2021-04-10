@@ -641,10 +641,11 @@
   (defun gpg/key-in-cache-p (key)
     "Return whether KEY is in the GPG-agents cache."
     ;; TODO: check if key is in gpg-agent cache entirely in elisp
-    (when-let ((keys (->> (shell-command-to-string "gpg-cached")
-                          (s-trim)
-                          (s-replace-regexp (rx "[" (or "S" "E" "C") "]") "")
-                          (s-split " "))))
+    (when-let* ((command (format "gpg-cached %s" key))
+                (keys (->> (shell-command-to-string command)
+                           (s-trim)
+                           (s-replace-regexp (rx "[" (or "S" "E" "C") "]") "")
+                           (s-split " "))))
       (member key keys)))
 
   (defun gpg/cache-key (key)
@@ -2466,9 +2467,9 @@ to a temp file and puts the filename in the kill ring."
   (remove-hook 'notmuch-mojn-post-refresh-hook #'notmuch-mojn-mute-retag-messages)
 
   (defun notmuch-mojn/cache-mail-key ()
-    (let ((passwordstore-key (get-secret 'user-passwordstore-key)))
-      (unless (gpg/key-in-cache-p passwordstore-key)
-        (gpg/cache-key passwordstore-key))))
+    (let ((gpg-key (get-secret 'user-gpg-key)))
+      (unless (gpg/key-in-cache-p gpg-key)
+        (gpg/cache-key gpg-key))))
 
   (add-hook 'notmuch-mojn-pre-fetch-hook #'notmuch-mojn/cache-mail-key)
   (add-hook 'message-send-hook #'notmuch-mojn/cache-mail-key)
