@@ -881,7 +881,7 @@ seconds."
   (add-hook* '(dired-mode-hook wdired-mode-hook) #'dired/always-hide-details-information)
 
   (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\..+$\\|^\\..+$")
-  (setq dired-listing-switches "-AgholXN --group-directories-first")
+  (setq dired-listing-switches "-AghoXN --group-directories-first")
   (setq dired-create-destination-dirs 'always)
   (setq dired-hide-details-hide-symlink-targets nil)
   (setq dired-dwim-target t)
