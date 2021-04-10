@@ -922,6 +922,10 @@ seconds."
 
   (advice-add #'dired-next-line :around #'dired/wrap-move))
 
+(use-package wdired
+  :config
+  (setq wdired-allow-to-redirect-links t)
+  (setq wdired-allow-to-change-permissions t))
 
 (use-package ediff
   :defer t
