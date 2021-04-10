@@ -3131,7 +3131,7 @@ clipboard."
         ("M-i" . #'notmuch/change-identity)
         ("M-t" . #'notmuch/set-recipient)
         :map notmuch-show-part-map
-        ("V" . #'notmuch-show/view-mime-part-at-point))
+        ("V" . #'notmuch-show/view-mime-part-at-point-in-mode))
   :config
   (setq notmuch-identities (get-secret 'user-mail-identities))
   (setq notmuch-fcc-dirs "sent +sent +new -unread")
@@ -3212,11 +3212,11 @@ clipboard."
           (:name "today"   :key "t" :query ,(notmuch/excl "date:today..") :sort-order newest-first)
           (:name "7 days"  :key "W" :query ,(notmuch/excl "date:7d..") :sort-order newest-first)
           (:name "30 days" :key "M" :query ,(notmuch/excl "date:30d..") :sort-order newest-first)
-          (:name "drafts"  :key "d" :query "tag:draft" :sort-order newest-first)
           (:name "inbox"   :key "i" :query "tag:inbox" :sort-order newest-first)
           (:blank t)
           (:name "emacs-devel" :key "ld" :query "tag:lists/emacs-devel" :sort-order newest-first)
           (:name "emacs-help"  :key "lh" :query "tag:lists/emacs-help" :sort-order newest-first)
+          (:name "emacs-bugs"  :key "lb" :query "tag:lists/emacs-bugs" :sort-order newest-first)
           (:name "emacs-misc"  :key "lm" :query "tag:lists/emacs-misc" :sort-order newest-first)
           (:blank t)
           (:name "work"     :key "w" :query "tag:work" :sort-order newest-first)
@@ -3227,6 +3227,7 @@ clipboard."
           (:name "all mail" :key "a" :query "not tag:lists and not tag:draft" :sort-order newest-first)
           (:name "archive"  :key "r" :query "tag:archived" :sort-order newest-first)
           (:name "sent"     :key "s" :query "tag:sent" :sort-order newest-first)
+          (:name "drafts"   :key "d" :query "tag:draft" :sort-order newest-first)
           (:name "trash"    :key "h" :query "tag:deleted" :sort-order newest-first)))
 
   (setq notmuch-tagging-keys
@@ -3313,21 +3314,23 @@ Inserts information about senders, and the mail subject into eldoc."
   (defun notmuch-show/view-mime-part-at-point-in-mode ()
     "Open MIME-part at point in a specific major-mode."
     (interactive)
-    (let* ((modes '(org-mode text-mode markdown-mode diff-mode))
+    (let* ((modes '(org-mode emacs-lisp-mode text-mode markdown-mode diff-mode))
            (mode (intern (completing-read "mode: " modes nil t))))
       (notmuch-show-apply-to-current-part-handle
        (lambda (handle)
          (let ((buf (generate-new-buffer " *notmuch-internal-part*")))
-           (switch-to-buffer buf)
-           (if (eq (mm-display-part handle) 'external)
-	             (kill-buffer buf)
-             (goto-char (point-min))
-             (set-buffer-modified-p nil)
-             (funcall mode)
-             (if (eq major-mode 'org-mode)
-                 (org-show-all))
-             (view-buffer buf #'kill-buffer-if-not-modified)
-             (font-lock-ensure))))
+           (with-current-buffer buf
+             (if (eq (mm-display-part handle) 'external)
+	               (kill-buffer buf)
+               (goto-char (point-min))
+               (set-buffer-modified-p nil)
+               (funcall mode)
+
+               (if (eq major-mode 'org-mode)
+                   (org-show-all))
+
+               (font-lock-ensure)))
+           (view-buffer-other-window buf #'kill-buffer-if-not-modified)))
        "text/plain")))
 
   (defun notmuch-show/message-has-tag-p (tag)
@@ -3498,7 +3501,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   ;;;;;;;;;;;;
 
   ;; TODO: fix these so org-store-link stores link to the message at ;; point in search mode.
-  (require 'org-notmuch)
+  (require 'ol-notmuch)
   (bind-key "C-c C-l" #'org-store-link notmuch-show-mode-map)
   (bind-key "C-c C-l" #'org-store-link notmuch-search-mode-map))
 
