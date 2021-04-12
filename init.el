@@ -2342,12 +2342,13 @@ If DIR is nil, download to current directory."
 (defun jens/diff (a b)
   "Diff A with B, either should be a location of a document, local or remote."
   (interactive)
-  (let* ((a-name (f-filename a))
-         (b-name (f-filename b))
-         (file_a (if (f-exists-p a) a
-                   (jens/download-file a (concat (uuid) "-" a-name) temporary-file-directory)))
-         (file_b (if (f-exists-p b) b
-                   (jens/download-file b (concat (uuid) "-" b-name) temporary-file-directory))))
+  (let* ((file_a a)
+         (file_b b))
+    (unless (f-exists-p a)
+      (setq file_a (jens/download-file a (concat (f-filename a) "_" (uuid)) temporary-file-directory)))
+    (unless (f-exists-p b)
+      (setq file_b (jens/download-file b (concat (f-filename b) "_" (uuid)) temporary-file-directory)))
+
     (diff file_a file_b)))
 
 (defun jens/diff-pick ()
