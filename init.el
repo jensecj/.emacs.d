@@ -639,11 +639,9 @@
     "Return whether KEY is in the GPG-agents cache."
     ;; TODO: check if key is in gpg-agent cache entirely in elisp
     (when-let* ((command (format "gpg-cached %s" key))
-                (keys (->> (shell-command-to-string command)
-                           (s-trim)
-                           (s-replace-regexp (rx "[" (or "S" "E" "C") "]") "")
-                           (s-split " "))))
-      (member key keys)))
+                (output (shell-command-to-string command)))
+      (unless (or (string-empty-p output))
+        (mapcar #'string-trim (split-string output)))))
 
   (defun gpg/cache-key (key)
     "Call GPG to cache KEY in the GPG-agent."
