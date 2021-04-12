@@ -707,6 +707,10 @@ seconds."
 
 (log-info "Configuring built-in packages")
 
+(use-package debug
+  :config
+  (setq debugger-stack-frame-as-list t))
+
 
 ;;;;; major-modes
 
