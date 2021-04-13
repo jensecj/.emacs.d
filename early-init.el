@@ -11,6 +11,9 @@
 ;; precompute one big autoloads file, makes loading them faster
 (setq package-quickstart t)
 
+;; dont load package.el
+(setq package-enable-at-startup nil)
+
 ;; don't show inscructions on who to exit new frames
 (setq server-client-instructions nil)
 
