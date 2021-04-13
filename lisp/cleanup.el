@@ -65,4 +65,12 @@
     (funcall f))
   (message "buffer cleaned"))
 
+(defun cleanup--elisp-indent-entire-buffer ()
+  (unless (check-parens)
+    (cleanup-indent-entire-buffer)))
+
+(cleanup-add 'emacs-lisp-mode
+             (list #'whitespace-cleanup
+                   #'cleanup--elisp-indent-entire-buffer))
+
 (provide 'cleanup)
