@@ -72,11 +72,14 @@
 
 (log-info "Loading fundamental third-party packages")
 
-;; make sure straight.el is installed
+(message "bootstrapping straight.el...")
+
+(setq straight-vc-git-default-protocol 'ssh)
+(setq straight-check-for-modifications '(check-on-save find-when-checking))
+
 (defvar bootstrap-version)
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
-  (message "bootstrapping straight...")
   (unless (file-exists-p bootstrap-file)
     (log-info "straight.el was not found, installing.")
     (with-current-buffer
@@ -89,7 +92,6 @@
 
 (message "bootstrapping use-package...")
 (straight-use-package 'use-package)
-(setq straight-vc-git-default-protocol 'ssh)
 
 ;; need to enable imenu support before requiring `use-package'
 (setq use-package-enable-imenu-support t)
