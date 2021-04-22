@@ -2498,8 +2498,11 @@ to a temp file and puts the filename in the kill ring."
   (remove-hook 'notmuch-mojn-post-refresh-hook #'notmuch-mojn-mute-retag-messages)
 
   (defun notmuch-mojn/cache-mail-key ()
-    (let ((gpg-key (get-secret 'user-gpg-key)))
-      (unless (gpg/key-in-cache-p gpg-key)
+    (let ((counter 0)
+          (gpg-key (get-secret 'user-gpg-key)))
+      (while (and (< counter 3)
+                  (not (gpg/key-in-cache-p gpg-key)))
+        (cl-incf counter)
         (gpg/cache-key gpg-key))))
 
   (add-hook 'notmuch-mojn-pre-fetch-hook #'notmuch-mojn/cache-mail-key)
