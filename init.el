@@ -8,7 +8,7 @@
 (setq-default lexical-binding t)
 
 ;; some functions for logging
-(defmacro log-info (txt &rest args)    `(message ,(concat "\n " txt) ,@args))
+(defmacro log-info (txt &rest args)    `(message ,(concat "\n" txt) ,@args))
 (defmacro log-warning (txt &rest args) `(message ,(concat "~ "  txt) ,@args))
 (defmacro log-error (txt &rest args)   `(message ,(concat "! "  txt) ,@args))
 (defmacro log-success (txt &rest args) `(message ,(concat "@ "  txt) ,@args))
@@ -703,7 +703,7 @@ seconds."
     (unless (zerop buffers-killed)
       (message "%s .gpg buffer(s) saved and killed" buffers-killed))))
 
-(setq jens/kill-idle-gpg-buffers-timer (run-with-idle-timer 120 t 'jens/kill-idle-gpg-buffers))
+(setq jens/kill-idle-gpg-buffers-timer (run-with-idle-timer 120 t #'jens/kill-idle-gpg-buffers))
 
 ;;;; packages
 
@@ -1623,7 +1623,7 @@ If METHOD does not exist, do nothing."
 (setq package--builtins (assq-delete-all 'org package--builtins))
 
 (use-package org
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :pin org
   :demand t
   :commands (org-indent-region
@@ -2282,7 +2282,8 @@ current line."
   (unless (boundp 'tail-message-buffer-mode)
     (define-minor-mode tail-message-buffer-mode
       "Tail the *Messages* buffer every time something calls `message'."
-      nil " tail" (make-keymap)
+      :lighter " tail"
+      :keymap (make-keymap)
       (if (bound-and-true-p tail-message-buffer-mode)
           (advice-add #'message :after #'tmb/message-buffer-goto-end)
         (advice-remove #'message #'tmb/message-buffer-goto-end))))
@@ -2422,7 +2423,6 @@ to a temp file and puts the filename in the kill ring."
   :demand t)
 
 (use-package editsym
-  :demand t
   :bind ("C-<f12>" . editsym-at-point))
 
 (use-package orgflow
@@ -2589,8 +2589,7 @@ to a temp file and puts the filename in the kill ring."
 (use-package today
   :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
   :defer t
-  :commands (today-hydra/body
-             today-capture-elfeed-at-point)
+  :commands (today-capture-elfeed-at-point)
   :bind
   (("C-x t" . today-transient))
   :config
@@ -3667,7 +3666,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (dired-rainbow/def partition       zent-blue-4    ("bak" "bin" "dmg" "iso" "vmdk"))
   (dired-rainbow/def web             zent-red+2    ("css" "htm" "html" "less" "mustache" "sass" "scss"))
   (dired-rainbow/def document        zent-magenta  ("PDF" "djvu" "doc" "docm" "docx" "epub" "mobi" "odb" "odp" "odt" "pdf" "ppt" "pptx" "ps" "rtf"))
-  (dired-rainbow/def media           zent-blue-4   ("MP3" "MP4" "avi" "flac" "flv" "mid" "midi" "mkv" "mov" "mp3" "mp4" "mpeg" "mpg" "ogg" "wav"))
+  (dired-rainbow/def media           zent-blue-1   ("MP3" "MP4" "avi" "flac" "flv" "mid" "midi" "mkv" "mov" "mp3" "mp4" "mpeg" "mpg" "ogg" "wav"))
   (dired-rainbow/def image           zent-blue+3   ("JPEG" "gif" "ico" "jpeg" "jpg" "png" "svg"))
   (dired-rainbow/def log             zent-grey-1   ("log"))
   (dired-rainbow/def encrypted       zent-tan-1    ("age" "asc" "enc" "gpg" "minisig" "pem" "pgp" "sig" "signature"))
@@ -3828,7 +3827,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   :straight t
   :diminish outshine-mode
   :after outline
-  :hook (prog-mode . outshine-mode)
+  :hook ((prog-mode outline-minor-mode) . outshine-mode)
   :bind
   (:map outshine-mode-map
         ("M-<up>" . nil)
@@ -3843,7 +3842,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   ;; fontify the entire outshine-heading, including the comment characters (;;;)
   (patch-add
    #'outshine-fontify-headlines
-   "ee4638aaa657b4a8b440aa5bb28a3373"
+   "f07111ba85e2f076788ee39af3805516"
    '(font-lock-new-keywords
      `((,heading-1-regexp 1 'outshine-level-1 t)
        (,heading-2-regexp 1 'outshine-level-2 t)
@@ -4264,8 +4263,7 @@ re-enable afterwards."
 (use-package fullframe
   :straight t
   :config
-  (fullframe magit-status magit-mode-quit-window)
-  (fullframe list-packages quit-window))
+  (fullframe magit-status magit-mode-quit-window))
 
 (use-package undo-tree
   :straight t
@@ -4594,8 +4592,8 @@ re-enable afterwards."
 (bind-key "b" #'describe-bindings help-map)
 
 ;; Evaluate the current buffer/region
-(bind-key* "C-c C-k" 'eval-buffer)
-(bind-key* "C-c k" 'eval-region)
+(bind-key "C-c C-k" #'eval-buffer)
+(bind-key "C-c k" #'eval-region)
 
 ;; Casing words/regions
 (bind-key* "M-u" #'upcase-dwim)
