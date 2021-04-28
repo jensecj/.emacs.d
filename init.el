@@ -1929,11 +1929,11 @@ With prefix ARG, ask for file to open."
   "interactively open a link visible in the current window."
   (interactive)
   (when-let* ((links (jens/visible-links))
-              (pick (ivy-read "" links
-                              :require-match t
-                              :sort t)))
+              (pick (completing-read "" links nil t)))
     (browse-url pick)))
 (bind-key "C-x C-l" #'jens/open-links)
+(with-eval-after-load 'ivy-prescient
+  (add-to-list 'ivy-prescient-sort-commands #'jens/open-links t))
 
 ;;;;; files
 
