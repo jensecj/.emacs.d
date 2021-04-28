@@ -1157,7 +1157,6 @@ Works well being called from a terminal:
   :config
   (setq show-paren-delay 0.1)
   (setq show-paren-style 'expression)
-  (setq show-paren-when-point-inside-paren t)
   (show-paren-mode +1))
 
 (use-package abbrev ;; auto-replace common abbreviations
