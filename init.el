@@ -574,7 +574,7 @@
                            (expand-file-name "vendor/" user-emacs-directory)
                            (expand-file-name "var/" user-emacs-directory)
                            (expand-file-name "etc/" user-emacs-directory)
-                           (expand-file-name "emacs/src" user-home-directory)
+                           (expand-file-name "emacs/emacs" user-home-directory)
                            (expand-file-name "emacs/build" user-home-directory)))
               (file buffer-file-name)
               (dir (f-dirname file)))
