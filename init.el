@@ -1665,6 +1665,8 @@ If METHOD does not exist, do nothing."
   ;; general settings ;;
   ;;;;;;;;;;;;;;;;;;;;;;
 
+  (setq org-startup-folded t)
+
   (setq org-archive-save-context-info '(time file olpath itags))
 
   (setq org-catch-invisible-edits 'show-and-error)
