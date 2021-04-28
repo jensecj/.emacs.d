@@ -232,7 +232,7 @@
 (use-package diminish :straight t :demand t)
 (use-package delight :straight t :demand t)
 (use-package shut-up :straight t :demand t)
-(use-package hydra :straight t :demand t)
+(use-package transient :straight t :demand t)
 (use-package ov :straight t :demand t)
 
 (use-package async
@@ -1232,14 +1232,16 @@ number input"
 
 (use-package smerge-mode ;; easily handle merge conflicts
   :bind
-  (:map smerge-mode-map ("C-c ^" . smerge/hydra/body))
+  (:map smerge-mode-map ("C-c ^" . transient-smerge))
   :config
-  (defhydra smerge/hydra ()
-    "Move between buffers."
-    ("n" #'smerge-next "next")
-    ("p" #'smerge-prev "previous")
-    ("u" #'smerge-keep-upper "keep upper")
-    ("l" #'smerge-keep-lower "keep lower"))
+  (transient-define-prefix transient-smerge ()
+    "Most commonly used window commands"
+    :transient-non-suffix 'transient--do-call
+    ["Commands"
+     [("n" "next" smerge-next)
+      ("p" "previous" smerge-prev)
+      ("u" "keep upper" smerge-keep-upper)
+      ("l" "keep lower" smerge-keep-lower)]])
 
   (defun smerge/enable-if-diff-buffer ()
     "Enable Smerge-mode if the current buffer is showing a diff."
@@ -1492,7 +1494,7 @@ If METHOD does not exist, do nothing."
   :bind
   (("M-g M-n" . compile/next-error)
    ("M-g M-p" . compile/previous-error)
-   ("M-g M-e" . compile/goto-error-hydra/body))
+   ("M-g M-e" . compile/transient-goto-error))
   :config
   ;; don't keep asking for the commands
   (setq compilation-read-command nil)
@@ -1504,22 +1506,23 @@ If METHOD does not exist, do nothing."
   (require 'ansi-color)
   (add-hook* '(compilation-filter-hook shell-mode-hook) #'ansi-color-for-comint-mode-on)
 
-  (defhydra compile/goto-error-hydra ()
+  (transient-define-prefix compile/transient-goto-error ()
     "Hydra for navigating between errors."
-    ("n" #'next-error "next error")
-    ("p" #'previous-error "previous error"))
+    ["Commands"
+     [("n" #'next-error "next error")
+      ("p" #'previous-error "previous error")]])
 
   (defun compile/next-error ()
     "Go to next error in buffer, and start goto-error-hydra."
     (interactive)
     (next-error)
-    (compile/goto-error-hydra/body))
+    (compile/transient-goto-error))
 
   (defun compile/previous-error ()
     "Go to previous error in buffer, and start goto-error-hydra."
     (interactive)
     (previous-error)
-    (compile/goto-error-hydra/body)))
+    (compile/transient-goto-error)))
 
 (use-package mml
   :config
@@ -2238,29 +2241,32 @@ current line."
      (t (message "unable to locate repo: %s" pick)))))
 (bind-key* "M-r" #'jens/goto-repo)
 
-(defhydra jens/shortcut (:exit t)
-  ("m" #'jens/goto-msg-buffer "*messages*")
-  ("n" #'notmuch-mojn "notmuch")
-  ("e" #'elfeed "elfeed")
-  ("c" #'buf-jump-to-empty-scratch-buffer "new *scratch*"))
-(bind-key "C-<escape>" #'jens/shortcut/body)
+(transient-define-prefix jens/shortcut ()
+  :transient-non-suffix 'transient--do-call
+  ["Shortcuts"
+   [("m" "*messages*" jens/goto-msg-buffer)
+    ("n" "notmuch" notmuch-mojn)
+    ("e" "elfeed" elfeed)
+    ("c" "new *scratch*" buf-jump-to-empty-scratch-buffer)]])
+(bind-key "C-<escape>" #'jens/shortcut)
 
 (defun jens/buffer-carousel-previous ()
   (interactive)
   (previous-buffer)
-  (jens/buffer-carousel-hydra/body))
+  (jens/buffer-carousel))
 (bind-key "C-x <left>" #'jens/buffer-carousel-previous)
 
 (defun jens/buffer-carousel-next ()
   (interactive)
   (next-buffer)
-  (jens/buffer-carousel-hydra/body))
+  (jens/buffer-carousel))
 (bind-key "C-x <right>" #'jens/buffer-carousel-next)
 
-(defhydra jens/buffer-carousel-hydra ()
+(transient-define-prefix jens/buffer-carousel ()
   "Move between buffers."
-  ("<left>" #'previous-buffer "previous")
-  ("<right>" #'next-buffer "next"))
+  ["Commands"
+   [("<left>" "previous" previous-buffer :transient t)
+    ("<right>" "next" next-buffer :transient t)]])
 
 ;; TODO: make tail-buffer work for the buffer its called in, not just *Messages*
 (defun jens/tail-message-buffer ()
@@ -2544,12 +2550,14 @@ to a temp file and puts the filename in the kill ring."
   :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
   :defer t
   :bind
-  (("M-v" . views-hydra/body))
+  (("M-v" . transient-views))
   :config
-  (defhydra views-hydra (:exit t)
-    ("s" #'views-switch "switch")
-    ("p" #'views-push "push")
-    ("k" #'views-pop "pop")))
+  (transient-define-prefix transient-views ()
+    :transient-non-suffix 'transient--do-call
+    ["Commands"
+     [("s" "switch" views-switch)
+      ("p" "push" views-push)
+      ("k" "pop" views-pop)]]))
 
 (use-package sane-windows
   :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
@@ -2584,7 +2592,7 @@ to a temp file and puts the filename in the kill ring."
   :commands (today-hydra/body
              today-capture-elfeed-at-point)
   :bind
-  (("C-x t" . today-hydra/body))
+  (("C-x t" . today-transient))
   :config
   (with-eval-after-load 'elfeed
     (bind-key "t" #'today-capture-elfeed-at-point elfeed-search-mode-map))
@@ -2644,36 +2652,18 @@ to a temp file and puts the filename in the kill ring."
                   (,(rx (or space punct) (or (seq "E" (opt ".") "U" (opt "."))
                                              (seq "europe" (opt "an") (opt "union")))) . "eu")))
 
-  (defhydra today-hydra (:foreign-keys run)
-    "
-^Today^
-^^^^^^^^------------------------------
-_a_: Archive completed todos
-_l_: List all archived files
-_g_: Move entry to today-file
-
-_c_: Capture here from clipboard
-
-_T_: Update title
-_D_: Update publish date property
-_V_: Update video duration property
-_L_: Update LOC property
-
-_t_: Go to todays file
-"
-    ("a" #'today-archive-done-todos :exit t)
-    ("t" #'today-visit-todays-file :exit t)
-    ("l" #'today-list :exit t)
-
-    ("c" #'today-capture-here-from-clipboard)
-
-    ("T" #'today-capture-update-title-at-point)
-    ("L" #'today-capture-add-property-loc-at-point)
-    ("D" #'today-capture-add-property-archive-date-at-point)
-    ("V" #'today-capture-add-property-video-duration-at-point)
-
-    ("g" #'today-move-to-today)
-    ("q" nil "quit")))
+  (transient-define-prefix today-transient ()
+    :transient-non-suffix 'transient--do-call
+    [[("a" "Archive completed todos" today-archive-done-todos)
+      ("t" "Go to todays file" today-visit-todays-file)
+      ("l" "List all archived files" today-list)]
+     [("c" "Capture here from clipboard" today-capture-here-from-clipboard :transient t)]
+     [("T" "Update title" today-capture-update-title-at-point :transient t)
+      ("L" "Update LOC property" today-capture-add-property-loc-at-point :transient t)
+      ("D" "Update publish date property" today-capture-add-property-archive-date-at-point :transient t)
+      ("V" "Update video duration property" today-capture-add-property-video-duration-at-point :transient t)]
+     [("g" "Move entry to today-file" today-move-to-today :transient t)]])
+  )
 
 (use-package dokument
   :straight (dokument :repo "git@github.com:jensecj/dokument.el.git")
@@ -2857,7 +2847,7 @@ _t_: Go to todays file
 
 (use-package forge
   :straight t
-  :after magit
+  :after (magit transient)
   :config
   (add-to-list 'forge-owned-accounts `(,(get-secret 'user-github-account) . ()))
   ;; setup augment.el, see (forge-bug-reference-setup)
@@ -3916,7 +3906,7 @@ if BACKWARDS is non-nil, jump backwards instead."
              diff-hl-mode
              diff-hl-next-hunk
              diff-hl-previous-hunk)
-  :bind ("C-c C-v" . diff-hl/hydra/body)
+  :bind ("C-c C-v" . diff-hl/transient)
   :hook
   ((magit-post-refresh . diff-hl-magit-post-refresh)
    (prog-mode . diff-hl-mode)
@@ -3935,12 +3925,14 @@ if BACKWARDS is non-nil, jump backwards instead."
     (goto-char (point-max))
     (diff-hl-previous-hunk))
 
-  (defhydra diff-hl/hydra ()
+  (transient-define-prefix diff-hl/transient ()
     "Move to changed VC hunks."
-    ("f" #'diff-hl/first-hunk "first")
-    ("n" #'diff-hl-next-hunk "next")
-    ("p" #'diff-hl-previous-hunk "previous")
-    ("l" #'diff-hl/last-hunk "last"))
+    :transient-non-suffix 'transient--do-call
+    ["Commands"
+     [("n" "next" diff-hl-next-hunk :transient t)
+      ("p" "previous" diff-hl-previous-hunk :transient t)]
+     [("f" "first" diff-hl/first-hunk :transient t)
+      ("l" "last" diff-hl/last-hunk :transient t)]])
 
   (global-diff-hl-mode +1))
 
