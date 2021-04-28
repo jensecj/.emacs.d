@@ -1161,7 +1161,9 @@ Works well being called from a terminal:
 
 (use-package abbrev ;; auto-replace common abbreviations
   :diminish abbrev-mode
-  :hook (text-mode  . abbrev-mode)
+  :hook ((text-mode
+          circe-chat-mode
+          git-commit-mode) . abbrev-mode)
   :config
   (read-abbrev-file)
   (abbrev-mode +1))
