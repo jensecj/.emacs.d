@@ -2040,20 +2040,6 @@ With prefix ARG, ask for file to open."
       (cl-assert (eq (point) (point-min)))
       (read (current-buffer)))))
 
-(defun jens/sexp-up ()
-  (interactive)
-  (condition-case nil
-      (forward-sexp -1)
-    (error (backward-char))))
-(bind-key* "M-<prior>" #'jens/sexp-up)
-
-(defun jens/sexp-down ()
-  (interactive)
-  (condition-case nil
-      (forward-sexp 1)
-    (error (forward-char))))
-(bind-key* "M-<next>" #'jens/sexp-down)
-
 (defun jens/open-line-below ()
   "Insert a line below the current line, indent it, and move to
 the beginning of that line."
@@ -2200,21 +2186,7 @@ current line."
   (re-search-backward
    (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
   (back-to-indentation))
-(bind-key* "s-p" 'jens/goto-prev-line-with-same-indentation)
-
-(defun jens/copy-sexp-at-point ()
-  "Save the `symbol-at-point' to the `kill-ring'."
-  (interactive)
-  (let ((sexp (thing-at-point 'sexp t)))
-    (kill-new sexp)))
-(bind-key* "C-M-k" #'jens/copy-sexp-at-point)
-
-(defun jens/kill-sexp-at-point ()
-  "Kill the sexp at point."
-  (interactive)
-  (let ((bounds (bounds-of-thing-at-point 'sexp)))
-    (delete-region (car bounds) (cdr bounds))))
-(bind-key* "M-K" #'jens/kill-sexp-at-point)
+(bind-key* "s-p" #'jens/goto-prev-line-with-same-indentation)
 
 (defun jens/copy-buffer-file-path ()
   "Copy the current buffers file path to the clipboard."
@@ -2427,6 +2399,11 @@ to a temp file and puts the filename in the kill ring."
 
 (use-package editsym
   :bind ("C-<f12>" . editsym-at-point))
+
+(use-package parenthetic
+  :straight (parenthetic :type git :repo "git@github.com:jensecj/parenthetic.el")
+  :bind (("M-<prior>" . parenthetic-up)
+         ("M-<next>" . parenthetic-down)))
 
 (use-package orgflow
   :straight (orgflow :type git :repo "git@github.com:jensecj/orgflow.el.git")
@@ -3883,12 +3860,18 @@ if BACKWARDS is non-nil, jump backwards instead."
   :defer t
   :bind (("M-<up>" .  sp-backward-barf-sexp)
          ("M-<down>" . sp-forward-barf-sexp)
+         ;; ("M-<prior>" . sp-backward-up-sexp)
+         ;; ("M-<next>" . sp-up-sexp)
          ("M-<left>" . sp-backward-slurp-sexp)
          ("M-<right>" . sp-forward-slurp-sexp)
+         ("M-k" . sp-kill-sexp)
+         ("C-M-k" . sp-copy-sexp)
          ("C-S-a" . sp-beginning-of-sexp)
          ("C-S-e" . sp-end-of-sexp)
          ("S-<next>" . sp-split-sexp)
-         ("S-<prior>" . sp-join-sexp)))
+         ("S-<prior>" . sp-join-sexp))
+  :config
+  (require 'smartparens-config))
 
 (use-package paren-face
   :straight t
@@ -4184,23 +4167,6 @@ if BACKWARDS is non-nil, jump backwards instead."
    :heuristic 'point
    :async 500
    :order 1))
-
-(use-package paxedit
-  ;; TODO: replace this
-  :straight t
-  :defer t
-  :diminish paxedit-mode
-  :hook ((lisp-mode . paxedit-mode)
-         (lisp-interaction-mode . paxedit-mode)
-         (emacs-lisp-mode . paxedit-mode)
-         (clojure-mode . paxedit-mode)
-         (scheme-mode . paxedit-mode))
-  :commands (paxedit-transpose-forward
-             paxedit-transpose-backward)
-  :bind (("M-k" . paxedit-kill)
-         ("M-K" . paxedit-copy)
-         ("M-<prior>" . paxedit-backward-up)
-         ("M-<next>" . paxedit-backward-end)))
 
 (use-package iedit
   :straight t
