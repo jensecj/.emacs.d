@@ -38,7 +38,8 @@
 
 ;; setup package archives
 (setq package-archives
-      '(("gnu" . "https://elpa.gnu.org/packages/")
+      '(("elpa" . "https://elpa.gnu.org/packages/")
+        ("nongnu-elpa" . "https://elpa.nongnu.org/nongnu/")
         ("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")))
 
