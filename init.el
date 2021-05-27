@@ -106,6 +106,7 @@
 
 (message "loading common elisp libraries...")
 
+(use-package subr-x :demand t)
 (use-package cl-lib :demand t)
 (use-package mode-local :demand t)
 
