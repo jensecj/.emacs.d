@@ -4372,7 +4372,6 @@ re-enable afterwards."
   :straight t
   :demand t
   :diminish counsel-mode
-  :commands (counsel-mode counsel--find-file-matcher)
   :bind
   (("C-S-s" . counsel/ripgrep)
    ("C-x d" . counsel-dired)
