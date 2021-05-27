@@ -2454,7 +2454,9 @@ to a temp file and puts the filename in the kill ring."
   (:map org-extra-map
         ("*" . #'org-extra-rate)
         ("r" . #'org-extra-refile-here)
-        ("c" . #'org-extra-copy-url-at-point)))
+        ("c" . #'org-extra-copy-url-at-point))
+  :config
+  (add-to-list 'org-speed-commands-user '("C" . org-extra-copy-url-at-point)))
 
 (use-package dev-extra :demand t)
 
