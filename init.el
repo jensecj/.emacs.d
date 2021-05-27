@@ -395,6 +395,10 @@
 ;; show keystrokes in progress
 (setq echo-keystrokes 0.1)
 
+(setq next-screen-context-lines 4)
+
+(setq-default line-spacing 0.08)
+
 ;; move files to trash when deleting
 (setq delete-by-moving-to-trash t)
 
