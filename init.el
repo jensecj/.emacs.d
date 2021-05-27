@@ -4519,11 +4519,40 @@ re-enable afterwards."
       (when company-candidates
         (when-let ((pick
                     (ivy-read "complete: " company-candidates
-                              :initial-input prefix)))
+                              :initial-input prefix
+                              :caller #'company/complete)))
 
           ;; replace the candidate with the pick
           (delete-region (car bounds) (cdr bounds))
-          (insert pick))))))
+          (insert pick)))))
+
+  (with-eval-after-load 'ivy
+    (defun type-of-sym (sym)
+      (cond
+       ((commandp sym) 'command)
+       ((macrop sym) 'macro)
+       ((functionp sym) 'function)
+       ((booleanp sym) 'boolean)
+       ((keywordp sym) 'keyword)
+       ((keymapp (symbol-value sym)) 'keymap)
+       ((facep sym) 'face)
+       ((boundp sym) 'variable)
+       ((symbolp sym) 'symbol)))
+
+    (defun company/complete-xf (s)
+      (condition-case _
+          (if (eq major-mode 'emacs-lisp-mode)
+              (if-let* ((typ (intern-soft s))
+                        (typ (type-of-sym typ))
+                        (typ (symbol-name typ))
+                        (typ (propertize typ 'face font-lock-comment-face))
+                        (padding (s-repeat (max 5 (- 50 (length s))) " ")))
+                  (concat s padding typ)
+                s)
+            s)
+        (error s)))
+
+    (ivy-set-display-transformer #'company/complete #'company/complete-xf)))
 
 (use-package company-flx
   :straight t
