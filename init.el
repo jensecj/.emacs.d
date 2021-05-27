@@ -4630,23 +4630,22 @@ re-enable afterwards."
                ;; show info about loaded files with auto-save data
                "recover-this-file"
                ;; show warnings and errors that occurred during init
-               (group bol "! ")
-               (group bol "~ ")
+               (seq bol "! ")
+               (seq bol "~ ")
                ;; show all lines containing the word `warning' or `error'
-               (group bol (0+ any) "warning" (0+ any) eol)
-               (group bol (0+ any) "error" (0+ any) eol))))
-         (messages (with-current-buffer "*Messages*" (buffer-string)))
+               "warning"
+               "error")))
          (important
           (with-temp-buffer
-            (insert messages)
+            (insert-buffer-substring "*Messages*")
             (delete-non-matching-lines regex (point-min) (point-max))
             (buffer-string))))
-    (when (> (length important) 0)
+    (when (not (string-empty-p important))
       (with-current-buffer (get-buffer-create "*Important Messages*")
         (let ((inhibit-read-only t))
           (erase-buffer)
-          (insert important)
-          (view-buffer-other-window (current-buffer))))))
+          (insert important))
+        (view-buffer-other-window (current-buffer)))))
   ;; only show the messages buffer in the first frame created
   (remove-hook #'server-after-make-frame-hook #'jens/show-initial-important-messages))
 
