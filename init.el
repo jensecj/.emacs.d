@@ -3951,14 +3951,11 @@ if BACKWARDS is non-nil, jump backwards instead."
   ;; Use clean fringe style for highlighting
   (setq diff-hl-fringe-bmp-function #'create-empty-fringe-bitmap)
 
-  (if (not (string= (checksum #'diff-hl-dired-highlight-items)
-                    ))
-      (message "`diff-hl-dired-highlight-items' changed definition, ignoring patch.")
-    (patch-add
-     #'diff-hl-dired-highlight-items
-     "38a4236f8be21aeeb4ab18debf51673c"
-     'diff-hl-fringe-bmp-from-type
-     'create-empty-fringe-bitmap)))
+  (patch-add
+   #'diff-hl-dired-highlight-items
+   "38a4236f8be21aeeb4ab18debf51673c"
+   'diff-hl-fringe-bmp-from-type
+   'create-empty-fringe-bitmap))
 
 (use-package hl-todo
   :straight t
