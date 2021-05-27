@@ -1630,7 +1630,7 @@ If METHOD does not exist, do nothing."
 (setq package--builtins (assq-delete-all 'org package--builtins))
 
 (use-package org
-  :straight org-plus-contrib
+  :straight org
   :pin org
   :demand t
   :commands (org-indent-region
@@ -1824,6 +1824,10 @@ If METHOD does not exist, do nothing."
   ;;               '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
   ;;                 "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   )
+
+(use-package org-contrib
+  :straight t
+  :after org-mode)
 
 (use-package reftex
   :straight t
