@@ -237,6 +237,7 @@
 (use-package shut-up :straight t :demand t)
 (use-package transient :straight t :demand t)
 (use-package ov :straight t :demand t)
+(use-package git :straight t :demand t)
 
 (use-package async
   :straight t
