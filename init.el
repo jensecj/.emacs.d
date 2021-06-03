@@ -3922,6 +3922,9 @@ if BACKWARDS is non-nil, jump backwards instead."
   :straight t
   :after tree-sitter)
 
+(use-package xterm-color
+  :straight t)
+
 (use-package git-timemachine :straight t :defer t)
 (use-package rainbow-mode
   ;; highlight color-strings (hex, etc.)
