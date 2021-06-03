@@ -3937,6 +3937,11 @@ if BACKWARDS is non-nil, jump backwards instead."
   :config
   (add-hook 'visual-fill-column-mode-hook #'visual-line-mode))
 
+(use-package outline-minor-faces
+  :straight t
+  :after outline
+  :hook (outline-minor-mode . outline-minor-faces-add-font-lock-keywords))
+
 (use-package outshine
   :straight t
   :diminish outshine-mode
