@@ -3044,7 +3044,8 @@ clipboard."
              helpful-mode)
   :bind
   (:map help-map
-        ("M-a" . helpful-at-point))
+        ("M-a" . helpful-at-point)
+        ("l" . find-library))
   :config
   (defalias #'describe-key #'helpful-key)
   (defalias #'describe-function #'helpful-callable)
