@@ -484,8 +484,6 @@
 (setq-default truncate-lines t)
 (setq-default truncate-partial-width-windows t)
 
-;; allow recursive mini buffers
-(setq enable-recursive-minibuffers t)
 
 ;; show everything that's happening when evaluating something
 (setq eval-expression-print-level nil)
@@ -1068,6 +1066,21 @@ Works well being called from a terminal:
 ;;;;; minor modes
 
 (use-package hi-lock :diminish hi-lock-mode)
+
+(use-package minibuffer
+  :config
+  (setq enable-recursive-minibuffers t)
+  (setq read-file-name-completion-ignore-case t)
+  (setq read-buffer-completion-ignore-case t)
+
+  ;; do not allow the cursor in the minibuffer prompt
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
+
+(use-package occur-mode
+  :bind
+  ("C-c C-q" . occur-edit-mode))
 
 (use-package xref
   :config
