@@ -3940,7 +3940,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq outshine-use-speed-commands t)
   (setq outshine-preserve-delimiter-whitespace nil)
 
-  (setq outshine-speed-commands-user '(("g" . counsel-outline)))
+  (setq outshine-speed-commands-user '(("g" . consult-outline)))
 
   ;; fontify the entire outshine-heading, including the comment characters (;;;)
   (patch-add
@@ -4433,15 +4433,92 @@ re-enable afterwards."
   :after vterm
   :bind (("C-z" . multi-vterm)))
 
+(use-package orderless
   :straight t
   :demand t
+  :config
+  (setq completion-styles '(orderless))
+  (setq completion-category-defaults nil)
+  (setq completion-category-overrides '((file (styles . (partial-completion))))))
+
+(use-package vertico
   :straight t
   :demand t
+  :bind (:map vertico-map
+              ("<next>" . vertico-scroll-up)
+              ("<prior>" . vertico-scroll-down))
+  :config
+  (vertico-mode +1))
+
+(use-package marginalia
+  :straight t
+  :demand t
+  :config
+  (marginalia-mode +1))
+
+(use-package consult
+  :straight t
+  :hook (completion-list-mode . consult-preview-at-point-mode)
   :bind
+  (("C-s" . consult/search)
+   ("C-S-s" . consult/ripgrep)
+   ("C-S-f" . consult/fd)
+   ("C-x i" . consult-imenu)
+   ("C-x I" . consult-project-imenu)
+   ("C-x C-i" . consult-outline)
+   ("C-x C-b" . consult-buffer)
+   ("M-y" . consult-yank-pop)
+   ("M-æ" . consult-mark)
+   ("M-S-æ" . consult-global-mark)
+   ("M-g M-g" . consult-goto-line)
+   ("M-y" . consult-yank-pop)
+   ("M-b" . consult-bookmark))
+  :config
+  (setq consult-narrow-key (kbd "C-<"))
+
+  (setq xref-show-xrefs-function #'consult-xref)
+  (setq xref-show-definitions-function #'consult-xref)
+
+  (setq completion-in-region-function #'consult-completion-in-region)
+
+  (defun consult/search ()
     (interactive)
+    (if (region-active-p)
+        (let ((query (buffer-substring-no-properties
+                      (region-beginning) (region-end))))
+          (deactivate-mark)
+          (funcall #'consult-line query))
+      (call-interactively #'consult-line)))
 
+  (defun consult/ripgrep ()
+    (interactive)
+    (if (region-active-p)
+        (let ((query (buffer-substring-no-properties
+                      (region-beginning) (region-end))))
+          (deactivate-mark)
+          (funcall #'consult-ripgrep nil query))
+      (call-interactively #'consult-ripgrep)))
 
+  (defun consult/fd (&optional dir initial)
+    (interactive "P")
+    (let ((consult-find-command
+           (string-join
+            '("fd"
+              " --type f --hidden --no-ignore --no-ignore-vcs"
+              "--exclude '.git' --exclude 'var/backup/' --exclude 'var/auto-save/' --exclude 'var/undo-tree/'"
+              "--exclude 'eln-cache/' --exclude '.python-environments/'"
+              "--color never --full-path ARG OPTS")
+            " ")))
+      (consult-find dir initial)))
+  )
+
+(use-package embark
   :straight t
+  :bind ("M-a" . embark-act))
+
+(use-package embark-consult
+  :straight t
+  :after (embark consult))
 
 
 (use-package posframe
