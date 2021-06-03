@@ -4167,8 +4167,13 @@ if BACKWARDS is non-nil, jump backwards instead."
   :demand t)
 
 
+(use-package epithet
   :straight t
   :config
+  (add-hook 'Info-selection-hook #'epithet-rename-buffer)
+  (add-hook 'eww-after-render-hook #'epithet-rename-buffer)
+  (add-hook 'help-mode-hook #'epithet-rename-buffer)
+  (add-hook 'occur-mode-hook #'epithet-rename-buffer))
 
 (use-package prescient
   ;; functionality to sort candidates
