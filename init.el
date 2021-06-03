@@ -2850,6 +2850,8 @@ to a temp file and puts the filename in the kill ring."
 
   (add-hook 'git-commit-mode-hook #'flyspell-prog-mode))
 
+(use-package magit-section :straight t)
+
 (use-package forge
   :straight t
   :after (magit transient)
