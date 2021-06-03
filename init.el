@@ -2016,7 +2016,7 @@ With prefix ARG, ask for file to open."
              (current-buffer))
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
-(bind-key* "M-a" #'jens/eval-and-replace)
+(bind-key* "M-S-a" #'jens/eval-and-replace)
 
 (defun jens/remove-text-properties-region (beg end)
   "Remove text properties from text in region between BEG and END."
