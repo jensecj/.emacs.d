@@ -41,7 +41,8 @@
       '(("elpa" . "https://elpa.gnu.org/packages/")
         ("nongnu-elpa" . "https://elpa.nongnu.org/nongnu/")
         ("melpa" . "https://melpa.org/packages/")
-        ("org" . "https://orgmode.org/elpa/")))
+        ("org" . "https://orgmode.org/elpa/") ;; TODO: remove this after org 9.5, since it's moving to NonGNU elpa
+        ))
 
 ;; setup font, a bit convoluted because we also want the first frame
 ;; spawned by the daemon to use the face.
@@ -1395,12 +1396,12 @@ If METHOD does not exist, do nothing."
   (setq recentf-auto-cleanup 300)
 
   (defun recentf/silent-save ()
-    (shut-up
-      (recentf-save-list)))
+    (shut-up (recentf-save-list)))
 
   ;; save recentf file every 30s, but don't bother us about it
   (run-with-idle-timer 30 t #'recentf/silent-save)
 
+  ;; TODO: package these colorizers?
   (defun path-colorize-tail (path face)
     (let ((last-part (-last-item (f-split path))))
       ;; TODO: replace in-string, dont use regexp, it matches other things as well
@@ -1697,11 +1698,12 @@ If METHOD does not exist, do nothing."
   (setq org-ellipsis "――")
   (setq org-cycle-separator-lines 1)    ; show single spaces between entries
 
-  (setq org-speed-commands-user
-        ;; don't move the point when using speed-commands...
-        '(("o" . (lambda () (save-excursion (org-open-at-point))))))
+  ;; don't move the point when using speed-commands...
+  (add-to-list 'org-speed-commands-user
+               '("o" . (lambda () (save-excursion (org-open-at-point)))))
 
-  (add-to-list 'org-cycle-hook #'org-cycle-hide-drawers) ; don't expand org drawers on cycling
+  ;; don't expand org drawers on cycling
+  (add-to-list 'org-cycle-hook #'org-cycle-hide-drawers)
 
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -2958,7 +2960,7 @@ to a temp file and puts the filename in the kill ring."
 
   (add-hook 'elfeed-new-entry-hook
             (elfeed-make-tagger :feed-url "sachachua\\.com"
-                                :entry-title '("^Weekly review:")
+                                :entry-title (list "Weekly review:")
                                 :add 'junk
                                 :remove 'unread))
 
@@ -3408,6 +3410,7 @@ Inserts information about senders, and the mail subject into eldoc."
 
   (add-hook 'notmuch-show-mode-hook #'augment-mode)
 
+  ;; TODO: dont just show in mode, allow handlers to open mime parts
   (defun notmuch-show/view-mime-part-at-point-in-mode ()
     "Open MIME-part at point in a specific major-mode."
     (interactive)
@@ -4593,8 +4596,10 @@ re-enable afterwards."
     "Show company completions using the minibuffer."
     (interactive)
     (unless company-candidates
-      (let ((company-frontends nil))
-        (shut-up (company-complete))))
+      (let ((company-frontends '(company-echo-frontend)))
+        (shut-up
+          (company-complete)
+          )))
 
     (when-let ((prefix (symbol-name (symbol-at-point)))
                (bounds (bounds-of-thing-at-point 'symbol)))
@@ -4606,33 +4611,31 @@ re-enable afterwards."
           (delete-region (car bounds) (cdr bounds))
           (insert pick)))))
 
-  (with-eval-after-load 'ivy
-    (defun type-of-sym (sym)
-      (cond
-       ((commandp sym) 'command)
-       ((macrop sym) 'macro)
-       ((functionp sym) 'function)
-       ((booleanp sym) 'boolean)
-       ((keywordp sym) 'keyword)
-       ((keymapp (symbol-value sym)) 'keymap)
-       ((facep sym) 'face)
-       ((boundp sym) 'variable)
-       ((symbolp sym) 'symbol)))
+  (defun type-of-sym (sym)
+    ;; see [[file:~/emacs/build/share/emacs/28.0.50/lisp/help-fns.el.gz::(defun%20help--symbol-completion-table-affixation%20(completions)]]
+    (cond
+     ((commandp sym) 'command)
+     ((macrop sym) 'macro)
+     ((functionp sym) 'function)
+     ((booleanp sym) 'boolean)
+     ((keywordp sym) 'keyword)
+     ((keymapp (symbol-value sym)) 'keymap)
+     ((facep sym) 'face)
+     ((boundp sym) 'variable)
+     ((numberp sym) 'number)
+     ((symbolp sym) 'symbol)))
 
-    (defun company/complete-xf (s)
-      (condition-case _
-          (if (eq major-mode 'emacs-lisp-mode)
-              (if-let* ((typ (intern-soft s))
-                        (typ (type-of-sym typ))
-                        (typ (symbol-name typ))
-                        (typ (propertize typ 'face font-lock-comment-face))
-                        (padding (s-repeat (max 5 (- 50 (length s))) " ")))
-                  (concat s padding typ)
-                s)
-            s)
-        (error s)))
-
-    (ivy-set-display-transformer #'company/complete #'company/complete-xf)))
+  (defun company/complete-xf (s)
+    (ignore-errors
+      (when (eq major-mode 'emacs-lisp-mode)
+        (when-let* ((typ (intern-soft s))
+                    (typ (type-of-sym typ))
+                    (typ (symbol-name typ))
+                    (typ (propertize typ 'face font-lock-comment-face))
+                    (padding (s-repeat (max 5 (- 50 (length s))) " ")))
+          (setq s (concat s padding typ))))
+      s))
+  )
 
 (use-package company-flx
   :straight t
@@ -4670,12 +4673,12 @@ re-enable afterwards."
 ;;;; for built-in things
 
 ;; Easily mark the entire buffer
-(bind-key* "C-x a" 'mark-whole-buffer)
+(bind-key* "C-x a" #'mark-whole-buffer)
 
 ;; Quit emacs, mnemonic is C-x REALLY QUIT
-(bind-key* "C-x r q" 'save-buffers-kill-terminal)
+(bind-key* "C-x r q" #'save-buffers-kill-terminal)
 ;; Kill emacs, mnemonic is C-x REALLY KILL
-(bind-key* "C-x r k" 'save-buffers-kill-emacs)
+(bind-key* "C-x r k" #'save-buffers-kill-emacs)
 
 (bind-key* "C-c C-SPC" #'pop-to-mark-command)
 
@@ -4765,9 +4768,10 @@ re-enable afterwards."
 ;; TODO: add separator (^L / newline?) in compile mode
 ;; TODO: test with ert?
 ;; TODO: maybe autoinsert? https://www.gnu.org/software/emacs/manual/html_node/autotype/Autoinserting.html
-;; TODO: look at doom-emacs completion
+;; TODO: look at doom-emacs
 ;; TODO: notify someone about the auto-revert + tramp hangs
 ;; TODO: figure out how to default username on tramp ssh access using .ssh/config User entry
 
+;; TODO: using (if-let ((_ ...))) gives the warning "variable ‘_’ not left unused"
 (provide 'init)
 ;;; init.el ends here
