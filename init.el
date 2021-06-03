@@ -515,6 +515,8 @@
 
 ;; allow processes to read big chuncks of process output at a time
 (setq read-process-output-max (* 1024 1024))
+;; just read process output as-is
+(setq process-adaptive-read-buffering nil)
 
 ;; try to show "tall-lines" (images, etc.) properly
 (setq auto-window-vscroll t)
