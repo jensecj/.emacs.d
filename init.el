@@ -1467,15 +1467,7 @@ If METHOD does not exist, do nothing."
     (let* ((recent-files (mapcar #'substring-no-properties recentf-list))
            (colorized-files (-map #'path-colorize recent-files)))
 
-      (ivy-read "recent files: "
-                colorized-files
-                :action (lambda (f)
-                          (with-ivy-window
-                            (if current-prefix-arg
-                                (find-file-other-window f)
-                              (find-file f))))
-                :require-match t
-                :caller 'recentf/with-colors)))
+      (completing-read "recent files: " colorized-files nil t)))
 
   (defun recentf/cleanup (orig-fun &rest args)
     "Silence `recentf-auto-cleanup'."
@@ -1955,8 +1947,6 @@ With prefix ARG, ask for file to open."
               (pick (completing-read "" links nil t)))
     (browse-url pick)))
 (bind-key "C-x C-l" #'jens/open-links)
-(with-eval-after-load 'ivy-prescient
-  (add-to-list 'ivy-prescient-sort-commands #'jens/open-links t))
 
 ;;;;; files
 
@@ -3405,8 +3395,6 @@ Prefix buffers with server-name, append @ to query buffers."
       (if links
           (browse-url (completing-read "Links: " links)))))
 
-  (add-to-list 'ivy-prescient-sort-commands #'notmuch/show-list-links t)
-
   (defun notmuch-show/eldoc ()
     "Simple eldoc handler for `notmuch-show-mode'.
 
@@ -4107,7 +4095,6 @@ if BACKWARDS is non-nil, jump backwards instead."
    ("M-p d" . projectile-dired-other-window)
    ("M-p T" . projectile-toggle-between-implementation-and-test))
   :config
-  (setq projectile-completion-system 'ivy)
   (setq projectile-enable-caching t)
 
   (projectile-mode +1))
@@ -4163,26 +4150,14 @@ if BACKWARDS is non-nil, jump backwards instead."
   :download "https://www.emacswiki.org/emacs/download/help-fns%2b.el"
   :demand t)
 
-(use-package flx
-  ;; fuzzy searching for ivy, etc.
-  :straight t)
 
-(use-package amx
-  ;; extends M-x, augments ivy
   :straight t
   :config
-  (amx-mode +1))
 
 (use-package prescient
   ;; functionality to sort candidates
   :straight t
   :demand t)
-
-(use-package ivy-prescient
-  :after (prescient ivy)
-  :straight t
-  :config
-  (ivy-prescient-mode +1))
 
 (use-package company-prescient
   :straight t
@@ -4194,7 +4169,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   :straight t
   :defer t
   :config
-  (setq dumb-jump-selector 'ivy)
+  (setq dumb-jump-selector 'completing-read)
   (setq dumb-jump-prefer-searcher 'rg))
 
 (use-package smart-jump
@@ -4431,9 +4406,6 @@ re-enable afterwards."
               ("-" . grep-context-less-around-point)
               :map grep-mode-map
               ("+" . grep-context-more-around-point)
-              ("-" . grep-context-less-around-point)
-              :map ivy-occur-grep-mode-map
-              ("+" . grep-context-more-around-point)
               ("-" . grep-context-less-around-point)))
 
 (use-package exec-path-from-shell
@@ -4461,100 +4433,16 @@ re-enable afterwards."
   :after vterm
   :bind (("C-z" . multi-vterm)))
 
-(use-package ivy
   :straight t
   :demand t
-  :diminish ivy-mode
-  :commands (ivy-read)
-  :bind
-  (("C-x C-b" . ivy-switch-buffer)
-   ("C-c C-r" . ivy-resume)
-   :map ivy-minibuffer-map
-   ;; TODO: fix this, should jump to selected entries dir, not the candidates
-   ("C-d" . (lambda () (interactive) (ivy-quit-and-run (dired ivy--directory))))
-   ("C-<return>" . ivy-immediate-done)
-   :map ivy-occur-grep-mode-map
-   ("D" . ivy-occur-delete-candidate))
-  :config
-  (setq ivy-height 15)
-  (setq ivy-count-format "%d/%d ")
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-re-builders-alist '((t . ivy--regex-plus)))
-  (setq ivy-on-del-error-function nil)
-  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
-
-  (ivy-mode +1))
-
-(use-package counsel
   :straight t
   :demand t
-  :diminish counsel-mode
   :bind
-  (("C-S-s" . counsel/ripgrep)
-   ("C-x d" . counsel-dired)
-   ("C-x C-f" . counsel-find-file)
-   ("C-S-f" . counsel-fzf)
-   ("C-x i" . counsel-imenu)
-   ("C-x C-i" . counsel-outline)
-   ("M-æ" . counsel-mark-ring)
-   ("M-y" . counsel-yank-pop)
-   ("M-x" . counsel-M-x)
-   ("M-b" . counsel-bookmark)
-   :map help-map
-   ("l" . counsel-find-library))
-  :config
-  (setq counsel-outline-display-style 'path)
-  (setq counsel-outline-face-style 'verbatim)
-
-  (add-to-list* 'ivy-prescient-sort-commands
-                '(counsel-outline
-                  counsel-imenu
-                  counsel-grep
-                  counsel-mark-ring
-                  counsel-yank-pop)
-                t)
-
-  (setq counsel-fzf-cmd (s-join " "
-                                '("fd --type f --hidden --no-ignore --no-ignore-vcs --color never"
-                                  "--exclude '.git' --exclude 'var/backup/' --exclude 'var/auto-save/' --exclude 'var/undo-tree/'"
-                                  "--exclude 'eln-cache/' --exclude '.python-environments/'"
-                                  "\"%s\"")))
-
-  (add-to-list 'ivy-height-alist '(counsel-yank-pop . 10))
-
-  (setq counsel-yank-pop-separator
-        (propertize "\n------------------------------------------\n"
-                    'face `(:foreground "#111111")))
-
-  (setq counsel-rg-base-command "rg --hidden --max-columns 200 --glob='!{.git/*,var/auto-save/*,var/backup/*,var/temp/*,var/pcache/*}' --no-heading --line-number --color never %s .")
-
-  (defun counsel/ripgrep ()
-    "Interactively search the current directory. Jump to result using ivy."
     (interactive)
-    (let ((counsel-ag-base-command counsel-rg-base-command)
-          (initial-input (if (use-region-p)
-                             (buffer-substring-no-properties
-                              (region-beginning) (region-end)))))
-      (deactivate-mark)
-      (counsel-rg initial-input default-directory)))
 
-  (counsel-mode +1))
 
-(use-package swiper
   :straight t
-  :bind ("C-s" . swiper/search)
-  :config
-  (add-to-list 'ivy-prescient-sort-commands #'swiper t)
 
-  (defun swiper/search ()
-    "If region is active, use it as initial query"
-    (interactive)
-    (let ((fn #'swiper))
-      (if (region-active-p)
-          (let ((query (buffer-substring-no-properties (region-beginning) (region-end))))
-            (deactivate-mark)
-            (funcall fn query))
-        (call-interactively fn)))))
 
 (use-package posframe
   :straight t
@@ -4625,7 +4513,7 @@ re-enable afterwards."
   (setq company-tooltip-idle-delay nil)
 
   (defun company/complete ()
-    "Show company completions using ivy."
+    "Show company completions using the minibuffer."
     (interactive)
     (unless company-candidates
       (let ((company-frontends nil))
@@ -4635,9 +4523,7 @@ re-enable afterwards."
                (bounds (bounds-of-thing-at-point 'symbol)))
       (when company-candidates
         (when-let ((pick
-                    (ivy-read "complete: " company-candidates
-                              :initial-input prefix
-                              :caller #'company/complete)))
+                    (completing-read "complete: " company-candidates nil nil prefix)))
 
           ;; replace the candidate with the pick
           (delete-region (car bounds) (cdr bounds))
