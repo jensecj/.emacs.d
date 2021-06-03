@@ -3095,25 +3095,128 @@ clipboard."
   (transient-suffix-put 'magit-dispatch "E" :description "vdiff")
   (transient-suffix-put 'magit-dispatch "E" :command 'vdiff-magit))
 
-(use-package erc
-  :defer t
-  :config
-  (setq erc-rename-buffers t)
-  (setq erc-interpret-mirc-color t)
-  (setq erc-prompt ">")
-  (setq erc-track-enable-keybindings nil)
-  (setq erc-timestamp-only-if-changed-flag nil)
-  (setq erc-insert-timestamp-function 'erc-insert-timestamp-left)
-  (setq erc-lurker-hide-list '("JOIN" "PART" "QUIT"))
-  (setq erc-join-buffer 'buffer)
-
-
-  )
-
-
-(use-package erc-hl-nicks
+(use-package circe
   :straight t
-  :after erc)
+  :defer t
+  :bind (:map circe-mode-map
+              ("C-t" . #'circe/switch-buffer))
+  :config
+  (setq circe-default-quit-message "")
+  (setq circe-default-part-message "")
+  (setq circe-reduce-lurker-spam t)
+
+  (setq circe-server-auto-join-default-type :after-auth)
+
+  (setq circe-highlight-nick-type 'occurrence)
+
+  (setq circe-format-say "{nick}: {body}")
+  (setq circe-format-self-say "{nick}: {body}")
+
+  (setq circe-chat-buffer-name "{target}")
+  (setq circe-server-buffer-name "*{host}*")
+
+  (setq lui-time-stamp-position 'left)
+  (setq lui-time-stamp-format "%H:%M ")
+  (setq lui-time-stamp-only-when-changed-p nil)
+  (setq lui-fill-column 80)
+
+  (require 'circe-color-nicks)
+  (setq circe-color-nicks-everywhere t)
+  (add-to-list* 'circe-color-nicks-message-blacklist
+                '("the" "The" "NSA" "nsa" "another" "nevermind"))
+
+  (enable-circe-color-nicks)
+
+  ;; don't list names when joining channels
+  (circe-set-display-handler "353" 'circe-display-ignore)
+  (circe-set-display-handler "366" 'circe-display-ignore)
+
+  ;; don't display when lurkers become active
+  (advice-add #'circe-lurker-display-active :override #'ignore)
+
+  (defun circe/buffers ()
+    "Return a list of Circe buffers"
+    (-filter
+	   (lambda (buffer)
+       (provided-mode-derived-p
+        (buffer-local-value 'major-mode buffer)
+        'circe-mode))
+     (buffer-list)))
+
+  (defun circe/switch-buffer ()
+    "Switch to a Circe buffer interactively."
+    (interactive)
+    (let* ((buffers (mapcar #'buffer-name (circe/buffers)))
+           (pick (completing-read "buffer: " buffers nil t)))
+      (switch-to-buffer pick)))
+
+  (defun circe/switch-buffer-xf (s)
+    "Cleanup names of CIRCE buffers."
+    (let* ((buf (get-buffer s))
+           (buf-name (->> buf
+                          (buffer-name)
+                          (string-replace "*" "")
+                          (string-trim))))
+      buf-name))
+
+  (defun circe/rename-chat-buffers ()
+    "Rename Circe chat buffers.
+Prefix buffers with server-name, append @ to query buffers."
+    (let ((channel (buffer-name))
+          (server (with-circe-server-buffer circe-server-name)))
+      (when (eq major-mode 'circe-query-mode)
+        (setq channel (concat "@" channel)))
+
+      (rename-buffer (format "*%s/%s*" server channel) t)))
+
+  (add-hook 'circe-chat-mode-hook #'circe/rename-chat-buffers)
+
+  ;; when /join'ing, just switch to the buffer, don't open a new window
+  (patch-add
+   #'circe-command-JOIN
+   "5996ffd7bc7eb3639c0739b51074096a"
+   '(pop-to-buffer
+     (circe-server-get-or-create-chat-buffer channel
+                                             'circe-channel-mode))
+   '(switch-to-buffer
+     (circe-server-get-or-create-chat-buffer channel
+                                             'circe-channel-mode)))
+
+  ;; don't highlight the nicknames of lurkers
+  ;; lots of people use everyday words as nicknames
+  ;; e.g "the", "nevermind", or "always"
+  (patch-add
+   #'circe-color-nicks
+   "1582d0fb0f85ce1924faa0a9aeffd0be"
+   '(not (member nick blacklist))
+   '(and (not (member nick blacklist))
+         (not (circe-lurker-p nick))))
+
+  (defun circe/duration-string (seconds)
+    "Return a description of SECONDS as days,hours,minutes,seconds."
+    (let* ((days (floor (/ seconds 60 60 24)))
+           (seconds (- seconds (* 60 60 24 days)))
+           (hours (floor (/ seconds 60 60)))
+           (seconds (- seconds (* 60 60 hours)))
+           (minutes (floor (/ seconds 60)))
+           (seconds (round (- seconds (* 60 minutes)))))
+      (concat
+       (when (> days 0)    (format "%sd" days))
+       (when (> hours 0)   (format "%sh" hours))
+       (when (> minutes 0) (format "%sm" minutes))
+       (when (> seconds 0) (format "%ss" seconds)))))
+
+  (advice-add #'circe-duration-string :override #'circe/duration-string)
+
+  (comment
+   (circe "Libera Chat"
+          :tls t
+          :nick "jensecj"
+          :sasl-username "jensecj"
+          :sasl-password (lambda (&rest _) (get-secret "irc/libera/jensecj"))
+          :channels '("#emacs"))
+   )
+  )
 
 (use-package notmuch
   ;; TODO: setup notmuch for multiple mail-profiles
