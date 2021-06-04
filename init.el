@@ -2786,18 +2786,11 @@ to a temp file and puts the filename in the kill ring."
 (use-package clojure-mode
   :straight t
   :defer t
-  :after (company-mode cider clj-refactor)
-  :commands (cider-create-doc-buffer
-             cider-try-symbol-at-point)
   :bind
   :config
   (unbind-key "M-," clojure-mode-map)
   (unbind-key "M-." clojure-mode-map)
   (unbind-key "M--" clojure-mode-map)
-
-  (company-mode +1)
-  (cider-mode +1)
-  (clj-refactor-mode +1)
 
   ;; (setq cider-cljs-lein-repl
   ;;       "(do (require 'figwheel-sidecar.repl-api)
