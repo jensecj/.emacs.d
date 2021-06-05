@@ -1702,7 +1702,7 @@ If METHOD does not exist, do nothing."
   (setq org-cycle-separator-lines 1)    ; show single spaces between entries
 
   ;; don't move the point when using speed-commands...
-  (add-to-list 'org-speed-commands-user
+  (add-to-list 'org-speed-commands
                '("o" . (lambda () (save-excursion (org-open-at-point)))))
 
   ;; don't expand org drawers on cycling
@@ -2441,7 +2441,7 @@ to a temp file and puts the filename in the kill ring."
   (setq orgflow-section-sizes '(40 40))
   (setq orgflow-directory (lambda () (or default-directory (project-root (project-current)))))
 
-  (add-to-list* 'org-speed-commands-user
+  (add-to-list* 'org-speed-commands
                 '(("R" . orgflow-refile-to-nearby-file)
                   ("H" . orgflow-refile-here))))
 
@@ -2464,7 +2464,7 @@ to a temp file and puts the filename in the kill ring."
         ("r" . #'org-extra-refile-here)
         ("c" . #'org-extra-copy-url-at-point))
   :config
-  (add-to-list 'org-speed-commands-user '("C" . org-extra-copy-url-at-point)))
+  (add-to-list 'org-speed-commands '("C" . org-extra-copy-url-at-point)))
 
 (use-package dev-extra :demand t)
 
