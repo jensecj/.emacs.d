@@ -709,6 +709,13 @@
   :config
   (setq debugger-stack-frame-as-list t))
 
+(use-package edebug
+  :config
+  (defun edebug/instrument-last-sexp ()
+    (interactive)
+    (let ((edebug-all-defs t))
+      (destructuring-bind (beg . end) (bounds-of-thing-at-point 'sexp)
+        (eval-region beg end)))))
 
 ;;;;; major-modes
 
