@@ -1467,8 +1467,8 @@ If METHOD does not exist, do nothing."
     (interactive)
     (let* ((recent-files (mapcar #'substring-no-properties recentf-list))
            (colorized-files (-map #'path-colorize recent-files)))
-
-      (completing-read "recent files: " colorized-files nil t)))
+      (find-file
+       (completing-read "recent files: " colorized-files nil t))))
 
   (defun recentf/cleanup (orig-fun &rest args)
     "Silence `recentf-auto-cleanup'."
