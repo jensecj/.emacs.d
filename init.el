@@ -3660,12 +3660,20 @@ if BACKWARDS is non-nil, jump backwards instead."
       :error-list-face 'flycheck-error-list-error
       :fringe-face 'flycheck-fringe-error)))
 
-(use-package flycheck-package :straight t :defer t :commands (flycheck-package-setup))
+(use-package flycheck-package
+  :straight t
+  :after flycheck
+  :config (flycheck-package-setup))
 
 (use-package flycheck-checkbashisms
   :straight t
-  :config
-  (flycheck-checkbashisms-setup))
+  :after flycheck
+  :config (flycheck-checkbashisms-setup))
+
+(use-package flycheck-bashate
+  :straight t
+  :after flycheck
+  :config (flycheck-bashate-setup))
 
 (use-package flyspell-correct
   :straight t
