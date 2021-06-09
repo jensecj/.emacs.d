@@ -2385,8 +2385,8 @@ to a temp file and puts the filename in the kill ring."
 (use-package buf ;; buffer extentions
   :demand t)
 
-(use-package editsym
-  :bind ("C-<f12>" . editsym-at-point))
+(use-package edit-symbol
+  :bind ("C-<f12>" . edit-symbol-at-point))
 
 (use-package parenthetic
   :straight (parenthetic :type git :repo "git@github.com:jensecj/parenthetic.el")
