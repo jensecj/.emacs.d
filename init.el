@@ -3922,6 +3922,8 @@ if BACKWARDS is non-nil, jump backwards instead."
   :hook ((prog-mode outline-minor-mode) . outshine-mode)
   :bind
   (:map outshine-mode-map
+        ("<tab>" . nil)
+        ("<backtab>" . nil)
         ("M-<up>" . nil)
         ("M-<down>" . nil))
   :config
