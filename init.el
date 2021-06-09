@@ -2363,16 +2363,12 @@ to a temp file and puts the filename in the kill ring."
 (defun jens/render-control-chars ()
   "Render common control characters, such as ^L and ^M."
   (interactive)
-  (setq control-char-replacements
-        `((?\^M . [])
-          (?\^L . ,(vconcat (make-list fill-column (make-glyph-code ?̶ 'font-lock-builtin-face))))))
-
   (when (not buffer-display-table)
     (setq buffer-display-table (make-display-table)))
 
-  (-map
-   (lambda (c) (aset buffer-display-table (car c) (cdr c)))
-   control-char-replacements)
+  (aset buffer-display-table ?\^M [])
+  (aset buffer-display-table ?\^L
+        (vconcat (make-list fill-column (make-glyph-code ?― 'font-lock-builtin-face))))
 
   (redraw-frame))
 
