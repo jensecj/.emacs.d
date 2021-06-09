@@ -594,12 +594,6 @@
 
 (add-hook 'find-file-hook #'jens/ensure-read-only)
 
-;; package.el should ignore elpa/ files being read-only
-(advice-add #'package-install :around
-            (lambda (fn &rest args)
-              (let ((inhibit-read-only t))
-                (apply fn args))))
-
 ;;;;; authentication and security
 
 ;; set the paranoia level to medium, warns if connections are insecure
