@@ -4505,24 +4505,18 @@ re-enable afterwards."
   :straight t
   :defer t
   :diminish company-mode
-  :hook ((python-mode java-mode emacs-lisp-mode) . company-mode)
-  :bind
-  (("<backtab>" . #'completion-at-point)
-   ("M-<tab>" . #'company/complete))
+  :bind ("M-<tab>" . #'company/complete)
   :config
   (setq company-search-regexp-function 'company-search-flex-regexp)
   (setq company-require-match nil)
+  (setq company-abort-on-unique-match nil)
 
-  (setq company-frontends '(company-preview-if-just-one-frontend
-                            company-echo-metadata-frontend))
+
+  (setq company-frontends '())
   (setq company-backends
-        '(company-elisp
-          company-capf
-          company-semantic
-          company-clang
-          company-cmake
+        '(company-capf
           company-files
-          (company-dabbrev-code company-gtags company-etags company-keywords)
+          (company-dabbrev-code company-keywords)
           company-dabbrev))
 
   ;; don't show the company menu automatically
@@ -4533,21 +4527,11 @@ re-enable afterwards."
   (defun company/complete ()
     "Show company completions using the minibuffer."
     (interactive)
-    (unless company-candidates
-      (let ((company-frontends '(company-echo-frontend)))
-        (shut-up
-          (company-complete)
-          )))
+    (company-manual-begin) ;; calculates company-prefix and company-candidates
 
-    (when-let ((prefix (symbol-name (symbol-at-point)))
-               (bounds (bounds-of-thing-at-point 'symbol)))
-      (when company-candidates
-        (when-let ((pick
-                    (completing-read "complete: " company-candidates nil nil prefix)))
-
-          ;; replace the candidate with the pick
-          (delete-region (car bounds) (cdr bounds))
-          (insert pick)))))
+    (when-let ((pick (completing-read "complete: " company-candidates nil nil company-prefix)))
+      (delete-region (- company-point (length company-prefix)) company-point)
+      (insert pick)))
 
   (defun type-of-sym (sym)
     ;; see [[file:~/emacs/build/share/emacs/28.0.50/lisp/help-fns.el.gz::(defun%20help--symbol-completion-table-affixation%20(completions)]]
@@ -4573,11 +4557,8 @@ re-enable afterwards."
                     (padding (s-repeat (max 5 (- 50 (length s))) " ")))
           (setq s (concat s padding typ))))
       s))
-  )
 
-(use-package company-flx
-  :straight t
-  :hook (company-mode . company-flx-mode))
+  (global-company-mode +1))
 
   :straight t
   :config
