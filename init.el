@@ -794,9 +794,6 @@ seconds."
   ("C-d" . nil)
   (:map java-mode-map
         ("C-c C-c" . projectile-compile-project))
-  (:map c++-mode-map
-        ("C-c C-c" . projectile-compile-project)
-        ("C-c n" . clang-format-buffer))
   :config
   (dolist (k '("\M-," "\M-." "\M--" "\C-d"))
     (bind-key k nil c-mode-base-map)))
@@ -2732,7 +2729,6 @@ to a temp file and puts the filename in the kill ring."
 
 ;;;; major modes and extentions
 
-(use-package cmake-mode :straight t :defer t :mode "\\CmakeLists.txt\\'")
 (use-package yaml-mode :straight t :defer t :mode ("\\.yaml\\'" "\\.yml\\'"))
 (use-package toml-mode :straight t :defer t :mode ("\\.toml\\'"))
 (use-package dockerfile-mode :straight t :defer t :mode "\\Dockerfile\\'")
@@ -4252,42 +4248,7 @@ if BACKWARDS is non-nil, jump backwards instead."
    :refs-fn #'smart-jump-simple-find-references
    :should-jump t
    :heuristic #'smart-jump/select-rg-window
-   :order 4)
-
-  (smart-jump-register
-   :modes 'c++-mode
-   :jump-fn 'ggtags-find-tag-dwim
-   :pop-fn 'ggtags-prev-mark
-   :refs-fn 'ggtags-find-reference
-   :should-jump  (lambda () (bound-and-true-p ggtags-mode))
-   :heuristic 'point
-   :async 500
-   :order 3)
-
-  (smart-jump-register
-   :modes 'c++-mode
-   :jump-fn #'rtags-find-symbol-at-point
-   :pop-fn #'rtags-location-stack-back
-   :refs-fn #'rtags-find-all-references-at-point
-   :should-jump (lambda ()
-                  (and
-                   (fboundp 'rtags-executable-find)
-                   (fboundp 'rtags-is-indexed)
-                   (rtags-executable-find "rc")
-                   (rtags-is-indexed)))
-   :heuristic 'point
-   :async 500
-   :order 2)
-
-  (smart-jump-register
-   :modes 'c++-mode
-   :jump-fn #'lsp-find-definition
-   :pop-fn #'pop-tag-mark
-   :refs-fn #'lsp-find-references
-   :should-jump (lambda () (fboundp #'lsp))
-   :heuristic 'point
-   :async 500
-   :order 1))
+   :order 4))
 
 (use-package iedit
   :straight t
@@ -4652,21 +4613,9 @@ re-enable afterwards."
   :straight t
   :hook (company-mode . company-flx-mode))
 
-(use-package company-c-headers
   :straight t
-  :defer t
   :config
-  (setq c++-include-files
-        '("/usr/include/"
-          "/usr/include/c++/8.2.1/"
-          "/usr/lib/clang/7.0.1/include/"
-          "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include/"
-          "/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed/"))
 
-  (setq company-c-headers-path-system
-        (-uniq (-concat c++-include-files company-c-headers-path-system)))
-
-  (add-to-list 'company-backends 'company-c-headers))
 
 ;;; keybindings
 
