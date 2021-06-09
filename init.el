@@ -4112,10 +4112,23 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package epithet
   :straight t
   :config
-  (add-hook 'Info-selection-hook #'epithet-rename-buffer)
-  (add-hook 'eww-after-render-hook #'epithet-rename-buffer)
-  (add-hook 'help-mode-hook #'epithet-rename-buffer)
-  (add-hook 'occur-mode-hook #'epithet-rename-buffer))
+  ;; TODO: rename circe buffers
+  (add-hook*
+   '(Info-selection-hook
+     eww-after-render-hook
+     help-mode-hook
+     occur-mode-hook
+     notmuch-show-mode-hook)
+   #'epithet-rename-buffer)
+
+  (with-eval-after-load 'notmuch
+    (defun epithet/rename-notuch-show ()
+      (when (derived-mode-p 'notmuch-show-mode)
+        (format "notmuch: %s" (buffer-name))))
+
+    (add-to-list 'epithet-suggesters #'epithet/rename-notuch-show)
+    (add-to-list 'notmuch-show-mode-hook #'epithet-rename-buffer))
+  )
 
 (use-package prescient
   ;; functionality to sort candidates
