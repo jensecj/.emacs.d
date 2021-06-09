@@ -4089,6 +4089,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package rg :straight t :defer t) ;; ripgrep in emacs
 (use-package gist :straight t :defer t) ;; work with github gists
 (use-package edit-indirect :straight t)
+(use-package spinner :straight t)
 
 (use-package auto-compile
   :straight t
@@ -4096,29 +4097,8 @@ if BACKWARDS is non-nil, jump backwards instead."
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
 
-(use-package spinner
   :straight t
   :config
-  (defun spinner/package-spinner-start (&rest _arg)
-    "Create and start package-spinner."
-    (when-let ((buf (get-buffer "*Packages*")))
-      (with-current-buffer buf
-        (spinner-start 'progress-bar 2))))
-
-  (defun spinner/package-spinner-stop (&rest _arg)
-    "Stop the package-spinner."
-    (when-let ((buf (get-buffer "*Packages*")))
-      (with-current-buffer (get-buffer "*Packages*")
-        (spinner-stop))))
-
-  ;; create a spinner when launching `list-packages' and waiting for archive refresh
-  (advice-add #'list-packages :after #'spinner/package-spinner-start)
-  (add-hook 'package--post-download-archives-hook #'spinner/package-spinner-stop)
-
-  ;; create a spinner when updating packages using `U x'
-  (advice-add #'package-menu--perform-transaction :before #'spinner/package-spinner-start)
-  (advice-add #'package-menu--perform-transaction :after #'spinner/package-spinner-stop))
-
 (use-package org-web-tools
   :straight t
   :defer t
