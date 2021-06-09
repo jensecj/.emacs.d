@@ -605,7 +605,7 @@
 ;;;;; authentication and security
 
 ;; set the paranoia level to medium, warns if connections are insecure
-(setq network-security-level 'medium)
+(setq network-security-level 'high)
 
 (use-package auth-source
   :demand t
