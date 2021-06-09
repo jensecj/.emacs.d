@@ -1228,21 +1228,6 @@ Works well being called from a terminal:
   ;; just revert pdf files without asking
   (setq revert-without-query '("\\.pdf")))
 
-(use-package display-line-numbers
-  :defer t
-  :commands display-line-numbers-mode
-  :bind ("M-g M-g" . display-line-numbers/goto-line-with-feedback)
-  :config
-  (defun display-line-numbers/goto-line-with-feedback ()
-    "Show line numbers temporarily, while prompting for the line
-number input"
-    (interactive)
-    (unwind-protect
-        (progn
-          (display-line-numbers-mode +1)
-          (call-interactively 'goto-line))
-      (display-line-numbers-mode -1))))
-
 (use-package smerge-mode ;; easily handle merge conflicts
   :bind
   (:map smerge-mode-map ("C-c ^" . transient-smerge))
