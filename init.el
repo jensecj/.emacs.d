@@ -13,8 +13,6 @@
 (defmacro log-error (txt &rest args)   `(message ,(concat "! "  txt) ,@args))
 (defmacro log-success (txt &rest args) `(message ,(concat "@ "  txt) ,@args))
 
-(log-info "Started initializing emacs!")
-
 (call-interactively #'emacs-version)
 (message "Commit: %s (%s)" emacs-repository-version emacs-repository-branch)
 
@@ -79,6 +77,7 @@
 (setq straight-vc-git-default-protocol 'ssh)
 (setq straight-check-for-modifications '(check-on-save find-when-checking))
 
+(message "bootstrapping use-package...")
 (defvar bootstrap-version)
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
@@ -92,7 +91,6 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(message "bootstrapping use-package...")
 (straight-use-package 'use-package)
 
 ;; need to enable imenu support before requiring `use-package'
@@ -213,7 +211,7 @@
    (t (error "Dont know how to checksum %s (%s)" sym (type-of sym)))))
 
 (defun checksum-at-point ()
-  "Return the md5 checksum for the symbol-at-point."
+  "Return the md5 checksum for the symbol at point."
   (interactive)
   (let ((hash (checksum (intern-soft (thing-at-point 'symbol)))))
     (kill-new hash)
@@ -229,8 +227,6 @@
       (message "patching %s" name)
       (advice-patch name new old))))
 
-;; We are going to use the bind-key (`:bind') and diminish (`:diminish')
-;; extensions of `use-package', so we need to have those packages.
 (use-package bind-key :straight t :demand t)
 (use-package diminish :straight t :demand t)
 (use-package delight :straight t :demand t)
@@ -395,8 +391,10 @@
 ;; show keystrokes in progress
 (setq echo-keystrokes 0.1)
 
+;; try to keep 4 lines on context when scrolling
 (setq next-screen-context-lines 4)
 
+;; add just a bit of linespacing
 (setq-default line-spacing 0.08)
 
 ;; move files to trash when deleting
@@ -426,7 +424,7 @@
 ;; make re-centering more intuitive
 (setq recenter-positions '(top middle bottom))
 (bind-key* "C-l" #'recenter-top-bottom)
-(bind-key* "C-S-L" #'move-to-window-line-top-bottom)
+(bind-key* "C-S-l" #'move-to-window-line-top-bottom)
 
 ;; use UTF-8
 (setq locale-coding-system 'utf-8)
@@ -536,7 +534,7 @@
 (setq vc-follow-symlinks t)
 
 ;; just give me a clean scratch buffer
-(setq initial-scratch-message "")
+(setq initial-scratch-message nil)
 (setq initial-major-mode 'emacs-lisp-mode)
 
 ;; don't show trailing whitespace by default
@@ -571,7 +569,6 @@
               (let ((dir (file-name-directory buffer-file-name)))
                 (when (not (file-exists-p dir))
                   (make-directory dir t))))))
-
 
 (defun jens/ensure-read-only ()
   "Ensure that files opened from some common paths are read-only by default."
@@ -683,8 +680,7 @@
   (setq pinentry/gpg-reset-timer (run-with-timer 0 (* 60 45) #'pinentry/reset)))
 
 (defun jens/kill-idle-gpg-buffers ()
-  "Kill .gpg buffers after they have not been used for 120
-seconds."
+  "Kill .gpg buffers after they have not been used for 120 seconds."
   (interactive)
   ;; TODO: maybe use `midnight-mode'
   (let ((buffers-killed 0))
@@ -799,7 +795,6 @@ seconds."
   (setq-mode-local makefile-mode indent-tabs-mode t)
   ;; TODO: fix indentation
   (defun line-to-string (&optional line)
-    ""
     (save-excursion
       (if line (forward-line line))
       (buffer-substring-no-properties
@@ -807,7 +802,6 @@ seconds."
        (line-end-position))))
 
   (defun make-mode/indent ()
-    ""
     (tabify (point-min) (point-max))
     (let* ((indent-column 2)
            (line (line-to-string))
@@ -1056,11 +1050,8 @@ Works well being called from a terminal:
     (eww/delete-cookies)
     (quit-window)))
 
-;;;;; minor modes
-
-(use-package hi-lock :diminish hi-lock-mode)
-
 (use-package minibuffer
+  :bind ("C-<tab>" . #'completion-at-point)
   :config
   (setq enable-recursive-minibuffers t)
   (setq read-file-name-completion-ignore-case t)
@@ -1075,11 +1066,13 @@ Works well being called from a terminal:
   :bind
   ("C-c C-q" . occur-edit-mode))
 
+;;;;; minor modes
+
+(use-package hi-lock :diminish hi-lock-mode)
+
 (use-package xref
   :config
   (setq xref-search-program 'ripgrep))
-
-(use-package pulse)
 
 (use-package flymake
   :config
@@ -1494,7 +1487,9 @@ If METHOD does not exist, do nothing."
   (add-hook 'compilation-mode-hook #'visual-line-mode)
 
   (require 'ansi-color)
-  (add-hook* '(compilation-filter-hook shell-mode-hook) #'ansi-color-for-comint-mode-on)
+  (add-hook* '(compilation-filter-hook
+               shell-mode-hook)
+             #'ansi-color-for-comint-mode-on)
 
   (transient-define-prefix compile/transient-goto-error ()
     "Hydra for navigating between errors."
@@ -1909,7 +1904,7 @@ With prefix ARG, ask for file to open."
     (save-buffer)))
 
 (defun jens/visible-links ()
-  "return a list of all links visible in the current window."
+  "Return a list of all links visible in the current window."
   (let ((links)
         (link-regex (regexp-opt thing-at-point-uri-schemes))
         (end (window-end)))
@@ -1920,10 +1915,10 @@ With prefix ARG, ask for file to open."
     (-uniq links)))
 
 (defun jens/open-links ()
-  "interactively open a link visible in the current window."
+  "Interactively open a link visible in the current window."
   (interactive)
   (when-let* ((links (jens/visible-links))
-              (pick (completing-read "" links nil t)))
+              (pick (completing-read "urls: " links nil t)))
     (browse-url pick)))
 (bind-key "C-x C-l" #'jens/open-links)
 
@@ -2372,11 +2367,13 @@ to a temp file and puts the filename in the kill ring."
 
   (redraw-frame))
 
-(add-hook* '(special-mode-hook
-             view-mode-hook
-             diff-mode-hook
-             outline-mode-hook)
-           #'jens/render-control-chars)
+(add-hook*
+ '(special-mode-hook
+   view-mode-hook
+   diff-mode-hook
+   compilation-mode-hook
+   outline-mode-hook)
+ #'jens/render-control-chars)
 
 ;;;; packages
 
@@ -2818,7 +2815,7 @@ to a temp file and puts the filename in the kill ring."
   :straight t
   :after (magit transient)
   :config
-  (add-to-list 'forge-owned-accounts `(,(get-secret 'user-github-account) . ()))
+  (add-to-list 'forge-owned-accounts (list (list (get-secret 'user-github-account))))
   ;; setup augment.el, see (forge-bug-reference-setup)
   (transient-append-suffix 'magit-status-jump '(0 0 -1)
     '("I " "Issues" forge-jump-to-issues))
@@ -3114,9 +3111,9 @@ clipboard."
     "Cleanup names of CIRCE buffers."
     (let* ((buf (get-buffer s))
            (buf-name (->> buf
-                          (buffer-name)
-                          (string-replace "*" "")
-                          (string-trim))))
+                       (buffer-name)
+                       (string-replace "*" "")
+                       (string-trim))))
       buf-name))
 
   (defun circe/rename-chat-buffers ()
@@ -3222,10 +3219,10 @@ Prefix buffers with server-name, append @ to query buffers."
     (let ((sep "[ \n]*"))
       (cl-flet ((line-to-regex (line)
                                (->> line
-                                    (s-collapse-whitespace)
-                                    (string-replace " " sep)
-                                    (s-prepend sep)
-                                    (s-append sep))))
+                                 (s-collapse-whitespace)
+                                 (string-replace " " sep)
+                                 (s-prepend sep)
+                                 (s-append sep))))
         (let ((regex-lines (-map #'line-to-regex lines)))
           (s-join sep regex-lines)))))
 
@@ -3565,7 +3562,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   ;; extras ;;
   ;;;;;;;;;;;;
 
-  ;; TODO: fix these so org-store-link stores link to the message at ;; point in search mode.
+  ;; TODO: fix these so org-store-link stores link to the message at point in search mode.
   (require 'ol-notmuch)
   (bind-key "C-c C-l" #'org-store-link notmuch-show-mode-map)
   (bind-key "C-c C-l" #'org-store-link notmuch-search-mode-map))
@@ -3818,6 +3815,9 @@ if BACKWARDS is non-nil, jump backwards instead."
   :config
   (setq blacken-line-length 'fill))
 
+(use-package realgud
+  :defer t
+  :straight t)
 
 (use-package highlight-defined
   :straight t
@@ -3849,16 +3849,14 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 (use-package package-lint :straight t :defer t :commands (package-lint-current-buffer))
 (use-package relint :straight t :defer t :commands (relint-current-buffer relint-file relint-directory))
-
 (use-package clang-format :straight t :defer t)
+(use-package rmsbolt :straight t :defer t)
 
 (use-package flymake-shellcheck
   :straight t
   :commands flymake-shellcheck-load
   :init
   (add-hook 'sh-mode-hook #'flymake-shellcheck-load))
-
-(use-package rmsbolt :straight t :defer t)
 
 (use-package ob-async
   :disabled t
@@ -3876,6 +3874,8 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 ;;;; minor modes
 
+(use-package git-timemachine :straight t :defer t)
+
 (use-package tree-sitter
   :straight t
   :hook (after-init . global-tree-sitter-mode))
@@ -3887,7 +3887,6 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package xterm-color
   :straight t)
 
-(use-package git-timemachine :straight t :defer t)
 (use-package rainbow-mode
   ;; highlight color-strings (hex, etc.)
   :straight t
@@ -4090,6 +4089,8 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package gist :straight t :defer t) ;; work with github gists
 (use-package edit-indirect :straight t)
 (use-package spinner :straight t)
+(use-package browse-at-remote :straight t)
+(use-package org-web-tools :straight t :after org)
 
 (use-package auto-compile
   :straight t
@@ -4099,15 +4100,6 @@ if BACKWARDS is non-nil, jump backwards instead."
 
   :straight t
   :config
-(use-package org-web-tools
-  :straight t
-  :defer t
-  :after (org s))
-
-(use-package help-fns+
-  :download "https://www.emacswiki.org/emacs/download/help-fns%2b.el"
-  :demand t)
-
 
 (use-package epithet
   :straight t
@@ -4165,7 +4157,7 @@ if BACKWARDS is non-nil, jump backwards instead."
     "Use `rg' to find references."
     (interactive)
     (unless (fboundp 'rg)
-      (message "Install `rg' to use `smart-jump-simple-find-references-with-rg'."))
+      (message "Install `rg' to use `smart-jump/find-references-with-rg'."))
 
     (if (not (fboundp 'smart-jump-refs-search-rg))
         (rg-define-search smart-jump-refs-search-rg
@@ -4461,7 +4453,6 @@ re-enable afterwards."
   :straight t
   :after (embark consult))
 
-
 (use-package posframe
   :straight t
   :demand t
@@ -4480,7 +4471,7 @@ re-enable afterwards."
 (use-package lsp-mode
   :straight t
   :defer t
-  :hook ((lsp-mode . lsp-enable-which-key-integration))
+  :hook (lsp-mode . lsp-enable-which-key-integration)
   :config
   (setq lsp-eldoc-render-all t)
   (setq lsp-completion-enable-additional-text-edit nil)
