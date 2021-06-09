@@ -537,10 +537,6 @@
 (setq initial-scratch-message nil)
 (setq initial-major-mode 'emacs-lisp-mode)
 
-;; don't show trailing whitespace by default
-(setq-default show-trailing-whitespace nil)
-(setq whitespace-style '(face trailing))
-
 ;; timestamp messages in the *Warnings* buffer
 (setq warning-prefix-function
       (lambda (_level entry)
@@ -1140,14 +1136,15 @@ Works well being called from a terminal:
 (use-package whitespace
   :demand t
   :diminish whitespace-mode
+  :hook ((text-mode prog-mode) . whitespace/show-trailing)
   :config
+  (setq whitespace-style '(face empty trailing))
+
   (defun whitespace/show-trailing ()
     "Show trailing whitespace in buffer."
     (interactive)
     (setq show-trailing-whitespace t)
-    (whitespace-mode +1))
-
-  (add-hook* '(text-mode-hook prog-mode-hook) #'whitespace/show-trailing))
+    (whitespace-mode +1)))
 
 (use-package elec-pair ;; insert parens-type things in pairs
   :demand t
