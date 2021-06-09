@@ -260,8 +260,6 @@
   :config
   (load-theme 'zent t))
 
-(use-package zenburn-theme :disabled t :straight t)
-
 ;;;; cache, temp files, etc.
 
 (log-info "Setting up cache / temp-files / etc.")
