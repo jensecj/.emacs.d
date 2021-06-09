@@ -44,7 +44,8 @@
         ("org" . "https://orgmode.org/elpa/") ;; TODO: remove this after org 9.5, since it's moving to NonGNU elpa
         ))
 
-;; setup font, a bit convoluted because we also want the first frame
+;; setup fonts
+;; a bit convoluted because we also want the first frame
 ;; spawned by the daemon to use the face.
 (defun jens/init-fonts ()
   "Setup font configuration for new frames."
@@ -57,10 +58,9 @@
     ;; only setup fonts once
     (remove-hook 'server-after-make-frame-hook #'jens/init-fonts)))
 
-(unless (daemonp)
+(if (daemonp)
+    (add-hook 'server-after-make-frame-hook #'jens/init-fonts)
   (jens/init-fonts))
-
-(add-hook 'server-after-make-frame-hook #'jens/init-fonts)
 
 (defvar idle-with-no-active-frames-functions '())
 (defun jens/idle-with-no-active-frames ()
