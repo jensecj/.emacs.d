@@ -1746,6 +1746,13 @@ If METHOD does not exist, do nothing."
 
   (add-hook 'org-after-todo-statistics-hook #'org/complete-todo-entries)
 
+  (defun org/fold-completed-todo-entries ()
+    "Hide an entry when it is marked DONE."
+    (when (string= org-state "DONE")
+      (hide-subtree)))
+
+  (add-hook 'org-after-todo-state-change-hook #'org/fold-completed-todo-entries)
+
   ;; `$ $' is a pair for latex-math in org-mode
   (defvar org-extra-electric-pairs '((?\$ . ?\$)))
 
