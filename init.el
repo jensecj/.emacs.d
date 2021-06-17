@@ -2545,7 +2545,7 @@ to a temp file and puts the filename in the kill ring."
   :defer t
   :bind (("C-c n" . cleanup-buffer))
   :config
-  (cleanup-add 'org-mode #'org/indent)
+  (cleanup-add 'org-mode '(whitespace/collapse-newlines-in-buffer org/format-buffer))
   (cleanup-add 'python-mode #'blacken-buffer))
 
 (use-package augment
