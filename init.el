@@ -1136,15 +1136,18 @@ Works well being called from a terminal:
 (use-package whitespace
   :demand t
   :diminish whitespace-mode
-  :hook ((text-mode prog-mode) . whitespace/show-trailing)
   :config
   (setq whitespace-style '(face empty trailing))
+  (setq-mode-local text-mode show-trailing-whitespace t)
+  (setq-mode-local prog-mode show-trailing-whitespace t)
 
-  (defun whitespace/show-trailing ()
-    "Show trailing whitespace in buffer."
+  (defun whitespace/collapse-newlines-in-buffer ()
+    "Collapses multiple occurances of newlines in the current buffer."
     (interactive)
-    (setq show-trailing-whitespace t)
-    (whitespace-mode +1)))
+    (save-excursion
+      (goto-char (point-max))
+      (while (re-search-backward "\n\n\n" nil 'noerror)
+        (replace-match "\n\n")))))
 
 (use-package elec-pair ;; insert parens-type things in pairs
   :demand t
