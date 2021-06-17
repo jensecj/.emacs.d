@@ -29,6 +29,7 @@
 (require 'org)
 (require 'rx)
 
+;; * helpers
 
 (defun org-extra-subtree-remove-checkboxes (subtree &optional checkbox-state)
   "Returns SUBTREE with all checkboxes that are in CHECKBOX-STATE removed."
@@ -87,6 +88,29 @@ document."
         (string-match "\\[\\[.*\\]\\[" text)
         (insert (substring-no-properties text (+ (match-beginning 0) 2) (- (match-end 0) 2)))
         (buffer-string)))))
+
+;; * commands
+
+(defun org-extra-move-subtree-at-point-to-top ()
+  "Move the subtree at point to the top of the current buffer."
+  (interactive)
+  (save-excursion
+    (when (org-at-heading-p)
+      (org-cut-subtree)
+      (goto-char (point-min))
+      (newline)
+      (forward-line -1)
+      (org-paste-subtree))))
+
+(defun org-extra-move-subtree-at-point-to-bottom ()
+  "Move the subtree at point to the bottom of the current buffer."
+  (interactive)
+  (save-excursion
+    (when (org-at-heading-p)
+      (org-cut-subtree)
+      (goto-char (point-max))
+      (newline)
+      (org-paste-subtree))))
 
 (defun org-extra-copy-url-at-point ()
   "Grab URL from org-link at point."
