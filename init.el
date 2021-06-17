@@ -2472,7 +2472,9 @@ to a temp file and puts the filename in the kill ring."
   (:map org-extra-map
         ("*" . #'org-extra-rate)
         ("r" . #'org-extra-refile-here)
-        ("c" . #'org-extra-copy-url-at-point))
+        ("c" . #'org-extra-copy-url-at-point)
+        ("T" . #'org-extra-move-subtree-at-point-to-top)
+        ("B" . #'org-extra-move-subtree-at-point-to-bottom))
   :config
   (add-to-list 'org-speed-commands '("C" . org-extra-copy-url-at-point)))
 
