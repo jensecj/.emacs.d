@@ -3101,7 +3101,8 @@ clipboard."
   :straight t
   :defer t
   :bind (:map circe-mode-map
-              ("C-t" . #'circe/switch-buffer))
+              ("C-t" . #'circe/switch-buffer)
+              ("C-S-t" . #'tracking-next-buffer))
   :config
   (setq circe-default-quit-message "")
   (setq circe-default-part-message "")
@@ -3121,6 +3122,7 @@ clipboard."
   (setq lui-time-stamp-format "%H:%M ")
   (setq lui-time-stamp-only-when-changed-p nil)
   (setq lui-fill-column 80)
+  (setq lui-flyspell-p t)
 
   (require 'circe-color-nicks)
   (setq circe-color-nicks-everywhere t)
@@ -3128,6 +3130,7 @@ clipboard."
                 '("the" "The" "NSA" "nsa" "another" "nevermind"))
 
   (enable-circe-color-nicks)
+  (enable-lui-track)
 
   ;; don't list names when joining channels
   (circe-set-display-handler "353" 'circe-display-ignore)
