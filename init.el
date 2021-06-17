@@ -1915,7 +1915,8 @@ With prefix ARG, ask for file to open."
     (save-excursion
       (goto-char (window-start))
       (while (re-search-forward link-regex end t)
-        (push (thing-at-point 'url) links)))
+        (when-let ((url (thing-at-point 'url)))
+          (push url links))))
     (-uniq links)))
 
 (defun jens/open-links ()
