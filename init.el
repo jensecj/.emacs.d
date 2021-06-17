@@ -1799,6 +1799,34 @@ If METHOD does not exist, do nothing."
     (set (make-variable-buffer-local 'org-confirm-babel-evaluate)
          (not org-confirm-babel-evaluate)))
 
+  (defun org/format-buffer ()
+    (interactive)
+    (whitespace/collapse-newlines-in-buffer)
+
+    (org-map-entries
+     (lambda ()
+       ;; insert blank line after headline, before entry content
+       (let ((end (org-entry-end-position)))
+         (forward-line)
+
+         ;; skip planning lines
+         (while (and (org-at-planning-p)
+                     (< (point) (point-max)))
+           (forward-line))
+
+         ;; skip drawers. You might think that `org-at-drawer-p' would suffice, but
+         ;; for some reason it doesn't work correctly when operating on hidden text.
+         ;; This works, taken from `org-agenda-get-some-entry-text'.
+         (while (re-search-forward org-drawer-regexp end t)
+           (re-search-forward "^[ \t]*:END:.*\n?" end t)
+           (goto-char (match-end 0)))
+
+         ;; only insert a newline if it makes sense
+         (unless (or (= (point) (point-max))
+                     (org-at-heading-p)
+                     (looking-at-p "\n"))
+           (insert "\n"))))))
+
   (defun org/indent ()
     "Indent line or region in org-mode."
     (interactive)
