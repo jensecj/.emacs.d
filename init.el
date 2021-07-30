@@ -3115,6 +3115,7 @@ clipboard."
   :straight (circe :host github :repo "jorgenschaefer/circe"
                    :fork (:host github :repo "jensecj/circe"))
   :defer t
+  :commands circe/connect
   :bind (:map circe-mode-map
               ("C-t" . #'circe/switch-buffer)
               ("C-S-t" . #'tracking-next-buffer))
@@ -3127,10 +3128,8 @@ clipboard."
   (setq circe-default-quit-message "")
   (setq circe-default-part-message "")
   (setq circe-reduce-lurker-spam t)
-
+  (setq circe-server-max-reconnect-attempts 0)
   (setq circe-server-auto-join-default-type :after-auth)
-
-  (setq circe-highlight-nick-type 'occurrence)
 
   (setq circe-format-say "{nick}: {body}")
   (setq circe-format-self-say "{nick}: {body}")
@@ -3141,23 +3140,31 @@ clipboard."
   (setq lui-time-stamp-position 'left)
   (setq lui-time-stamp-format "%H:%M ")
   (setq lui-time-stamp-only-when-changed-p nil)
-  (setq lui-fill-column 80)
+  (setq lui-fill-column 75)
   (setq lui-flyspell-p t)
 
   (require 'circe-color-nicks)
   (setq circe-color-nicks-everywhere t)
+  (setq circe-highlight-nick-type 'occurrence)
+  (setq circe-color-nicks-min-contrast-ratio 5)
+  (setq circe-color-nicks-min-difference 12)
+  (setq circe-color-nicks-min-fg-difference 12)
+  (setq circe-color-nicks-persist t)
+
   (add-to-list* 'circe-color-nicks-message-blacklist
                 '("the" "The" "NSA" "nsa" "another" "nevermind"))
 
   (enable-circe-color-nicks)
   (enable-lui-track)
 
-  ;; don't list names when joining channels
-  (circe-set-display-handler "353" 'circe-display-ignore)
-  (circe-set-display-handler "366" 'circe-display-ignore)
-
   ;; don't display when lurkers become active
   (advice-add #'circe-lurker-display-active :override #'ignore)
+
+  ;; subword-mode messes with `circe-color-nicks-everywhere'
+  (add-hook
+   'circe-channel-mode-hook
+   (defun circe/disable-subword-mode ()
+     (subword-mode -1)))
 
   (defun circe/buffers ()
     "Return a list of Circe buffers"
@@ -3233,15 +3240,27 @@ Prefix buffers with server-name, append @ to query buffers."
 
   (advice-add #'circe-duration-string :override #'circe/duration-string)
 
-  (comment
-   (circe "Libera Chat"
-          :tls t
-          :nick "jensecj"
-          :sasl-username "jensecj"
-          :sasl-password (lambda (&rest _) (get-secret "irc/libera/jensecj"))
-          :channels '("#emacs"))
-   )
-  )
+  (defconst circe/configurations
+    '(("Freenode"
+       :tls t
+       :nick "jens"
+       :sasl-username "jens"
+       :sasl-password (lambda (&rest _) (get-secret "irc/freenode/jens"))
+       :channels ("#emacs"))
+      ("Libera Chat"
+       :tls t
+       :host "irc.eu.libera.chat"
+       :nick "jcj"
+       :sasl-username "jcj"
+       :sasl-password (lambda (&rest _) (get-secret "irc/libera/jcj"))
+       :channels ("#emacs" "#fsf" "#fsfe" "#gnu"))))
+
+  (defun circe/connect ()
+    (interactive)
+    (when-let* ((networks (mapcar #'car circe/configurations))
+                (network (completing-read "network: " networks))
+                (pick (assoc network circe/configurations)))
+      (apply #'circe pick))))
 
 (use-package notmuch
   ;; TODO: setup notmuch for multiple mail-profiles
