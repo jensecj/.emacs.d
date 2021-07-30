@@ -873,6 +873,7 @@
 
   (add-hook* '(dired-mode-hook wdired-mode-hook) #'dired/always-hide-details-information)
 
+  (setq dired-kill-when-opening-new-dired-buffer t)
   (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\..+$\\|^\\..+$")
   (setq dired-listing-switches "-AghoXN --group-directories-first")
   (setq dired-create-destination-dirs 'always)
