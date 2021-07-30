@@ -1,11 +1,9 @@
 ;;; -*- lexical-binding: t -*-
+
 ;;; prelude
 ;;;; early setup
 
 ;; TODO: look into (require 'message), and if it breaks #'message
-
-;; use lexical binding for initialization code
-(setq-default lexical-binding t)
 
 ;; some functions for logging
 (defmacro log-info (txt &rest args)    `(message ,(concat "\n" txt) ,@args))
