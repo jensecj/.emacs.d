@@ -840,6 +840,8 @@
 
 (use-package bookmark
   :config
+  (setq bookmark-menu-confirm-deletion t)
+
   (advice-add #'bookmark-jump :before
               (lambda (&rest _)
                 "Push point to the marker-stack before jumping to bookmark."
