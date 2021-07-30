@@ -4688,8 +4688,6 @@ re-enable afterwards."
 (bind-key* "C-M-n" #'forward-paragraph)
 (bind-key* "C-M-p" #'backward-paragraph)
 
-(bind-key* "C-c g" #'revert-buffer)
-
 ;; Scroll the buffer without moving the point (unless we over-shoot)
 (bind-key* "C-<up>" (xi (scroll-down 5)))
 (bind-key* "C-<down>" (xi (scroll-up 5)))
