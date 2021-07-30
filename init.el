@@ -4254,6 +4254,7 @@ if BACKWARDS is non-nil, jump backwards instead."
         (rg-define-search smart-jump-refs-search-rg
           "Search for references for QUERY in all files in
                 the current project."
+          :flags '("-aa")
           :dir project
           :files current))
 
