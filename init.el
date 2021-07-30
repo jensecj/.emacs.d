@@ -1634,8 +1634,6 @@ If METHOD does not exist, do nothing."
              org-indent-line
              org-babel-do-load-languages
              org-context)
-  :bind-keymap
-  ("M-o" . org-extra-map)
   :bind
   (
    :map org-mode-map
@@ -1661,9 +1659,6 @@ If METHOD does not exist, do nothing."
   :init
   (setq org-modules '(org-bibtex org-docview org-info))
   :config
-  (defvar org-extra-map (make-sparse-keymap)
-    "Extra keymap for `org-mode'.")
-
   ;;;;;;;;;;;;;;;;;;;;;;
   ;; general settings ;;
   ;;;;;;;;;;;;;;;;;;;;;;
@@ -2449,16 +2444,16 @@ to a temp file and puts the filename in the kill ring."
   :straight (orgflow :type git :repo "git@github.com:jensecj/orgflow.el.git")
   :after org
   :bind
-  (:map org-extra-map
-        ("u" . #'orgflow-visit-linked-url)
-        ("f" . #'orgflow-visit-linked-file)
-        ("i" . #'orgflow-insert-link-to-nearby-file)
-        ("R" . #'orgflow-refile-to-nearby-file)
-        ("n" . #'orgflow-visit-nearby-file)
-        ("t" . #'orgflow-visit-tagged-heading)
-        ("h" . #'orgflow-visit-nearby-heading)
-        ("H" . #'orgflow-refile-here)
-        ("b" . #'orgflow-visit-backlinks))
+  (("M-o u" . #'orgflow-visit-linked-url)
+   ("M-o f" . #'orgflow-visit-linked-file)
+   ("M-o i" . #'orgflow-insert-link-to-nearby-file)
+   ("M-o R" . #'orgflow-refile-to-nearby-file)
+   ("M-o n" . #'orgflow-visit-nearby-file)
+   ("M-o o" . #'orgflow-visit-open-file)
+   ("M-o t" . #'orgflow-visit-tagged-heading)
+   ("M-o h" . #'orgflow-visit-nearby-heading)
+   ("M-o H" . #'orgflow-refile-here)
+   ("M-o b" . #'orgflow-visit-backlinks))
   :config
   (setq orgflow-section-sizes '(40 40))
   (setq orgflow-directory (lambda () (or default-directory (project-root (project-current)))))
@@ -2481,12 +2476,12 @@ to a temp file and puts the filename in the kill ring."
 (use-package org-extra
   :after org
   :bind
-  (:map org-extra-map
-        ("*" . #'org-extra-rate)
-        ("r" . #'org-extra-refile-here)
-        ("c" . #'org-extra-copy-url-at-point)
-        ("T" . #'org-extra-move-subtree-at-point-to-top)
-        ("B" . #'org-extra-move-subtree-at-point-to-bottom))
+  (("M-o *" . #'org-extra-rate)
+   ("M-o r" . #'org-extra-refile-here)
+   ("M-o a" . #'org-extra-agenda-here)
+   ("M-o c" . #'org-extra-copy-url-at-point)
+   ("M-o T" . #'org-extra-move-subtree-at-point-to-top)
+   ("M-o B" . #'org-extra-move-subtree-at-point-to-bottom))
   :config
   (add-to-list 'org-speed-commands '("C" . org-extra-copy-url-at-point)))
 
