@@ -141,6 +141,12 @@ document."
       (delete-region (car bounds) (cdr bounds))
       (insert entry))))
 
+(defun org-extra-agenda-here ()
+  (interactive)
+  (let* ((org-agenda-files (list (buffer-file-name))))
+    (org-agenda-set-restriction-lock 'file)
+    (org-agenda-list (* 7 3))))
+
 (defun org-extra-rate ()
   "Rate an org-heading on a scale from 1-10"
   (interactive)
