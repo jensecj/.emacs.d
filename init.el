@@ -3112,7 +3112,8 @@ clipboard."
   (transient-suffix-put 'magit-dispatch "E" :command 'vdiff-magit))
 
 (use-package circe
-  :straight t
+  :straight (circe :host github :repo "jorgenschaefer/circe"
+                   :fork (:host github :repo "jensecj/circe"))
   :defer t
   :bind (:map circe-mode-map
               ("C-t" . #'circe/switch-buffer)
