@@ -17,6 +17,7 @@
  ("~/.emacs.d/straight/repos/straight-ui.el/")
  ("~/.emacs.d/straight/repos/augment.el/")
  ("~/.emacs.d/straight/repos/orgflow.el/")
+ ("~/.emacs.d/straight/repos/zent-theme.el/")
  ("~/.emacs.d/straight/repos/org-proplines.el/")
 
  ("~/vault/org/")
