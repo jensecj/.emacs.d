@@ -1923,6 +1923,7 @@ If METHOD does not exist, do nothing."
       (insert content))
     (switch-to-buffer-other-window newbuf)
     (goto-char p)))
+(bind-key "C-x x C" #'jens/clone-buffer)
 
 (defun jens/sudo-find-file (filename)
   "Open FILENAME with superuser permissions."
@@ -1949,6 +1950,7 @@ With prefix ARG, ask for file to open."
     (jens/sudo-find-file buffer-file-name)
     (goto-char place)
     (funcall mode)))
+(bind-key "C-x x e" #'jens/sudo-edit)
 
 (defun jens/sudo-save ()
   "Save the current buffer using sudo through TRAMP."
