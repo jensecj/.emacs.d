@@ -2949,6 +2949,9 @@ to a temp file and puts the filename in the kill ring."
   :config
   (require 'today)
 
+  (define-key elfeed-search-mode-map (kbd "<prior>") (xi (forward-line -5)))
+  (define-key elfeed-search-mode-map (kbd "<next>") (xi (forward-line 5)))
+
   (setq elfeed-search-filter "@100-month-ago +unread")
 
   (setq elfeed-search-trailing-width 25)
