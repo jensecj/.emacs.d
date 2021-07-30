@@ -3659,6 +3659,8 @@ if BACKWARDS is non-nil, jump backwards instead."
   ;; extras ;;
   ;;;;;;;;;;;;
 
+  (advice-add #'notmuch-refresh-this-buffer :around #'jens/restore-position-after-call)
+
   ;; TODO: fix these so org-store-link stores link to the message at point in search mode.
   (require 'ol-notmuch)
   (bind-key "C-c C-l" #'org-store-link notmuch-show-mode-map)
