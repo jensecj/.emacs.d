@@ -1011,11 +1011,24 @@ Works well being called from a terminal:
          ("M-s M-s" . #'eww-list-buffers)
          ("M-s M-c" . #'url-cookie-list)
          :map eww-mode-map
-         ("q" . #'eww/quit))
+         ("q" . #'eww/quit)
+         ("g" . #'eww/reload))
   :config
   (require 'browse-url)
 
+  (setq eww-browse-url-new-window-is-tab nil)
   (setq eww-download-directory (expand-file-name "~/downloads"))
+
+  (defun eww/reload ()
+    (interactive)
+    (let ((p (point))
+          (ws (window-start)))
+      (add-hook 'eww-after-render-hook
+                (defun eww/restore ()
+                  (goto-char p)
+                  (set-window-start (selected-window) ws)
+                  (remove-hook 'eww-after-render-hook #'eww/restore)))
+      (eww-reload)))
 
   (defun eww/search-region ()
     "Open eww and search for the contents of the region."
