@@ -4140,9 +4140,12 @@ if BACKWARDS is non-nil, jump backwards instead."
   :demand t
   :config
   (setq shackle-rules
-        '(((rx "*helpful*") :regexp t :select t :same t :inhibit-window-quit t)
-          ((rx "-clojuredocs*") :select t :same t :inhibit-window-quit t)
-          ((rx (or "*Apropos*" "*Info*" "*Help*")) :select t :same t :inhibit-window-quit t)
+        '(
+          (("*Warnings*" "*Messages*") :size 0.3 :align 'below)
+          ((Info-mode help-mode helpful-mode) :same t :select t :inhibit-window-quit t)
+          ("\\*info" :regexp t :select t :same t :inhibit-window-quit t)
+          ("\\*help" :regexp t :select t :same t :inhibit-window-quit t)
+          ("\\*helpful" :regexp t :select t :same t :inhibit-window-quit t)
           ((rx "*undo-tree*") :regexp t :select t :align right :inhibit-window-quit t)
           ((rx "*xref*") :regexp t :same t :inhibit-window-quit t)))
 
