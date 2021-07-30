@@ -1973,8 +1973,9 @@ With prefix ARG, ask for file to open."
       (goto-char (window-start))
       (while (re-search-forward link-regex end t)
         (when-let ((url (thing-at-point 'url)))
-          (push url links))))
-    (-uniq links)))
+          (unless (member url links)
+            (setq links (append links (list url)))))))
+    links))
 
 (defun jens/open-links ()
   "Interactively open a link visible in the current window."
