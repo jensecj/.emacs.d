@@ -3118,6 +3118,11 @@ clipboard."
               ("C-t" . #'circe/switch-buffer)
               ("C-S-t" . #'tracking-next-buffer))
   :config
+  (add-hook
+   'circe-channel-mode-hook
+   (defun circe/set-fill-column ()
+     (setq-local fill-column 80)))
+
   (setq circe-default-quit-message "")
   (setq circe-default-part-message "")
   (setq circe-reduce-lurker-spam t)
