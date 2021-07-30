@@ -2496,7 +2496,7 @@ to a temp file and puts the filename in the kill ring."
    ("M-o T" . #'org-extra-move-subtree-at-point-to-top)
    ("M-o B" . #'org-extra-move-subtree-at-point-to-bottom))
   :config
-  (add-to-list 'org-speed-commands '("C" . org-extra-copy-url-at-point)))
+  (add-to-list 'org-speed-commands '("c" . org-extra-copy-url-at-point)))
 
 (use-package dev-extra :demand t)
 
