@@ -1894,7 +1894,15 @@ If METHOD does not exist, do nothing."
 (use-package org-agenda
   :defer t
   ;; TODO: have a look at https://github.com/alphapapa/org-super-agenda
-  )
+  :bind
+  (:map org-agenda-mode-map
+        ("M" . org-agenda-bulk-mark)
+        ("m" . org-agenda-month-view))
+  :config
+  (setq org-agenda-compact-blocks t)
+  (setq org-agenda-time-leading-zero t)
+  (setq org-agenda-restore-windows-after-quit t)
+  (setq org-agenda-window-setup 'other-window))
 
 (use-package org-ql :straight t :defer t)
 
