@@ -2710,18 +2710,19 @@ to a temp file and puts the filename in the kill ring."
   (with-eval-after-load 'company
     (bind-key "C-+" #'dokument-company-menu-selection-quickhelp company-active-map))
 
+  ;; TODO: make work with `nil'
   (defun dokument/inspect-symbol-at-point (&optional arg)
     "Inspect symbol at point."
     (interactive "P")
     (require 'dokument)
     (require 'helpful)
-    (let* ((sym (symbol-at-point))
-           (value (cond
-                   ((fboundp sym)
-                    ;; TODO: fix functions defined in C.
-                    (let ((def (helpful--definition sym t)))
-                      (read (helpful--source sym t (car def) (cadr def)))))
-                   ((boundp sym) (symbol-value sym)))))
+    (when-let* ((sym (symbol-at-point))
+                (value (cond
+                        ((fboundp sym)
+                         ;; TODO: fix functions defined in C.
+                         (let ((def (helpful--definition sym t)))
+                           (read (helpful--source sym t (car def) (cadr def)))))
+                        ((boundp sym) (symbol-value sym)))))
       (if arg
           (with-current-buffer (get-buffer-create "*Inspect*")
             (let ((inhibit-read-only t))
@@ -2732,7 +2733,7 @@ to a temp file and puts the filename in the kill ring."
             (view-buffer-other-window (current-buffer)))
 
         ;; TODO: set max width on popup-frame
-        (funcall dokument-display-fn
+        (funcall dokument-display-fn sym
                  (dokument-elisp--fontify-as-code
                   (with-output-to-string
                     (pp value)))))))
