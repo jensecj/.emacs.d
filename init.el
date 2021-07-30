@@ -2889,16 +2889,6 @@ to a temp file and puts the filename in the kill ring."
   (transient-append-suffix 'magit-status-jump '(0 0 -1)
     '("P " "Pull-requests" forge-jump-to-pullreqs)))
 
-(use-package magithub
-  ;; https://github.com/vermiculus/magithub/blob/9fb9c653d0dad3da7ccff3ae321fa6e54c08f41b/magithub.el#L223
-  ;; https://github.com/vermiculus/ghub-plus
-  ;; https://github.com/vermiculus/apiwrap.el
-  ;; https://github.com/magit/ghub/issues/84
-  :straight t
-  :after magit
-  :config
-  (magithub-feature-autoinject t))
-
 (use-package magit-todos
   :straight t
   :after magit
