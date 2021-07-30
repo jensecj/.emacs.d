@@ -3444,9 +3444,9 @@ Prefix buffers with server-name, append @ to query buffers."
   (defun notmuch/show-list-links ()
     "List links in the current message, if one is selected, browse to it."
     (interactive)
-    (let ((links (notmuch-show--gather-urls)))
-      (if links
-          (browse-url (completing-read "Links: " links)))))
+    (when-let* ((links (notmuch-show--gather-urls))
+                (vertico-sort-override-function #'identity))
+      (browse-url (completing-read "Links: " links))))
 
   (defun notmuch-show/eldoc ()
     "Simple eldoc handler for `notmuch-show-mode'.
