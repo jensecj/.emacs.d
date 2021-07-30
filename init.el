@@ -354,6 +354,16 @@
 ;;; built-in
 ;;;; settings
 
+(use-package emacs
+  :config
+  (defun jens/restore-position-after-call (fn &rest args)
+    (let ((p (point))
+          (ws (window-start)))
+      (apply fn args)
+      (set-window-start (selected-window) ws)
+      (goto-char p)))
+  )
+
 (log-info "Redefining built-in defaults")
 
 ;; location of emacs source files
