@@ -1916,7 +1916,7 @@ If METHOD does not exist, do nothing."
 (defun jens/clone-buffer ()
   "Open a clone of the current buffer."
   (interactive)
-  (let ((newbuf (buf-new-scratch-buffer))
+  (let ((newbuf (generate-new-buffer (buffer-name)))
         (content (buffer-string))
         (p (point)))
     (with-current-buffer newbuf
