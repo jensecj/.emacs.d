@@ -3778,27 +3778,6 @@ if BACKWARDS is non-nil, jump backwards instead."
         ("C-," . flyspell-correct-at-point))
   :commands flyspell-correct-at-point)
 
-(use-package frog-menu
-  :straight t
-  :after flyspell-correct
-  :config
-  (setq frog-menu-avy-padding t)
-  (setq frog-menu-min-col-padding 4)
-  (setq frog-menu-format 'vertical)
-
-  (defun frog-menu/flyspell-correct (candidates word)
-    (interactive)
-    (let* ((actions `(("C-s" "Save word" (save . ,word))
-                      ("C-a" "Accept (session)" (session . ,word))
-                      ("C-b" "Accept (buffer)" (buffer . ,word))
-                      ("C-c" "Skip" (skip . ,word))))
-           (prompt (format "Dictionary: [%s]" (or ispell-local-dictionary
-                                                  ispell-dictionary
-                                                  "default"))))
-      (frog-menu-read prompt candidates actions)))
-
-  (setq flyspell-correct-interface #'frog-menu/flyspell-correct))
-
 (use-package diredfl
   :straight t
   :after dired
