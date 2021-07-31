@@ -1031,6 +1031,12 @@ Works well being called from a terminal:
   (setq eww-browse-url-new-window-is-tab nil)
   (setq eww-download-directory (expand-file-name "~/downloads"))
 
+  (add-hook 'eww-mode-hook
+            (defun eww/setup-eldoc ()
+              (defun eww/eldoc ()
+                (thing-at-point 'url))
+              (set (make-local-variable 'eldoc-documentation-function) #'eww/eldoc)))
+
   (defun eww/reload ()
     (interactive)
     (let ((p (point))
