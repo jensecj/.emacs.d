@@ -1017,7 +1017,7 @@ Works well being called from a terminal:
 (use-package eww
   :defer t
   :bind (("M-s M-o" . #'eww/open-url-at-point)
-         ("M-s M-w" . #'eww/search-region)
+         ("M-s M-w" . #'eww-search-words)
          ("M-s M-d" . #'eww/download-url-at-point)
          ("M-s M-D" . #'eww/delete-cookies)
          ("M-s M-s" . #'eww-list-buffers)
@@ -1041,16 +1041,6 @@ Works well being called from a terminal:
                   (set-window-start (selected-window) ws)
                   (remove-hook 'eww-after-render-hook #'eww/restore)))
       (eww-reload)))
-
-  (defun eww/search-region ()
-    "Open eww and search for the contents of the region."
-    (interactive)
-    (when-let (((use-region-p))
-               (query (buffer-substring (region-beginning) (region-end)))
-               (url (concat eww-search-prefix query))
-               (buf (get-buffer-create "*eww*")))
-      (view-buffer-other-window buf)
-      (eww url)))
 
   (defun eww/open-url-at-point ()
     "Open link at point in eww."
