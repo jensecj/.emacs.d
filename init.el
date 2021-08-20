@@ -3972,6 +3972,26 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 ;;;; minor modes
 
+(use-package minibuffer-line
+  :straight t
+  :config
+  (setq minibuffer-line-refresh-interval 30)
+  (setq minibuffer-line-format
+        (list "%e"
+              '(:eval (format "%s buffers" (length (buffer-list))))
+              ))
+
+  (with-eval-after-load 'circe
+    (defun minibuffer-line/circe ()
+      (when tracking-buffers
+        (format ", new messages: %s" (string-join tracking-buffers ", "))))
+
+    (add-to-list 'minibuffer-line-format '(:eval (minibuffer-line/circe)) 'append))
+
+  (minibuffer-line-mode +1)
+  :custom-face
+  (minibuffer-line ((t (:foreground ,zent-fg-05)))))
+
 (use-package git-timemachine :straight t :defer t)
 
 (use-package tree-sitter
