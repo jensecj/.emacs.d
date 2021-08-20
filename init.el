@@ -836,6 +836,18 @@
 (use-package hl-line
   :config
   (setq global-hl-line-sticky-flag t)
+
+  (advice-add
+   #'face-at-point
+   :around
+   (defun face-at-point/without-hl-line (fn &rest args)
+     (let ((applied global-hl-line-mode)
+           (res))
+       (when applied (global-hl-line-mode -1))
+       (setq res (apply fn args))
+       (when applied (global-hl-line-mode +1))
+       res)))
+
   (global-hl-line-mode +1))
 
 (use-package ibuffer
@@ -3913,6 +3925,18 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq highlight-thing-limit-to-region-in-large-buffers-p t)
   (setq highlight-thing-narrow-region-lines 30)
   (add-to-list* 'highlight-thing-excluded-major-modes '(pdf-view-mode doc-view-mode notmuch-show-mode notmuch-search-mode))
+
+  (advice-add
+   #'face-at-point
+   :around
+   (defun face-at-point/without-hl-thing (fn &rest args)
+     (let ((applied highlight-thing-mode)
+           (res))
+       (when applied (highlight-thing-mode -1))
+       (setq res (apply fn args))
+       (when applied (highlight-thing-mode +1))
+       res)))
+
   (global-highlight-thing-mode +1))
 
 (use-package fontify-face
