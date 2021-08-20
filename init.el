@@ -2615,14 +2615,6 @@ to a temp file and puts the filename in the kill ring."
   :defer t
   :bind ("M-f" . fullscreen-toggle))
 
-(use-package highlight-bookmarks
-  :demand t
-  :commands highlight-bookmarks-in-this-buffer
-  :config
-  (add-hook* '(find-file-hook after-save-hook) #'highlight-bookmarks-in-this-buffer)
-  (advice-add* '(bookmark-jump bookmark-set bookmark-delete)
-               :after
-               #'highlight-bookmarks-in-this-buffer))
 
 (use-package today
   :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
