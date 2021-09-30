@@ -2648,14 +2648,18 @@ to a temp file and puts the filename in the kill ring."
   (add-to-list* 'today-capture-auto-handlers
                 `(("emacswiki\\.org" . read)
                   ("github\\.com" . plain)
+                  ("goodreads\\.com" . plain)
                   ("github\\.io" . read)
                   ("lwn\\.net" . read)
+                  ("gatesnotes\\.com" . read)
+                  (,(rx (or "drewdevault.com" "sourcehut.org")) . read)
                   ("towardsdatascience\\.com" . read)
                   ("wikipedia\\.org" . read)
                   ("teddit\\.net" . read)
                   (,(rx (or "news.ycombinator.com" "lobste.rs")) . read)
                   (,(rx (or "twitch.tv"
                             "vimeo.com"
+                            "yewtu.be"
                             "subscriptions.gir.st"
                             "invidio.us"
                             "invidious.snopyta.org")) . watch)))
