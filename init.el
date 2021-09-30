@@ -1570,29 +1570,8 @@ If METHOD does not exist, do nothing."
   (setq message-citation-line-function #'message-insert-formatted-citation-line)
   (setq message-citation-line-format "On %b %d, %Y, at %H:%M, %f wrote:\n")
 
-  (require 'async)
-  (defun async-sendmail-send-it ()
-    (let ((to (message-field-value "To"))
-          (buf-content (buffer-substring-no-properties
-                        (point-min) (point-max))))
-      (message "Delivering message to %s..." to)
-      (async-start
-       `(lambda ()
-          (require 'sendmail)
-          (require 'message)
-          (with-temp-buffer
-            (insert ,buf-content)
-            (set-buffer-multibyte nil)
-            ,(async-inject-variables
-              "\\`\\(sendmail\\|message-\\|\\(user-\\)?mail\\)-\\|auth-sources\\|epg\\|nsm"
-              nil "\\`\\(mail-header-format-function\\|smtpmail-address-buffer\\|mail-mode-abbrev-table\\)")
-            (message-send-mail-with-sendmail)))
-       (lambda (&optional _ignore)
-         (message "Delivering message to %s...done" to)))))
-
   ;; make sendmail errors buffer read-only and view-mode
   ;; FIXME: error: "failed with exit value 78", because gpg-key not cached?
-  ;; (setq message-send-mail-function 'async-sendmail-send-it)
   (setq message-send-mail-function 'sendmail-send-it))
 
 ;;;;; org-mode
