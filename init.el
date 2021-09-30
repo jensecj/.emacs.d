@@ -4248,7 +4248,9 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package prescient
   ;; functionality to sort candidates
   :straight t
-  :demand t)
+  :demand t
+  :config
+  (prescient-persist-mode +1))
 
 (use-package company-prescient
   :straight t
