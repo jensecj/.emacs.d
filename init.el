@@ -4189,14 +4189,16 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package browse-at-remote :straight t)
 (use-package org-web-tools :straight t :after org)
 
+(use-package orglink
+  :straight t
+  :config
+  (global-orglink-mode +1))
+
 (use-package auto-compile
   :straight t
   :config
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
-
-  :straight t
-  :config
 
 (use-package epithet
   :straight t
