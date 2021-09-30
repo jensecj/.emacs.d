@@ -3826,7 +3826,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   (dired-rainbow/def image           zent-blue+3   ("JPEG" "gif" "ico" "jpeg" "jpg" "png" "svg"))
   (dired-rainbow/def log             zent-grey-1   ("log"))
   (dired-rainbow/def encrypted       zent-tan-1    ("age" "asc" "enc" "gpg" "minisig" "pem" "pgp" "sig" "signature"))
-  (dired-rainbow/def packaged        zent-blue-6   ("apk" "bsp" "deb" "jar" "rpm"))
+  (dired-rainbow/def packaged        zent-blue-6   ("apk" "bsp" "deb" "rpm"))
   (dired-rainbow/def xml             zent-yellow-4 ("bib" "edn" "json" "msg" "rss" "xml" "xsd" "xsl" "xslt" "yaml" "yml"))
   (dired-rainbow/def markdown        zent-orange   ("info" "markdown" "md" "org" "rst" "tex" "txt"))
   (dired-rainbow/def database        zent-green+4  ("csv" "db" "mdb" "nc" "sqlite" "xls" "xlsx"))
