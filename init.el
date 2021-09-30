@@ -1598,57 +1598,14 @@ If METHOD does not exist, do nothing."
 
 (log-info "Setting up org-mode")
 
-(progn ;; the straight.el org-mode hack
-  (require 'subr-x)
-  (straight-use-package 'git)
-
-  (defun org-git-version ()
-    "The Git version of org-mode.
-  Inserted by installing org-mode or when a release is made."
-    (require 'git)
-    (let ((git-repo (expand-file-name
-                     "straight/repos/org/" user-emacs-directory)))
-      (string-trim
-       (git-run "describe"
-                "--match=release\*"
-                "--abbrev=6"
-                "HEAD"))))
-
-  (defun org-release ()
-    "The release version of org-mode.
-  Inserted by installing org-mode or when a release is made."
-    (require 'git)
-    (let ((git-repo (expand-file-name
-                     "straight/repos/org/" user-emacs-directory)))
-      (string-trim
-       (string-remove-prefix
-        "release_"
-        (git-run "describe"
-                 "--match=release\*"
-                 "--abbrev=0"
-                 "HEAD")))))
-
-  (provide 'org-version)
-
-  (comment
-   (straight-use-package
-    '(org-plus-contrib
-      :repo "https://code.orgmode.org/bzg/org-mode.git"
-      :local-repo "org"
-      :files (:defaults "contrib/lisp/*.el")
-      :includes (org))))
-
-  (straight-use-package 'org-plus-contrib))
-
 ;; I want to use the version of org-mode from upstream.
 ;; remove the built-in org-mode from the load path, so it does not get loaded
 (setq load-path (-remove (lambda (x) (string-match-p "org$" x)) load-path))
-;; remove org-mode from the built-ins list, because we're using upstream
+;; remove org-mode from the built-ins list, so we can grab it from repos
 (setq package--builtins (assq-delete-all 'org package--builtins))
 
 (use-package org
-  :straight org
-  :pin org
+  :straight t
   :demand t
   :commands (org-indent-region
              org-indent-line
