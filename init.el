@@ -1258,7 +1258,7 @@ Works well being called from a terminal:
   (setq auto-revert-verbose nil)
 
   ;; just revert pdf files without asking
-  (setq revert-without-query '("\\.pdf")))
+  (add-to-list* 'revert-without-query '(".+\\.pdf" ".+\\.svg")))
 
 (use-package smerge-mode ;; easily handle merge conflicts
   :bind
