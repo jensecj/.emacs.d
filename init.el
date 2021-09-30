@@ -2060,6 +2060,18 @@ With prefix ARG, ask for file to open."
       (kill-buffer-if-not-modified (current-buffer))
       (find-file file)))))
 
+(defun backup-this-file ()
+  "Backup the current file."
+  (interactive)
+  (let* ((file (buffer-file-name))
+         (bak-file (concat file ".bak")))
+    (cond
+     ((not (file-exists-p file)) (message "file does not exist on disk, cannot backup."))
+     ((buffer-modified-p (current-buffer)) (message "buffer has not been saved, aborting backup."))
+     ((file-exists-p bak-file) (message "backup file already exists"))
+     (t
+      (write-file bak-file)))))
+
 ;;;;; lisp
 
 (defun jens/eval-and-replace ()
