@@ -1252,6 +1252,7 @@ Works well being called from a terminal:
 (use-package autorevert
   ;; always show the version of a file as it appears on disk
   :demand t
+  :hook (image-mode . auto-revert-mode)
   :config
   ;; auto revert applicable buffers
   (setq global-auto-revert-non-file-buffers t)
