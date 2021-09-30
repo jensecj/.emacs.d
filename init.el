@@ -4399,19 +4399,25 @@ re-enable afterwards."
   (fullframe magit-status magit-mode-quit-window))
 
 (use-package undo-tree
-  :straight t
-  :defer t
+  :straight (undo-tree
+             :type git :host nil :repo "https://gitlab.com/tsc25/undo-tree.git")
+  :demand t
   :diminish undo-tree-mode
-  :commands global-undo-tree-mode
   :bind*
   (("C-x u" . undo-tree-visualize)
-   ("C-_" . undo-tree-undo)
-   ("M-_" . undo-tree-redo)
    :map undo-tree-visualizer-mode-map
    ("<return>" . undo-tree-visualizer-quit))
   :config
-  (setq undo-tree-visualizer-diff t)
+  (setq undo-tree-visualizer-diff nil)
   (setq undo-tree-auto-save-history t)
+
+  (defun undo-tree/save-history (fn &rest args)
+    (let ((message-log-max nil)
+          (inhibit-message t))
+      (apply fn args)))
+
+  (advice-add 'undo-tree-save-history :around 'undo-tree/save-history)
+
   (global-undo-tree-mode +1))
 
 (use-package goto-chg
