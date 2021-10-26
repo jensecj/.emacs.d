@@ -24,7 +24,7 @@
 (defconst user-vendor-directory (locate-user-emacs-file "vendor/"))
 (defconst user-secrets-file (locate-user-emacs-file "secrets.el"))
 
-(defconst user-mail-directory "~/private/mail")
+(defconst user-mail-directory "~/mail")
 (defconst user-contacts-files '("~/vault/contacts.org.gpg"))
 
 ;; add user directories to the load-path
