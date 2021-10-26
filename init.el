@@ -416,7 +416,7 @@
 (setq bidi-inhibit-bpa t)
 
 ;; fold characters in searches (e.g. 'a' matches 'â')
-(setq search-default-mode 'char-fold-to-regexp)
+(setq search-default-mode #'char-fold-to-regexp)
 (setq replace-char-fold t)
 
 ;; transparently open compressed files
@@ -453,10 +453,10 @@
       auto-save-default t)
 
 ;; show active region
-(transient-mark-mode 1)
+(transient-mark-mode +1)
 
 ;; remove text in active region if inserting text
-(delete-selection-mode 1)
+(delete-selection-mode +1)
 
 ;; display line and column numbers in mode-line
 (setq line-number-mode t)
@@ -686,13 +686,12 @@
 (defun jens/kill-idle-gpg-buffers ()
   "Kill .gpg buffers after they have not been used for 120 seconds."
   (interactive)
-  ;; TODO: maybe use `midnight-mode'
   (let ((buffers-killed 0))
     (dolist (buffer (buffer-list))
       (with-current-buffer buffer
         (when (string-match ".*\.gpg$" (buffer-name buffer))
-          (let ((current-time (second (current-time)))
-                (last-displayed-time (second buffer-display-time)))
+          (let ((current-time (nth 1 (current-time)))
+                (last-displayed-time (nth 1 buffer-display-time)))
             (when (or (not last-displayed-time)
                       (> (- current-time last-displayed-time) 60))
               (message "killing %s" (buffer-name buffer))
@@ -1638,7 +1637,7 @@ If METHOD does not exist, do nothing."
   (setq org-adapt-indentation nil) ; don't indent things
   (setq org-tags-column 0)
   (setq org-tags-sort-function #'org-string-collate-lessp)
-  (setq org-ellipsis "――")
+  (setq org-ellipsis "⸺")
   (setq org-cycle-separator-lines 1)    ; show single spaces between entries
 
   ;; don't move the point when using speed-commands...
@@ -1836,8 +1835,8 @@ If METHOD does not exist, do nothing."
 
   (defun org-contacts/get-contacts ()
     "Return all contacts from `org-contacts', in 'NAME <EMAIL>' format."
-    (let ((data (-map #'caddr (org-contacts-db))))
-      (-map
+    (let ((data (mapcar #'caddr (org-contacts-db))))
+      (mapcar
        (lambda (d)
          (let ((email (cdr (assoc-string org-contacts-email-property d)))
                (name (cdr (assoc-string "ITEM" d))))
@@ -2020,7 +2019,7 @@ With prefix ARG, ask for file to open."
              (current-buffer))
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
-(bind-key* "M-S-a" #'jens/eval-and-replace)
+(bind-key* "M-C-a" #'jens/eval-and-replace)
 
 (defun jens/remove-text-properties-region (beg end)
   "Remove text properties from text in region between BEG and END."
@@ -2584,6 +2583,8 @@ to a temp file and puts the filename in the kill ring."
   :bind
   (("C-x t" . today-transient))
   :config
+  (setq today-capture-ytdl-path (executable-find "yt-dlp"))
+
   (with-eval-after-load 'elfeed
     (bind-key "t" #'today-capture-elfeed-at-point elfeed-search-mode-map))
 
@@ -2799,6 +2800,7 @@ to a temp file and puts the filename in the kill ring."
   :after clojure-mode
   :hook (clojure-mode . cider-mode)
   :config
+  (setq cider-repl-display-help-banner nil)
   (setq cider-repl-use-pretty-printing t
         cider-prompt-for-symbol nil
         cider-print-fn 'pprint
@@ -2919,6 +2921,7 @@ to a temp file and puts the filename in the kill ring."
   (setq elfeed-search-filter "@100-month-ago +unread")
 
   (setq elfeed-search-trailing-width 25)
+  (setq elfeed-search-title-max-width 90)
 
   (defface youtube-elfeed-face '((t :foreground "#E0CF9F"))
     "face for youtube.com entries"
@@ -4171,6 +4174,7 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 (use-package orglink
   :straight t
+  :diminish
   :config
   (global-orglink-mode +1))
 
