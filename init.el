@@ -45,7 +45,7 @@
 ;; spawned by the daemon to use the face.
 (defun jens/init-fonts ()
   "Setup font configuration for new frames."
-  (let ((my-font "Source Code Pro Semibold 11"))
+  (let ((my-font "Source Code Pro Semibold 12"))
     (if (not (find-font (font-spec :name my-font)))
         (log-warning "could not find font: %s" my-font)
       (add-to-list 'default-frame-alist `(font . ,my-font))
