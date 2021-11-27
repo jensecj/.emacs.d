@@ -2967,22 +2967,6 @@ to a temp file and puts the filename in the kill ring."
 
   (elfeed/load-feeds)
 
-  (defun elfeed/-focus-emacs-after-browse-url (fn &rest args)
-    "Activate the emacs-window"
-    (let* ((emacs-window (shell-command-to-string "xdo id"))
-           (active-window "")
-           (counter 0))
-      (apply fn args)
-      (sleep-for 0.7)
-      (while (and (not (string= active-window emacs-window))
-                  (< counter 15))
-        (sleep-for 0.2)
-        (cl-incf counter)
-        (setq active-window (shell-command-to-string "xdo id"))
-        (shell-command-to-string (format "xdo activate %s" emacs-window)))))
-
-  (advice-add #'elfeed-search-browse-url :around #'elfeed/-focus-emacs-after-browse-url)
-
   (defun elfeed/play-video-at-point ()
     "Attempt to play the video link of the elfeed entry at point."
     (interactive)
