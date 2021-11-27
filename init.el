@@ -2973,7 +2973,7 @@ to a temp file and puts the filename in the kill ring."
     (letrec ((entry (car (elfeed-search-selected)))
              (link (elfeed-entry-link entry))
              (mpv-buf (get-buffer-create "*mpv*")))
-      (start-process "mpv-ytdl" mpv-buf "mpv" "--ytdl-format=bestvideo[width<=1920][height<=1080]" "--ytdl" link)
+      (start-process "mpv-ytdl" mpv-buf "mpv" "--ytdl" link)
       (view-buffer-other-window mpv-buf)))
 
   (defun elfeed/copy-link-at-point ()
