@@ -36,9 +36,7 @@
 (setq package-archives
       '(("elpa" . "https://elpa.gnu.org/packages/")
         ("nongnu-elpa" . "https://elpa.nongnu.org/nongnu/")
-        ("melpa" . "https://melpa.org/packages/")
-        ("org" . "https://orgmode.org/elpa/") ;; TODO: remove this after org 9.5, since it's moving to NonGNU elpa
-        ))
+        ("melpa" . "https://melpa.org/packages/")))
 
 ;;;; font setup
 ;; a bit convoluted because we also want the first frame
