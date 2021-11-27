@@ -4598,8 +4598,7 @@ re-enable afterwards."
     (company-manual-begin) ;; calculates company-prefix and company-candidates
 
     (when-let ((pick (completing-read "complete: " company-candidates nil nil company-prefix)))
-      (delete-region (- company-point (length company-prefix)) company-point)
-      (insert pick)))
+      (company-finish pick)))
 
   (defun type-of-sym (sym)
     ;; see [[file:~/emacs/build/share/emacs/28.0.50/lisp/help-fns.el.gz::(defun%20help--symbol-completion-table-affixation%20(completions)]]
