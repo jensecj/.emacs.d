@@ -40,7 +40,7 @@
         ("org" . "https://orgmode.org/elpa/") ;; TODO: remove this after org 9.5, since it's moving to NonGNU elpa
         ))
 
-;; setup fonts
+;;;; font setup
 ;; a bit convoluted because we also want the first frame
 ;; spawned by the daemon to use the face.
 (defun jens/init-fonts ()
@@ -67,7 +67,7 @@
 (setq straight-vc-git-default-protocol 'ssh)
 (setq straight-check-for-modifications '(check-on-save find-when-checking))
 
-(message "bootstrapping use-package...")
+(message "bootstrapping straight and use-package...")
 (defvar bootstrap-version)
 (let ((bootstrap-file (locate-user-emacs-file "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 5))
@@ -101,7 +101,7 @@
 
 (use-package contrib :demand t) ; the mailing list is against a lot of these, but I think they're nifty
 
-(use-package dash ;; working with lists, -map, -concat, etc
+(use-package dash ;; list defuns; -map, -concat, etc.
   :demand t
   :straight (dash :host github :repo "magnars/dash.el"
                   :fork (:host github :repo "jensecj/dash.el"))
@@ -122,24 +122,26 @@
      (t (funcall fn atom-or-list))))
   )
 
-(use-package s ;; string things, s-trim, s-replace, etc.
+(use-package s ;; string defuns; s-trim, s-replace, etc.
   :demand t
   :straight (s :host github :repo "magnars/s.el"
                :fork (:host github :repo "jensecj/s.el")))
 
-(use-package f ;; file-things, f-exists-p, f-base, etc.
+(use-package f ;; fs defuns; f-exists-p, f-base, etc.
   :demand t
   :straight (f :host github :repo "rejeep/f.el"
                :fork (:host github :repo "jensecj/f.el")))
 
-(use-package ht ;; great hash-table wrapper.
+(use-package ht ;; hash-table wrapper.
   :demand t
   :straight (ht :host github :repo "Wilfred/ht.el"
                 :fork (:host github :repo "jensecj/ht.el")))
 
-(use-package ts ;; time api
+(use-package ts ;; time defuns
   :demand t
   :straight (ts :host github :repo "alphapapa/ts.el"))
+
+;;;; core config and lisp hacking
 
 (progn ;; add `:download' keyword to `use-package' to easily download files
   (defun use-package-normalize/:download (_name-symbol keyword args)
@@ -217,6 +219,8 @@
       (message "patching %s" name)
       (advice-patch name new old))))
 
+;;;; common packages
+
 (use-package bind-key :straight t :demand t)
 (use-package diminish :straight t :demand t)
 (use-package delight :straight t :demand t)
@@ -237,7 +241,7 @@
       ,(if callback
            `(lambda (res) (funcall ,callback res))))))
 
-;;;; themes
+;;;; theming
 
 (use-package zent-theme
   :straight (zent-theme :type git :repo "git@github.com:jensecj/zent-theme.el.git")
@@ -344,7 +348,9 @@
 
 (use-package emacs
   :config
-  (defun jens/restore-position-after-call (fn &rest args)
+  ;; TODO: add timestamps to *Messages*
+
+  (defun emacs/restore-position-after-call (fn &rest args)
     (let ((p (point))
           (ws (window-start)))
       (apply fn args)
@@ -723,6 +729,7 @@
 
 ;;;;; major-modes
 
+;; TODO: translate ML course from octave to python, then remove octave-mode
 (use-package octave :mode ("\\.m\\'" . octave-mode))
 
 (use-package sh-script
@@ -2108,7 +2115,7 @@ current line."
    (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]")
    nil nil (if (= 0 (current-column)) 2 1))
   (back-to-indentation))
-(bind-key* "s-n" 'jens/goto-next-line-with-same-indentation)
+(bind-key* "C-S-n" 'jens/goto-next-line-with-same-indentation)
 
 (defun jens/goto-prev-line-with-same-indentation ()
   "Jump to a previous line with the same indentation level as the
@@ -2118,7 +2125,7 @@ current line."
   (re-search-backward
    (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
   (back-to-indentation))
-(bind-key* "s-p" #'jens/goto-prev-line-with-same-indentation)
+(bind-key* "C-S-p" #'jens/goto-prev-line-with-same-indentation)
 
 (defun jens/copy-buffer-file-path ()
   "Copy the current buffers file path to the clipboard."
@@ -2243,18 +2250,6 @@ Requires the system tools `tokei' and `jq'."
       (message (s-trim (shell-command-to-string (format "tokei %s" file))))
     (message "This buffer does not have a file.")))
 
-(defun jens/download-file (url &optional newname dir overwrite)
-  "Download a file from URL to DIR, optionally OVERWRITE an existing file.
-If DIR is nil, download to current directory."
-  (let* ((dir (or dir default-directory))
-         (file (or newname (url-unhex-string (f-filename url))))
-         (path (f-join dir file)))
-    (condition-case _ex
-        (progn
-          (url-copy-file url path overwrite)
-          path)
-      (error 'file-already-exists))))
-
 (defun jens/read-emacs-news ()
   "Check what's new in NEWS."
   (interactive)
@@ -2263,14 +2258,14 @@ If DIR is nil, download to current directory."
          (pick (completing-read "news file: " news-files nil t)))
     (view-file-other-window
      (if (string= pick "UPSTREAM")
-         (jens/download-file
+         (url-copy-file
           "https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/NEWS"
-          (concat "NEWS" "_" (uuid))
-          temporary-file-directory)
+          (f-join temporary-file-directory
+                  (concat "NEWS" "_" (format-time-string "%Y-%m-%d"))))
        (f-join news-dir pick)))))
 
 
-(defun screenshot-frame-to-svg ()
+(defun emacs/screenshot-frame-to-svg ()
   "Save a screenshot of the current frame as an SVG image.  Saves
 to a temp file and puts the filename in the kill ring."
   (interactive)
@@ -2281,7 +2276,7 @@ to a temp file and puts the filename in the kill ring."
     (kill-new filename)
     (message filename)))
 
-(defun jens/render-control-chars ()
+(defun emacs/render-control-chars ()
   "Render common control characters, such as ^L and ^M."
   (interactive)
   (when (not buffer-display-table)
@@ -2299,7 +2294,7 @@ to a temp file and puts the filename in the kill ring."
    diff-mode-hook
    compilation-mode-hook
    outline-mode-hook)
- #'jens/render-control-chars)
+ #'emacs/render-control-chars)
 
 ;;;; packages
 
@@ -3502,7 +3497,7 @@ if BACKWARDS is non-nil, jump backwards instead."
   ;; extras ;;
   ;;;;;;;;;;;;
 
-  (advice-add #'notmuch-refresh-this-buffer :around #'jens/restore-position-after-call)
+  (advice-add #'notmuch-refresh-this-buffer :around #'emacs/restore-position-after-call)
 
   ;; TODO: fix these so org-store-link stores link to the message at point in search mode.
   (require 'ol-notmuch)
