@@ -350,6 +350,19 @@
       (apply fn args)
       (set-window-start (selected-window) ws)
       (goto-char p)))
+
+  (defun emacs/save-to-file (data filename)
+    "Save lisp object DATA to FILENAME."
+    (with-temp-file filename
+      (prin1 data (current-buffer))))
+
+  (defun emacs/load-from-file (filename)
+    "Load lisp object from FILENAME."
+    (when (file-exists-p filename)
+      (with-temp-buffer
+        (insert-file-contents filename)
+        (cl-assert (eq (point) (point-min)))
+        (read (current-buffer)))))
   )
 
 (log-info "Redefining built-in defaults")
@@ -2031,19 +2044,6 @@ With prefix ARG, ask for file to open."
       (insert dashed)
       (goto-char p))))
 
-(defun jens/save-to-file (data filename)
-  "Save lisp object DATA to FILENAME."
-  (with-temp-file filename
-    (prin1 data (current-buffer))))
-
-(defun jens/load-from-file (filename)
-  "Load lisp object from FILENAME."
-  (when (file-exists-p filename)
-    (with-temp-buffer
-      (insert-file-contents filename)
-      (cl-assert (eq (point) (point-min)))
-      (read (current-buffer)))))
-
 (defun jens/open-line-below ()
   "Insert a line below the current line, indent it, and move to
 the beginning of that line."
@@ -2204,7 +2204,7 @@ current line."
 (defun jens/goto-repo ()
   "Quickly jump to a repository, defined in repos.el"
   (interactive)
-  (let* ((repos (jens/load-from-file (locate-user-emacs-file "repos.el")))
+  (let* ((repos (emacs/load-from-file (locate-user-emacs-file "repos.el")))
          (repos-propped
           (-map (lambda (r)
                   (let ((last-part (-last-item (f-split (car r)))))
@@ -2950,7 +2950,7 @@ to a temp file and puts the filename in the kill ring."
   (defun elfeed/load-feeds ()
     (interactive)
     (let* ((feeds-file (locate-user-emacs-file "elfeeds.el"))
-           (feeds (jens/load-from-file feeds-file)))
+           (feeds (emacs/load-from-file feeds-file)))
       (setq elfeed-feeds feeds)))
 
   (elfeed/load-feeds)
