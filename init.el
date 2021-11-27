@@ -159,7 +159,7 @@
                                    (when (not (f-exists-p dir))
                                      (f-mkdir dir))
                                    (with-demoted-errors "Error: %S"
-                                     (url-copy-file url dest)
+                                     (url-copy-file url dest t)
                                      (byte-compile-file dest))))
                   (handle-url (url)
                               (let* ((file (url-unhex-string (f-filename url)))
@@ -260,7 +260,7 @@
 
 (setq auto-save-no-message t)
 
-;; don't use the customize system, all settings are keps in this file
+;; don't use the customize system, all settings are kept in this file
 (setq custom-file null-device)
 
 ;; don't load default.el
@@ -295,7 +295,7 @@
      (lambda (a) (atom a))
      (lambda (a) (-repeat max-width a))
      args)))
-(broadcast 'a '(1 2 3) 'z '(a b c) '(æ ø å)); => ((a a a) (1 2 3) (z z z) (a b c) (æ ø å))
+;; (broadcast 'a '(1 2 3) 'z '(a b c) '(æ ø å)); => ((a a a) (1 2 3) (z z z) (a b c) (æ ø å))
 
 ;; TODO: fix #'transpose, `-mapcar' is wrong in this context
 (defun transpose (&rest lists)
@@ -516,8 +516,8 @@
 (setq history-length t)
 (setq history-delete-duplicates t)
 
-;; TODO: maybe set amalgamating-undo-limit?, see if it replaces `jens/pop-to-mark-command'
-;; (setq amalgamating-undo-limit 50)
+;; combine amalgamating commands into a single undo
+(setq amalgamating-undo-limit 50)
 
 ;; remember a lot of messages
 (setq message-log-max 50000)
@@ -787,7 +787,6 @@
   :defer t
   :bind
   (:map python-mode-map
-        ("C-c C-c" . projectile-compile-project)
         ("M-," . nil)
         ("M-." . nil)
         ("M--" . nil)))
@@ -1579,7 +1578,7 @@ If METHOD does not exist, do nothing."
 
 ;; I want to use the version of org-mode from upstream.
 ;; remove the built-in org-mode from the load path, so it does not get loaded
-(setq load-path (-remove (lambda (x) (string-match-p "org$" x)) load-path))
+(setq load-path (seq-remove (lambda (x) (string-match-p "org$" x)) load-path))
 ;; remove org-mode from the built-ins list, so we can grab it from repos
 (setq package--builtins (assq-delete-all 'org package--builtins))
 
@@ -1935,6 +1934,7 @@ With prefix ARG, ask for file to open."
   "Interactively open a link visible in the current window."
   (interactive)
   (when-let* ((links (jens/visible-links))
+              (vertico-sort-override-function #'identity)
               (pick (completing-read "urls: " links nil t)))
     (browse-url pick)))
 (bind-key "C-x C-l" #'jens/open-links)
