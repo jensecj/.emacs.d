@@ -734,7 +734,6 @@
          ("\\.profile\\'" . shell-script-mode)
          ("\\.bashrc\\'" . shell-script-mode)
          ("\\.bash_profile\\'" . shell-script-mode)
-         ("\\.extend.bashrc\\'" . shell-script-mode)
          ("\\.xinitrc\\'" . shell-script-mode)
          ("\\.PKGBUILD\\'" . shell-script-mode))
   :config
@@ -789,17 +788,12 @@
         ("M--" . nil)))
 
 (use-package cc-mode
-  :bind
-  ("C-d" . nil)
-  (:map java-mode-map
-        ("C-c C-c" . projectile-compile-project))
   :config
   (dolist (k '("\M-," "\M-." "\M--" "\C-d"))
     (bind-key k nil c-mode-base-map)))
 
 (use-package make-mode
-  :mode (("\\justfile\\'" . makefile-mode)
-         ("\\Makefile\\'" . makefile-mode))
+  :mode (("\\Makefile\\'" . makefile-mode))
   :config
   (setq-mode-local makefile-mode whitespace-style
                    '(face indentation space-before-tab space-after-tab trailing lines))
@@ -2022,45 +2016,6 @@ With prefix ARG, ask for file to open."
            (insert (current-kill 0)))))
 (bind-key* "M-C-a" #'jens/eval-and-replace)
 
-(defun jens/remove-text-properties-region (beg end)
-  "Remove text properties from text in region between BEG and END."
-  (set-text-properties beg end nil))
-
-(defun jens/remove-text-propertiex-in-region ()
-  "Remove text properties from all text in active region."
-  (interactive)
-  (when (region-active-p)
-    (jens/remove-text-properties-region
-     (region-beginning) (region-end))))
-
-(defun jens/space-to-dash-in-region ()
-  "Replace all spaces in region with dashes."
-  (interactive)
-  (when (region-active-p)
-    (let* ((p (point))
-           (str (buffer-substring (region-beginning) (region-end)))
-           (dashed (s-replace " " "-" str)))
-      (delete-region (region-beginning) (region-end))
-      (insert dashed)
-      (goto-char p))))
-
-(defun jens/open-line-below ()
-  "Insert a line below the current line, indent it, and move to
-the beginning of that line."
-  (interactive)
-  (end-of-line)
-  (newline)
-  (indent-for-tab-command))
-
-(defun jens/open-line-above ()
-  "Insert a line above the current line, indent it, and move to
-the beginning of that line."
-  (interactive)
-  (beginning-of-line)
-  (newline)
-  (forward-line -1)
-  (indent-for-tab-command))
-
 (defun jens/smart-beginning-of-line ()
   "Move point to the beginning of line or beginning of text."
   (interactive)
@@ -2125,19 +2080,6 @@ current line, placing it after."
     (join-line -1)))
 (bind-key* "M-j" 'jens/join-region-or-line)
 
-(defun jens/join-line-down ()
-  "Pull the line above down to the end of this line."
-  (interactive)
-  (save-excursion
-    (let ((cp (point)))
-      (forward-line -1)
-      (when (not (= (point) cp))
-        (call-interactively #'jens/kill-region-or-current-line)
-        (end-of-line)
-        (save-excursion (insert " " (s-chomp (current-kill 0))))
-        (just-one-space)))))
-(bind-key* "M-J" 'jens/join-line-down)
-
 (defun jens/comment-uncomment-region-or-line ()
   "If region is active, comment or uncomment it (based on what it
 currently is), otherwise comment or uncomment the current line."
@@ -2148,20 +2090,6 @@ currently is), otherwise comment or uncomment the current line."
 (bind-key* "C-c c" 'jens/comment-uncomment-region-or-line)
 
 ;;;;; misc
-
-(defun jens/get-package-reqs (package)
-  (when-let* ((desc (assq 'cider package-alist))
-              (desc (cadr desc)))
-    (package-desc-reqs desc)))
-
-(defun jens/required-by (package)
-  (let ((descs (-map #'cdr package-alist))
-        (res '()))
-    (dolist (d descs res)
-      (let ((pkg-name (package-desc-name (car d)))
-            (reqs (-map #'car (package-desc-reqs (car d)))))
-        (when (-contains-p reqs package)
-          (push pkg-name res))))))
 
 (defun jens/goto-msg-buffer ()
   "View the *Messages* buffer, return to previous buffer when
@@ -2326,25 +2254,6 @@ If DIR is nil, download to current directory."
           (url-copy-file url path overwrite)
           path)
       (error 'file-already-exists))))
-
-(defun jens/diff (a b)
-  "Diff A with B, either should be a location of a document, local or remote."
-  (interactive)
-  (let* ((file_a a)
-         (file_b b))
-    (unless (f-exists-p a)
-      (setq file_a (jens/download-file a (concat (f-filename a) "_" (uuid)) temporary-file-directory)))
-    (unless (f-exists-p b)
-      (setq file_b (jens/download-file b (concat (f-filename b) "_" (uuid)) temporary-file-directory)))
-
-    (diff file_a file_b)))
-
-(defun jens/diff-pick ()
-  "Pick two files and diff them."
-  (interactive)
-  (let ((a (read-file-name "File A: " (f-dirname (buffer-file-name))))
-        (b (read-file-name "File B: " (f-dirname (buffer-file-name)))))
-    (jens/diff a b)))
 
 (defun jens/read-emacs-news ()
   "Check what's new in NEWS."
@@ -3890,11 +3799,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   :init
   (add-hook 'sh-mode-hook #'flymake-shellcheck-load))
 
-(use-package ob-async
-  :disabled t
-  :straight t
-  :defer t)
-
 (use-package ob-clojure
   :disabled t
   :requires cider
@@ -3902,7 +3806,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq org-babel-clojure-backend 'cider))
 
 (use-package ox-pandoc :straight t :defer t :after org)
-(use-package ox-asciidoc :straight t :defer t :after org)
 
 ;;;; minor modes
 
@@ -4128,13 +4031,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   (setq projectile-enable-caching t)
 
   (projectile-mode +1))
-
-(use-package keyfreq
-  :straight t
-  :commands (keyfreq-mode keyfreq-autosave-mode)
-  :config
-  (keyfreq-mode +1)
-  (keyfreq-autosave-mode +1))
 
 ;;;; misc packages
 
