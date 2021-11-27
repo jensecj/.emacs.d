@@ -4133,13 +4133,9 @@ if BACKWARDS is non-nil, jump backwards instead."
   :straight t
   :defer t
   :diminish projectile-mode
+  :commands projectile-command-map
   :bind
-  (("M-p c" . projectile-compile-project)
-   ("M-p t" . projectile-test-project)
-   ("M-p r" . projectile-run-project)
-   ("M-p f" . projectile-find-file)
-   ("M-p d" . projectile-dired-other-window)
-   ("M-p T" . projectile-toggle-between-implementation-and-test))
+  (("M-p" . projectile-command-map))
   :config
   (setq projectile-enable-caching t)
 
