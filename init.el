@@ -2863,7 +2863,13 @@ to a temp file and puts the filename in the kill ring."
   (transient-append-suffix 'magit-status-jump '(0 0 -1)
     '("T " "Todos" magit-todos-jump-to-todos))
 
-  (setq magit-todos-exclude-globs '("var/*" "venv/*" "vendor/*")))
+  (setq magit-todos-exclude-globs
+        '("straight/*"
+          "eln-cache/*"
+          ".git/*"
+          "var/*"
+          "venv/*"
+          "vendor/*")))
 
 (use-package auctex
   :straight t
