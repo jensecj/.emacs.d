@@ -556,9 +556,7 @@
         (insert (format-time-string "[%H:%M:%S] "))
         entry))
 
-;; When popping the mark, continue popping until the cursor actually
-;; moves. also, if the last command was a copy - skip past all the
-;; expand-region cruft.
+;; When popping the mark, continue popping until the cursor moves
 (defun jens/pop-to-mark-command (orig-fun &rest args)
   "Call ORIG-FUN until the cursor has moved.  Try popping up to 10 times."
   (let ((p (point)))
@@ -567,13 +565,12 @@
         (apply orig-fun args)))))
 (advice-add #'pop-to-mark-command :around #'jens/pop-to-mark-command)
 
-;; allows us to type 'C-u C-SPC C-SPC...' instead of having to re-type 'C-u'
-;; every time.
+;; allow `C-u C-SPC C-SPC...' instead of having to `C-u' every time.
 (setq set-mark-command-repeat-pop t)
 
 ;; Create nonexistent directories when saving a file
 (add-hook 'before-save-hook
-          (lambda ()
+          (defun emacs/create-dir-before-save ()
             (when buffer-file-name
               (let ((dir (file-name-directory buffer-file-name)))
                 (when (not (file-exists-p dir))
@@ -745,32 +742,7 @@
   (add-to-list 'interpreter-mode-alist '("bb" . clojure-mode))
   (add-hook* 'sh-mode-hook '(flymake-mode flycheck-mode)))
 
-(use-package conf-mode
-  :defer t
-  :config
-  (defun conf-mode/indent ()
-    ;; FIXME: does not work when called with indent-region
-    (interactive)
-    (save-excursion
-      (beginning-of-line)
-
-      (let ((col (syntax-ppss-depth (syntax-ppss))))
-        (save-excursion
-          ;; indent lines that are part of multi-line commands
-          (skip-syntax-backward "-")
-          (backward-char 2)
-          (if (looking-at (rx ?\\ eol))
-              (cl-incf col)))
-
-        (save-excursion
-          ;; dont indent the terminating line of a block
-          (skip-syntax-forward "-")
-          (if (looking-at (rx (or ?\] ?\} ?\))))
-              (cl-decf col)))
-
-        (indent-line-to (* col tab-width)))))
-
-  (setq-mode-local conf-space-mode indent-line-function #'conf-mode/indent))
+(use-package conf-mode :defer t)
 
 (use-package doc-view
   :hook (doc-view-mode . auto-revert-mode)
@@ -801,35 +773,7 @@
   :config
   (setq-mode-local makefile-mode whitespace-style
                    '(face indentation space-before-tab space-after-tab trailing lines))
-  (setq-mode-local makefile-mode indent-tabs-mode t)
-  ;; TODO: fix indentation
-  (defun line-to-string (&optional line)
-    (save-excursion
-      (if line (forward-line line))
-      (buffer-substring-no-properties
-       (line-beginning-position)
-       (line-end-position))))
-
-  (defun make-mode/indent ()
-    (tabify (point-min) (point-max))
-    (let* ((indent-column 2)
-           (line (line-to-string))
-           (prev-line (line-to-string -1))
-           (label-line-regex (rx (optional ".") (1+ ascii) ":" (0+ ascii) eol))
-           (indented-line-regex (rx (= 2 ;;(eval indent-column)
-                                       space) (0+ ascii) eol))
-           (multi-line-regex (rx (0+ ascii) ?\\ eol))
-           (assignment-regex (rx bol (0+ ascii) ?= (0+ ascii) eol)))
-      (cond
-       ((s-matches-p multi-line-regex prev-line) (indent-to-left-margin))
-       ((and (not (s-matches-p label-line-regex prev-line))
-             (s-matches-p assignment-regex line))
-        (indent-to-left-margin))
-       ((s-matches-p label-line-regex line) (indent-to-left-margin))
-       ((s-matches-p label-line-regex prev-line) (indent-line-to indent-column))
-       ((s-matches-p indented-line-regex prev-line) (indent-line-to indent-column)))))
-
-  (setq-mode-local makefile-mode indent-line-function #'make-mode/indent))
+  (setq-mode-local makefile-mode indent-tabs-mode t))
 
 (use-package hl-line
   :config
@@ -1365,24 +1309,7 @@ Works well being called from a terminal:
   :defer t
   :config
   (setq tramp-verbose 6)
-  (setq tramp-default-method "ssh")
-
-  (defun tramp/get-method-parameter (method param)
-    "Return the method parameter PARAM.
-If the `tramp-methods' entry does not exist, return NIL."
-    (when-let ((entry (assoc param (assoc method tramp-methods))))
-      (cadr entry)))
-
-  (defun tramp/set-method-parameter (method param newvalue)
-    "Set the method paramter PARAM to VALUE for METHOD.
-
-If METHOD does not yet have PARAM, add it.
-If METHOD does not exist, do nothing."
-    (let ((method-params (assoc method tramp-methods)))
-      (when method-params
-        (if-let ((entry (assoc param method-params)))
-            (setcar (cdr entry) newvalue)
-          (setcdr (last method-params) '(param newvalue)))))))
+  (setq tramp-default-method "ssh"))
 
 (use-package recentf
   ;; save a list of recently visited files.
