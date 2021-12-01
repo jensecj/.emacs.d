@@ -367,7 +367,22 @@
         (insert-file-contents filename)
         (cl-assert (eq (point) (point-min)))
         (read (current-buffer)))))
-  )
+
+  (defun emacs/get-empty-scratch-buffer ()
+    "Return an empty scratch buffer if one exists."
+    (let* ((scratch-regex (rx bol "*scratch*" (optional "<" (1+ digit) ">")))
+           (bufs (seq-filter (lambda (b) (string-match scratch-regex (buffer-name b))) (buffer-list)))
+           (empty-bufs (-filter (lambda (b) (< (buffer-size b) 200)) bufs)))
+      (nth 0 empty-bufs)))
+
+  (defun emacs/jump-to-empty-scratch-buffer ()
+    "Create a new scratch buffer to work in. (named *scratch* - *scratch<n>*)."
+    (interactive)
+    (xref-push-marker-stack)
+    (switch-to-buffer
+     (or (emacs/get-empty-scratch-buffer)
+         (generate-new-buffer "*scratch*")))
+    (emacs-lisp-mode)))
 
 (log-info "Redefining built-in defaults")
 
@@ -2092,7 +2107,7 @@ current line."
     (bind-key "m" #'jens/goto-msg-buffer map)
     (bind-key "n" #'notmuch-mojn map)
     (bind-key "e" #'elfeed map)
-    (bind-key "c" #'buf-jump-to-empty-scratch-buffer map)
+    (bind-key "c" #'emacs/jump-to-empty-scratch-buffer map)
     map))
 (fset 'jens/shortcut-map jens/shortcut-map)
 (bind-key "C-<escape>" #'jens/shortcut-map)
@@ -2225,9 +2240,6 @@ to a temp file and puts the filename in the kill ring."
 ;;;; packages
 
 (log-info "Loading homemade packages")
-
-(use-package buf ;; buffer extentions
-  :demand t)
 
 (use-package edit-symbol
   :bind ("C-<f12>" . edit-symbol-at-point))
