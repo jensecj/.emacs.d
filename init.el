@@ -2145,10 +2145,10 @@ current line."
 (jens/tail-message-buffer)
 
 (defun jens/emacs-init-loc ()
-  "Total lines of emacs-lisp code in my emacs configuration.
-
-Requires the system tools `tokei' and `jq'."
+  "Total lines of emacs-lisp code in my emacs configuration."
   (interactive)
+  (when (not (and (executable-find "jq") (executable-find "tokei")))
+    (error "Requires the system tools `tokei' and `jq'."))
   (let* ((locs '("init.el"
                  "early-init.el"
                  "experimental.el"
