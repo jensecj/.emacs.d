@@ -2418,6 +2418,7 @@ to a temp file and puts the filename in the kill ring."
                   ("github\\.com" . plain)
                   ("goodreads\\.com" . plain)
                   ("github\\.io" . read)
+                  ("200ok.ch" . read)
                   ("lwn\\.net" . read)
                   ("gatesnotes\\.com" . read)
                   (,(rx (or "drewdevault.com" "sourcehut.org")) . read)
