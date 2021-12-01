@@ -1875,6 +1875,14 @@ With prefix ARG, ask for file to open."
       (byte-recompile-file (buffer-file-name))
     (byte-compile-file (buffer-file-name))))
 
+(defun cloc-this-file ()
+  "Count the number of code lines in the current file."
+  (interactive)
+  (let ((file (buffer-file-name)))
+    (when (not (and file (file-exists-p file)))
+      (error "buffer is not visiting a file!"))
+    (message (s-trim (shell-command-to-string (format "tokei %s" file))))))
+
 (defun rename-this-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
@@ -2168,13 +2176,6 @@ Requires the system tools `tokei' and `jq'."
          (final-cmd (format "%s %s | %s" cloc-cmd all-files format-cmd))
          (lines-of-code (s-trim (shell-command-to-string final-cmd))))
     lines-of-code))
-
-(defun jens/cloc-this-file ()
-  "Count the number of code lines in the current file."
-  (interactive)
-  (if-let ((file (buffer-file-name)))
-      (message (s-trim (shell-command-to-string (format "tokei %s" file))))
-    (message "This buffer does not have a file.")))
 
 (defun jens/read-emacs-news ()
   "Check what's new in NEWS."
