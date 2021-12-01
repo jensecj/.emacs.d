@@ -2119,8 +2119,8 @@ current line."
 (defun jens/tail-message-buffer ()
   "Toggle tailing the *Message* buffer every time something is written to it."
   (interactive)
-  (unless (fboundp 'tmb/message-buffer-goto-end)
-    (defun tmb/message-buffer-goto-end (&rest args)
+  (unless (fboundp 'jens/message-buffer-goto-end)
+    (defun jens/message-buffer-goto-end (&rest args)
       (dolist (w (get-buffer-window-list "*Messages*"))
         (with-selected-window w
           (set-window-point w (point-max))))
@@ -2132,8 +2132,8 @@ current line."
       :lighter " tail"
       :keymap (make-keymap)
       (if (bound-and-true-p tail-message-buffer-mode)
-          (advice-add #'message :after #'tmb/message-buffer-goto-end)
-        (advice-remove #'message #'tmb/message-buffer-goto-end))))
+          (advice-add #'message :after #'jens/message-buffer-goto-end)
+        (advice-remove #'message #'jens/message-buffer-goto-end))))
 
   (with-current-buffer (get-buffer "*Messages*")
     (if (not (bound-and-true-p tail-message-buffer-mode))
