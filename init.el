@@ -2080,14 +2080,15 @@ current line."
      (t (message "unable to locate repo: %s" pick)))))
 (bind-key* "M-r" #'jens/goto-repo)
 
-(transient-define-prefix jens/shortcut ()
-  :transient-non-suffix 'transient--do-call
-  ["Shortcuts"
-   [("m" "*messages*" jens/goto-msg-buffer)
-    ("n" "notmuch" notmuch-mojn)
-    ("e" "elfeed" elfeed)
-    ("c" "new *scratch*" buf-jump-to-empty-scratch-buffer)]])
-(bind-key "C-<escape>" #'jens/shortcut)
+(defvar jens/shortcut-map
+  (let ((map (make-sparse-keymap)))
+    (bind-key "m" #'jens/goto-msg-buffer map)
+    (bind-key "n" #'notmuch-mojn map)
+    (bind-key "e" #'elfeed map)
+    (bind-key "c" #'buf-jump-to-empty-scratch-buffer map)
+    map))
+(fset 'jens/shortcut-map jens/shortcut-map)
+(bind-key "C-<escape>" #'jens/shortcut-map)
 
 (defun jens/buffer-carousel-previous ()
   (interactive)
