@@ -4238,13 +4238,11 @@ re-enable afterwards."
 (use-package exec-path-from-shell
   :straight t
   :demand t
-  :init
-  (setq exec-path-from-shell-check-startup-files nil)
   :config
-  (exec-path-from-shell-initialize)
-  ;; try to grab the ssh-agent if it is running
-  (exec-path-from-shell-copy-env "SSH_AGENT_PID")
-  (exec-path-from-shell-copy-env "SSH_AUTH_SOCK"))
+  (dolist (e '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "SSH_ASKPASS" "GPG_AGENT_INFO"))
+    (add-to-list 'exec-path-from-shell-variables e))
+
+  (exec-path-from-shell-initialize))
 
 (use-package vterm
   :defer t
