@@ -2552,11 +2552,6 @@ to a temp file and puts the filename in the kill ring."
 
 (log-info "Loading third-party packages")
 
-(use-package epdh
-  :straight (emacs-package-dev-handbook
-             :host github :repo "alphapapa/emacs-package-dev-handbook"
-             :fork (:host github :repo "jensecj/emacs-package-dev-handbook")))
-
 ;;;; major modes and extentions
 
 (use-package yaml-mode :straight t :defer t :mode ("\\.yaml\\'" "\\.yml\\'"))
