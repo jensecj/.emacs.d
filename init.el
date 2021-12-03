@@ -4308,6 +4308,18 @@ re-enable afterwards."
 
   (setq completion-in-region-function #'consult-completion-in-region)
 
+  (defun consult/insert-unicode ()
+    (interactive)
+    (let ((cands)
+          (unicodes (ucs-names)))
+      (maphash
+       (lambda (name code)
+         (push (format "%-5c %s" code name) cands))
+       unicodes)
+      (insert
+       (substring-no-properties
+        (completing-read "unicode: " cands) 0 1))))
+
   (defun consult/search ()
     (interactive)
     (if (region-active-p)
