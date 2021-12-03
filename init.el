@@ -2561,7 +2561,7 @@ to a temp file and puts the filename in the kill ring."
 (use-package lua-mode :straight t :defer t :mode "\\.lua\\'")
 (use-package markdown-mode :straight t :defer t :mode ("\\.md\\'" "\\.card\\'"))
 (use-package scss-mode :straight t :defer t :mode "\\.scss\\'")
-(use-package tuareg :straight t :defer t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
+(use-package tuareg :straight t :defer t :mode ("\\.ml\\'" "\\.mli\\'" "\\.mll\\'" "\\.mly\\'"))
 (use-package ini-mode :straight t :defer t)
 (use-package just-mode :straight t)
 (use-package systemd :straight t :defer t)
