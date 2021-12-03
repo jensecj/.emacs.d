@@ -4083,6 +4083,13 @@ if BACKWARDS is non-nil, jump backwards instead."
    :heuristic #'smart-jump/select-rg-window)
 
   (smart-jump-register
+   :modes 'python-mode
+   :jump-fn #'dumb-jump-go
+   :pop-fn #'xref-pop-marker-stack
+   :should-jump t
+   :heuristic 'point)
+
+  (smart-jump-register
    :modes 'c++-mode
    :jump-fn 'dumb-jump-go
    :pop-fn 'pop-tag-mark
