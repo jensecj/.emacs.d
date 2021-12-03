@@ -62,7 +62,6 @@
 
 (message "bootstrapping straight.el...")
 
-(setq straight-vc-git-default-protocol 'ssh)
 (setq straight-check-for-modifications '(check-on-save find-when-checking))
 
 (message "bootstrapping straight and use-package...")
@@ -102,7 +101,7 @@
 (use-package dash ;; list defuns; -map, -concat, etc.
   :demand t
   :straight (dash :host github :repo "magnars/dash.el"
-                  :fork (:host github :repo "jensecj/dash.el"))
+                  :fork (:protocol ssh :host github :repo "jensecj/dash.el"))
   :config
   (defun -flatmap (f list)
     (-flatten (-map f list)))
@@ -123,17 +122,17 @@
 (use-package s ;; string defuns; s-trim, s-replace, etc.
   :demand t
   :straight (s :host github :repo "magnars/s.el"
-               :fork (:host github :repo "jensecj/s.el")))
+               :fork (:protocol ssh :host github :repo "jensecj/s.el")))
 
 (use-package f ;; fs defuns; f-exists-p, f-base, etc.
   :demand t
   :straight (f :host github :repo "rejeep/f.el"
-               :fork (:host github :repo "jensecj/f.el")))
+               :fork (:protocol ssh :host github :repo "jensecj/f.el")))
 
 (use-package ht ;; hash-table wrapper.
   :demand t
   :straight (ht :host github :repo "Wilfred/ht.el"
-                :fork (:host github :repo "jensecj/ht.el")))
+                :fork (:protocol ssh :host github :repo "jensecj/ht.el")))
 
 (use-package ts ;; time defuns
   :demand t
@@ -242,7 +241,7 @@
 ;;;; theming
 
 (use-package zent-theme
-  :straight (zent-theme :type git :repo "git@github.com:jensecj/zent-theme.el.git")
+  :straight (zent-theme :type git :protocol ssh :repo "git@github.com:jensecj/zent-theme.el.git")
   :demand t
   :functions zent
   :config
@@ -2245,12 +2244,12 @@ to a temp file and puts the filename in the kill ring."
   :bind ("C-<f12>" . edit-symbol-at-point))
 
 (use-package parenthetic
-  :straight (parenthetic :type git :repo "git@github.com:jensecj/parenthetic.el")
+  :straight (parenthetic :type git :protocol ssh :repo "git@github.com:jensecj/parenthetic.el.git")
   :bind (("M-<prior>" . parenthetic-up)
          ("M-<next>" . parenthetic-down)))
 
 (use-package orgflow
-  :straight (orgflow :type git :repo "git@github.com:jensecj/orgflow.el.git")
+  :straight (orgflow :type git :protocol ssh :repo "git@github.com:jensecj/orgflow.el.git")
   :after org
   :bind
   (("M-o u" . #'orgflow-visit-linked-url)
@@ -2272,7 +2271,7 @@ to a temp file and puts the filename in the kill ring."
                   ("H" . orgflow-refile-here))))
 
 (use-package org-proplines
-  :straight (org-proplines :type git :repo "git@github.com:jensecj/org-proplines.el.git")
+  :straight (org-proplines :type git :protocol ssh :repo "git@github.com:jensecj/org-proplines.el.git")
   :after org
   :hook (org-mode . org-proplines-mode)
   :config
@@ -2301,7 +2300,7 @@ to a temp file and puts the filename in the kill ring."
   :bind (("M-i" . indset)))
 
 (use-package notmuch-mojn
-  :straight (notmuch-mojn :type git :repo "git@github.com:jensecj/notmuch-mojn.el.git")
+  :straight (notmuch-mojn :type git :protocol ssh :repo "git@github.com:jensecj/notmuch-mojn.el.git")
   :defer t
   :requires epa-file
   :bind*
@@ -2365,7 +2364,7 @@ to a temp file and puts the filename in the kill ring."
   (cleanup-add 'python-mode #'blacken-buffer))
 
 (use-package augment
-  :straight (augment :type git :repo "git@github.com:jensecj/augment.el")
+  :straight (augment :type git :protocol ssh :repo "git@github.com/jensecj/augment.el")
   :defer t
   :hook (emacs-lisp-mode . augment-prog-mode)
   :config
@@ -2375,7 +2374,7 @@ to a temp file and puts the filename in the kill ring."
   (augment-sort-entries))
 
 (use-package views
-  :straight (views :type git :repo "git@github.com:jensecj/views.el.git")
+  :straight (views :type git :protocol ssh :repo "git@github.com:jensecj/views.el.git")
   :defer t
   :bind
   (("M-v" . transient-views))
@@ -2388,7 +2387,7 @@ to a temp file and puts the filename in the kill ring."
       ("k" "pop" views-pop)]]))
 
 (use-package sane-windows
-  :straight (sane-windows :type git :repo "git@github.com:jensecj/sane-windows.el.git")
+  :straight (sane-windows :type git :protocol ssh :repo "git@github.com:jensecj/sane-windows.el.git")
   :defer t
   :bind* (("C-x 0" . nil)
           ("C-x 1" . nil)
@@ -2407,7 +2406,7 @@ to a temp file and puts the filename in the kill ring."
 
 
 (use-package today
-  :straight (today :type git :repo "git@github.com:jensecj/today.el.git")
+  :straight (today :type git :protocol ssh :repo "git@github.com:jensecj/today.el.git")
   :defer t
   :commands (today-capture-elfeed-at-point)
   :bind
@@ -2492,7 +2491,7 @@ to a temp file and puts the filename in the kill ring."
   )
 
 (use-package dokument
-  :straight (dokument :repo "git@github.com:jensecj/dokument.el.git")
+  :straight (dokument :type git :protocol ssh :repo "git@github.com:jensecj/dokument.el.git")
   :demand t
   :bind
   (("C-+" . dokument)
@@ -2536,14 +2535,14 @@ to a temp file and puts the filename in the kill ring."
   (dokument-use-defaults))
 
 (use-package replace-at-point
-  :straight (replace-at-point :repo "git@github.com:jensecj/replace-at-point.el.git")
+  :straight (replace-at-point :type git :protocol ssh :repo "git@github.com:jensecj/replace-at-point.el.git")
   :defer t
   :bind ("C-M-SPC" . replace-at-point)
   :config
   (replace-at-point-setup-defaults))
 
 (use-package lowkey-mode-line
-  :straight (lowkey-mode-line :repo "git@github.com:jensecj/lowkey-mode-line.el.git")
+  :straight (lowkey-mode-line :type git :protocol ssh :repo "git@github.com:jensecj/lowkey-mode-line.el.git")
   :demand t
   :commands lowkey-mode-line-enable
   :config
