@@ -14,6 +14,10 @@
 (call-interactively #'emacs-version)
 (message "Commit: %s (%s)" emacs-repository-version emacs-repository-branch)
 
+(require 'server)
+(when (server-running-p)
+  (throw 'server-already-running "the emacs server is already running"))
+
 (log-info "Doing early initialization")
 
 ;; user directories/files
