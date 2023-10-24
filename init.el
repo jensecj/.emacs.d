@@ -284,6 +284,13 @@
      (interactive)
      ,@body))
 
+(defmacro xa (name &rest body)
+  "Convenience macro for creating _names_ no-argument interactive lambdas.
+Useful because defun names are shown in which-key, etc."
+  `(defun ,name ()
+     (interactive)
+     ,@body))
+
 (defun longest-list (&rest lists)
   "Return the longest list in LISTS."
   (-max-by
@@ -4425,13 +4432,14 @@ re-enable afterwards."
 (log-info "Setting keybindings")
 
 ;; keys for quickly going to common files
-(bind-key* "\e\ei" (xi (find-file "~/vault/inbox/inbox.org")))
-(bind-key* "\e\ek" (xi (find-file "~/vault/org/tracking.org")))
-(bind-key* "\e\em" (xi (find-file "~/vault/org/roadmap.org")))
-(bind-key* "\e\et" (xi (find-file "~/vault/inbox/today.org")))
-(bind-key* "\e\er" (xi (find-file "~/vault/org/read.org")))
-(bind-key* "\e\ew" (xi (find-file "~/vault/org/watch.org")))
-(bind-key* "\e\ec" (xi (find-file "~/.emacs.d/init.el")))
+(bind-key* "\e\ei" (xa .jump-to-inbox-file (find-file "~/vault/inbox/inbox.org")))
+(bind-key* "\e\ek" (xa .jump-to-tracking-file (find-file "~/vault/org/tracking.org")))
+(bind-key* "\e\em" (xa .jump-to-roadmap-file (find-file "~/vault/org/roadmap.org")))
+(bind-key* "\e\et" (xa .jump-to-today-file (find-file "~/vault/inbox/today.org")))
+(bind-key* "\e\er" (xa .jump-to-read-file (find-file "~/vault/org/read.org")))
+(bind-key* "\e\ew" (xa .jump-to-watch-file (find-file "~/vault/org/watch.org")))
+(bind-key* "\e\ec" (xa .jump-to-emacs-config-file (find-file "~/.emacs.d/init.el")))
+
 
 ;;;; for built-in things
 
