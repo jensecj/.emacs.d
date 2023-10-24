@@ -257,9 +257,12 @@
 
 ;; contain extra files in etc/ and var/.
 ;; load early, and overwrite locations in configs if needed.
-(use-package no-littering :straight t :demand t)
-
-(setq temporary-file-directory (no-littering-expand-var-file-name "temp/"))
+(use-package no-littering
+  :straight t
+  :demand t
+  :config
+  (setq temporary-file-directory (no-littering-expand-var-file-name "temp/"))
+  (no-littering-theme-backups))
 
 (setq auto-save-no-message t)
 
