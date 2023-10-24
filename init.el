@@ -1135,7 +1135,7 @@ Works well being called from a terminal:
   :demand t
   :diminish whitespace-mode
   :config
-  (setq whitespace-style '(face empty trailing))
+  (setq whitespace-style '(face empty trailing missing-newline-at-eof))
   (setq-mode-local text-mode show-trailing-whitespace t)
   (setq-mode-local prog-mode show-trailing-whitespace t)
 
