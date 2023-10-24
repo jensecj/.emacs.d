@@ -2111,16 +2111,6 @@ current line."
      (t (message "unable to locate repo: %s" pick)))))
 (bind-key* "M-r" #'jens/goto-repo)
 
-(defvar jens/shortcut-map
-  (let ((map (make-sparse-keymap)))
-    (bind-key "m" #'jens/goto-msg-buffer map)
-    (bind-key "n" #'notmuch-mojn map)
-    (bind-key "e" #'elfeed map)
-    (bind-key "c" #'emacs/jump-to-empty-scratch-buffer map)
-    map))
-(fset 'jens/shortcut-map jens/shortcut-map)
-(bind-key "C-<escape>" #'jens/shortcut-map)
-
 (defun jens/buffer-carousel-previous ()
   (interactive)
   (previous-buffer)
@@ -2583,18 +2573,6 @@ to a temp file and puts the filename in the kill ring."
   :hook ((json-mode . flycheck-mode))
   :config
   (setq js-indent-level tab-width))
-
-(use-package elpher
-  :straight t
-  :bind (("M-s M-e" . #'elpher/open-url-at-point))
-  :config
-  (defun elpher/open-url-at-point ()
-    (interactive)
-    (let ((url (or
-                (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)))
-                (browse-url/get-url-at-point))))
-      (view-buffer-other-window "*elpher*")
-      (elpher-go url))))
 
 (use-package rust-mode
   :straight t
@@ -3617,25 +3595,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   (dired-rainbow/def artifact        zent-cyan     ("class" "elc" "eln" "o" "out" "pyc"))
   )
 
-(use-package geiser
-  :straight t
-  :defer t
-  :hook (scheme-mode . geiser-mode)
-  :config
-  (setq geiser-chicken-binary "chicken-csi")
-  (setq geiser-active-implementations '(chicken)))
-
-(use-package chicken
-  :download "https://code.call-cc.org/cgi-bin/gitweb.cgi?p=chicken-core.git;a=blob_plain;f=misc/chicken.el"
-  :after scheme-mode
-  :config
-  (setq scheme-program-name "chicken-csi -:c")
-  (setq scheme-compiler-name "chicken-csc")
-
-  (defun chicken/compile-this-file ()
-    (interactive)
-    (shell-command-to-string (format "%s %s" scheme-compiler-name (buffer-file-name)))))
-
 (use-package elpy
   :straight t
   :after python-mode
@@ -3729,21 +3688,12 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package package-lint :straight t :defer t :commands (package-lint-current-buffer))
 (use-package relint :straight t :defer t :commands (relint-current-buffer relint-file relint-directory))
 (use-package clang-format :straight t :defer t)
-(use-package rmsbolt :straight t :defer t)
 
 (use-package flymake-shellcheck
   :straight t
   :commands flymake-shellcheck-load
   :init
   (add-hook 'sh-mode-hook #'flymake-shellcheck-load))
-
-(use-package ob-clojure
-  :disabled t
-  :requires cider
-  :config
-  (setq org-babel-clojure-backend 'cider))
-
-(use-package ox-pandoc :straight t :defer t :after org)
 
 ;;;; minor modes
 
