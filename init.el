@@ -620,8 +620,11 @@
 
 ;;;;; authentication and security
 
-;; set the paranoia level to medium, warns if connections are insecure
+;; set the paranoia level, warns if connections are insecure
 (setq network-security-level 'high)
+
+;; use textsec to validate inputs in places like shr/eww/mail
+(setq textsec-check t)
 
 (use-package auth-source
   :demand t
