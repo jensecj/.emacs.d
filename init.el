@@ -4439,7 +4439,8 @@ re-enable afterwards."
 (bind-key* "\e\er" (xa .jump-to-read-file (find-file "~/vault/org/read.org")))
 (bind-key* "\e\ew" (xa .jump-to-watch-file (find-file "~/vault/org/watch.org")))
 (bind-key* "\e\ec" (xa .jump-to-emacs-config-file (find-file "~/.emacs.d/init.el")))
-
+(bind-key* "\e\en" #'notmuch-mojn)
+(bind-key* "\e\ee" #'elfeed)
 
 ;;;; for built-in things
 
