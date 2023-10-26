@@ -753,6 +753,12 @@ Useful because defun names are shown in which-key, etc."
       (destructuring-bind (beg . end) (bounds-of-thing-at-point 'sexp)
         (eval-region beg end)))))
 
+(use-package comp
+  :config
+  (add-to-list*
+   'native-comp-deferred-compilation-deny-list
+   '(".*elfeed.*" ".*avl-tree.*")))
+
 ;;;;; major-modes
 
 ;; TODO: translate ML course from octave to python, then remove octave-mode
