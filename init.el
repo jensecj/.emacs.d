@@ -1079,6 +1079,10 @@ Works well being called from a terminal:
 (use-package hi-lock :diminish hi-lock-mode)
 
 (use-package xref
+  :bind
+  (("M-." . xref-find-definitions)
+   ("M-," . xref-go-back)
+   ("M--" . xref-find-references))
   :config
   (setq xref-search-program 'ripgrep))
 
@@ -3642,12 +3646,6 @@ if BACKWARDS is non-nil, jump backwards instead."
   (with-eval-after-load 'flycheck
     (add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup)))
 
-(use-package blacken
-  :straight t
-  :after python-mode
-  :config
-  (setq blacken-line-length 'fill))
-
 (use-package realgud
   :defer t
   :straight t)
@@ -3936,6 +3934,13 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package browse-at-remote :straight t)
 (use-package org-web-tools :straight t :after org)
 
+(use-package reformatter
+  :straight t
+  :config
+  (reformatter-define ruff-format
+    :program "ruff"
+    :args `("format" "--stdin-filename" ,buffer-file-name "-")))
+
 (use-package orglink
   :straight t
   :diminish
@@ -3984,86 +3989,9 @@ if BACKWARDS is non-nil, jump backwards instead."
 
 (use-package dumb-jump
   :straight t
-  :defer t
   :config
   (setq dumb-jump-selector 'completing-read)
-  (setq dumb-jump-prefer-searcher 'rg))
-
-(use-package smart-jump
-  :straight t
-  :defer t
-  :commands (smart-jump-register
-             smart-jump-simple-find-references)
-  :functions (smart-jump/find-references-with-rg
-              smart-jump-refs-search-rg
-              smart-jump/select-rg-window)
-  :bind*
-  (("M-." . smart-jump-go)
-   ("M-," . smart-jump-back)
-   ("M--" . smart-jump-references))
-  :config
-  (defun smart-jump/find-references-with-rg ()
-    "Use `rg' to find references."
-    (interactive)
-    (unless (fboundp 'rg)
-      (message "Install `rg' to use `smart-jump/find-references-with-rg'."))
-
-    (if (not (fboundp 'smart-jump-refs-search-rg))
-        (rg-define-search smart-jump-refs-search-rg
-          "Search for references for QUERY in all files in
-                the current project."
-          :flags '("-aa")
-          :dir project
-          :files current))
-
-    (smart-jump-refs-search-rg
-     (cond ((use-region-p)
-            (buffer-substring-no-properties (region-beginning)
-                                            (region-end)))
-           ((symbol-at-point)
-            (substring-no-properties
-             (symbol-name (symbol-at-point)))))))
-
-  (defun smart-jump/select-rg-window nil
-    "Select the `rg' buffer, if visible."
-    (select-window (get-buffer-window (get-buffer "*rg*"))))
-
-  (setq smart-jump-find-references-fallback-function #'smart-jump/find-references-with-rg)
-
-  (smart-jump-register :modes '(clojure-mode rust-mode))
-
-  (smart-jump-register
-   :modes '(emacs-lisp-mode lisp-interaction-mode)
-   :jump-fn #'xref-find-definitions
-   :pop-fn #'xref-pop-marker-stack
-   :refs-fn #'xref-find-references
-   :should-jump t
-   :async 500
-   :heuristic 'error)
-
-  (smart-jump-register
-   :modes 'python-mode
-   :jump-fn #'elpy-goto-definition
-   :pop-fn #'xref-pop-marker-stack
-   :refs-fn #'smart-jump-simple-find-references
-   :should-jump (lambda () (bound-and-true-p elpy-mode))
-   :heuristic #'smart-jump/select-rg-window)
-
-  (smart-jump-register
-   :modes 'python-mode
-   :jump-fn #'dumb-jump-go
-   :pop-fn #'xref-pop-marker-stack
-   :should-jump t
-   :heuristic 'point)
-
-  (smart-jump-register
-   :modes 'c++-mode
-   :jump-fn 'dumb-jump-go
-   :pop-fn 'pop-tag-mark
-   :refs-fn #'smart-jump-simple-find-references
-   :should-jump t
-   :heuristic #'smart-jump/select-rg-window
-   :order 4))
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 (use-package iedit
   :straight t
