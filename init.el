@@ -2368,11 +2368,13 @@ to a temp file and puts the filename in the kill ring."
              blog-find-posts-file))
 
 (use-package cleanup
-  :defer t
   :bind (("C-c n" . cleanup-buffer))
   :config
   (cleanup-add 'org-mode '(whitespace/collapse-newlines-in-buffer org/format-buffer))
-  (cleanup-add 'python-mode #'blacken-buffer))
+  (cleanup-add 'python-mode #'ruff-format-buffer)
+  (cleanup-add 'json-mode #'jq-format-buffer)
+  (cleanup-add 'sh-mode #'sh-format-buffer)
+  )
 
 (use-package augment
   :straight (augment :type git :protocol ssh :repo "git@github.com/jensecj/augment.el")
@@ -3937,9 +3939,17 @@ if BACKWARDS is non-nil, jump backwards instead."
 (use-package reformatter
   :straight t
   :config
-  (reformatter-define ruff-format
+  (reformatter-define ruff-format ;; python
     :program "ruff"
-    :args `("format" "--stdin-filename" ,buffer-file-name "-")))
+    :args `("format" "--stdin-filename" ,buffer-file-name "-"))
+  (reformatter-define jq-format ;; json
+    :program "jq"
+    :args '("." "-"))
+  (reformatter-define sh-format ;; shell
+    :program "shfmt"
+    ;; pass filename to `shfmt` as it may influence editorconfig
+    :args (list "-i=4" "-filename" (or (buffer-file-name) input-file)))
+  )
 
 (use-package orglink
   :straight t
